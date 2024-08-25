@@ -12,7 +12,6 @@
 
 报名方式是完全基于 GitHub 的流程，通过提交 PR 进行申请，合并 PR 之后拥有更新权限。如果你不熟悉 GitHub 和 Git 的操作，请先自行学习。
 
-
 ## Web3 CTF 残酷共學介绍
 
 - 舉辦的原因: 推廣 Web3 Security，參加 9/20~9/22 BlazCTF. 
