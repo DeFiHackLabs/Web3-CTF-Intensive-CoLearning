@@ -14,7 +14,7 @@
 
 ## Web3 CTF 残酷共學介绍
 
-- 舉辦的原因: 推廣 Web3 Security，參加 9/20~9/22 BlazCTF. 
+- 舉辦的原因: 推廣 Web3 安全，並鼓勵大家參加 9 月 20 日至 9 月 22 日的 [BlazCTF](https://ctf.blaz.ai/)。
 
 ## 共學內容
 - 題目需完成 a,b,c 系列或 1b2c. 可自行選擇要做哪一組題. 卡關可以換下一題 (統一使用 Foundry寫POC), 21天至少完成40題. 需要在下一屆避免做到重覆系列.
@@ -83,7 +83,7 @@ https://github.com/fiveoutofnine/tardis
 
   - Step01：Fork 本仓库。
   - Step02：复制 Template.md 创建你的个人笔记文件，并根据文档指引填写你的信息，并将文件重命名为你的名字：YourName.md
-  - Step03：並建立一個目錄並命名為你的名字，路徑為 writeup/YourName/
+  - Step03：並建立一個目錄並命名為你的名字，路徑為 writeup/YourName/，放置POC。
   - Step04：创建一个 PR 到当前仓库，本残酷共学助教会对你的 PR 进行 review，review 通过后，你的 PR 会被 merge 到 main 分支，这个时候你会收到邀请加入这个仓库 contribution 的邮件，接受邀请后，你会自动获得 main 分支的 push 权限。
   - Step05：完成以上三个步骤，恭喜你报名成功，后续就可以将你的学习记录直接 push 到 main 分支进行更新。
   - 请加入 TG 群组保持交流：（[Web3 CTF殘酷共學群組](https://t.me/+kXHdFJWCYFNkZGNl))。加入群组后请在群里报到一下方便助教记录。
