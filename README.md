@@ -13,11 +13,21 @@
 
 ## Web3 CTF 残酷共學介绍
 
-- 舉辦的原因: 推廣 Web3 安全，並鼓勵大家參加 9 月 20 日至 9 月 22 日的 [BlazCTF](https://ctf.blaz.ai/)。
+- 這次 CTF 殘酷共學#1 主要是推廣 Web3 安全，培養社區 CTF 戰隊選手，並鼓勵大家參加 9 月 20 日至 9 月 22 日的 [BlazCTF](https://ctf.blaz.ai/)。
+- 發起人: [SunSec](https://x.com/1nf0s3cpt)
+- 助教: [Bill](https://x.com/hibillh)、[galois](https://x.com/YQ996CO28254695)
+- 投票: 社區白帽
+- 協作: 社區 OP
 
+## 共学时间
+
+- 報名起始時間：8/26~8/28
+- 本期共學開始時間：8/29~9/22（週日和9/17放假，放假日也可以簽到和學習，9/20-9/22 為比賽日，可列入解題紀錄)
+- 本期共學持續時間：21天
+  
 ## 共學內容
-- 題目需完成 a,b,c 系列或 1b2c. 可自行選擇要做哪一組題. 卡關可以換下一題 (統一使用 Foundry寫POC), 21天至少完成40題. 如參加下一屆需避免做到重覆系列.
-- **a.3選1系列**
+- 題目需完成 A,B,C 系列或 1B2C. 可自行選擇要做哪一組題. 卡關可以換下一題 (統一使用 Foundry 寫POC), 21天至少完成40題. 在下一屆需避免做到重覆系列.
+- **A.3選1系列**
     - 1.Ethernaut CTF (31)
 https://ethernaut.openzeppelin.com/
 
@@ -27,7 +37,7 @@ https://www.damnvulnerabledefi.xyz/
     - 3.QuillCTF Challenges (23)
 https://github.com/Quillhash/Quill-CTFs?tab=readme-ov-file#quillctf-challenges
 
-- **b.2選1系列**
+- **B.2選1系列**
 
     - 4.Ethcc CTF 2023 (5)
 https://github.com/spalen0/warroom-ethcc-2023
@@ -35,7 +45,7 @@ https://github.com/spalen0/warroom-ethcc-2023
     - 5.EthTaipei CTF 2023 (5)
 https://github.com/dinngo/ETHTaipei-war-room/
 
-- **c.6選1系列｜6選2**
+- **C.6選1系列或6選2(如果過去已經做過A系列的同學)**
   
     - 6.MetaTrust 2023 (22)
 https://github.com/MetaTrustLabs/ctf
@@ -54,12 +64,6 @@ https://github.com/OpenZeppelin/ctf-2024
 
     - 11.Curta (10)
 https://github.com/fiveoutofnine/tardis
-
-## 共学时间
-
-- 報名起始時間：8/26~8/28
-- 本期共學開始時間：8/29~9/22（週日和9/17放假，9/20-9/22 為比賽日，可列入解題紀錄)
-- 本期共學持續時間：21天
 
 ## 共学规则
 
