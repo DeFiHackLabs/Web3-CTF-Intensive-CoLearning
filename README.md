@@ -1,6 +1,5 @@
 # Web3 CTF 残酷共學 by DeFiHackLabs
 
-
 ## 什麼是残酷共學（Intensive Co-learning）？
 
 残酷共学是由 [Bruce Xu](https://twitter.com/brucexu_eth) 首创的一种学习模式，目前由 [LXDAO](https://lxdao.io/) 组织并运营残酷共学品牌。
@@ -17,7 +16,7 @@
 - 舉辦的原因: 推廣 Web3 安全，並鼓勵大家參加 9 月 20 日至 9 月 22 日的 [BlazCTF](https://ctf.blaz.ai/)。
 
 ## 共學內容
-- 題目需完成 a,b,c 系列或 1b2c. 可自行選擇要做哪一組題. 卡關可以換下一題 (統一使用 Foundry寫POC), 21天至少完成40題. 需要在下一屆避免做到重覆系列.
+- 題目需完成 a,b,c 系列或 1b2c. 可自行選擇要做哪一組題. 卡關可以換下一題 (統一使用 Foundry寫POC), 21天至少完成40題. 如參加下一屆需避免做到重覆系列.
 - **a.3選1系列**
     - 1.Ethernaut CTF (31)
 https://ethernaut.openzeppelin.com/
