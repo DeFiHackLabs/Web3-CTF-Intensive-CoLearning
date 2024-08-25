@@ -184,9 +184,9 @@ def check_weekly_status(user_status, date, user_tz):
         missing_days = sum(1 for d in week_dates if user_status.get(datetime.combine(
             d.astimezone(pytz.UTC).date(), datetime.min.time()).replace(tzinfo=pytz.UTC), "⭕️") == "⭕️")
 
-        if local_date == current_date and missing_days > 2:
+        if local_date == current_date and missing_days > 6:
             return "❌"
-        elif local_date < current_date and missing_days > 2:
+        elif local_date < current_date and missing_days > 6:
             return "❌"
         elif local_date > current_date:
             return " "
