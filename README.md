@@ -20,33 +20,42 @@
 ## 共學內容
 - 題目需完成 a,b,c 系列或 1b2c. 可自行選擇要做哪一組題. 卡關可以換下一題 (統一使用 Foundry寫POC), 21天至少完成40題. 需要在下一屆避免做到重覆系列.
 - **a.3選1系列**
-1.Ethernaut CTF (31)
+    - 1.Ethernaut CTF (31)
 https://ethernaut.openzeppelin.com/
-2.Damn Vulnerable DeFi (18)
+
+    - 2.Damn Vulnerable DeFi (18)
 https://www.damnvulnerabledefi.xyz/
-3.QuillCTF Challenges (23)
+
+    - 3.QuillCTF Challenges (23)
 https://github.com/Quillhash/Quill-CTFs?tab=readme-ov-file#quillctf-challenges
 
 - **b.2選1系列**
-4.Ethcc CTF 2023 (5)
+
+    - 4.Ethcc CTF 2023 (5)
 https://github.com/spalen0/warroom-ethcc-2023
-5.EthTaipei CTF 2023 (5)
+
+    - 5.EthTaipei CTF 2023 (5)
 https://github.com/dinngo/ETHTaipei-war-room/
 
 - **c.6選1系列｜6選2**
-6.MetaTrust 2023 (22)
+  
+    - 6.MetaTrust 2023 (22)
 https://github.com/MetaTrustLabs/ctf
-7.BlazCTF 2023 (14)
-https://github.com/fuzzland/blazctf-2023
-8.Paradigm CTF 2022 (21)
-https://github.com/paradigmxyz/paradigm-ctf-2022
-9.Paradigm CTF 2023 (17)
-https://github.com/paradigmxyz/paradigm-ctf-2023
-10.Openzeppelin CTF 2023 (9)
-https://github.com/OpenZeppelin/ctf-2024
-11.Curta (10)
-https://github.com/fiveoutofnine/tardis
 
+    - 7.BlazCTF 2023 (14)
+https://github.com/fuzzland/blazctf-2023
+
+    - 8.Paradigm CTF 2022 (21)
+https://github.com/paradigmxyz/paradigm-ctf-2022
+
+    - 9.Paradigm CTF 2023 (17)
+https://github.com/paradigmxyz/paradigm-ctf-2023
+
+    - 10.Openzeppelin CTF 2023 (9)
+https://github.com/OpenZeppelin/ctf-2024
+
+    - 11.Curta (10)
+https://github.com/fiveoutofnine/tardis
 
 ## 共学时间
 
