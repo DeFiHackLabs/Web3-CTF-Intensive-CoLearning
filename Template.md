@@ -43,6 +43,8 @@ timezone: Asia/Bangkok # 中南半岛时间 (UTC+7)
 
 timezone: Asia/Shanghai # 中国标准时间 (UTC+8)
 
+timezone: Asia/Taipei # 台灣标准时间 (UTC+8)
+
 timezone: Asia/Tokyo # 日本标准时间 (UTC+9)
 
 timezone: Australia/Sydney # 澳大利亚东部标准时间 (UTC+10)
