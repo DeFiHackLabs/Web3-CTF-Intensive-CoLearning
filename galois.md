@@ -22,6 +22,7 @@ Plan:
 1. Try to solve paradigm CTF 2023 as many as I could 
 2. Try to solve Blaz CTF 2023 as many as I could 
 3. Try to solve Openzeppelin CTF 2023 as many as I could 
+4. Try to learn more about cryptography
 
 ### 2024.08.26
 
