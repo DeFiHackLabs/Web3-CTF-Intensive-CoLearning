@@ -91,4 +91,4 @@ contract TheRewarderDistributor {
 ```
 
 ### Solution
-See [TheRewarder.sol](./TheRewarder.t.sol).
+See [TheRewarder.sol](./TheRewarder.t.sol#150).
