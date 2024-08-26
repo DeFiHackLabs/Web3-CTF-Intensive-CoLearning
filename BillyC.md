@@ -3,7 +3,7 @@ timezone: Asia/Taipei
 ---
 
 
-# {Billy}
+# BillyC
 
 1. 自我介绍
 Billy, currently work as security engineer. Wanna learn web3 security
