@@ -111,9 +111,11 @@ https://github.com/fiveoutofnine/tardis
 <!-- START_COMMIT_TABLE -->
 | Web3CTF· Name | 8.26 | 8.27 | 8.28 | 8.29 | 8.30 |
 | ------------- | ---- | ---- | ---- | ---- | ---- |
-| SunSec |   | | | | |
+| SunSec | ✅ | | | | |
 | README |   | | | | |
+| TestSun |   | | | | |
 <!-- END_COMMIT_TABLE -->
+
 
 
 
