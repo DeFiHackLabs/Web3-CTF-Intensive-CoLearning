@@ -45,35 +45,35 @@ https://github.com/spalen0/warroom-ethcc-2023
     - 5.EthTaipei CTF 2023 (5)
 https://github.com/dinngo/ETHTaipei-war-room/
 
-- **C.6選1系列或6選2(如果過去已經做過A系列的同學)**
-  
-    - 6.MetaTrust 2023 (22)
-https://github.com/MetaTrustLabs/ctf
-
-    - 7.BlazCTF 2023 (14)
-https://github.com/fuzzland/blazctf-2023
-
-    - 8.Paradigm CTF 2022 (21)
-https://github.com/paradigmxyz/paradigm-ctf-2022
-
-    - 9.Paradigm CTF 2023 (17)
-https://github.com/paradigmxyz/paradigm-ctf-2023
-
-    - 10.Openzeppelin CTF 2023 (9)
-https://github.com/OpenZeppelin/ctf-2024
-
-    - 11.Curta (10)
-https://github.com/fiveoutofnine/tardis
-
-    - 12.Secureum AMAZEX-DSS-PARIS (8)
+    - 6.Secureum AMAZEX-DSS-PARIS (8)
 https://github.com/secureum/AMAZEX-DSS-PARIS
 
-    - 13.Real World CTF 2024 SafeBridge (1)
+    - 7.Real World CTF 2024 SafeBridge (1)
 https://github.com/chaitin/Real-World-CTF-6th-Challenges/tree/main/SafeBridge
 
-    - 14.Grey Cat the Flag 2024 Milotruck challs (4)
+    - 8.Grey Cat the Flag 2024 Milotruck challs (4)
 https://github.com/MiloTruck/evm-ctf-challenges
-    
+
+- **C.6選1系列或6選2(如果過去已經做過A系列的同學)**
+  
+    - 9.MetaTrust 2023 (22)
+https://github.com/MetaTrustLabs/ctf
+
+    - 10.BlazCTF 2023 (14)
+https://github.com/fuzzland/blazctf-2023
+
+    - 11.Paradigm CTF 2022 (21)
+https://github.com/paradigmxyz/paradigm-ctf-2022
+
+    - 12.Paradigm CTF 2023 (17)
+https://github.com/paradigmxyz/paradigm-ctf-2023
+
+    - 13.Openzeppelin CTF 2023 (9)
+https://github.com/OpenZeppelin/ctf-2024
+
+    - 14.Curta (10)
+https://github.com/fiveoutofnine/tardis
+
 ## 共学规则
 
 - 报名规则：请在报名截止时间前进行报名，共学一旦开始后，不得中途加入
