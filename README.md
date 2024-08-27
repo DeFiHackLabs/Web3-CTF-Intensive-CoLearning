@@ -65,6 +65,15 @@ https://github.com/OpenZeppelin/ctf-2024
     - 11.Curta (10)
 https://github.com/fiveoutofnine/tardis
 
+    - 12. Secureum AMAZEX-DSS-PARIS (8)
+https://github.com/secureum/AMAZEX-DSS-PARIS
+
+    - 13. Real World CTF 2024 SafeBridge (1)
+https://github.com/chaitin/Real-World-CTF-6th-Challenges/tree/main/SafeBridge
+
+    - 14. Grey Cat the Flag 2024 Milotruck challs (4)
+https://github.com/MiloTruck/evm-ctf-challenges
+    
 ## 共学规则
 
 - 报名规则：请在报名截止时间前进行报名，共学一旦开始后，不得中途加入
