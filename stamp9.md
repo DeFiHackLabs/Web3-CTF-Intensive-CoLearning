@@ -1,8 +1,9 @@
 ---
-timezone:Europe/Helsinki
+timezone: Europe/Helsinki
 ---
 
-# {你的名字}
+
+# stamp9
 
 1. 自我介绍 Hi, I am Stamp9 and I am still learning
 2. 你认为你会完成本次残酷学习吗？ Yes
