@@ -7,3 +7,6 @@
 [submodule "Writeup/SpeedX/lib/forge-std"]
 	path = Writeup/SpeedX/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/mystiz/metatrust-ctf-2023/lib/forge-std"]
+	path = Writeup/mystiz/metatrust-ctf-2023/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
