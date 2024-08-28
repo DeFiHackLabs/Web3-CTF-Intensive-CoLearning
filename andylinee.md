@@ -13,4 +13,6 @@ timezone: Asia/Taipei
 
 ### 2024.08.28
 
-Register
+Sign up
+
+<!-- Content_END -->
