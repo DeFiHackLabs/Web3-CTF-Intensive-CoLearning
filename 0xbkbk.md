@@ -63,11 +63,11 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
 笔记内容
 第一次尝试使用github
 
-### 2024.07.12
+### 2024.08.29
 
 <!-- Content_END -->
