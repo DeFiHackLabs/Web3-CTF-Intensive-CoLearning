@@ -15,6 +15,6 @@ web3菜雞
 <!-- Content_START -->
 
 ### 2024.08.29
-test
+Complete Ethernaut CTF level 0
 
 <!-- Content_END -->
