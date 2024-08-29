@@ -11,11 +11,9 @@ timezone: Asia/Taipei
 
 <!-- Content_START -->
 
-### 2024.08.28
-Hello World !!!
-
-笔记内容
-
-### 2024.07.12
+### 2024.08.29
+學習內容:
+目前還在嘗試搞懂怎麼創建題目和繳交。
+Foundry 的檔案架構已有初步了解，但目前卡在 import "forge-std/Script.sol"; 和 import "forge-std/console.sol"; 發生 not found 的錯誤，希望能盡快搞定環境。
 
 <!-- Content_END -->
