@@ -62,9 +62,19 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-Note
+(1) BlazCTF easy-nft challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/eazy-nft
+
+Writeup: The `player` can call mint function and update the owner of a certain token through `ET:mint` function.
+
+(2) BlazCTF lockless-swap challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/lockless-swap
+
+Writeup: The reentrancy lock is not implemented in the PancakeSwap function, allowing an attacker to call the swap function and synchronize the reserve in the callback function, followed by minting liquidity tokens. Through a series of similar operations, the attacker can retrieve most of the liquidity in the pool.
 
 ### 2024.07.12
 
