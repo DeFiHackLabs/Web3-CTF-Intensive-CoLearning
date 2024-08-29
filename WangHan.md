@@ -62,10 +62,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
+Create local [Solidity](https://soliditylang.org/) and [Foundry](https://github.com/foundry-rs/foundry) dev environment
 
-笔记内容
-
-### 2024.07.12
 
 <!-- Content_END -->
