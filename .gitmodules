@@ -39,3 +39,6 @@
 [submodule "Writeup/Tanner/lib/openzeppelin-contracts"]
 	path = Writeup/Tanner/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/billh/Curta/CurtaLending/lib/forge-std"]
+	path = Writeup/billh/Curta/CurtaLending/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
