@@ -71,8 +71,6 @@ This is what it looks when `vault.flashLoan(exploit, address(token), 1e18, bytes
 
 ![](Writeup/mystiz/images/20240829-dvd-unstoppable-1.png)
 
-<!-- Content_END -->
-
 #### 🏁 Damn Vulnerable DeFi: Unstoppable
 
 **Time used: ~1h 55m**
@@ -132,3 +130,4 @@ We create an `ExploitContract` to drain the funds from `SideEntranceLenderPool`.
 
 After that, we can simply withdraw the amount to the recovery wallet.
 
+<!-- Content_END -->
