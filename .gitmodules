@@ -51,3 +51,6 @@
 [submodule "Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts-upgradeable"]
 	path = Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts-upgradeable
 	url = https://github.com/openzeppelin/openzeppelin-contracts-upgradeable
+[submodule "Writeup/Joy/A-Ethernaut-CTF/lib/forge-std"]
+	path = Writeup/Joy/A-Ethernaut-CTF/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
