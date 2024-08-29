@@ -15,7 +15,7 @@ timezone: Asia/Taipei
 
 <!-- Content_START -->
 
-### 2024.08.26
+### 2024.08.29
 
 學習內容: 
 - A 系列的 Ethernaut CTF, 之前做了差不多了. POC: [ethernaut-foundry-solutions](https://github.com/SunWeb3Sec/ethernaut-foundry-solutions)
@@ -55,6 +55,6 @@ timezone: Asia/Taipei
 - RoadClosed 為例子我寫了2個解題方式. testRoadClosedExploit 和 testRoadClosedContractExploit (因為題目有檢查msg.sender是不是合約, 所以可以透過constructor來繞過 isContract)
 - [POC](./Writeup/SunSec/test/QuillCTF/RoadClosed.t.sol) 
 
-### 2024.08.30
+### 
 
 <!-- Content_END -->
