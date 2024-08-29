@@ -4,9 +4,9 @@ pragma solidity ^0.8.26;
 import {Test, console} from "forge-std/Test.sol";
 import "forge-std/Vm.sol";
 interface Instance {
-function authenticate(string memory passkey) external;
-function password() external view returns (string memory);
-function getCleared() external view returns (bool);
+    function authenticate(string memory passkey) external;
+    function password() external view returns (string memory);
+    function getCleared() external view returns (bool);
 }
 
 contract CounterTest is Test {

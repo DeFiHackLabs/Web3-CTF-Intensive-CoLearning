@@ -10,7 +10,7 @@ interface Instance {
 }
 
 contract ExploitScript is Script {
-    Instance level0 = Instance(0x0288d2799539152DF34A3eF29144fB086791f76c);
+    Instance level0 = Instance(0x044dD753634CaAa34c6F051D5A245e82bB65E4Fd);
 
     function run() public {
         vm.startBroadcast();
