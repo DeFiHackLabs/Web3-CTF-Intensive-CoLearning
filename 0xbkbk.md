@@ -1,5 +1,5 @@
 ---
-timezone: Asia/Taipei
+timezone: Asia/Shanghai
 ---
 
 > 请在上边的 timezone 添加你的当地时区，这会有助于你的打卡状态的自动化更新，如果没有添加，默认为北京时间 UTC+8 时区
@@ -53,10 +53,11 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ---
 
-# Alex Liao
+# {0xbkbk}
 
-1. 自我介绍：我是 [Alex Liao](https://x.com/0xAlex_Liao)，目前為一名 Solidity 智能合約開發者，同時也會關注與學習 Web3 安全相關知識
-2. 你认为你会完成本次残酷学习吗？ 希望可以，雖然有些題目感覺一天花兩小時也解不出來，但我會盡力抱助教大腿的。
+1. 研究区块链3年，正在学习solidity
+2. 你认为你会完成本次残酷学习吗？
+3. 会努力完成
 
 ## Notes
 
@@ -64,12 +65,9 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.08.29
 
-挑戰題目：
+笔记内容
+第一次尝试使用github
 
--   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Unstoppable](https://www.damnvulnerabledefi.xyz/challenges/unstoppable/)
-
-筆記連結： [DamnVulnerableDeFi: Unstoppable](./Writeup/AlexLiao/DamnVulnerableDeFi/Unstoppable.md)
-
-### 2024.08.30
+### 2024.08.29
 
 <!-- Content_END -->

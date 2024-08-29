@@ -14,10 +14,16 @@ timezone: Asia/Taipei
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+學習內容: 
 
-### 2024.07.12
+- 設定好 Foundry 環境和準備 QuillAudit CTF 題目
+- 今天時間只夠先完成一題 Easy
+
+#### [QuillAudit CTF - VIPBank](./Writeup/Tanner/src/QuillCTF/VIPBank.sol)
+
+- [Writeup](./Writeup/Tanner/writeup/QuillCTF/VIPBank.md) 
+- [POC](./Writeup/Tanner/test/QuillCTF/VIPBank.t.sol) 
 
 <!-- Content_END -->
