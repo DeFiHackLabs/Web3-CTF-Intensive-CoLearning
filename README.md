@@ -24,7 +24,7 @@
 - 報名起始時間：8/26~8/28
 - 本期共學開始時間：8/29~9/22（週日和9/17放假，放假日也可以簽到和學習，9/20-9/22 為比賽日，可列入解題紀錄)
 - 本期共學持續時間：21天
-  
+
 ## 共學內容
 - 題目需完成 A,B,C 系列或 1B2C. 可自行選擇要做哪一組題. 卡關可以換下一題 (統一使用 Foundry 寫POC), 21天至少完成40題. 在下一屆需避免做到重覆系列.
 - **A.3選1系列**
@@ -55,7 +55,7 @@ https://github.com/chaitin/Real-World-CTF-6th-Challenges/tree/main/SafeBridge
 https://github.com/MiloTruck/evm-ctf-challenges
 
 - **C.6選1系列或6選2(如果過去已經做過A系列的同學)**
-  
+
     - 9.MetaTrust 2023 (22)
 https://github.com/MetaTrustLabs/ctf
 
@@ -81,10 +81,10 @@ https://github.com/fiveoutofnine/tardis
 - 激勵規格：
     1. 每天打卡上傳學習過程加2分
     2. 21 天後社區白帽投票 writeup 寫得最好以及完整(依據做了多少組題目和內容完整度.) - 第一加10分，第二加8分，第三加6分，第四加5分，第五加4分.
-- 21 days 後公佈名次與分數： 
+- 21 days 後公佈名次與分數：
     1. 1st 250 Dai 學習獎勵金
     2. 2nd 200 Dai 學習獎勵金
-    3. 3rd 150 Dai 學習獎勵金 
+    3. 3rd 150 Dai 學習獎勵金
     4. Top4-Top5 每人 100 Dai 學習獎勵金
 
 ## 如何报名和打卡？
@@ -225,6 +225,7 @@ https://github.com/fiveoutofnine/tardis
 | stamp9 |   | | |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
 | Ray |   | | |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
 | Joy |   | | |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+| wiasliaw |   | | |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
 <!-- END_COMMIT_TABLE -->
 
 
