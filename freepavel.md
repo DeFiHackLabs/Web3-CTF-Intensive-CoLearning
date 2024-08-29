@@ -64,9 +64,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
-
-笔记内容
+### 2024.08.29
+- 打了 Ethernaut 的第 0 題 > [HelloEthernaut](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/00_HelloEthernaut.md)
 
 ### 2024.07.12
 
