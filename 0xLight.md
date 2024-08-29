@@ -64,10 +64,11 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
 笔记内容
 
-### 2024.07.12
+### 2024.08.29
+[AMAZEX-DSS-PARIS Challenge1](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/Operation%20magic%20redemption.md)
 
 <!-- Content_END -->
