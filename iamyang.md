@@ -64,10 +64,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+熟悉 foundry 使用
 
-### 2024.07.12
+完成 Ethernaut 环境初始化创建
+
+完成 Ethernaut 第一题
 
 <!-- Content_END -->
