@@ -12,8 +12,6 @@
 > ABI (Application Binary Interface) 定義函式的介面，包含這些
 [欄位](https://gist.github.com/Ankarrr/f3f4173316223337696ea4c904e968ac)，可以幫助開發者了解怎麼跟這支合約互動
 
-<script src="https://gist.github.com/Ankarrr/f3f4173316223337696ea4c904e968ac.js"></script>
-
 看完ABI以後，題目要求先從`info()`開始，function return的內容就是說下一步怎麼做，都蠻直覺的，一路操作都最後就可以成功完成這題了。附截圖：
 
 ![](./img/00/solution.png)
