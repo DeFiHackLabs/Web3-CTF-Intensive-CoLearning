@@ -16,6 +16,41 @@ timezone: Asia/Taipei
 
 ### 2024.08.29
 
+## Foundry指令
+
+### Initialize project
+forge init PROJECTNAME
+
+### Install OpenZeppelin
+forge install OpenZeppelin/openzeppelin-contracts
+
+### Remappings
+forge remappings > remappings.txt
+
+### 指定test
+forge test --match-contract HelloWorldTest
+
+### 指定test file
+forge test --match-path test/Hello.t.sol
+
+### 有更多解釋
+forge test -vvv
+
+### 看gas
+forge test --gas-report
+
+### Remapping
+forge remappings
+
+### Update library
+forge update lib/solmate
+
+### Remove library
+forge remove solmate
+
+### Format
+forge fmt
+
 
 ### 2024.07.12
 
