@@ -16,8 +16,6 @@ timezone: Asia/Shanghai
 
 ### 2024.08.29
 
-完成第一题
-
-### 2024.08.29
+完成第一题，successful
 
 <!-- Content_END -->
