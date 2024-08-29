@@ -1,5 +1,5 @@
 ---
-timezone: Pacific/Auckland
+timezone: Asia/Shanghai
 ---
 
 > 请在上边的 timezone 添加你的当地时区，这会有助于你的打卡状态的自动化更新，如果没有添加，默认为北京时间 UTC+8 时区
@@ -67,8 +67,9 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 ### 2024.08.29
 
 笔记内容
+[AMAZEX-DSS-PARIS Challenge1](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/Operation%20magic%20redemption.md)
+为什么我交了也算miss
 
 ### 2024.08.29
-[AMAZEX-DSS-PARIS Challenge1](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/Operation%20magic%20redemption.md)
 
 <!-- Content_END -->
