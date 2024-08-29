@@ -15,5 +15,8 @@ Yes.
 
 <!-- Content_START -->
 
+### 2024.08.29
+
+Solved CurtaLending.
 
 <!-- Content_END -->
