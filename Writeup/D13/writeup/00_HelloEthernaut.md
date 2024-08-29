@@ -38,8 +38,8 @@ contract Instance {
 }
 ```
 1. 13 行的 function `authenticate()` 是解開這題的主要函式，會檢查參數跟`password`是否相同
-2. 第 9 行的 `constructor` 是只有合約建立時才會執行的function，`password`也是在這邊被賦予值的；也就是說該值是在合約成立時就設定好的。
-3. 回到第 5 行，發現`password`這個變數在宣告時被設定為`public`。代表我們可以直接呼叫`password()`取得該值並通過`authenticate()`的判定。
+2. 第 9 行的 `constructor` 是只有合約建立時才會執行的function，`password`也是在這邊被賦予值的；也就是說該值是在合約成立時就設定好的
+3. 回到第 5 行，發現`password`這個變數在宣告時被設定為`public`。代表我們可以直接呼叫`password()`取得該值並通過`authenticate()`的判定
 
 > [!NOTE]
 > 在Solidity中，宣告為`public`的變數會自動生成一個跟變數同名的getter function，也就代表任何人都可以讀取該變數。
