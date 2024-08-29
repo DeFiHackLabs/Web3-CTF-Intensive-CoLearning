@@ -24,7 +24,6 @@
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
 [submodule "Writeup/geyu/lib/forge-std"]
 	path = Writeup/geyu/lib/forge-std
-=======
 [submodule "Writeup/LouisTsai/challenge/lib/forge-std"]
 	path = Writeup/LouisTsai/challenge/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
