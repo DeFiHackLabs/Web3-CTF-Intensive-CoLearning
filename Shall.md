@@ -15,5 +15,8 @@ I would try my best.
 <!-- Content_START -->
 
 ### 2024.08.29
+QuillCTF-01-RoadClosed-isContract Bypass
+- [PoC](./Writeup/Shall/road-closed/roadclosed.t.sol)
+- [Writeup](./Writeup/Shall/road-closed/writeup.md)
 
 <!-- Content_END -->
