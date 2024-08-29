@@ -19,7 +19,8 @@ timezone: Asia/Taipei
 
 學習內容: 
 - Ethernaut CTF, 之前做了差不多了, 不過沒寫紀錄. 之後再回頭來看看. POC: [ethernaut-foundry-solutions](https://github.com/SunWeb3Sec/ethernaut-foundry-solutions)
-- A 系列我選擇 QuillAudit CTF 開始, 主要是收集題目, 後面再繼續 Damn Vulnerable DeFi.
+- A 系列的 QuillAudit CTF 題目的網站關掉了, 幫大家收集了[題目](./Writeup/SunSec/src/QuillCTF/), 不過還是有幾題沒找到. 有找到題目的人可以在發出來.
+- A 系列的 DamnVulnerableCTF 有持續更新, 題目也不錯. [Damn Vulnerable DeFi](https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0).
   
 #### [QuillAudit CTF - RoadClosed](./Writeup/SunSec/src/QuillCTF/RoadClosed.sol)
 ```
