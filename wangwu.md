@@ -16,7 +16,7 @@ timezone: Asia/Shanghai
 
 ### 2024.08.29
 
-学习了min proxy
+完成第一题
 
 ### 2024.08.29
 
