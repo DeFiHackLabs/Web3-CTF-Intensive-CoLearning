@@ -1,6 +1,24 @@
+[submodule "Writeup/D13/lib/forge-std"]
+	path = Writeup/D13/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
 [submodule "Writeup/kkontheway/lib/forge-std"]
 	path = Writeup/kkontheway/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
-[submodule "Writeup/geyu/lib/forge-std"]
-	path = Writeup/geyu/lib/forge-std
+[submodule "Writeup/Alive/lib/forge-std"]
+	path = Writeup/Alive/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/SpeedX/lib/forge-std"]
+	path = Writeup/SpeedX/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/mystiz/metatrust-ctf-2023/lib/forge-std"]
+	path = Writeup/mystiz/metatrust-ctf-2023/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts-07"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts-07
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts-08"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts-08
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
