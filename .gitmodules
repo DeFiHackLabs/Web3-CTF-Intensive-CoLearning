@@ -19,3 +19,6 @@
 [submodule "Writeup/kkontheway/lib/openzeppelin-contracts-08"]
 	path = Writeup/kkontheway/lib/openzeppelin-contracts-08
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/Joy/A-Ethernaut-CTF/lib/forge-std"]
+	path = Writeup/Joy/A-Ethernaut-CTF/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
