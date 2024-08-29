@@ -18,10 +18,12 @@ Will try my best to finish it
 
 ### 2024.08.29
 
-Finished setup env, ethernaut level0
+1. Finished setup env
+2. ethernaut level0
+3. ethernaut level1
 
 
-### 2024.07.12
+### 2024.08.30
 
 
 <!-- Content_END -->
