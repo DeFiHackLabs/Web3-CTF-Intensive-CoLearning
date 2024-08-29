@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Level01 {
+contract Fallback {
     mapping(address => uint256) public contributions;
     address public owner;
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Level00 {
+contract HelloEthernaut {
     string public password;
     uint8 public infoNum = 42;
     string public theMethodName = "The method name is method7123949.";
