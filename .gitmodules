@@ -34,3 +34,9 @@
 [submodule "Writeup/spn/CTF/lib/forge-std"]
 	path = Writeup/spn/CTF/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Tanner/lib/forge-std"]
+	path = Writeup/Tanner/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Tanner/lib/openzeppelin-contracts"]
+	path = Writeup/Tanner/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
