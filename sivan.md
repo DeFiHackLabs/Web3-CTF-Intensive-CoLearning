@@ -11,7 +11,7 @@ timezone: Asia/Shanghai
 
 <!-- Content_START -->
 
-### 2024.08.28
-
-
+### 2024.08.29
+- Ethernaut CTF中fallback以及fallout两个题目，题目比较简单，调用两次函数便可以解决.
+- [2024.8.29](./Writeup/Sivan/2024.8.29)
 <!-- Content_END -->
