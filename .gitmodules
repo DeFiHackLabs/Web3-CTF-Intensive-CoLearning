@@ -10,3 +10,12 @@
 [submodule "Writeup/mystiz/metatrust-ctf-2023/lib/forge-std"]
 	path = Writeup/mystiz/metatrust-ctf-2023/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts-07"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts-07
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts-08"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts-08
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
