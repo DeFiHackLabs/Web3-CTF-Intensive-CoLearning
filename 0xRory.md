@@ -12,9 +12,11 @@ timezone: Asia/Shanghai
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.09.29
 
-笔记内容
+A-Ethernaut-CTF
+
+[Ethernaut CTF Level 0 ](./Writeup/0xRory/A-Ethernaut-CTF/README.md)
 
 ### 2024.07.12
 
