@@ -13,6 +13,8 @@ timezone: Asia/Shanghai
 
 <!-- Content_START -->
 
-### 2024.08.28
+### 2024.08.29
 
-Pending
+完成A类Ethernaut CTF的1-5题
+
+<!-- Content_END -->

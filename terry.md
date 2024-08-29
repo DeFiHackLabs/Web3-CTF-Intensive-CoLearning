@@ -11,12 +11,13 @@ timezone: Asia/Taipei
 
 <!-- Content_START -->
 
-### 2024.08.29 (Example)
+### 2024.08.29
+第一次使用Foundry，對於很多功能還不識很熟悉。
 
-學習內容: 
-- Ethernaut CTF - beef: 漏洞為xxxx
-- POC: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/SunSec/foundry.md
+學習內容:
+- Ethernaut CTF - Fallback
+- POC: https://lalaterry.github.io/posts/Ethernaut-Fallback/
 
-### 2024.08.26
+### 2024.08.30
 
 <!-- Content_END -->
