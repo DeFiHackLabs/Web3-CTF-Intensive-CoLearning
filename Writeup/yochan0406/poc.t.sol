@@ -166,7 +166,7 @@ contract UnstoppableChallenge is Test {
         }
 
 
-        // Remove vm.stopPrank here since it's handled by the modifier
+        
 
     }
 
