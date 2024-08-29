@@ -12,9 +12,11 @@ timezone: Asia/Shanghai
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+- 1.Ethernaut CTF (31) - Hello Ethernaut - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 入门题，通过这个学习了如何做这个 web3 CTF;
+- 1.Ethernaut CTF (31) - Fallback - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
 
 ### 2024.07.12
 
