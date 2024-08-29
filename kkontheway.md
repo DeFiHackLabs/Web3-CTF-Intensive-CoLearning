@@ -13,14 +13,14 @@ timezone: Asia/Shanghai
 
 <!-- Content_START -->
 
-### 2024.08.26
+### 2024.08.29
 
 A: Damn Vulnerable DeFi V4(1/18)
 ---
 
 
 
-B:EthTaipei CTF 2023(1/5)
+B:EthTaipei CTF 2023(2/5)
 ---
 
 **1. Casino**
@@ -142,8 +142,219 @@ contract WrappedNative is ERC20("Wrapped Native Token", "WNative"), Ownable {
 3. 最后直接调用`withdraw`即可直接取出所有的`wNative`
 4. 后面发现也不需要管`block.number`，直接在调用play的时候传入一个足够大的数字，什么`5k`，`1w`的都可以，然后直接`withdraw`就可以了
 
-## Exp
+**Exp**
 In WriteUp/kkontheway/
+
+**2. WBC**
+
+**Goal**
+
+```solidity
+function solve() public override {
+        require(wbc.scored());
+        super.solve();
+    }
+```
+
+**Solution**
+
+首先阅读代码，要让`wbc.scored=true`有两种方式：
+
+```solidity
+1. 成功执行_homeBase() 
+2. block.timestamp % 23_03_2023 == 0
+```
+
+因为第二个几乎不可能，所以我们走第一条路成功调用`_homeBase()` 
+
+代码模拟的是一个棒球比赛，`homeBase`也就是本垒打，我们要先越过一垒，二垒和三垒，所以我们就一个一个的绕过。
+
+首先我们要注册成为`Player`,调用`bodyCheck()`
+
+<details>
+
+```solidity
+function bodyCheck() external {
+        require(msg.sender.code.length == 0, "no personal stuff");
+        require(uint256(uint160(msg.sender)) % 100 == 10, "only valid players");
+
+        player = msg.sender;
+    }
+```
+
+</details>
+
+`bodyCheck()`检查了`msg.sender.code.length == 0`，我们可以通过在`constructor`中调用的方式来绕过，因为智能合约在执行构造函数的阶段`code.length`为0。
+
+还有一个检查是要求`uint256(uint160(msg.sender)) % 100 == 10` ，一个特定的地址，在`EVM`中创建地址有两种一种是`Create`一种是`Create2`，具体可查看这篇文章即可了解原理如何生成一个我们想要的地址:[Vanity-address](https://0xfoobar.substack.com/p/vanity-addresses).
+
+接下来我们要调用`ready()`, 进入比赛
+
+<details>
+
+```solidity
+function ready() external {
+        require(IGame(msg.sender).judge() == judge, "wrong game");
+        _swing();
+    }
+```
+
+</details>
+
+通过这个我们可以知道`caller`必须是一个合约，同时要满足`IGame`接口，并且合约的`judge()`返回值==`judge`。
+
+接下来就进入了`swing()`
+
+<details>
+
+```solidity
+function _swing() internal onlyPlayer {
+        _firstBase();
+        require(scored, "failed");
+    }
+```
+
+</details>
+
+`swing()`会调用`_firstBase()`
+
+<details>
+
+```solidity
+function _firstBase() internal {
+        uint256 o0o0o0o00oo00o0o0o0o0o0o0o0o0o0o0o0oo0o = 1001000030000000900000604030700200019005002000906;
+        uint256 o0o0o0o00o0o0o0o0o0o0o0ooo0o00o0ooo000o = 460501607330902018203080802016083000650930542070;
+        uint256 o0o0o00o0oo00oo00o0o0o0o0o0o0o0o0oo0o0o = 256; // 2^8
+        uint256 o0oo0o0o0o0o0o0o0o0o00o0oo00o0o0o0o0o0o = 1;
+        _secondBase(
+            uint160(
+                o0o0o0o00oo00o0o0o0o0o0o0o0o0o0o0o0oo0o
+                    + o0o0o0o00o0o0o0o0o0o0o0ooo0o00o0ooo000o * o0o0o00o0oo00oo00o0o0o0o0o0o0o0o0oo0o0o
+                    - o0oo0o0o0o0o0o0o0o0o00o0oo00o0o0o0o0o0o
+            )
+        );
+    }
+```
+
+</details>
+
+`_firstBase()`函数会讲计算之后的结果传递提`_secondBase()`，我们来看看`_secondBase()`干了什么：
+
+<details>
+
+```solidity
+function _secondBase(uint160 input) internal {
+        require(IGame(msg.sender).steal() == input, "out");
+        _thirdBase();
+    }
+```
+
+</details>
+
+要求传入的值和我们的攻击合约的`steal`返回值是一样的，才能调用三垒`_thirdBase()`, 这没什么难度计算一下就好，我们来看三垒的实现：
+
+<details>
+
+```solidity
+function decode(bytes32 data) external pure returns (string memory) {
+        assembly {
+            mstore(0x20, 0x20)
+            mstore(0x49, data)
+            return(0x20, 0x60)
+        }
+    }
+function _thirdBase() internal {
+        require(keccak256(abi.encodePacked(this.decode(IGame(msg.sender).execute()))) == keccak256("HitAndRun"), "out");
+        _homeBase();
+    }
+```
+
+</details>
+
+`_thirdBase`调用了攻击合约的`execute`函数，并且用`wbc::decode`函数对他进行解码，要求计算后的`keccak256`的值得和`HitAndRun`一致，所以我们来看看`decode`函数在干什么具体在干嘛。
+
+我们可以从[evm.codes](https://www.evm.codes/)上看到：
+
+```solidity
+Stack input
+offset: offset in the memory in bytes.
+value: 32-byte value to write in the memory.
+```
+
+第一个参数是memory中的offset，第二个参数是值
+
+所以decode的的作用就是将data转换成EVM格式的字符串：
+
+```solidity
+assembly {
+            mstore(0x20, 0x20)
+            //在内存中0x20的位置写入值0x20
+            mstore(0x49, data)
+            //在内存中0x49的位置写入data
+            return(0x20, 0x60)
+            //从0x20的位置返回0x60长度的值
+        }
+  // x 代表我们的data
+  0x20 0000000000000000000000000000000000000000000000000000000000000020 0x3f
+  0x40 000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 0x5f
+  0x60 xxxxxxxxxxxxxxxxxx0000000000000000000000000000000000000000000000 0x7f
+       
+```
+
+我们知道在`EVM`中字符串会被打包成三个`32`字节，第一个`32`字节是偏移量代表字符串从哪里开始，第二个`32`字节是字符串的长度，第三个是字符串的实际内容。所以我们只要传入`HitAndRun`的长度和实际内容将他们嵌进去就好了。所以我们可以通过传入:`0x09(HitAndRun的长度)`和`486974416E6452756E` (HitAndRun的ASCII码)就可以了：
+
+```solidity
+0000000000000000000000000000000000000000000009486974416e6452756e
+```
+
+我们把它嵌入到上面的内存中看看:
+
+```solidity
+// x 代表我们的data
+  0x20 0000000000000000000000000000000000000000000000000000000000000020 0x3f
+  0x40 0000000000000000000000000000000000000000000000000000000000000009 0x5f
+  0x60 486974416e6452756e0000000000000000000000000000000000000000000000 0x7f
+```
+
+这个也就代表着我们的字符串`HitAndRun`了
+
+到此我们成功绕过了前面的三垒，接下来就差最后一个`_homebase()`了
+
+<details>
+
+```solidity
+function _homeBase() internal {
+        scored = true;
+
+        (bool succ, bytes memory data) = msg.sender.staticcall(abi.encodeWithSignature("shout()"));
+        require(succ, "out");
+        require(
+            keccak256(abi.encodePacked(abi.decode(data, (string)))) == keccak256(abi.encodePacked("I'm the best")),
+            "out"
+        );
+
+        (succ, data) = msg.sender.staticcall(abi.encodeWithSignature("shout()"));
+        require(succ, "out");
+        require(
+            keccak256(abi.encodePacked(abi.decode(data, (string))))
+                == keccak256(abi.encodePacked("We are the champion!")),
+            "out"
+        );
+    }
+```
+
+</details>
+
+`_homeBase()`会通过`staticcall`调用攻击合约的`shou()`函数两次，那我们怎么让同一个函数在两次调用的时候返回不一样的值呢，在两次调用的时候只有一个东西发生了变化，就是`gas`，我们可以通过一笔交易中`gas`的剩余来判断这是第一次还是第二次调用，从而完成条件到此我们已经达成了完成这道题目的所有必要条件:
+
+1. `constructor`中调用`bodycheck`成为`player`
+2. `judge()`返回`block.coinbase`
+3. `steal()`返回
+4. `execute()`返回`0000000000000000000000000000000000000000000009486974416e6452756e`
+5. `shout()`函数加一个判断`gas`剩余的`if`判断，然后返回不同值
+6. 写出EXP
+
+**Exp**
 
 C:MetaTrust 2023 (22)
 ---
