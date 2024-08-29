@@ -1,17 +1,3 @@
 Writeup/.DS_Store
-.DS_Store
 
-# Compiler files
-cache/
-out/
-
-# Ignores development broadcast logs
-Writeup/D13/broadcast/
-
-# Docs
-docs/
-
-# Dotenv file
-.env
-
-.vscode/settings.json
+.history

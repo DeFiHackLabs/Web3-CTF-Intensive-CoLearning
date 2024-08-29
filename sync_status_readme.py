@@ -228,22 +228,22 @@ def update_readme(content):
             match = re.match(r'\|\s*([^|]+)\s*\|', row)
             if match:
                 display_name = match.group(1).strip()
-                if display_name:  # 检查 display_name 是否为非空
+                if display_name and display_name != 'README':
                     existing_users.add(display_name)
                     new_table.append(generate_user_row(display_name))
                 else:
                     logging.warning(
-                        f"Skipping empty display name in row: {row}")
+                        f"Skipping excluded display name in row: {row}")
             else:
                 logging.warning(f"Skipping invalid row: {row}")
 
         new_users = set(get_all_user_files()) - existing_users
         for user in new_users:
-            if user.strip():  # 确保用户名不是空的或只包含空格
+            if user.strip() and user != 'README':
                 new_table.append(generate_user_row(user))
                 logging.info(f"Added new user: {user}")
             else:
-                logging.warning(f"Skipping empty user: '{user}'")
+                logging.warning(f"Skipping empty or excluded user: '{user}'")
         new_table.append(f'{TABLE_END_MARKER}\n')
         return content[:start_index] + ''.join(new_table) + content[end_index + len(TABLE_END_MARKER):]
     except Exception as e:

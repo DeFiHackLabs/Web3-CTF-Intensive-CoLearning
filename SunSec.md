@@ -15,7 +15,7 @@ timezone: Asia/Taipei
 
 <!-- Content_START -->
 
-### 2024.08.29 (Example)
+### 2024.08.26 (Example)
 
 學習內容: 
 - Ethernaut CTF - beef: 漏洞為xxxx
