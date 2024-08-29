@@ -11,12 +11,12 @@ timezone: Asia/Taipei
 
 <!-- Content_START -->
 
-### 2024.08.29 (Example)
+### 2024.08.29 
 
 學習內容: 
-- Ethernaut CTF - beef: 漏洞為xxxx
+- Ethernaut CTF - beef
 - POC: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/SunSec/foundry.md
 
-### 2024.08.26
+### 2024.08.30
 
 <!-- Content_END -->
