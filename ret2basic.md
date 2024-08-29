@@ -16,6 +16,10 @@ Can't say no.
 
 ## Notes
 
+<!-- Content_START -->
+
+### 2024.08.29
+
 I have done Ethernaut and DamnVulnerableDeFi before ([writeup](https://ret2basic.gitbook.io/ctfwriteup)).
 
 Plan:
@@ -24,11 +28,8 @@ Plan:
 2. Solve paradigm ctf 2023 locally
 3. Solve curta locally: https://github.com/fiveoutofnine/tardis
 
-### 2024.08.26
+Today:
+- Half way into https://onlypwner.xyz/challenges/4.
+- Tried to compile https://github.com/rebryk/profanity-brute-force on both Linux and Windows but failed.
 
-Half way into https://onlypwner.xyz/challenges/4.
-
-### 2024.08.27
-
-
-
+<!-- Content_END -->
