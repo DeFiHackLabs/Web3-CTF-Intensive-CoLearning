@@ -14,9 +14,11 @@ Will try my best to finish it
 ## Notes
 
 <!-- Content_START -->
+- Ethenaut
 
-### 2024.07.11
+### 2024.08.29
 
+Finished setup env, ethernaut level0
 
 
 ### 2024.07.12
