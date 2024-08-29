@@ -29,7 +29,7 @@ Plan:
 3. Solve curta locally: https://github.com/fiveoutofnine/tardis
 
 Today:
-- Half way into https://onlypwner.xyz/challenges/4.
+- Half way into Diversion: https://onlypwner.xyz/challenges/4.
 - Tried to compile https://github.com/rebryk/profanity-brute-force on both Linux and Windows but failed.
 
 <!-- Content_END -->
