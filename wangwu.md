@@ -16,6 +16,9 @@ timezone: Asia/Shanghai
 
 ### 2024.08.29
 
-完成第一题，successful
+完成ethernaut第1题 
+
+### 2024.08.30
+完成ethernaut第2题  fallback
 
 <!-- Content_END -->

