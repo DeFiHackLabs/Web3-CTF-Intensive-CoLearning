@@ -123,4 +123,3 @@ contract Fallout {
 ```solidity
 await contract.Fal1out()
 ```
-这关想教我们的如果关键函数有拼写错误会导致严重后果，要注意仔细检查代码中的 typos。
