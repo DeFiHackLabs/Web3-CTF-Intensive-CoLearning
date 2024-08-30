@@ -20,4 +20,10 @@ timezone: Asia/Taipei
 
 ### 2024.08.30
 
+
+學習內容:
+- Ethernaut CTF - Fallback
+- POC: https://lalaterry.github.io/posts/Ethernaut-Fallout/
+
+
 <!-- Content_END -->

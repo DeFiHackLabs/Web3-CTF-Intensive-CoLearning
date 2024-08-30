@@ -23,7 +23,8 @@ timezone: Asia/Taipei
   - 2. 取走合約中所有的錢
   
 - POC:
-  - 合約中的receive function會將owner轉換為呼叫者，所以做到符合require的條件就可以成為合約owner
+  - 分析
+    - 合約中的receive function會將owner轉換為呼叫者，所以做到符合require的條件就可以成為合約owner
     - require
       - 條件一：msg.value > 0 (向合約地址轉eth)
       - 條件二：contributions[msg.sender] > 0 
@@ -36,6 +37,17 @@ timezone: Asia/Taipei
 
 
   
-### 2024.07.12
+### 2024.08.30
+學習內容: 
+- Ethernaut CTF - 02 Fallout:
+- 目標：
+  - 1. 成為合約owner
+-  POC:
+   - 分析
+      -  合約中的constructor是一個public function，且在constructor可以取得合約owner的身份
+   - 步驟
+     - 呼叫Fallout function
+  
+  
 
 <!-- Content_END -->

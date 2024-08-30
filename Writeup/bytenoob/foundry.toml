@@ -4,3 +4,5 @@ out = "out"
 libs = ["lib"]
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+
+eth_rpc_url = "https://eth-holesky.g.alchemy.com/v2/yczC292IJK22du8vFpRRJjd4QOctHQwJ"

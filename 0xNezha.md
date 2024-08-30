@@ -20,7 +20,10 @@ hmm... 希望这次不要分心 XD
 
 ### 2024.08.29
 
-配置相关环境，使用 Foundry Cast 与合约交互，完成 [Ethernaut 0: Hello Ethernaut](./Writeup/0xNezha/Ethernaut/00_Hello%20Ethernaut.md) 
+配置相关环境，使用 Foundry Cast 与合约交互，完成 Ethernaut 之 [00_Hello Ethernaut](./Writeup/0xNezha/Ethernaut/00_Hello%20Ethernaut.md) 
+
+### 2024.08.30
+在以太坊智能合约中，receive 函数是一个特殊的函数，用于接收以太币。当合约地址接收到以太币时，这个函数会被自动调用。[01_Fallback](./Writeup/0xNezha/Ethernaut/01_Fallback.md) 
 
 
 <!-- Content_END -->
