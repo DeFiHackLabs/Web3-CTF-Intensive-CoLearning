@@ -22,4 +22,9 @@ timezone: America/New_York
 
 ### 2024.08.30
 
+學習內容: 
+- Damn Vulnerable DeFi V4 - #2 NaiveReceiver
+- POC: https://github.com/lzhan195/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/cz/POC.md
+
+
 <!-- Content_END -->
