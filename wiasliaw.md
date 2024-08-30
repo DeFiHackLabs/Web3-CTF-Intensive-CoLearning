@@ -12,6 +12,12 @@
 
 <!-- Content_START -->
 
-TBD
+### 2024.08.29
+
+學習內容:
+
+- A 系列 DamnVulnerableDeFi - unstoppable
+  - 想太多以為是 flashloan + exchange rate manipulation
+  - 撰寫 writeup
 
 <!-- Content_END -->

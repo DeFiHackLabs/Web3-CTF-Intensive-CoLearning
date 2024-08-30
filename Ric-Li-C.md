@@ -67,10 +67,18 @@ Yes 75%
 
 <!-- Content_START -->
 
-### 2024.08.29
-
-笔记内容
-
 ### 2024.08.30
+
+Setup Writeup folder for below CTF:
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+### 2024.08.31
+
+### 2024.09.01
+
+### 2024.09.02
 
 <!-- Content_END -->

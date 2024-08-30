@@ -62,9 +62,9 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+這次能把系列Ａ弄完就好棒棒了～～～，之前都寫在 Remix 花掉很多 gas fee, 後續打算用 foundry 練習
 
 ### 2024.07.12
 
