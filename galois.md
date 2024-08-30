@@ -4,7 +4,7 @@ timezone: Asia/Shanghai
 
 
 
-# ret2basic.eth
+# galois
 
 1. 自我介绍
 
@@ -24,11 +24,12 @@ Plan:
 3. Try to solve Openzeppelin CTF 2023 as many as I could 
 4. Try to learn more about cryptography
 
-### 2024.08.26
+### 2024.08.29
 
+1. Solved Blacksheep and my writeup: https://hackmd.io/@0xgalois/B1xBNzAsR
 
+### 2024.08.30
 
-### 2024.08.27
 
 
 
