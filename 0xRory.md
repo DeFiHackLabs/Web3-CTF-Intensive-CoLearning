@@ -1,9 +1,9 @@
 ---
-timezone: Asia/Shanghai
+timezone: Asia/Taipei
 ---
 
 
-# {0xRory}
+# 0xRory
 
 1. 有智能合約開發的經驗，但是不是很熟練（學而不精）
 2. 不能完成的機率高達 80% ，但逼自己一把。
