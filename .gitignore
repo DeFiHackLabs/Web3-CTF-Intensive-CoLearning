@@ -6,5 +6,6 @@ Writeup/Ric-Li-C/*.txt
 Writeup/Ric-Li-C/ethernaut-foundry/broadcast/
 Writeup/Ric-Li-C/ethernaut-foundry/lib/
 Writeup/*/*/.env
+files.txt
 
 .history
