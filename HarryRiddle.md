@@ -121,7 +121,7 @@ Plan:
 
 **Elevator**
 
-- Description:
+- Description: Attack the `Elevator` contract by implementing the other contract with custom `isLastFloor` function.
 
 - Proof of Code: [Testing]("/Writeup/HarryRiddle/Ethernaut-CTF/test/Elevator.t.sol")
 
