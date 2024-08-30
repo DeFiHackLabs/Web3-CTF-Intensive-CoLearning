@@ -78,4 +78,16 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
 
 ### 2024.08.30
 
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Truster
+  - [`target.functionCall(data)`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/truster/TrusterLenderPool.sol#L28) can be a `token.approve(player, TOKENS_IN_POOL)` call.
+  - To by pass [the balance check](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/truster/TrusterLenderPool.sol#L30), we can set `amount` of `flashLoad` to be 0
+  - Finally, palyer can use `token.transferFrom` to rescue all funds in the pool.
+- Side Entrance
+  - To by pass [the balance check](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/side-entrance/SideEntranceLenderPool.sol#L40-L42), we can set `amount` of `flashLoad` to be 0.
+  - Receiver can call `pool.deposit` while [calling back to receiver](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/side-entrance/SideEntranceLenderPool.sol#L38).
+    - [the ownership of the deposit can be assigned to receiver.](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/side-entrance/SideEntranceLenderPool.sol#L21)
+    - the balance of pool have not changed.
+
 <!-- Content_END -->
