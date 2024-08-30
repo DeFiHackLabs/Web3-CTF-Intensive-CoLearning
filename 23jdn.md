@@ -172,10 +172,7 @@ contract CoinFlip {
 
 分析:该合约通过获取当前区块高度-1(由于当前交易所在区块打包上链进行广播此时是获取不到当前区块的hash的，随意采用获取上一个区块)的区块哈希值与预定义好的FACTOR进行相除来模拟一个硬币的正反面，由于FACTOR是一个很大的值相除只会得到1 or 0的结果(blockvalue是一个uint256的变量),并通过连续猜对次数的记录作为猜对次数判定。由于区块hash算一个伪随机数，所以在同样的环境下运行同样的算法即可得到一样的结果，其关键在于本地运算与目标合约的flip的调用在同一笔交易(也就是同一区块)中实现即可得到同样的hash，在计算好结果后在调用CoinFilp的flip函数代入即可猜对对应结果。
 
-
 **附:由于foundry还在熟悉中，以上操作均在remix上进行部署调用，后续了解foundry后补上对应poc**
-=======
 
-Foundry安装方法比较简单，但由于其他因素可能会导致一些问题，目前遇到的问题为网络环境问题被墙导致执行curl -L https://foundry.paradigm.xyz | bash 出现curl(7)的错误，本想着通过docker pull部署，但由于网络被墙的问题以及ubuntu下无法配置全局网络代理导致docker pull失败，后面了解到curl(7)该错误由于使用的节点与“raw.githubusercontent.com”网站出现dns解析异常而导致失败，通过https://www.ipaddress.com 查询对应域名dns解析Ip 添加对应ip到系统文件hosts处实现强制指向从而解决curl(7)错误
 
 <!-- Content_END -->
