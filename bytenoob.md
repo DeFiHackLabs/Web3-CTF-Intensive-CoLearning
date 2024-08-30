@@ -62,10 +62,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+Init foundry project and write sol test file
 
-### 2024.07.12
+### 2024.08.30
+
+Finish ethernaut 2 Fallback
 
 <!-- Content_END -->
