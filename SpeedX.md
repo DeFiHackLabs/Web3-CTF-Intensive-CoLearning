@@ -152,6 +152,15 @@ forge script --chain anvil --rpc-url anvil script/Ethernaut/coinflip_poc.s.sol:C
 
 ### 2024.08.31
 
+今天完成 Ethernaut Level 04 Telephone
+
+tx.origin 为交易from 地址
+
+msg.sender 为调用 Telephone 合约的 POC 合约地址
+
+这个任务很简单写个简单的 POC 调用就可以了， [参考POC 代码](Writeup/SpeedX/src/Ethernaut/telephone_poc.sol)
+
+
 ### 2024.09.01
 
 <!-- Content_END -->
