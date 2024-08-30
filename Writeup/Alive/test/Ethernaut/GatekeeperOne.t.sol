@@ -33,7 +33,6 @@ contract Helper {
                 0x07e79e0e21304FF2B68484e59155cee3974AaE11
             ).call{gas: i + 20000}(abi.encodeCall(GatekeeperOne.enter, key));
             if (success) {
-                console.log(i); // 4829
                 break;
             }
         }
