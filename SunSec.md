@@ -57,5 +57,7 @@ timezone: Asia/Taipei
 
 ### 2024.08.30
 - DamnVulnerableDeFi #1 [Unstoppable](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#unstoppable)
-
+- DamnVulnerableDeFi #2 [naive-receiver](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#naive-receiver)
+- DamnVulnerableDeFi #3 [Truster](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#truster)
+- 
 <!-- Content_END -->
