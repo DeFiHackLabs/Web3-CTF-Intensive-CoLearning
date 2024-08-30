@@ -63,7 +63,7 @@ await contract.Fal1out()
 
 被攻击的合约地址需要写成ethernaut生成的合约地址
 
-使用remix部署[合约](Writeup/awmpy/ethernaut_coin_flip_hack.sol)，写入ethernaut合约地址作为target
+使用remix部署[合约](Writeup/awmpy/remix/ethernaut_coin_flip_hack.sol)，写入ethernaut合约地址作为target
 
 调用10次flip函数
 
