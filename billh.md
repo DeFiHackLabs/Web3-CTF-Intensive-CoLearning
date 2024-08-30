@@ -15,5 +15,12 @@ Yes.
 
 <!-- Content_START -->
 
+### 2024.08.29
+
+Solved CurtaLending.
+
+### 2024.08.30
+
+System Setup and Challenge Environment Adjustment.
 
 <!-- Content_END -->

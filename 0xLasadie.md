@@ -16,9 +16,21 @@ timezone: Asia/Singapore
 
 ### 2024.08.29
 
-testing
+#### Damn Vulnerable DeFi - Unstoppable:
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/unstoppable.md)
 
 ### 2024.08.30
 
+#### Damn Vulnerable DeFi - Naive Receiver:
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/naive-receiver.md)
+
+#### Damn Vulnerable DeFi - Truster:
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/truster.md)
+
+#### Damn Vulnerable DeFi - Side Entrace:
+- [POC](https://github.com/lasadie/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/0xLasadie/damnvulnerabledefi/side-entrance.md)
+
+
+### 2024.08.31
 
 <!-- Content_END -->

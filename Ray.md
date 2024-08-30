@@ -64,10 +64,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
-
-笔记内容
-
-### 2024.07.12
+### 2024.08.30
+完成 ethernaut 的 Fallback 和 Fallout
+[Day2](Writeup/Ray/Day2.md)
 
 <!-- Content_END -->

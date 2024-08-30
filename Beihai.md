@@ -62,10 +62,11 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.30
 
-笔记内容
-
-### 2024.07.12
+- 环境搭建
+- 了解了一下CTF的基本概念
+- Ethernaut Level 0
+- Ethernaut Level 1
 
 <!-- Content_END -->
