@@ -50,6 +50,16 @@ await contract.Fal1out()
 
 
 
-### 2024.07.12
+### 2024.08.30
+#### Ethernaut - Telephone
+在 Remix 上部署一个合约，调用 Telephone 合约的 changeOwner方法
+1. 需要学习下如何在Remix上部署和调用合约
+
+#### Ethernaut - Token
+使用溢出攻击。需要让另一个账号来给我们转账。
+合约transfer中 require 有问题，会受到溢出攻击。
+合约地址：0x7e74e1b56aE3F378866a0A71921Aea1f4EAe0343
+1. 可以使用 remix 编译这个合约，然后在remix部署页面通过 atAddress 可以定义到这个合约
+2. 使用另一个账号给开发账号转账 1个币
 
 <!-- Content_END -->
