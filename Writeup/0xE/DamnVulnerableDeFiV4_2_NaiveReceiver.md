@@ -1,6 +1,4 @@
 ## 题目 [Naive Receiver](https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/naive-receiver)
-![](/img/DamnVulnerableDeFiV4/2.1.png)
-**天真接收者**  
 有一个池子里有 1000 WETH 余额，提供闪电贷。该池子收取固定费用为 1 WETH。这个池子通过与一个无权限的转发合约集成，支持元交易。  
 
 一个用户部署了一个样本合约，余额为 10 WETH。看起来这个合约可以执行 WETH 的闪电贷。  
@@ -56,7 +54,7 @@ Multicall 是一个智能合约库，其作用是允许批量执行多个函数�
 ```
 
 **任务2：清空 `NaiveReceiverPool` 合约资产。**  
-在`NaiveReceiverPool`合约中取资产的方式有 `withdraw`，并且存款和取款使用了一个自定义的 `_msgSender()` 函数，在这个函数中是取中继器发来的 `msg.data` 的最后 20 个字节作为 `msgSender` 。此时我想的是可能从这里入手，在 `msg.data` 最后增加一个地址。但是这个地址需要在 `deposits` 变量中有资产，不然扣除不了 `amount` 。
+在`NaiveReceiverPool`合约中取资产的方式有 `withdraw`，并且存款和取款使用了一个自定义的 `_msgSender()` 函数，在这个函数中是取中继器发来的 `msg.data` 的最后 20 个字节作为 `msgSender` 。那么可以在 `msg.data` 最后增加一个地址，并且这个地址需要在 `deposits` 变量中有资产，不然扣除不了 `amount` 。
 ``` solidity
     function withdraw(uint256 amount, address payable receiver) external {
         // Reduce deposits
@@ -86,7 +84,7 @@ Multicall 是一个智能合约库，其作用是允许批量执行多个函数�
         }
     }
 ```
-之后仔细看 `flashLoan` 函数，发现手续费接收地址 `feeReceiver` 是会增加 `deposits` 的。  
+之后仔细看 `flashLoan` 函数，发现手续费接收地址 `feeReceiver` 是会增加 `deposits` 的。并且根据测试文件和构造函数，可以看出 `deployer` 和 `feeReceiver` 是同一个地址。  
 ``` solidity
     function flashLoan(IERC3156FlashBorrower receiver, address token, uint256 amount, bytes calldata data)
         external
@@ -110,20 +108,6 @@ Multicall 是一个智能合约库，其作用是允许批量执行多个函数�
 
         return true;
     }
-```
-但是 `feeReceiver` 不就收到 10 个 WETH 吗，怎么把 1010 WETH 全拿走呢？  
-后来根据测试文件和构造函数，可以看出 `deployer` 和 `feeReceiver` 是同一个地址，并且部署合约时，`deployer` 的 `deposits` 变量是有增加的。
-``` solidity
-    constructor(address _trustedForwarder, address payable _weth, address _feeReceiver) payable {
-        weth = WETH(_weth);
-        trustedForwarder = _trustedForwarder;
-        feeReceiver = _feeReceiver;
-        _deposit(msg.value);
-    }
-```
-
-``` solidity
-pool = new NaiveReceiverPool{value: WETH_IN_POOL}(address(forwarder), payable(weth), deployer);
 ```
 
 ## 题解
