@@ -67,10 +67,10 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.30
 
-笔记内容
+通过 Hello Ethernaut 学习了 Ethernaut 平台的交互方法。
 
-### 2024.07.12
+
 
 <!-- Content_END -->
