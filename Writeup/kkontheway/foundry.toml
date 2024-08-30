@@ -10,3 +10,4 @@ remappings = [
     "@openzeppelin-contracts-07=lib/openzeppelin-contracts-07",
     "@openzeppelin-contracts-08=lib/openzeppelin-contracts-08",
 ]
+fs_permissions = [{ access = 'read-write', path = '/' }]
