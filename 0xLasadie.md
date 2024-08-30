@@ -28,7 +28,7 @@ timezone: Asia/Singapore
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/truster.md)
 
 #### Damn Vulnerable DeFi - Side Entrace:
-- [POC]()
+- [POC](https://github.com/lasadie/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/0xLasadie/damnvulnerabledefi/side-entrance.md)
 
 
 ### 2024.08.31
