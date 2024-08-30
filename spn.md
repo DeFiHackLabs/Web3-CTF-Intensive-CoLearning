@@ -19,5 +19,6 @@ timezone: Asia/Shanghai
 metatrustctf byteVault（详见[wp](https://github.com/spn21/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/spn)）
 
 ### 2024.08.30
+[here](https://github.com/spn21/web3-ctf-learning/tree/main/metatrustctf/guessgame)
 
 <!-- Content_END -->
