@@ -25,7 +25,7 @@ Upon closer inspection, conditions 1, 2, and 4 are all determined by the caller'
 
 ## PoC test case
 
-```code=solidity
+```solidity
 // SPDX-License-Identifier: MIT
 // Damn Vulnerable DeFi v4 (https://damnvulnerabledefi.xyz)
 pragma solidity =0.8.25;

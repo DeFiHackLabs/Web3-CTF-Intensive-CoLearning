@@ -21,4 +21,8 @@ timezone: Asia/Shanghai
 
 完成 Ethernaut 第一题
 
+### 2024.08.30
+
+完成 Ethernaut 第二题
+
 <!-- Content_END -->

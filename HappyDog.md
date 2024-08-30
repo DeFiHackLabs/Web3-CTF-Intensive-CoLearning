@@ -73,4 +73,34 @@ Solidity：
   一種高級編程語言，用於編寫和部署在以太坊（Ethereum）區塊鏈上的智能合約。它是以太坊開發的主要語言，設計上類似於 JavaScript 和 C++，使開發者能夠創建去中心化應用（DApps）和各種自動化合約。
   (明日將基本語法補充進來)
 
+### 2024.08.30
+不小心感冒了，今日將環境架設完畢，並學習Solidity的基本語法
+**合約開發框架 Foundry**
+- Foundry是由 Rust 語言所寫，為 Solidity 開發者構建的合約開發框架
+- 合約編譯和測試執行速度非常快
+- 用 Solidity 撰寫測試，只需要專注在 Solidity 本身
+- 相比 Hardhat 測試，多了 Fuzzing 測試
+- 安裝Foundry
+      參考網頁：
+          https://hackmd.io/@Ryan0912/ryA8yUK-2
+          https://book.getfoundry.sh/getting-started/installation
+    1. 先安裝[Rust](https://www.rust-lang.org/tools/install)
+    2. #clone the repository
+        git clone https://github.com/foundry-rs/foundry.git
+        cd foundry
+        #install Forge
+        cargo install --path ./crates/forge --profile release --force --locked
+        #install Cast
+        cargo install --path ./crates/cast --profile release --force --locked
+        #install Anvil
+        cargo install --path ./crates/anvil --profile release --force --locked
+        #install Chisel
+        cargo install --path ./crates/chisel --profile release --force --locked
+    3. 相關套件都安裝完後可以確認版本
+        forge --version
+        成功會跳出類似下方訊息
+        forge 0.2.0 (98ab45eeb 2024-08-30T09:21:16.144880400Z)
+    4. 開始建立新的Foundry專案
+
+  
 <!-- Content_END -->

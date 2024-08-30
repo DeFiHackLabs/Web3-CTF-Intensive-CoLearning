@@ -1,0 +1,11 @@
+#define macro MAIN() = takes (0) returns (0) {
+  0x2a 0x00 mstore // MSTORE(offset=0x00, value=0x2a) - Save the number 42
+  // PUSH1 42
+  // PUSH1 0
+  // MSTORE
+
+  0x20 0x00 return // RETURN(offset=0x00, size=0x20) - Return a bytes32 data
+  // PUSH1 32
+  // PUSH1 0
+  // RETURN
+}

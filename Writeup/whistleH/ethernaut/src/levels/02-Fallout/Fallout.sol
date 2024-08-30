@@ -29,6 +29,7 @@ contract Fallout {
         allocator.transfer(allocations[allocator]);
     }
 
+    // 只有 Owner 才能转移走账户
     function collectAllocations() public onlyOwner {
         msg.sender.transfer(address(this).balance);
     }
