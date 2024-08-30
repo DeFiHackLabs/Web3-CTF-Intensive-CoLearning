@@ -62,10 +62,22 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+挑戰題目：
 
-### 2024.07.12
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Unstoppable](https://www.damnvulnerabledefi.xyz/challenges/unstoppable/)
+
+筆記連結： [DamnVulnerableDeFi: Unstoppable](./Writeup/AlexLiao/DamnVulnerableDeFi/Unstoppable.md)
+
+### 2024.08.30
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Naive Receiver](https://www.damnvulnerabledefi.xyz/challenges/naive-receiver/)
+
+筆記連結： [DamnVulnerableDeFi: Naive Receiver](./Writeup/AlexLiao/DamnVulnerableDeFi/NaiveReceiver.md)
+
+### 2024.08.31
 
 <!-- Content_END -->

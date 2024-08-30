@@ -15,10 +15,22 @@ timezone: Asia/Shanghai
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+[参考资料](https://medium.com/immunefi/how-to-use-foundry-to-poc-bug-leads-part-1-214c9c02ff30)
+[参考资料](https://blog.dixitaditya.com/getting-started-with-ethernaut-hello-ethernaut)
 
-### 2024.07.12
+使用 metamask 钱包
+
+foundry 安装
+`
+curl -L https://foundry.paradigm.xyz | bash\n
+ foundryup
+brew install libusb
+source /Users/bytedance/.zshenv
+foundryup
+forge init
+`
+ 
 
 <!-- Content_END -->
