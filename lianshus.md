@@ -13,10 +13,9 @@ timezone: Asia/Shanghai
 2. 很难说啊，希望能坚持下来
 
 ## Notes
+<!-- Content_START -->
 
 ### 2024.08.29
-
-<!-- Content_START -->
 
 学习內容:
 
@@ -37,8 +36,6 @@ timezone: Asia/Shanghai
 有一点忙，今天只简单看了A系列一题，后续题目等和 erthernaut交互后继续
 
 [POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
-
-<!-- Content_END -->
 
 
 
