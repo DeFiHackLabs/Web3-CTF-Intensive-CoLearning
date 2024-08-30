@@ -65,5 +65,9 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 ### 2024.08.29
 Create local [Solidity](https://soliditylang.org/) and [Foundry](https://github.com/foundry-rs/foundry) dev environment
 
+### 2024.08.30
+[Ethernaut CTF](https://ethernaut.openzeppelin.com/)
+- Hello Ethernaut
+- Fallback
 
 <!-- Content_END -->

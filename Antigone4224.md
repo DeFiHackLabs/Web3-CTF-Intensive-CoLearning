@@ -27,6 +27,10 @@ timezone: Asia/Shanghai
 
 配好了foundry环境和damn vulnerable defi仓库，完成了unstoppable。
 
+### 2024.08.30
+
+damnvulnerable defi：完成了naviereceiver和Truster
+
 
 
 
