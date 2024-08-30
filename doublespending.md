@@ -67,9 +67,10 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
 
 - UnstoppableVault
-  - [`UnstoppableMonitor.onFlashLoan` revert when fee does not equal to 0](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableMonitor.sol#L27-L29)
-  - [`UnstoppableVault.flashLoan` will get 0 fee when `block.timestamp < end && _amount < maxFlashLoan(_token)` is `false`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableVault.sol#L64)
-  - Finally, the tx will run into [this logic](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableMonitor.sol#L45-L51).
+  - `UnstoppableMonitor.onFlashLoan` revert when [`convertToShares(totalSupply) != balanceBefore`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableVault.sol#L85C13-L85C58)
+  - We can get the share amount by `convertToShares(totalSupply)`
+  - In normal case, share amount equals to asset amount by `deposit` or `mint` method.
+  - However, if we transfer the token to the pool directly, the share amount does not changed but the asset amount increases.
 - NaiveReceiver
   - We can send all weth of `IERC3156FlashBorrower receiver` to `feeReceiver` by calling [flashLoan](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/naive-receiver/NaiveReceiverPool.sol#L43C24-L43C54) 10 times
   - Then, we use `Forwrarder` to call `Multicall` with a `withdraw` call.
