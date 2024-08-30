@@ -12,7 +12,7 @@ contract SolveTest is Test {
     }
 
     function testExploit() public {
-        for(uint256 i=0;i<20;i++) {
+        for (uint256 i = 0; i < 20; i++) {
             challenge.et().mint(address(this), i);
         }
 
