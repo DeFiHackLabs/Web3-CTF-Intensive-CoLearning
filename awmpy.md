@@ -63,9 +63,24 @@ await contract.Fal1out()
 
 被攻击的合约地址需要写成ethernaut生成的合约地址
 
+##### remix
 使用remix部署[合约](Writeup/awmpy/remix/ethernaut_coin_flip_hack.sol)，写入ethernaut合约地址作为target
 
-调用10次flip函数
+调用10次flip函数，即可过关
+
+##### foundry
+在`Writeup/awmpy`目录下执行`forge init`初始化forge项目
+
+将CoinFlip的代码复制到[coin_flip.sol](Writeup/awmpy/src/ethernaut/coin_flip.sol)
+
+在`Writeup/awmpy`目录下新建`.env`文件，在文件中写入`PRIVATE_KEY`环境变量，此变量会在脚本文件中被调用
+
+编写脚本[coin_flip_hack.s.sol](Writeup/awmpy/script/ethernaut/coin_flip_hack.s.sol)，计算guess并调用ethernaut生成的合约，脚本中直接写死合约地址
+
+执行命令进行调用10次后，即可过关
+```
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/coin_flip_hack.s.sol:CoinFlipHackScript -vvvv --broadcast
+```
 
 ### 2024.08.31
 
