@@ -3,7 +3,7 @@ pragma solidity ^0.6.0;
 
 import "ds-test/test.sol";
 import "forge-std/Vm.sol";
-import "../src/levels/02-Fallout/Fallout.sol"; // test/Billy/ folder
+import "../src/levels/02-Fallout/Fallout.sol"; 
 
 contract ContractTest3 is DSTest {
     Fallout level2 =
