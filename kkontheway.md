@@ -359,5 +359,102 @@ function _homeBase() internal {
 C:MetaTrust 2023 (22)
 ---
 
+### 2024.08.30
+
+A: Damn Vulnerable DeFi V4(1/18)
+---
+**Shards**
+## Goal
+<details>
+
+```solidity
+function _isSolved() private view {
+        // Balance of staking contract didn't change
+        assertEq(token.balanceOf(address(staking)), STAKING_REWARDS, "Not enough tokens in staking rewards");
+
+        // Marketplace has less tokens
+        uint256 missingTokens = initialTokensInMarketplace - token.balanceOf(address(marketplace));
+        assertGt(missingTokens, initialTokensInMarketplace * 1e16 / 100e18, "Marketplace still has tokens");
+
+        // All recovered funds sent to recovery account
+        assertEq(token.balanceOf(recovery), missingTokens, "Not enough tokens in recovery account");
+        assertEq(token.balanceOf(player), 0, "Player still has tokens");
+
+        // Player must have executed a single transaction
+        assertEq(vm.getNonce(player), 1);
+    }
+```
+</details>
+
+## Soultion
+
+整体逻辑就是拥有`NFT`的人可以挂一个单，然后选择把它分成多少片(`shards`)，如果一个`buyer`把所有的`shards`都买下来，那么他就拥有了这个`NFT`。
+
+一开始我没能看出来有什么问题，测试了几乎所有的`external`函数，看起来貌似是正常的。
+
+后面我想到了题目中特地强调了`100万`，我开始深入研究他的数学计算过程，虽然他符合先乘后除的规范，但是还是存在了问题.
+
+当我们计算购买的时候时候,计算我们要付多少的`DVT`：
+
+<details>
+
+```solidity
+//ShardsNFTMarketplace::fill()
+paymentToken.transferFrom(
+            msg.sender, address(this), want.mulDivDown(_toDVT(offer.price, _currentRate), offer.totalShards)
+        );
+//want.mulDivDown(_toDVT(offer.price, _currentRate), offer.totalShards
+//分解一下
+//want * _toDVT(offer.price, _currentRate) / offer.totalShards
+//want * (offer.price * _currentRate / 1e6) / offer.totalShards
+//want * (1_000_000e6 * 75e15 / 1e6) / 10_000_000e18
+// 所以我们想要让结果 = 0的话，得分子 < 分母
+// 所以 want < 130
+```
+
+</details>
+
+经过计算可以知道，只要我们传入的`want` < `130`，我们就可以在获得`want`的同时不付任何的`DVT`，因我们本身也没有`DVT`。
+
+那么下一步我们来看看`cancel`的时候，我们的`want`能换回来多少钱
+
+<details>
+
+```solidity
+//ShardsNFTMarketplace::cancel()
+paymentToken.transfer(buyer, purchase.shards.mulDivUp(purchase.rate, 1e6));
+// purchase.shards * purchase.rate / 1e6
+// 100 * 75e15 / 1e6
+// 7.5e12
+```
+</details>
+
+我们可以取回`7.5e12`个`DVT`，这里的`100`是随便定的，只要小于`130`都行
+
+账户里还有多少 `7.5e20 - 7.5e12 = 7.499999925E20`
+
+那我们还需要多少`shards`才能取出来呢
+
+<details>
+
+```solidity
+want * 75e15 / 1e6 = 750e18 - 7.5e12
+want = 9,999,999,900
+```
+
+</details>
+
+那我们重新`call`一下`fill()`函数，并且带上我们新的`want`，看看我们的钱够不够
+
+<details>
+
+```solidity
+9,999,999,900 * (1_000_000e6 * 75e15 / 1e6) / 10_000_000e18 = 74,999,999.25
+
+```
+结果 < `7.5e12`
+
+我们完全付得起这个价格，之后我们再取消一次，我们就可以把账户中几乎所有的钱都取出来啦！
+**Exp**
 
 <!-- Content_END -->

