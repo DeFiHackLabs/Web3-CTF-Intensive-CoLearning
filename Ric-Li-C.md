@@ -69,11 +69,11 @@ Yes 75%
 
 ### 2024.08.30
 
+Setup Writeup folder for below CTF:
+
 A.3 選 1 系列
 
     1.Ethernaut CTF (31)
-
-        Solved 01-Fallback
 
 ### 2024.08.31
 
