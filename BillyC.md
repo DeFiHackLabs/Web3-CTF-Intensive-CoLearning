@@ -25,5 +25,7 @@ Will try my best to finish it
 
 ### 2024.08.30
 
+1. ethernaut level2
+2. ethernaut level3
 
 <!-- Content_END -->
