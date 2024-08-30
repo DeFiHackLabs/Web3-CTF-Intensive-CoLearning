@@ -64,8 +64,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.07.11
 
-笔记内容
+### 2024.08.29
 
-### 2024.07.12
+学习Fallback， 笔记在这里 https://github.com/rickwang9/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/rickwang9/Fallback.md
 
 <!-- Content_END -->

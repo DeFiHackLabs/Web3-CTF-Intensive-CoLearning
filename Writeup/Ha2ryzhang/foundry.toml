@@ -1,0 +1,13 @@
+[profile.default]
+src = 'src'
+out = 'out'
+libs = ['lib']
+remappings = [
+    'ds-test/=lib/forge-std/lib/ds-test/src/',
+    'forge-std/=lib/forge-std/src/',
+    'openzeppelin-contracts-06/=lib/openzeppelin-contracts-06/contracts/',
+    'openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/',
+]
+[rpc_endpoints]
+sepolia = "https://rpc.ankr.com/eth_sepolia"
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config
