@@ -19,4 +19,9 @@ QuillCTF-01-RoadClosed-isContract Bypass
 - [PoC](./Writeup/Shall/road-closed/roadclosed.t.sol)
 - [Writeup](./Writeup/Shall/road-closed/writeup.md)
 
+### 2024.08.30
+QuillCTF-02-VIPBank-Selfdestruct Usage
+- [PoC](./Writeup/Shall/vip-bank/vipbank.t.sol)
+- [Writeup](./Writeup/Shall/vip-bank/writeup.md)
+
 <!-- Content_END -->
