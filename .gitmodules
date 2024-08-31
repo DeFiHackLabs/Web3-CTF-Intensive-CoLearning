@@ -74,3 +74,6 @@
 [submodule "Writeup/Joy/A-Ethernaut-CTF/lib/forge-std"]
 	path = Writeup/Joy/A-Ethernaut-CTF/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/0xRory/A-Ethernaut-CTF/POC/lib/forge-std"]
+	path = Writeup/0xRory/A-Ethernaut-CTF/POC/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
