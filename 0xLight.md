@@ -72,4 +72,9 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 [ModernWETH](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/ModernWETH.md)//解题和POC
 
 [LendingPool](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/tree/main)
+
+### 2024.8.31
+
+[Rescue POSI Token](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/Operation%20Rescue%20POSI%20Token!.md)
+[balloon-vault](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/balloon-vault.md)
 <!-- Content_END -->

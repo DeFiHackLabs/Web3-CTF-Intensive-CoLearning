@@ -24,4 +24,9 @@ QuillCTF-02-VIPBank-Selfdestruct Usage
 - [PoC](./Writeup/Shall/vip-bank/vipbank.t.sol)
 - [Writeup](./Writeup/Shall/vip-bank/writeup.md)
 
+### 2024.08.31
+QuillCTF-03-ConfidentialHash-Slot Peak
+- [PoC](./Writeup/Shall/confidential-hash/confidentailhash.t.sol)
+- [Writeup](./Writeup/Shall/confidential-hash/writeup.md)
+
 <!-- Content_END -->
