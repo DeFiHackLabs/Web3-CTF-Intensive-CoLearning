@@ -136,3 +136,111 @@ Plan:
 #### Real World CTF 2024 SafeBridge (0/1)
 
 #### Paradigm CTF 2023 (0/17)
+
+### 2024.08.31
+
+#### Ethernaut CTF (15/31)
+
+**Gatekeeper One**
+
+- Description:
+
+```javascript
+    modifier gateOne() {
+        require(msg.sender != tx.origin);
+        _;
+    }
+```
+
+The way to break `gateOne` modifier is that using the other contract to call the function in `GatekeeperOne`
+
+```javascript
+    modifier gateTwo() {
+        require(gasleft() % 8191 == 0);
+        _;
+    }
+```
+
+We will use `call` methods to call function with `gas` property. The value of gas should be the number of dividable 8191, then i will use loop for applying gas value.
+
+```javascript
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+        _;
+    }
+```
+
+```javascript
+    uint64 k = uint64(_gateKey);
+    => uint32(k) == uint16(k)
+    => uint32(k) != uint64(_gateKey)
+    => uint32(k) == uint16(uint160(tx.origin))
+
+    // uint32(k) == uint16(uint160(tx.origin))
+    // uint32(k) == uint16(k)
+    => uint16(k) = uint16(uint160(tx.origin))
+    => k = uint160(tx.origin)
+
+    // uint32(k) != uint64(_gateKey)
+
+    => uint64 k64 = uint64(1 << 63) + uint64(k16)
+```
+
+- Proof of Code: [Testing]("/Writeup/HarryRiddle/Ethernaut-CTF/test/GatekeeperOne.t.sol")
+
+**Gatekeeper Two**
+
+- Description:
+
+```javascript
+    modifier gateOne() {
+        require(msg.sender != tx.origin);
+        _;
+    }
+```
+
+The way to break `gateOne` modifier is that using the other contract to call the function in `GatekeeperOne`
+
+```javascript
+    modifier gateTwo() {
+        uint256 x;
+        assembly {
+            x := extcodesize(caller())
+        }
+        require(x == 0);
+        _;
+    }
+```
+
+This code is implied that the contract sender does not have any code. Therefore, we will use only `constructor`
+
+```javascript
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey) == type(uint64).max);
+        _;
+    }
+```
+
+- Proof of Code: [Testing]("/Writeup/HarryRiddle/Ethernaut-CTF/test/GatekeeperTwo.t.sol")
+
+**Naught Coin**
+
+- Description: This token implement `ERC20` standard of `Openzeppelin` and override the `transfer` function to apply the duration of time. However, they do not override the `transferFrom` function with the same functionality with `transfer`.
+
+- Proof of Code: [Testing]("/Writeup/HarryRiddle/Ethernaut-CTF/test/NaughtCoin.t.sol")
+
+**Preservation**
+
+- Description:
+
+- Proof of Code: [Testing]("/Writeup/HarryRiddle/Ethernaut-CTF/test/Preservation.t.sol")
+
+#### QuillCTF Challenges (0/23)
+
+#### Real World CTF 2024 SafeBridge (0/1)
+
+#### Paradigm CTF 2023 (0/17)
+
+### 2024.09.01
