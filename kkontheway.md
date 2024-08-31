@@ -525,4 +525,19 @@ contract Exploit {
 }
 ```
 
+### 2024.08.31
+
+A: Damn Vulnerable DeFi V4(2/18)
+---
+
+**ABI smuggling**
+
+**Goal**
+
+```solidity
+```
+
+
+
+
 <!-- Content_END -->

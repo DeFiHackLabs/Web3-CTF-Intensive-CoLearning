@@ -105,9 +105,43 @@ Pragma
 合约
 创建合约
 ### 2024.08.30
+Solidity 持续学习
 
-笔记内容
+状态变量在储存中的布局
+映射和动态数组
+JSON 输出
+变量在内存布局
+与存储中布局的不同
+CallData 布局
+清理变量
+Source Mappings
+The Optimizer
+Benefits of Optimizing Solidity Code
+Differences between Optimized and Non-Optimized Code
+Optimizer Parameter Runs
+Opcode-Based Optimizer Module
+Yul-Based Optimizer Module
+合约的元数据
+字节码中元数据哈希的编码
+自动化接口生成和 以太坊注释规范格式Ethereum Nature Specification Format(natspec) 的使用方法
+源代码验证的使用方法
+应用二进制接口说明
+基本设计
+函数选择器Function Selector
+参数编码
+类型编码
+编码的设计准则
+编码的形式化说明
+函数选择器Function Selector 和参数编码
+例子
+动态类型的使用
+事件
+错误编码
+JSON
+严格编码模式
+非标准打包模式（Non-standard Packed Mode）
+事件索引参数的编码
 
-### 2024.08.30
+### 2024.08.31
 
 <!-- Content_END -->
