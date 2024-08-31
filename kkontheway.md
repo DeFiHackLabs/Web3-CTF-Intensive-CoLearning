@@ -16,12 +16,9 @@ timezone: Asia/Shanghai
 ### 2024.08.29
 
 A: Damn Vulnerable DeFi V4(1/18)
----
-
 
 
 B:EthTaipei CTF 2023(2/5)
----
 
 **1. Casino**
 
@@ -357,12 +354,12 @@ function _homeBase() internal {
 **Exp**
 
 C:MetaTrust 2023 (22)
----
+
 
 ### 2024.08.30
 
 A: Damn Vulnerable DeFi V4(1/18)
----
+
 **Shards**
 ## Goal
 <details>
@@ -458,7 +455,7 @@ want = 9,999,999,900
 
 
 C:Paradigm2023 (1/1)
----
+
 
 **BlackSheep**
 
@@ -527,7 +524,7 @@ contract Exploit {
 ### 2024.08.31
 
 A: Damn Vulnerable DeFi V4(2/18)
----
+
 
 **ABI smuggling**
 
