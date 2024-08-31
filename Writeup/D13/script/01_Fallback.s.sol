@@ -5,6 +5,7 @@ import "forge-std/Script.sol";
 import "../src/Ethernaut Challenge/01_Fallback.sol";
 
 contract ExploitScript is Script {
+    
     Fallback level1 = Fallback(payable(0x27d96f33A5668B3447F21a08223bc5a42dfE697c));
 
     function run() public {
