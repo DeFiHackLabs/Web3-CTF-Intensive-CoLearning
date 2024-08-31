@@ -12,3 +12,4 @@ https://ethernaut.openzeppelin.com/
 
 [Hello Ethernaut](./ethernaut/hello_ethernaut.md)
 [Fallback](./ethernaut/Fallback.md)
+[Fallout](./ethernaut/Fallout.md)
