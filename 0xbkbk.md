@@ -23,5 +23,9 @@ timezone: Asia/Shanghai
 配置foundry环境，
 
 ### 2024.08.31
+script/solution，和src都是答题，要写的脚本，solution是部署合约，src里面写攻击合约
+目标（题目）在challenge里面
+
+
 
 <!-- Content_END -->
