@@ -90,4 +90,18 @@ Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/rock-paper-s
 
 Writeup: This is a straightforward pseudo-randomness vulnerability. By analyzing the `randomShape` function, we can determine the outcome and provide a specific input to exploit the contract.
 
+### 2024.08.31
+
+(1) DamnVulnerableDeFi V4 side-entrance challenge
+
+Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/side-entrance
+
+Writeup: there is reentrancy issue in the SideEntranceLenderPool, user can request flashloan and later deposit the borrowed asset into the pool when executing the callback function. Reentrancy lock is required to prevent such vulnerability.
+
+(2) DamnVulnerableDeFi V4 Truster challenge
+
+Link: https://www.damnvulnerabledefi.xyz/challenges/truster/
+
+Writeup: it is the arbitrary call vulnerability, attacker can forge a malicious calldata for the flash loan provider to approve allowance to the attacker, and after the flash loan is repaid, the attacker can withdraw the asset through `transferFrom`.
+
 <!-- Content_END -->

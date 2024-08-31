@@ -16,4 +16,11 @@ timezone: Asia/Taipei
 目前還在嘗試搞懂怎麼創建題目和繳交。
 Foundry 的檔案架構已有初步了解，但目前卡在 import "forge-std/Script.sol"; 和 import "forge-std/console.sol"; 發生 not found 的錯誤，希望能盡快搞定環境。
 
+### 2024.08.30
+學習內容:
+今天總算把環境搞定，並成功運行解題的程式碼。接下來會盡量整理解題的過程，和整理筆記的細節。
+解題:
+  [Lev1-Fallback](./Writeup/Clad/Lev1Sol.s.sol)
+
+
 <!-- Content_END -->

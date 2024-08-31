@@ -12,7 +12,9 @@ timezone: Asia/Shanghai
 ## Notes
 
 <!-- Content_START -->
-
+### 2024.08.30
+   进入第2题，fallback,学会了怎么用js调用 receive函数
+   
 ### 2024.08.29
    直接选了 ethernaut 做了第一题
    虽然 不是很懂js，但跟着一步一步操作还挺有意思，最后也算是完成了

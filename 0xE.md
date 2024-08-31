@@ -16,15 +16,11 @@ timezone: Pacific/Auckland
 <!-- Content_START -->
 
 ### 2024.08.29
-笔记：  
-[[Damn Vulnerable DeFi V4] 1 | Unstoppable](./Writeup/0xE/[Damn%20Vulnerable%20DeFi%20V4]%201%20|%20Unstoppable.md)  
-测试文件：  
-[Unstoppable.t.sol](./Writeup/0xE/foundry/test/unstoppable/Unstoppable.t.sol)  
+POC：  
+[[Damn Vulnerable DeFi V4] 1 | Unstoppable](./Writeup/0xE/DamnVulnerableDeFiV4_1_Unstoppable.md)  
 
 ### 2024.08.30
-笔记：  
-[[Damn Vulnerable DeFi V4] 2 | Naive Receiver](./Writeup/0xE/[Damn%20Vulnerable%20DeFi%20V4]%202%20|%20Naive%20Receiver.md)
-测试文件：
-[NaiveReceiver.t.sol](./Writeup/0xE/foundry/test/naive-receiver/NaiveReceiver.t.sol)
+POC：  
+[[Damn Vulnerable DeFi V4] 2 | Naive Receiver](./Writeup/0xE/DamnVulnerableDeFiV4_2_NaiveReceiver.md)  
 
 <!-- Content_END -->
