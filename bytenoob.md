@@ -70,4 +70,10 @@ Init foundry project and write sol test file
 
 Finish ethernaut 2 Fallback
 
+### 2024.08.31
+Finish ethernaut 3 Fallout
+
+
+
+
 <!-- Content_END -->

