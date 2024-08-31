@@ -26,4 +26,21 @@ timezone: Asia/Taipei
 - [Writeup](./Writeup/Tanner/writeup/QuillCTF/VIPBank.md) 
 - [POC](./Writeup/Tanner/test/QuillCTF/VIPBank.t.sol) 
 
+### 2024.08.31
+
+學習內容: 
+
+- 完成 ConfidentialHash
+- 完成 D31eg4t3
+
+#### [QuillAudit CTF - ConfidentialHash](./Writeup/Tanner/src/QuillCTF/ConfidentialHash.sol)
+
+- [Writeup](./Writeup/Tanner/writeup/QuillCTF/ConfidentialHash.md) 
+- [POC](./Writeup/Tanner/test/QuillCTF/ConfidentialHash.t.sol) 
+
+#### [QuillAudit CTF - D31eg4t3](./Writeup/Tanner/src/QuillCTF/D31eg4t3.sol)
+
+- [Writeup](./Writeup/Tanner/writeup/QuillCTF/D31eg4t3.md) 
+- [POC](./Writeup/Tanner/test/QuillCTF/D31eg4t3.t.sol) 
+
 <!-- Content_END -->
