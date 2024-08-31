@@ -259,7 +259,7 @@ contract NaiveReceiverChallenge is Test {
 
 <br/><br/>
 
-### Day2 - Damn Vulnerable DeFi V4 - #3 Truster
+### Day3 - Damn Vulnerable DeFi V4 - #3 Truster
 
 ```solidity
 // SPDX-License-Identifier: MIT
