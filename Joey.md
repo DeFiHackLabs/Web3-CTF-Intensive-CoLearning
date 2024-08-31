@@ -66,4 +66,24 @@ timezone: Asia/Shanghai
 2. 查看如何采用 VsCode 进行 Solidity 全流程开发，测试，方便后续加快学习进度
 3. 继续解决新题
 
+### 2024.08.31
+
+今天学了什么
+
+1. FaL1OUT
+
+今天遇到了什么问题
+
+1. 使用 Foundry，在大陆有网络限制
+
+如何解决这些问题
+
+1. 考虑买 VPS
+
+今日总结
+
+明天安排
+
+1. buy vps
+
 <!-- Content_END -->
