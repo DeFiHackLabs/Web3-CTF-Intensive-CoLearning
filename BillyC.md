@@ -14,7 +14,6 @@ Will try my best to finish it
 ## Notes
 
 <!-- Content_START -->
-- Ethenaut
 
 ### 2024.08.29
 
@@ -27,5 +26,9 @@ Will try my best to finish it
 
 1. ethernaut level2
 2. ethernaut level3
+
+### 2024.08.31
+1. Finish the Damn Vulnerable Defi - Naive Receiver
+https://hackmd.io/@0xbc000/SyY4Evy2R
 
 <!-- Content_END -->
