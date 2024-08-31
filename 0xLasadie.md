@@ -34,7 +34,7 @@ timezone: Asia/Singapore
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/the-rewarder.md)
 
 #### Damn Vulnerable DeFi - Selfie:
-- [POC]()
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/selfie.md)
 
 ### 2024.09.01
 #### Damn Vulnerable DeFi - Compromised:
