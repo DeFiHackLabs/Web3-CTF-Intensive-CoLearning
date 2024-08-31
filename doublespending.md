@@ -91,4 +91,13 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
     - [the ownership of the deposit can be assigned to receiver.](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/side-entrance/SideEntranceLenderPool.sol#L21)
     - the balance of pool have not changed.
 
+### 2024.08.30
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- The Rewarder
+  - [`claimRewards`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/the-rewarder/TheRewarderDistributor.sol#L81C14-L81C26) uses[`_setClaimed`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/the-rewarder/TheRewarderDistributor.sol#L120C14-L120C25) to prevent reclaiming based on \<token, sender, batchNumber\>.
+  - However, `_setClaimed` is only called after token switch of `inputClaims` array.
+  - So, before switching token, we can reclaim with same \<token, sender, batchNumber\>.
+
 <!-- Content_END -->
