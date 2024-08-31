@@ -84,4 +84,39 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/coin_flip_hack.
 
 ### 2024.08.31
 
+#### 4. Telephone
+
+这个挑战的核心点在于考察`msg.sender`和`tx.origin`的知识，`msg.sender`可能是EOA或合约，`tx.origin`只能是EOA
+
+因此只需要实现以下调用链即可：
+```
+EOA ==> AttackContract ==> TelephoneContract
+```
+
+编写攻击合约[telephone_hack.sol](Writeup/awmpy/src/ethernaut/telephone_hack.sol)
+部署攻击合约，部署时指定合约地址为ethernaut生成的合约地址
+```
+forge create --constructor-args "0xFce4169EcEa2f8FA0A12B0312C96Beb8d8734E76" --rpc-url https://1rpc.io/holesky --private-key $PRIVATE_KEY src/ethernaut/telephone_hack.sol:TelephoneHack
+```
+编写执行脚本[telephone_hack.s.sol](Writeup/awmpy/script/ethernaut/telephone_hack.s.sol)，其中攻击合约地址为刚部署的攻击合约地址
+执行脚本发起攻击
+```
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/telephone_hack.s.sol:TelephoneHackScript -vvvv --broadcast
+```
+
+#### 5. Token
+
+这个挑战是考察溢出漏洞，Token合约使用的版本是0.6.0，且没有使用SafeMath
+
+此题目给玩家预分配了20枚代币，因此只需要调用合约的`transfer`方法向任意地址转移`21`枚代币就可以触发漏洞
+
+编写执行脚本[token_hack.s.sol](Writeup/awmpy/script/ethernaut/token_hack.s.sol)，其中实例化Token合约使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+```
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/token_hack.s.sol:TokenHackScript -vvvv --broadcast
+```
+
+### 2024.09.01
+
 <!-- Content_END -->
