@@ -23,4 +23,11 @@ POC：
 POC：  
 [[Damn Vulnerable DeFi V4] 2 | Naive Receiver](./Writeup/0xE/DamnVulnerableDeFiV4/2_NaiveReceiver.md)  
 
+### 2024.08.31
+POC:  
+[[Damn Vulnerable DeFi V4] 3 | Truster](./Writeup/0xE/DamnVulnerableDeFiV4/3_Truster.md)  
+
+
+
+
 <!-- Content_END -->
