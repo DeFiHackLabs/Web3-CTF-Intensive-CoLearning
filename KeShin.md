@@ -42,6 +42,10 @@ KeShin, 合约安全新人
 - 本地模拟能过，但是提交到链上后，blockHash和blockNumber变了，导致答案变了，如何及时将正确结果及时提交到链上，还需要再研究研究
 
 ### 2024.08.31
+- 昨天的 CoinFlip 题目的链下模拟与链上执行答案不一致的问题，是因为forge script 广播后，其区块高度已经发生了改变，所以不能直接在 script 中计算答案，应该部署一个攻击合约，在合约的逻辑中计算答案，然后提交给 CoinFlip 合约
+
+#### [Ethernaut CTF : 4 Telephone](https://ethernaut.openzeppelin.com/level/4)
+- 让 tx.origin 和 msg.sender 不一致即可
 
 ### 2024.9.1
 
