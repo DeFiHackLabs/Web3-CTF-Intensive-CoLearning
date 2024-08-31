@@ -21,4 +21,8 @@ timezone: Asia/Taipei
 
 ### 2024.08.30
 在這題ETHTaipeiWarRoomNFT卡關好久 還是想不出來...明天繼續
+
+### 2024.08.31
+今天從Ethernaut開始，完成第1~5題...明天繼續
+
 <!-- Content_END -->
