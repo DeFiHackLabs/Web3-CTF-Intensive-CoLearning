@@ -38,10 +38,10 @@ timezone: Asia/Singapore
 
 ### 2024.09.01
 #### Damn Vulnerable DeFi - Compromised:
-- [POC]()
+
 
 #### Damn Vulnerable DeFi - Puppet:
-- [POC]()
+
 
 ### 2024.09.02
 
