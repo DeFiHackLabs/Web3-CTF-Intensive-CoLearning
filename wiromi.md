@@ -70,5 +70,9 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 還在熟悉使用 foundry 框架，暫時先用 Remix 解一些題目
 
-還在熟悉使用 foundry 框架，暫時先用 Remix 解一些題目
+
+### 2024.08.31
+
+熟悉基礎的 foundry 語法
+
 <!-- Content_END -->
