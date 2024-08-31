@@ -21,4 +21,7 @@ metatrustctf byteVault（详见[wp](https://github.com/spn21/Web3-CTF-Intensive-
 ### 2024.08.30
 [here](https://github.com/spn21/web3-ctf-learning/tree/main/metatrustctf/guessgame)
 
+### 2024.08.31
+写了[今天的](https://github.com/spn21/web3-ctf-learning/tree/main/metatrustctf/NaryReistry),实习答辩完了，可以安心做ctf了😭😭这几天全是量小+卡时间
+
 <!-- Content_END -->
