@@ -59,5 +59,10 @@ timezone: Asia/Taipei
 - DamnVulnerableDeFi #1 [Unstoppable](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#unstoppable)
 - DamnVulnerableDeFi #2 [naive-receiver](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#naive-receiver)
 - DamnVulnerableDeFi #3 [Truster](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#truster)
-  
+
+### 2024.08.31
+- DamnVulnerableDeFi #4 [Side Entrance](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#side-entrance)
+- DamnVulnerableDeFi #5 [The Rewarder](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#the-rewarder)
+- DamnVulnerableDeFi #6 [Selfie](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#selfie)
+- 
 <!-- Content_END -->
