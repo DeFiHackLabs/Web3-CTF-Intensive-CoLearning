@@ -1,8 +1,5 @@
 # Hello Ethernaut
 
-> 钱包
-> 0xaCab087f7f0977c31d68E8BAe117069a90Dc6574
-
 这是check in题目，部署实例后按f12打开浏览器工具，根据提示输入
 ![img.png](imgs/img.png)
 

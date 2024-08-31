@@ -30,9 +30,14 @@ timezone: Asia/Tokyo
     }
 ```
 
-#### 2. Fallback
+
+### 2024.08.30
+做第二題的時候發現需要Solidity基礎，臨時調整計劃，先學2天入門基礎再做第二題。
 
 
+#### 筆記
+- [學習網址](https://www.wtf.academy/docs/solidity-101/HelloWeb3/)
+- [Remix](https://remix.ethereum.org/)
 
 ### 2024.07.12
 

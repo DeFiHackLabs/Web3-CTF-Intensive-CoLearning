@@ -16,8 +16,11 @@ timezone: Pacific/Auckland
 <!-- Content_START -->
 
 ### 2024.08.29
-笔记链接：
-[[Damn Vulnerable DeFi V4] 1 | Unstoppable](./Writeup/0xE/[Damn%20Vulnerable%20DeFi%20V4]%201%20|%20Unstoppable.md)
+POC：  
+[[Damn Vulnerable DeFi V4] 1 | Unstoppable](./Writeup/0xE/DamnVulnerableDeFiV4_1_Unstoppable.md)  
 
+### 2024.08.30
+POC：  
+[[Damn Vulnerable DeFi V4] 2 | Naive Receiver](./Writeup/0xE/DamnVulnerableDeFiV4_2_NaiveReceiver.md)  
 
 <!-- Content_END -->

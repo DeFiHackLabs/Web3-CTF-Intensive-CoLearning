@@ -76,6 +76,32 @@ Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/lockless-swa
 
 Writeup: The reentrancy lock is not implemented in the PancakeSwap function, allowing an attacker to call the swap function and synchronize the reserve in the callback function, followed by minting liquidity tokens. Through a series of similar operations, the attacker can retrieve most of the liquidity in the pool.
 
-### 2024.07.12
+### 2024.08.30
+
+(1) BlazCTF Jambo challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/jambo
+
+Writeup: After decompilation, we observed that the value at storage slot 1 is initialized to the parameter: ```0x66757a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a6c616e64```. The setup function later calls ```revokeOwnership()```, but this call appears to have no impact. Upon analyzing the implementation of the answer function, we discovered that the input value must match the value at storage slot 0, and ```msg.value`` should exceed 1. Additionally, the function checks whether the caller is a contract. To bypass this check, we can initiate the attack within a constructor or by calling the contract from an EOA.
+
+(2) BlazCTF rock-paper-scissor challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/rock-paper-scissor
+
+Writeup: This is a straightforward pseudo-randomness vulnerability. By analyzing the `randomShape` function, we can determine the outcome and provide a specific input to exploit the contract.
+
+### 2024.08.31
+
+(1) DamnVulnerableDeFi V4 side-entrance challenge
+
+Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/side-entrance
+
+Writeup: there is reentrancy issue in the SideEntranceLenderPool, user can request flashloan and later deposit the borrowed asset into the pool when executing the callback function. Reentrancy lock is required to prevent such vulnerability.
+
+(2) DamnVulnerableDeFi V4 Truster challenge
+
+Link: https://www.damnvulnerabledefi.xyz/challenges/truster/
+
+Writeup: it is the arbitrary call vulnerability, attacker can forge a malicious calldata for the flash loan provider to approve allowance to the attacker, and after the flash loan is repaid, the attacker can withdraw the asset through `transferFrom`.
 
 <!-- Content_END -->
