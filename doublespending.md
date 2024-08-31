@@ -91,7 +91,7 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
     - [the ownership of the deposit can be assigned to receiver.](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/side-entrance/SideEntranceLenderPool.sol#L21)
     - the balance of pool have not changed.
 
-### 2024.08.30
+### 2024.08.31
 
 A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
 
