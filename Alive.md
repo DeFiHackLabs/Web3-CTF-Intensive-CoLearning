@@ -88,4 +88,19 @@ solidity0.8.0之前是没有溢出检查的，需要用safemath来保证数据�
 
 主要就是考察erc20的熟悉程度。erc20代币的转移有transfer和transferFrom两种方式。合约中只是重写了transfer加上了个时间锁，但是代币仍可通过transferFrom进行转移，转移之前不要忘了approve就行。
 
+### 2024.08.31
+
+#### 第16题Preservation
+
+对delegatecall的更深入的考察。攻击合约调用了实例中的setFirstTime两次。第一次调用的时候实际上把实例中的timeZone1Library重置为攻击合约地址，第二次调用时实际delegatecall的对象已经变为了攻击合约，利用delegatecall的调用上下文保持不变特性，将攻击合约与状态变量与实例的状态变量对齐，从而实现在攻击合约中修改实例的owner的值。
+由此例可看出，由于delegatecall操作的是调用合约的存储，如果处理不当，可能会导致严重的安全问题。例如，如果调用的目标合约地址可以由外部控制，攻击者可能会将调用者合约的存储更改为意料之外的状态。
+
+#### 第17题Recovery
+
+一种讨巧的方法是直接到区块浏览器上查交易记录找到部署的合约地址，还有一种就是poc中手动计算被部署的合约的地址。
+
+#### 第18题MagicNumber
+
+一些内联汇编的基本操作，比较偏evm底层。
+
 <!-- Content_END -->
