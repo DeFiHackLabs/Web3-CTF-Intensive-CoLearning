@@ -17,10 +17,10 @@ timezone: Pacific/Auckland
 
 ### 2024.08.29
 POC：  
-[[Damn Vulnerable DeFi V4] 1 | Unstoppable](./Writeup/0xE/DamnVulnerableDeFiV4_1_Unstoppable.md)  
+[[Damn Vulnerable DeFi V4] 1 | Unstoppable](./Writeup/0xE/DamnVulnerableDeFiV4/1_Unstoppable.md  
 
 ### 2024.08.30
 POC：  
-[[Damn Vulnerable DeFi V4] 2 | Naive Receiver](./Writeup/0xE/DamnVulnerableDeFiV4_2_NaiveReceiver.md)  
+[[Damn Vulnerable DeFi V4] 2 | Naive Receiver](./Writeup/0xE/DamnVulnerableDeFiV4/2_NaiveReceiver.md)  
 
 <!-- Content_END -->
