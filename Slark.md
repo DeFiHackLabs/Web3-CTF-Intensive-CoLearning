@@ -32,4 +32,11 @@ timezone: Asia/Shanghai
     - [POC](./Writeup/Slark/test/ethernaut//level2.t.sol)
     - 这个关卡比较水，单纯是 constructor 函数拼写错误，导致预期只在初始化执行的函数，变成了无限制可调用的写函数。直接调用，即可完成 owner 权限变更。
     
+### 2024.08.31
+
+今天打卡 A 系列 `ethernaut`，1 个关卡
+
+- [level3](https://ethernaut.openzeppelin.com/level/0xA62fE5344FE62AdC1F356447B669E9E6D10abaaF)
+    - [POC](./Writeup/Slark/test/ethernaut//level3.t.sol)
+    - 这个关卡设计的猜谜游戏，生成规则基于已经生成的区块数，属于可以“预测”的情况，只需要和生成规则保持一致，即可计算结果，从而达到一定猜中的结果。
 <!-- Content_END -->
