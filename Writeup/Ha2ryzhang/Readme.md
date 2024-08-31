@@ -3,3 +3,7 @@
 
 #### A-Ethernaut-NaughtCoin [POC](./test/NaughtCoin.t.sol)
 
+#### A-Ethernaut-Preservation [POC](./test/Preservation.t.sol)
+
+#### A-Ethernaut-Recovery [POC](./test/Recovery.t.sol)
+
