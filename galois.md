@@ -27,6 +27,10 @@ Plan:
 1. Solved Blacksheep and my writeup: https://hackmd.io/@0xgalois/B1xBNzAsR
 
 
+### 2024.09.01
+
+1. Solved Dropper and my writeup: https://hackmd.io/@0xgalois/HJJkjK-n0
+
 
 <!-- Content_END -->
 
