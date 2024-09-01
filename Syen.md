@@ -28,4 +28,10 @@ Web3 Dapp Developer
 
 - [Confidential Hash](./Writeup/Syen/src/QuillCTF/ConfidentialHash/README.md)
 
+### 2024.09.01
+
+**QuillCTF**
+
+- [SafeNFT](./Writeup/Syen/src/QuillCTF/SafeNFT/README.md)
+
 <!-- Content_END -->
