@@ -1,4 +1,4 @@
-## Selfie
+## [Selfie](https://www.damnvulnerabledefi.xyz/challenges/selfie/)
 
 > A new lending pool has launched! It’s now offering flash loans of DVT tokens. It even includes a fancy governance mechanism to control it.
 >

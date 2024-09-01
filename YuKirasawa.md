@@ -77,4 +77,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 尝试搭建 Foundry 环境，还没有完全完成。
 
+### 2024.09.01
+
+完成了 Ethernaut 的 Fallout 题目。
+
 <!-- Content_END -->

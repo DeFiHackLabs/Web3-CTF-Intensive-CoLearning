@@ -1,10 +1,10 @@
 Writeup/.DS_Store
-Writeup/Slack/cache/
-Writeup/Slack/out/
+Writeup/*/*/cache/
+Writeup/*/*/out/
 
 Writeup/Ric-Li-C/*.txt
-Writeup/Ric-Li-C/ethernaut-foundry/broadcast/
-Writeup/Ric-Li-C/ethernaut-foundry/lib/
+Writeup/*/*/broadcast/
+Writeup/*/*/lib/
 Writeup/*/*/.env
 files.txt
 

@@ -80,4 +80,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.08.31
 
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Truster](https://www.damnvulnerabledefi.xyz/challenges/truster/)
+
+筆記連結： [DamnVulnerableDeFi: Truster](./Writeup/AlexLiao/DamnVulnerableDeFi/Truster.md)
+
+### 2024.09.01
+
 <!-- Content_END -->

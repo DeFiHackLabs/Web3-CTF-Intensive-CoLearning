@@ -27,7 +27,8 @@ POC：
 POC:  
 [[Damn Vulnerable DeFi V4] 3 | Truster](./Writeup/0xE/DamnVulnerableDeFiV4/3_Truster.md)  
 
-
-
+### 2024.09.01
+POC:  
+[[Damn Vulnerable DeFi V4] 4 | Side Entrance](./Writeup/0xE/DamnVulnerableDeFiV4/4_SideEntrance.md)  
 
 <!-- Content_END -->

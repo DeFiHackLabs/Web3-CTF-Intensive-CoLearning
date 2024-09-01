@@ -70,4 +70,6 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 ### 2024.08.30
 - fallback > [fallback](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/01_fallback.md)
 
+### 2024.08.31
+- coinfilp > [coinfilp](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/03_coinfilp.md)
 <!-- Content_END -->
