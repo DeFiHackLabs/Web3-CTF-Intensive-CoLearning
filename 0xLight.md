@@ -66,10 +66,19 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.08.29
 
-笔记内容
-
 [AMAZEX-DSS-PARIS Challenge1](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/Operation%20magic%20redemption.md)//笔记和POC都在链接里，不知道昨天是忘记改上面时区了还是什么算我miss了，>:
-### 2024.08.29
+### 2024.08.30
 
+[ModernWETH](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/ModernWETH.md)//解题和POC
 
+[LendingPool](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/LendingPool.md)
+
+### 2024.8.31
+
+[Rescue POSI Token](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/Operation%20Rescue%20POSI%20Token!.md)
+
+[balloon-vault](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/balloon-vault.md)
+
+### 2024.9.1
+[yieldPool](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/yieldPool.md)
 <!-- Content_END -->

