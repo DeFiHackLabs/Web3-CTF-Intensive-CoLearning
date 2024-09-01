@@ -46,8 +46,12 @@ KeShin, 合约安全新人
 
 #### [Ethernaut CTF : 4 Telephone](https://ethernaut.openzeppelin.com/level/4)
 - 让 tx.origin 和 msg.sender 不一致即可
+- 我们创建一个中介合约来进行调用
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/4-Telephone)
 
 ### 2024.9.1
+#### [Ethernaut CTF : 5 Token](https://ethernaut.openzeppelin.com/level/5)
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/5-Token)
 
 ### 2024.9.2
 
