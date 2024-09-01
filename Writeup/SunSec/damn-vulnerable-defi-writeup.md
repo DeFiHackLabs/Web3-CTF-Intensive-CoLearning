@@ -16,7 +16,7 @@
  if (convertToShares(totalSupply) != balanceBefore) revert InvalidBalance(); 
 ```
 
-[POC:](./Writeup/SunSec/damn-vulnerable-defi/test/unstoppable/Unstoppable.t.sol) 
+[POC:](./damn-vulnerable-defi/test/unstoppable/Unstoppable.t.sol) 
 ```
     function test_unstoppable() public checkSolvedByPlayer {
         token.transfer(address(vault), 123);   
@@ -62,7 +62,7 @@
     }
 
 ```
-[POC](./Writeup/SunSec/damn-vulnerable-defi/test/naive-receiver/NaiveReceiver.t.sol) : 
+[POC](./damn-vulnerable-defi/test/naive-receiver/NaiveReceiver.t.sol) : 
 ```
     function test_naiveReceiver() public checkSolvedByPlayer {
         bytes[] memory callDatas = new bytes[](11);
@@ -109,7 +109,7 @@
 解題:
 - 在 floashLoan 中可以看到 target.functionCall(data); 可以執行任意calldata且target的地址可控. 可直接執行任意指令.
 
-[POC](./Writeup/SunSec/damn-vulnerable-defi/test/truster/Truster.t.sol) : 
+[POC](./damn-vulnerable-defi/test/truster/Truster.t.sol) : 
 ```
     function test_truster() public checkSolvedByPlayer {
         Exploit exploit = new Exploit(address(pool), address(token),address(recovery));
@@ -139,7 +139,7 @@
 - flashLoan 採用非標準用法, 判斷有沒有repay只是看池子的餘額 if (address(this).balance < balanceBefore). 
 - 所以只要透過 flashLoan借款出來, 再透過deposit存回去. 就代表repay了. 然後你在合約同時有存款證明, 可執行 withdraw 就可以把$$轉出去了.
 
-[POC](./Writeup/SunSec/damn-vulnerable-defi/test/SideEntrance/SideEntrance.t.sol) : 
+[POC](./damn-vulnerable-defi/test/SideEntrance/SideEntrance.t.sol) : 
 ```
     function test_sideEntrance() public checkSolvedByPlayer {
         Exploit exploiter = new Exploit(address(pool), recovery, ETHER_IN_POOL);
@@ -187,7 +187,7 @@ contract Exploit{
                 if (!_setClaimed(token, amount, wordPosition, bitsSet)) revert AlreadyClaimed();
             }
 ```
-[POC](./Writeup/SunSec/damn-vulnerable-defi/test/the-rewarder/TheRewarder.t.sol) : 
+[POC](./damn-vulnerable-defi/test/the-rewarder/TheRewarder.t.sol) : 
 ```
    function test_theRewarder() public checkSolvedByPlayer {
         uint PLAYER_DVT_CLAIM_AMOUNT = 11524763827831882;
@@ -257,7 +257,7 @@ contract Exploit{
 - 要執行 queueAction 要通過 _hasEnoughVotes 檢查, DamnValuableVotes 繼承 ERC20Votes, 所以借貸到的DVT需要delete受投票權給自己, 需要持有總發行量的一半投票權才能發起提案.
 - 解題流程: Flashloan -> delegate ->發起提案 queueAction -> repay -> executeAction
 
-[POC](./Writeup/SunSec/damn-vulnerable-defi/test/selfie/selfie.t.sol) : 
+[POC](./damn-vulnerable-defi/test/selfie/selfie.t.sol) : 
 ```
     function test_selfie() public checkSolvedByPlayer {
         Exploit exploiter = new Exploit(
@@ -380,8 +380,8 @@ Wallet address: 0xA417D473c40a4d42BAd35f147c21eEa7973539D8
 
 ```
 - 操控NFT價格, 低買高賣即可獲得更多ETH
-  
-[POC](./Writeup/SunSec/damn-vulnerable-defi/test/compromised/Compromised.t.sol) : 
+
+[POC](./damn-vulnerable-defi/test/compromised/Compromised.t.sol) : 
 ```
     function test_compromised() public checkSolved {
         Exploit exploit = new Exploit{value:address(this).balance}(oracle, exchange, nft, recovery);
@@ -463,7 +463,7 @@ Wallet address: 0xA417D473c40a4d42BAd35f147c21eEa7973539D8
 ```
 - 將自己的所有DVT透過 tokenToEthTransferInput 打到 uniswapV1Exchange 操控price.
 - 
-[POC](./Writeup/SunSec/damn-vulnerable-defi/test/puppet/Puppet.t.sol) : 
+[POC](./damn-vulnerable-defi/test/puppet/Puppet.t.sol) : 
 ```
     function test_puppet() public checkSolvedByPlayer {
         Exploit exploit = new Exploit{value:PLAYER_INITIAL_ETH_BALANCE}(
@@ -522,7 +522,7 @@ contract Exploit {
 解題:
 - 這關oracle改成使用 Uniswap v2, 不過 getReserves 跟取balance是一樣的意思,存在操控的風險
 
-[POC](./Writeup/SunSec/damn-vulnerable-defi/test/puppet-v2/PuppetV2.t.sol) : 
+[POC](./damn-vulnerable-defi/test/puppet-v2/PuppetV2.t.sol) : 
 ```
 
     // Fetch the price from Uniswap v2 using the official libraries
