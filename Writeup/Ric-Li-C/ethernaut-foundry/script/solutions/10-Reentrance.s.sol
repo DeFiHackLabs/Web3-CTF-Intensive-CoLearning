@@ -17,9 +17,7 @@ contract ReentranceSolution is Script, EthernautHelper {
         // NOTE Must send at least 0.001 ETH
         address challengeInstance = __createInstance(LEVEL_ADDRESS);
 
-        // YOUR SOLUTION HERE
-        ReentranceAttacker reentranceAttacker = new ReentranceAttacker{value: 0.001 ether}(challengeInstance);
-        reentranceAttacker.attack();
+        // Ric Li C's Solution
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);

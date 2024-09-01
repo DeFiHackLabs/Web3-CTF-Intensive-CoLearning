@@ -32,4 +32,7 @@ Solved 3 - Truster.
 Solved 4 - Side Entrance.
 Solved 5 - The Rewarder.
 
+### 2024.09.01
+Solved 6 - Selfie.
+
 <!-- Content_END -->

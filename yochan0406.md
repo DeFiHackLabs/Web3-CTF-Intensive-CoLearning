@@ -21,7 +21,18 @@ timezone: Asia/Taipei
 ### 2024.08.29
 
 今天嘗試解A系列Damn Vulnerable DeFi的unstoppable
+
 [writeup](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/yochan0406/unstoppable_writeup.md)
+
 [poc](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/yochan0406/poc.t.sol)
+
+### 2024.08.31
+
+今天嘗試解A系列Damn Vulnerable DeFi的truster
+
+[writeup](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/yochan0406/truster_writeup.md)
+
+[poc](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/yochan0406/truster_poc.sol)
+
 
 <!-- Content_END -->

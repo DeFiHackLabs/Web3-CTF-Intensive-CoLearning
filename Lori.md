@@ -14,7 +14,7 @@ timezone: Asia/Shanghai
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
 Ethernaut 之前我已经做完了了，写了部分[解析和PoC](https://github.com/Chocolatieee0929/ContractSafetyStudy/tree/main/ethernaut).
 damn-vulnerable-defi 写了一半，接下来会接着完成剩余的部分，前面3天先复习。
@@ -25,7 +25,7 @@ damn-vulnerable-defi 写了一半，接下来会接着完成剩余的部分，�
 2. 接收者不能是治理合约本身msg.sender
 第一点，由于没有对持有代币时间的限制，攻击者可以通过闪电贷来绕过第一点的检查。
 
-### 2024.07.12
+### 2024.08.30
 
 [Puppet](https://github.com/Chocolatieee0929/ContractSafetyStudy/tree/main/damn-vulnerable-defi/test/Levels/puppet)
 Root cause：Spot price
@@ -71,5 +71,30 @@ function testExploit_Puppet() public {
         console.log(unicode"\n🎉 Congratulations, you can go to the next level! 🎉");
     }
 ```
+
+### 2024.08.31
+[puppetV2](https://github.com/Chocolatieee0929/ContractSafetyStudy/blob/main/damn-vulnerable-defi/test/Levels)
+与最初版本不同的地方在于使用WETH-token交易对，现在还是关注质押WETH数量是如何计算的，
+```
+// PuppetV2.sol
+    function calculateDepositOfWETHRequired(uint256 tokenAmount) public view returns (uint256) {
+        return (_getOracleQuote(tokenAmount) * 3) / 10 ** 18;
+    }
+
+    // Fetch the price from Uniswap v2 using the official libraries
+    function _getOracleQuote(uint256 amount) private view returns (uint256) {
+        (uint256 reservesWETH, uint256 reservesToken) =
+            // 获取交易对数量
+            UniswapV2Library.getReserves(_uniswapFactory, address(_weth), address(_token));
+        return UniswapV2Library.quote(amount * (10 ** 18), reservesToken, reservesWETH);
+    }
+// UniswapV2Library.sol
+    function quote(uint256 amountA, uint256 reserveA, uint256 reserveB) internal pure returns (uint256 amountB) {
+        require(amountA > 0, "UniswapV2Library: INSUFFICIENT_AMOUNT");
+        require(reserveA > 0 && reserveB > 0, "UniswapV2Library: INSUFFICIENT_LIQUIDITY");
+        amountB = (amountA * reserveB) / reserveA;
+    }
+```
+同样的，质押物价值也是通过uniswapv2池子里交易对数量比值作为瞬时价格，突破点也是在这。与上边不同的地在于需要将eth置换成WETH。
 
 <!-- Content_END -->

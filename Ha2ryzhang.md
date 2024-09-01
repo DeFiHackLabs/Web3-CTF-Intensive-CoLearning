@@ -139,4 +139,18 @@ CREATE2 确保，如果创建者使用 CREATE2 和提供的 salt 部署给定的
 这里levelAddresss是已知的,`0x01`可以理解为nonce,如果再调用一次`generateToken`那么就应该是`0x02`.
 
 
+### 2024.09.01
+
+#### A-Ethernaut-MagicNumber
+
+这题第一次看的时候很懵,考察的点是`opcode`和`assembly`的使用.
+
+
+[evm.code](https://www.evm.codes/?fork=shanghai)
+[WTF 教程](https://www.wtf.academy/docs/evm-opcodes-101/)
+
+知识点很多,目前还没看完,过几天补一补.
+
+
+
 <!-- Content_END -->
