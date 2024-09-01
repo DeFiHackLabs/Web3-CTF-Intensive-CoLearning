@@ -110,7 +110,7 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/telephone_hack.
 
 此题目给玩家预分配了20枚代币，因此只需要调用合约的`transfer`方法向任意地址转移`21`枚代币就可以触发漏洞
 
-编写执行脚本[token_hack.s.sol](Writeup/awmpy/script/ethernaut/token_hack.s.sol)，其中实例化Token合约使用ethernaut提供的合约地址
+编写攻击脚本[token_hack.s.sol](Writeup/awmpy/script/ethernaut/token_hack.s.sol)，其中实例化Token合约使用ethernaut提供的合约地址
 
 执行脚本发起攻击
 ```
@@ -118,5 +118,28 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/token_hack.s.so
 ```
 
 ### 2024.09.01
+
+#### 6. Delegation
+
+这个挑战是考察Delegatecall相关知识
+
+`Delegation`合约中实现了一个`fallback`函数，在调用此合约中不存在的函数时，`fallback`函数就会被调用，将原来的calldata传递给它
+
+`Delegate`合约中实现了一个`pwn`方法，将`owner`改为`msg.sender`
+
+而在`Delegatecall`时，`msg.sender`和`msg.value`都不会改变，只需要写脚本调用`Delegation`合约的`pwn`方法即可获得`Delegate`合约的`owner`权限
+
+调用`pwn`方法时需要使用`abi.encodeWithSignature`将函数名转为`function signature`进行调用
+
+编写攻击脚本[delegation_hack.s.sol](Writeup/awmpy/script/ethernaut/delegation_hack.s.sol)，其中实例化Token合约使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+```
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/delegation_hack.s.sol:DelegationHackScript -vvvv --broadcast
+```
+
+
+
+### 2024.09.02
 
 <!-- Content_END -->
