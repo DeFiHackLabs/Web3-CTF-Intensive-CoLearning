@@ -1,18 +1,3 @@
-[submodule "Writeup/kkontheway/lib/forge-std"]
-	path = Writeup/kkontheway/lib/forge-std
-	url = https://github.com/foundry-rs/forge-std
-[submodule "Writeup/Alive/lib/forge-std"]
-	path = Writeup/Alive/lib/forge-std
-	url = https://github.com/foundry-rs/forge-std
-[submodule "Writeup/SpeedX/lib/forge-std"]
-	path = Writeup/SpeedX/lib/forge-std
-	url = https://github.com/foundry-rs/forge-std
-[submodule "Writeup/HarryRiddle/Ethernaut-CTF/lib/openzeppelin-foundry-upgrades"]
-	path = Writeup/HarryRiddle/Ethernaut-CTF/lib/openzeppelin-foundry-upgrades
-	url = https://github.com/OpenZeppelin/openzeppelin-foundry-upgrades
-[submodule "Writeup/HarryRiddle/Ethernaut-CTF/lib/openzeppelin-contracts-upgradeable"]
-	path = Writeup/HarryRiddle/Ethernaut-CTF/lib/openzeppelin-contracts-upgradeable
-	url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
 [submodule "Writeup/D13/lib/forge-std"]
 	path = Writeup/D13/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
@@ -21,9 +6,6 @@
 	url = https://github.com/foundry-rs/forge-std
 [submodule "Writeup/Alive/lib/forge-std"]
 	path = Writeup/Alive/lib/forge-std
-	url = https://github.com/foundry-rs/forge-std
-[submodule "Writeup/YangRui/lib/forge-std"]
-	path = Writeup/YangRui/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
 [submodule "Writeup/SpeedX/lib/forge-std"]
 	path = Writeup/SpeedX/lib/forge-std
@@ -53,6 +35,7 @@
 	url = https://github.com/foundry-rs/forge-std
 [submodule "Writeup/bytenoob/lib/forge-std"]
 	path = Writeup/bytenoob/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
 [submodule "Writeup/Syen/lib/forge-std"]
 	path = Writeup/Syen/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
@@ -73,4 +56,16 @@
 	url = https://github.com/openzeppelin/openzeppelin-contracts-upgradeable
 [submodule "Writeup/Joy/A-Ethernaut-CTF/lib/forge-std"]
 	path = Writeup/Joy/A-Ethernaut-CTF/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/bytenoob/lib/openzeppelin-foundry-upgrades"]
+	path = Writeup/bytenoob/lib/openzeppelin-foundry-upgrades
+	url = https://github.com/OpenZeppelin/openzeppelin-foundry-upgrades
+[submodule "Writeup/bytenoob/lib/openzeppelin-contracts-upgradeable"]
+	path = Writeup/bytenoob/lib/openzeppelin-contracts-upgradeable
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
+[submodule "Writeup/bytenoob/lib/openzeppelin-contracts"]
+	path = Writeup/bytenoob/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/phipupt/ethernaut/lib/forge-std"]
+	path = Writeup/phipupt/ethernaut/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std

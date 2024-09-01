@@ -77,3 +77,17 @@ One important thing is that, the pool directly uses `target.functionCall(data);`
 This means we can call any function in any contract, e.g. token's `approve` function.
 
 Since the challenge requires only one transaction and there is no more `multicall`, we need a contract to do all the stuff.
+
+## Side Entrance (24/08/31)
+Rescue the funds from another pool. The pool is not complicated.
+We can ask for a flash loan, and then deposit the loaned ETH back to the pool to increase our balances.
+The deposit is also considered as the payback of the flash loan。
+Then we can withdraw all the funds.
+
+## The Rewarder (24/08/31)
+This chanllenge contract is a reward distributor.
+It records the reward amount and address in a merkle tree, and users can claim the reward by providing the proof.
+
+However, the contract does not correctly mark the claimed rewards, and we can claim the reward of a same token multiple times until the reward is exhausted.
+(Use `console.log` to confirm that the player address is eligible for the reward.)
+

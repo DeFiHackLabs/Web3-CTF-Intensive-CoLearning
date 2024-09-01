@@ -130,4 +130,20 @@ We create an `ExploitContract` to drain the funds from `SideEntranceLenderPool`.
 
 After that, we can simply withdraw the amount to the recovery wallet.
 
+### 2024.08.31
+
+Progress
+
+* Damn Vulnerable DeFi (5/18)
+* EthTaipei CTF 2023 (0/5)
+* MetaTrust CTF 2023 (0/22)
+
+#### 🏁 Damn Vulnerable DeFi: The Rewarder
+
+**Time used: ~1h 15m**
+
+Important: We are also rewarded. `0x44E97aF4418b7a17AABD8090bEA0A471a366305C` appeared on line 755 in both files. We are the 188th entry.
+
+To (almost) drain the reward distributor, we can repeatedly send the same claim in the same transaction. This is because `_setClaimed` will be called once.
+
 <!-- Content_END -->

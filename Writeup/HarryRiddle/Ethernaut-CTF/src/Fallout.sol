@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity ^0.6.2;
 
-import "openzeppelin-contracts-06/math/SafeMath.sol";
+// import "openzeppelin-contracts-06/math/SafeMath.sol";
+
+import "../dependencies/@openzeppelin-contracts-4.0.0/utils/math/SafeMath.sol";
 
 contract Fallout {
     using SafeMath for uint256;

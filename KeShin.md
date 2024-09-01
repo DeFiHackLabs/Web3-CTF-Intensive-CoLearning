@@ -30,9 +30,27 @@ KeShin, 合约安全新人
 - 所以我们先调用 contribute 随意贡献一点，然后转 ETH 到合约，receive 被触发使 owner 修改，然后调用 withdraw 取走合约所有 ETH 即可。
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/1-Fallback)
 
-
-
-
 ### 2024.08.30
+
+#### [Ethernaut CTF : 2 Fallout](https://ethernaut.openzeppelin.com/level/2)
+- 直接调用 Fal1out 函数就可以拿到 owner 权限
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/2-Fallout)
+
+#### [Ethernaut CTF : 3 CoinFlip](https://ethernaut.openzeppelin.com/level/3)
+- 随机数问题，依赖的 blockHash 和 blockNumber 都是可预测的，答案可以提前算出来
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/3-CoinFlip)
+- 本地模拟能过，但是提交到链上后，blockHash和blockNumber变了，导致答案变了，如何及时将正确结果及时提交到链上，还需要再研究研究
+
+### 2024.08.31
+- 昨天的 CoinFlip 题目的链下模拟与链上执行答案不一致的问题，是因为forge script 广播后，其区块高度已经发生了改变，所以不能直接在 script 中计算答案，应该部署一个攻击合约，在合约的逻辑中计算答案，然后提交给 CoinFlip 合约
+
+#### [Ethernaut CTF : 4 Telephone](https://ethernaut.openzeppelin.com/level/4)
+- 让 tx.origin 和 msg.sender 不一致即可
+
+### 2024.9.1
+
+### 2024.9.2
+
+### 2024.9.3
 
 <!-- Content_END -->

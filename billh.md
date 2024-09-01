@@ -19,4 +19,12 @@ Yes.
 
 Solved CurtaLending.
 
+### 2024.08.30
+
+System Setup and Challenge Environment Adjustment.
+
+### 2024.08.31
+
+Solved Latent.
+
 <!-- Content_END -->
