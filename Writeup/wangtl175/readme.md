@@ -11,6 +11,13 @@ https://ethernaut.openzeppelin.com/
 代码: https://github.com/wangtl175/ethernaut
 
 [Hello Ethernaut](./ethernaut/hello_ethernaut.md)
+
 [Fallback](./ethernaut/Fallback.md)
+
 [Fallout](./ethernaut/Fallout.md)
+
 [CoinFlip](./ethernaut/CoinFlip.md)
+
+[Telephone](./ethernaut/Telephone.md)
+
+[Token](./ethernaut/Token.md)
