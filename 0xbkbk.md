@@ -39,7 +39,7 @@ script/solution，和src都是答题，要写的脚本，solution是部署合约
   策略：
     call contribute（）让自己的contributions【msg.sender】非0（没有完全搞懂）
     发送ether到目标合约，触发receive（）执行msg.sender（没有完全搞懂）
-    呼叫withdra（）取走合约所有的余额（这一步逻辑不难）
+    呼叫withdraw（）取走合约所有的余额（这一步逻辑不难）
   
 
 
