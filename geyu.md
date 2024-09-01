@@ -23,4 +23,8 @@ writeup: [hello_ethernaut](./Writeup/geyu/writeup/00_HelloEthernaut.md)
 第二天 完成了 ethernaut 第二个练习 fallback ，加深了对调用 fallback 与 receiver 的理解
 writeup:[fallback](./Writeup/geyu/writeup/01_fallback.md)
 
+### 2024.09.01
+完成了 ethernaut 第 3 个练习 fallout 
+writeup:[fallout](./Writeup/geyu/writeup/02_fallout.md)
+
 <!-- Content_END -->
