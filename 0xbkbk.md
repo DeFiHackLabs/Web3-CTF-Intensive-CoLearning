@@ -34,6 +34,8 @@ script/solution，和src都是答题，要写的脚本，solution是部署合约
   理解fallback方法
   如何发送ether
 执行：
+
+### 2024.09.1
   策略：
     call contribute（）让自己的contributions【msg.sender】非0（没有完全搞懂）
     发送ether到目标合约，触发receive（）执行msg.sender（没有完全搞懂）
