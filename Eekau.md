@@ -85,5 +85,22 @@ Rubixi hack
 >> 
 ### 2024.09.1
 
-
+>> - block.number
+>>   block.number 是當前 block 編號 並非真正隨機
+>>   可以很容易查詢到
+>> - 如何用Solidity和其他合約互動?
+>>   ```solidity
+>>   interface ICoinFlip {
+>>       function flip(bool _guess) external returns (bool);
+>>   }
+>>   ```
+>>   
+>>   ```solidity
+>>   contract Mycontract{
+>>       ICoinFlip(目標合約).flip(side);
+>>   }
+>>   ```
+>>   [參考影片](https://www.youtube.com/watch?v=YWtT0MNHYhQ)
+>>   
 <!-- Content_END -->
+
