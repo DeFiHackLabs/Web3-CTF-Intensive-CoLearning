@@ -17,4 +17,7 @@ timezone: Asia/Shanghai
 ### 2024.08.30
 - Ethernaut CTF中CoinFlip以及Telephone两个题目，题目比较简单，需要了解evm调用机制.
 - [2024.8.30](./Writeup/Sivan/2024.8.30)
+### 2024.08.31
+- Ethernaut CTF中Delegation以及Token两个题目，主要是利用delegatecall以及整数溢出的安全问题.
+- [2024.8.31](./Writeup/Sivan/2024.8.31)
 <!-- Content_END -->

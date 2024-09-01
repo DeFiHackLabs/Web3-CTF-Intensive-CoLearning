@@ -28,5 +28,11 @@ Trying to solve 2 - Naive Receiver.
 Solved 2 - Naive Receiver.
 Solved 3 - Truster.
 
+### 2024.08.31
+Solved 4 - Side Entrance.
+Solved 5 - The Rewarder.
+
+### 2024.09.01
+Solved 6 - Selfie.
 
 <!-- Content_END -->

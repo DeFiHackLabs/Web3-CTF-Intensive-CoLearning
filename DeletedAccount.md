@@ -339,6 +339,111 @@ cast send -r $RPC_OP_SEPOLIA $PRIVACY_INSTANCE "unlock(bytes16)" 0x300fbf4b66e2c
 - [Ethernaut15-NaughtCoin.sh](/Writeup/DeletedAccount/Ethernaut15-NaughtCoin.sh)
 - [Ethernaut15-NaughtCoin.s.sol](/Writeup/DeletedAccount/Ethernaut15-NaughtCoin.s.sol)
 
+### 2024.08.30
 
+- Day2 共學開始
+- 目前規劃會在本檔案做流水帳紀錄
+- 預計會在 9/20 來做一個 Writeup 總整理
+- 放假日有空也會回來整理
+
+#### [Ethernaut-16] Preservation
+
+- 破關條件: 把 `owner` 權限改成自己
+- 解法:
+  - 這題和第六關 Delegation 很像
+  - 我應該要先呼叫一次 `setFirstTime()`，`_timeStamp` 改成自己部署合約的地址
+    - 這樣應該就可以蓋掉 `Preservation.timeZone1Library` 成為自己
+  - 然後再次呼叫 `setFirstTime()` 使 `Preservation` Delegatecall 到自己的合約
+  - 然後自己的合約再把 slot2 改成 `tx.origin`，這樣就可以過關了
+- 知識點: Storage Collision、Function Signature
+
+解法:
+
+- [Ethernaut16-Preservation.sh](/Writeup/DeletedAccount/Ethernaut16-Preservation.sh)
+- [Ethernaut16-Preservation.s.sol](/Writeup/DeletedAccount/Ethernaut16-Preservation.s.sol)
+
+#### [Ethernaut-17] Recovery
+
+- 破關條件: 呼叫 `SimpleToken.destroy()` 使它的以太幣餘額清空，但你要想辦法找出 `SimpleToken` 的合約地址 
+- 解法:
+  - 呃...直接去 Explorer 看，就能知道 0.001 ETH 跑到哪裡去了XD
+  - ![etherscan](/Writeup/DeletedAccount/Ethernaut17-Recovery.png)
+  - 但這其實算偷吃步，因為如果遇到像 Paradigm CTF 這種會自架區塊鏈的題目，這招就沒辦法使用了
+  - 所以重點還是要知道 `new` 出來的合約地址究竟是如何被計算出來的
+  - 公式是: `new_contract_address = hash(msg.sender, nonce)`
+  - 可以用 `cast nonce $RECOVERY_INSTANCE -r $RPC_OP_SEPOLIA` 查到目前 Instance 有多少 Nonce
+  - Nonce 是 2，代表它已經發過 2 次 Transaction (即: 下一筆交易會是用 Nonce 3)
+  - 我們算 1 和 2 就可以知道計算結果的其中一個是 `SimpleToken` 的地址了
+  - 如果目標的 Nonce 很大，解法中的 Python Script 可以加個迴圈和判斷式，快速爆破
+- 知識點: `new` 出來的地址，是可以被預先算出並得知的
+
+解法:
+
+- [Ethernaut17-Recovery.sh](/Writeup/DeletedAccount/Ethernaut17-Recovery.sh)
+- [Ethernaut17-Recovery.py](/Writeup/DeletedAccount/Ethernaut17-Recovery.py)
+
+#### [Ethernaut-18] Magic Number
+
+- 破關條件: 部署一個呼叫了會返回 `42` 的合約，但是該合約的 runtime bytecode 必須少於 10 bytes
+- 解法:
+  - 照著 evm.codes 操作即可，似乎沒什麼好講的
+  - 這題不難，只是有點麻煩而已
+  - 之前是用 Yul 解這題，這次換用 Huff 來解
+  - 因為不熟悉 creation bytecode 和 runtime bytecode 的差別，過程踩了蠻多的坑
+    - 主要是卡在用 `-b` 會包含 creation bytecode, 要檢查長度是否少於 10 bytes 還是要用 `-r` 來檢查 runtime bytecode...
+  - 用 evm.codes 解很快，但不熟悉 Huff 的語法，花了一些時間看官方文件
+- 知識點: EVM OP Codes
+
+解法:
+
+- [Ethernaut18-MagicNumber.sh](/Writeup/DeletedAccount/Ethernaut18-MagicNumber.sh)
+- [Ethernaut18-MagicNumber.huff](/Writeup/DeletedAccount/Ethernaut18-MagicNumber.huff)
+
+### 2024.08.31
+
+- Day3 共學開始
+- 祖父送急診...本日大部分時間都在照顧老人
+- 學習時間不多，今天進度較少
+
+#### [Ethernaut-19] Alien Codex
+
+個人覺得這一題十分有趣，屬於必看必解題！
+
+- 破關條件: 把 `owner` 變成自己
+- 解法:
+  - 題目本身沒宣告 `owner`，但可以觀察到 `AlienCodex` 有繼承 Ownable
+  - `Ownable-05.sol"` 的原始碼沒給，但我們可以從 [GitHub](https://github.com/OpenZeppelin/ethernaut/blob/master/contracts/src/helpers/Ownable-05.sol#L13) 找到原始碼觀察到 `address private _owner`
+  - 繼承的合約 `Ownable` 所宣告變數，會先佔用 Storage，所以 `_owenr` 的 Slot 是在 Slot0
+  - 並且編譯都是用 Solidity 0.5.0，沒有內建 overflow/underflow 的版本，所以猜測可能是與 overflow/underflow 有關的漏洞利用
+  - 這一題的主要考點是 Array Overflow/Underflow，需要知道一個 Dynamic Array 宣告在 Storage 的時候，具體來說其中的 Elements 都會被放在哪個 Slot
+  - `codex` 這個 Dynamic Bytes32 Array 被宣告在 Slot1，因為 `contact` 會和 `_owner` 打包在一起 (`concat` 在左邊高位 `_owner`在右邊低位)
+    - **Slot2 本身**將會放的是這個 **Dynamic Array 目前的總長度**
+    - Dynamic Array 的**第一個元素**會被放在 **`keccak256(n) + 0`**，n 等於原先佔用的 slot offset (本例 `codex` 佔用 Slot2，即 `n=1`)
+    - Dynamic Array 的**第二個元素**會被放在 **`keccak256(n) + 1`**
+    - Dynamic Array 的**第三個元素**會被放在 **`keccak256(n) + 2`**，依此類推
+  - 我們的目標是控制 Slot0 的內容，乍看之下似乎無路可解
+  - 但我們有 `retract()` 可以將 Slot1 的值，從 `keccak256(0)` (即 `codex` 元素有 `0` 個) 更改為 `keecak256(2**256 - 1)` (即 `codex` 元素有 `2**256 - 1` 個)
+  - 欸！既然 `codex` 的 index 長度可以拉到 `2**256-1` 個，那是不是代表...
+  - 沒錯！我們可以利用 `revise()` 函數來達到 **任意重設指定的 Storage Slot 的內容值** 了！
+  - 為了過關，我們肯定是想要將 Slot0 的前 20 bytes 內容值修改成自己的地址的，但具體來說如何做呢？
+    - 我們需要將 `codex` 佔用的首個元素的 Slot Number，再加上某個偏移量造成 Overflow，使它能夠重新指向到 Slot0
+    - 假設上述輸出命名為 i，則 i 的計算公式為:
+    - `i = keccak256(1) + N = 0x0000...0000`
+    - 要取得 N，我們只需要將 `0xffff...ffff` 減去 `keccak256(1)` 再 `+1` 即可
+    - `N = (0xffff...ffff - keccak256(1)) + 1`
+
+```soldity
+bytes32 slot_index_of_first_element_of_codex = keccak256(abi.encode(uint256(1)));
+bytes32 max_bytes32 = bytes32(type(uint256).max);
+bytes32 array_index_that_occupied_the_slotMAX = bytes32(uint256(max_bytes32) - uint256(slot_index_of_first_element_of_codex));
+bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
+```
+- 知識點: Array Storage Layout, Array Underflow/Overflow
+
+
+解法:
+
+- [Ethernaut19-AlienCodex.sh](/Writeup/DeletedAccount/Ethernaut19-AlienCodex.sh)
+- [Ethernaut19-AlienCodex.s.sol](/Writeup/DeletedAccount/Ethernaut19-AlienCodex.s.sol)
 
 <!-- Content_END -->

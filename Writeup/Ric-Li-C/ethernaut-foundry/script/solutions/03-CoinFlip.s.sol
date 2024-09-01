@@ -10,24 +10,17 @@ import {CoinFlipAttacker} from "../../src/03-CoinFlipAttacker.sol";
 contract CoinFlipSolution is Script, EthernautHelper {
     address constant LEVEL_ADDRESS = 0xA62fE5344FE62AdC1F356447B669E9E6D10abaaF;
     uint256 heroPrivateKey = vm.envUint("PRIVATE_KEY");
-    address challengeInstanceOnChain = 0xE17e4fb48D30f247F749a42Ab35E8465C1ac4732; // Change this address into yours after step1 executed.
-    address coinFlipAttackerAddress = 0x38eddcE71f8d83eBEfe41bEA8EEdb40d8A6e9b93; // Change this address into yours after step1 executed.
+    address challengeInstanceOnChain =
+        0xE17e4fb48D30f247F749a42Ab35E8465C1ac4732; // Change this address into yours after step1 executed.
+    address coinFlipAttackerAddress =
+        0x38eddcE71f8d83eBEfe41bEA8EEdb40d8A6e9b93; // Change this address into yours after step1 executed.
 
     function run() public {
         vm.startBroadcast(heroPrivateKey);
         // NOTE this is the address of your challenge contract
         address challengeInstance = createInstance(LEVEL_ADDRESS);
 
-        // YOUR SOLUTION HERE 
-        CoinFlipAttacker coinFlipAttacker = new CoinFlipAttacker(challengeInstance);
-        uint256 height = 100;
-        vm.roll(height);
-
-        for (uint i = 0; i < 10; i++) {
-            vm.roll(height + i);
-            console2.log(block.number);
-            coinFlipAttacker.attack();
-        }
+        // Ric Li C's Solution
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);
@@ -48,8 +41,10 @@ contract CoinFlipSolution is Script, EthernautHelper {
         address challengeInstance = createInstance(LEVEL_ADDRESS);
         console2.log("challengeInstanceOnChain:", challengeInstance);
 
-        // YOUR SOLUTION HERE 
-        CoinFlipAttacker coinFlipAttacker = new CoinFlipAttacker(challengeInstance);
+        // YOUR SOLUTION HERE
+        CoinFlipAttacker coinFlipAttacker = new CoinFlipAttacker(
+            challengeInstance
+        );
         console2.log("coinFlipAttackerAddress:", address(coinFlipAttacker));
 
         console2.log("block.number:", block.number);

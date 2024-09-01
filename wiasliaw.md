@@ -20,4 +20,14 @@
   - 想太多以為是 flashloan + exchange rate manipulation
   - 撰寫 writeup
 
+### 2024.08.30
+
+- A 系列 DamnVulnerableDeFi - native receiver
+  - 撰寫 writeup
+
+### 2024.08.31
+
+- A 系列 DamnVulnerableDeFi - truster
+  - 撰寫 writeup
+
 <!-- Content_END -->

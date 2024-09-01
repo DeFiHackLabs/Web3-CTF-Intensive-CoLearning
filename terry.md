@@ -25,5 +25,12 @@ timezone: Asia/Taipei
 - Ethernaut CTF - Fallback
 - POC: https://lalaterry.github.io/posts/Ethernaut-Fallout/
 
+### 2024.08.31
+
+
+學習內容:
+- Ethernaut CTF - CoinFilp
+- POC: https://lalaterry.github.io/posts/Ethernaut-CoinFilp/
+
 
 <!-- Content_END -->

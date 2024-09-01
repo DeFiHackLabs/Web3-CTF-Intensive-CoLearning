@@ -32,4 +32,14 @@ Today:
 - Half way into Diversion: https://onlypwner.xyz/challenges/4.
 - Tried to compile https://github.com/rebryk/profanity-brute-force on both Linux and Windows but failed.
 
+### 2024.08.30
+
+1. Wrote a PoC for Solidity assembly related bug during work
+2. Wrapped up eWPT exam (web hacking)
+
+### 2024.08.31
+
+1. Investigated a ECDSA signature related issue during work
+2. Worked on Taichi private audit
+
 <!-- Content_END -->

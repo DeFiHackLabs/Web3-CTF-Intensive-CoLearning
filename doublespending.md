@@ -91,4 +91,28 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
     - [the ownership of the deposit can be assigned to receiver.](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/side-entrance/SideEntranceLenderPool.sol#L21)
     - the balance of pool have not changed.
 
+### 2024.08.31
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- The Rewarder
+  - [`claimRewards`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/the-rewarder/TheRewarderDistributor.sol#L81C14-L81C26) uses[`_setClaimed`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/the-rewarder/TheRewarderDistributor.sol#L120C14-L120C25) to prevent reclaiming based on \<token, sender, batchNumber\>.
+  - However, `_setClaimed` is only called after token switch of `inputClaims` array.
+  - So, before switching token, we can reclaim with same \<token, sender, batchNumber\>.
+
+### 2024.09.01
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Selfie
+  - If we want to take all the token inside `SelfiePool`
+  - We should call [`SelfiePool.emergencyExit`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/selfie/SelfiePool.sol#L71C14-L71C27)
+  - To bypass the check of `SelfiePool.emergencyExit`, we should use [`SimpleGovernance.executeAction`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/selfie/SimpleGovernance.sol#L53).
+  - To execute an action, we should calling [`SimpleGovernance.queueAction`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/selfie/SimpleGovernance.sol#L23C14-L23C25) first.
+  - To call `SimpleGovernance.queueAction`, we should bypass the check of [`_hasEnoughVotes`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/selfie/SimpleGovernance.sol#L100) which means we should get more than half of the voting token.
+  - We can use [`SelfiePool.flashLoan`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/selfie/SelfiePool.sol#L50C14-L50C23) to get the require token voting token.
+  - Then, we can delegate the token and `SimpleGovernance.queueAction`.
+  - Finally, we can return the token to SelfiePool.
+  - After `ACTION_DELAY_IN_SECONDS`, we can call `SimpleGovernance.executeAction`.
+
 <!-- Content_END -->
