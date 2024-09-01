@@ -71,7 +71,7 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 [ModernWETH](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/ModernWETH.md)//解题和POC
 
-[LendingPool](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/tree/main)
+[LendingPool](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/LendingPool.md)
 
 ### 2024.8.31
 
