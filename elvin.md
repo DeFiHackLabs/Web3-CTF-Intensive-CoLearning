@@ -396,5 +396,15 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
 
 ### 2024.09.01
 
+1. Damn Vulnerable DeFi - The Rewarder
+   [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/05-the-rewarder/05-the-rewarder-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/05-the-rewarder/TheRewarder.t.sol)
+
+2. Damn Vulnerable DeFi - Selfie
+   [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/06-selfie/06-selfie-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/06-selfie/Selfie.t.sol)
+
+
+
 
 <!-- Content_END -->
