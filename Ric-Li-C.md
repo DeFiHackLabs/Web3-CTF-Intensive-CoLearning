@@ -75,9 +75,13 @@ A.3 選 1 系列
 
     1.Ethernaut CTF (31)
 
-### 2024.08.31
-
 ### 2024.09.01
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 01-Fallback
 
 ### 2024.09.02
 

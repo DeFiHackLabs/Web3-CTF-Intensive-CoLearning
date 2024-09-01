@@ -23,4 +23,8 @@ Solved CurtaLending.
 
 System Setup and Challenge Environment Adjustment.
 
+### 2024.08.31
+
+Solved Latent.
+
 <!-- Content_END -->

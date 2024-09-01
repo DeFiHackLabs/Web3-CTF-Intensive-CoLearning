@@ -11,10 +11,10 @@ timezone: Asia/Taipei
 
 <!-- Content_START -->
 
-### 2024.08.27
+### 2024.08.31
 
-test
+Complete Ethernaut CTF level 0
 
-### 2024.08.27
+### 2024.08.31
 
 <!-- Content_END -->

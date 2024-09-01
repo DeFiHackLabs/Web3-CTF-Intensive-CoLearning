@@ -39,4 +39,14 @@ timezone: Asia/Shanghai
 - [level3](https://ethernaut.openzeppelin.com/level/0xA62fE5344FE62AdC1F356447B669E9E6D10abaaF)
     - [POC](./Writeup/Slark/test/ethernaut//level3.t.sol)
     - 这个关卡设计的猜谜游戏，生成规则基于已经生成的区块数，属于可以“预测”的情况，只需要和生成规则保持一致，即可计算结果，从而达到一定猜中的结果。
+
+### 2024.09.01
+
+
+今天打卡 A 系列 `ethernaut`，1 个关卡
+
+- [level4](https://ethernaut.openzeppelin.com/level/0x478f3476358Eb166Cb7adE4666d04fbdDB56C407)
+    - [POC](./Writeup/Slark/test/ethernaut//level4.t.sol)
+    - 这个关卡重点在于 uint 的计算溢出，实际上 0.8.0 solidity 应该不会有这个问题了。
+    
 <!-- Content_END -->

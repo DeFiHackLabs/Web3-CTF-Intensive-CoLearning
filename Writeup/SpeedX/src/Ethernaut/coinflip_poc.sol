@@ -28,15 +28,9 @@ contract CoinFlipPOC {
         uint256 cf = blockValue / FACTOR;
         bool side = cf == 1 ? true : false;
 
-        if (side == true) {
-            bool r = coinFlip.flip(true);
-            if (r == false) {
-                revert("Flip failed");
-            }
-
-            return true;
-        } else {
-            return false;
+        bool r = coinFlip.flip(side);
+        if (r == false) {
+            revert("Flip failed");
         }
     }
 }
