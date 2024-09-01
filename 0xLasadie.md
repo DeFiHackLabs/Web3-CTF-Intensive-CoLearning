@@ -15,22 +15,42 @@ timezone: Asia/Singapore
 <!-- Content_START -->
 
 ### 2024.08.29
-
 #### Damn Vulnerable DeFi - Unstoppable:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/unstoppable.md)
 
 ### 2024.08.30
-
 #### Damn Vulnerable DeFi - Naive Receiver:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/naive-receiver.md)
 
 #### Damn Vulnerable DeFi - Truster:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/truster.md)
 
-#### Damn Vulnerable DeFi - Side Entrace:
-- [POC](https://github.com/lasadie/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/0xLasadie/damnvulnerabledefi/side-entrance.md)
+#### Damn Vulnerable DeFi - Side Entrance:
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/side-entrance.md)
 
 
 ### 2024.08.31
+#### Damn Vulnerable DeFi - The Rewarder:
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/the-rewarder.md)
 
+#### Damn Vulnerable DeFi - Selfie:
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/selfie.md)
+
+### 2024.09.01
+#### Damn Vulnerable DeFi - Puppet:
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/puppet.md)
+
+### 2024.09.02
+#### Damn Vulnerable DeFi - Compromised:
+
+
+### 2024.09.03
+
+### 2024.09.04
+
+### 2024.09.05
+
+### 2024.09.06
+
+### 2024.09.07
 <!-- Content_END -->

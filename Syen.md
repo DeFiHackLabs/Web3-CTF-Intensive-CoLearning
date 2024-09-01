@@ -22,4 +22,16 @@ Web3 Dapp Developer
 
 - [Road Closed](./Writeup/Syen/src/QuillCTF/VIPBank/README.md)
 
+### 2024.08.31
+
+**QuillCTF**
+
+- [Confidential Hash](./Writeup/Syen/src/QuillCTF/ConfidentialHash/README.md)
+
+### 2024.09.01
+
+**QuillCTF**
+
+- [SafeNFT](./Writeup/Syen/src/QuillCTF/SafeNFT/README.md)
+
 <!-- Content_END -->

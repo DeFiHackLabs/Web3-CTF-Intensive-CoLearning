@@ -32,4 +32,8 @@ Will try my best to finish it
 2. Finish the Damn Vulnerable Defi - Naive Receiver
 https://hackmd.io/@0xbc000/SyY4Evy2R
 
+### 2024.09.01
+1. ethernaut level4
+
+
 <!-- Content_END -->

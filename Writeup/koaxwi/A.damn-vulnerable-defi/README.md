@@ -91,3 +91,18 @@ It records the reward amount and address in a merkle tree, and users can claim t
 However, the contract does not correctly mark the claimed rewards, and we can claim the reward of a same token multiple times until the reward is exhausted.
 (Use `console.log` to confirm that the player address is eligible for the reward.)
 
+## Selfie (24/09/01)
+This challenge introduces a new concept: governance. Apparently, we need to call `emergencyExit` somehow.
+
+The `SimpleGovernance` mainly has two functions: `queueAction` and `executeAction`.
+The former is used to queue an action, and requires the caller's `getVotes` is greater than half of the total supply of the underlying token.
+The latter is used to execute the action, and requires the action is queued for at least 2 days.
+
+By checking the `ERC20Vote` contract, we find that to have votes, we need to call `delegate`, and our token balance will be used as voting uint.
+As the pool is holding 75% of the total supply, we can ask for a flash loan to increase our voting power and queue the action.
+
+For the 2 days check, we cannot find a way to bypass it.
+Some thoughts: The governance contract uses `unchecked` to calculate the `timeDelta`, but we cannot propose an action at some future time.
+After some searching, we use foundry's cheatcode to set the block timestamp.
+There is `warp` to set the timestamp and `skip` to skip the time.
+

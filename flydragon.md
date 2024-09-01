@@ -17,4 +17,7 @@ web3菜雞
 ### 2024.08.29
 Complete Ethernaut CTF level 0
 
+### 2024.08.31
+Complete Ethernaut CTF level 1
+
 <!-- Content_END -->

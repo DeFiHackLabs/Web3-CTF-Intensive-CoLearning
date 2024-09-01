@@ -18,8 +18,7 @@ contract FalloutSolution is Script, EthernautHelper {
         // NOTE this is the address of your challenge contract
         address challengeInstance = createInstance(LEVEL_ADDRESS);
 
-        // YOUR SOLUTION HERE
-        Fallout(payable(challengeInstance)).Fal1out();
+        // Ric Li C's Solution
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);

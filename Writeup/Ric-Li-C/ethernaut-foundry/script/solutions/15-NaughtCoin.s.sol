@@ -9,13 +9,30 @@ import "../../src/15-NaughtCoinAttacker.sol";
 
 interface IERC20 {
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
+
     function totalSupply() external view returns (uint256);
+
     function balanceOf(address account) external view returns (uint256);
+
     function transfer(address to, uint256 value) external returns (bool);
-    function allowance(address owner, address spender) external view returns (uint256);
+
+    function allowance(
+        address owner,
+        address spender
+    ) external view returns (uint256);
+
     function approve(address spender, uint256 value) external returns (bool);
-    function transferFrom(address from, address to, uint256 value) external returns (bool);
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    ) external returns (bool);
 }
 
 contract NaughtCoinSolution is Script, EthernautHelper {
@@ -28,10 +45,7 @@ contract NaughtCoinSolution is Script, EthernautHelper {
         // NOTE make sure to change original function into "_createInstance()" for the correct challengeInstance address.
         address challengeInstance = _createInstance(LEVEL_ADDRESS);
 
-        // YOUR SOLUTION HERE
-        NaughtCoinAttacker naughtCoinAttacker = new NaughtCoinAttacker(challengeInstance);
-        IERC20(challengeInstance).approve(address(naughtCoinAttacker), 1000000 * (10**18));
-        naughtCoinAttacker.attack();
+        // Ric Li C's Solution
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);

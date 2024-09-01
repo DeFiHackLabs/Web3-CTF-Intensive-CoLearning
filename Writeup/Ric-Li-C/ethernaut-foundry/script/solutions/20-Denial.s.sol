@@ -16,9 +16,7 @@ contract DenialSolution is Script, EthernautHelper {
         // NOTE this is the address of your challenge contract
         address challengeInstance = 0xcfE5fa726434dB5fa096Ca50999da604dff7f48a; // Hard coding
 
-        // YOUR SOLUTION HERE
-        DenialAttacker denialAttacker = new DenialAttacker(challengeInstance);
-        denialAttacker.attack();
+        // Ric Li C's Solution
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);

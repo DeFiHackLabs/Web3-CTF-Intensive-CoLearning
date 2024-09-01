@@ -24,4 +24,8 @@ Sign up
 
 今天開始準備練習 Damn Vulnerable 題目
 
+### 2024.08.31
+
+今天開始練習 Damn Vulnerable，之後補上 write up
+
 <!-- Content_END -->

@@ -15,14 +15,7 @@ contract PrivacySolution is Script, EthernautHelper {
         // NOTE this is the address of your challenge contract
         address challengeInstance = createInstance(LEVEL_ADDRESS);
 
-        // YOUR SOLUTION HERE
-
-        /**
-         * Understanding Solidity’s Storage Layout And How To Access State Variables In Storage Slots.
-         */
-        bytes32 key = vm.load(challengeInstance, bytes32(uint256(5)));
-        challengeInstance.call(abi.encodeWithSignature("unlock(bytes16)", bytes16(key)));
-
+        // Ric Li C's Solution
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);
