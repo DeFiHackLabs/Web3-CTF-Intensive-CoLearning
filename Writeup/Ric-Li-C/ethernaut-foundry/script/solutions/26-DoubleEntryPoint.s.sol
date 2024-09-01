@@ -16,10 +16,7 @@ contract DoubleEntryPointSolution is Script, EthernautHelper {
         // NOTE this is the address of your challenge contract
         address challengeInstance = _createInstance(LEVEL_ADDRESS);
 
-        // YOUR SOLUTION HERE
-        DoubleEntryPointAttacker doubleEntryPointAttacker = new DoubleEntryPointAttacker(challengeInstance);
-        address forta = address(IDoubleEntryPoint(challengeInstance).forta());
-        IForta(forta).setDetectionBot(address(doubleEntryPointAttacker)); // Let setDetectionBot() to trigger delegateTransfer(), then we can call raiseAlert(user);
+        // Ric Li C's Solution
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);
