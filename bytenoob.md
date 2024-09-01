@@ -73,6 +73,10 @@ Finish ethernaut 2 Fallback
 ### 2024.08.31
 Finish ethernaut 3 Fallout
 
+### 2024.09.01
+
+Finish ethernaut 4 5 6
+
 
 
 
