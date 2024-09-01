@@ -24,4 +24,8 @@ timezone: Asia/Shanghai
 
 熟悉基礎的 foundry 語法
 
+### 2024.09.01
+
+熟悉基礎的 foundry 語法，解 1 題
+
 <!-- Content_END -->
