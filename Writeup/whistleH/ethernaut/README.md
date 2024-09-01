@@ -172,5 +172,34 @@ forge script ./script/Level01.s.sol -vvvv --private-key $PRI_KEY --rpc-url https
 2. 在receive函数中继续调用withdraw操作即可
 3. 具体的PoC见[Level 10-PoC](./script/Level10.s.sol)
 
+## Level 11 - Elevator
+
+### Target
+
+1. 学习基于接口实现合约
+
+### PoC
+
+1. 这道题实质就是希望我们实现一个Building接口的合约
+2. 合约满足isLastFloor第一次调用返回False，第二次调用返回true
+3. 我们只需要引入第三方变量，很轻易就能实现2的要求
+4. 具体的PoC见[Level 11-PoC](./script/Level11.s.sol)
+
+## Level 12 - Privacy
+
+### Target
+
+1. 学习[Solidity的内存模型](https://medium.com/@ozorawachie/solidity-storage-layout-and-slots-a-comprehensive-guide-2cee71817ed8)
+
+### PoC
+
+1. 参照Vault那题，使用cast工具查看合约的Storage空间获取私有变量的值
+
+   ```shell
+   cast storage 0xBa0A4a42D133c0Bb014C4900ED29D8EB7b47B3df 5 --rpc-url=https://rpc.ankr.com/eth_sepolia
+   ```
+
+2. 具体的PoC见[Level 12-PoC](./script/Level12.s.sol)
+
 
 

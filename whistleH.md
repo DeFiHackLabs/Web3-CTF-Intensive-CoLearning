@@ -45,12 +45,23 @@ timezone: Asia/Shanghai
 
 当前挑战：ethernaut
 
-今日完成：Level03 - Level10
+今日完成：Level04- Level10
 
 学习内容
 
 1. Solidity相关的基础，如selfdestruct、委托代理等等
 2. 学习Solidity DoS风险、可重入风险、数据泄露风险
 3. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
+### 2024.09.01
+
+当前挑战：ethernaut
+
+今日完成：Level11- Level12
+
+学习内容
+
+1. Solidity内存模型、接口
+2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
 
 <!-- Content_END -->
