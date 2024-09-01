@@ -452,10 +452,7 @@ want = 9,999,999,900
 
 我们完全付得起这个价格，之后我们再取消一次，我们就可以把账户中几乎所有的钱都取出来啦！
 **Exp**
-
-
-C:Paradigm2023 (1/1)
-
+/Writeup/kkontheway
 
 **BlackSheep**
 
@@ -547,7 +544,7 @@ function _isSolved() private view {
     - 执行器
     - `execute()` 执行函数先检查权限，再进行调用、
 - Setup
-    - 初始化合约，通过赋予`player` `sweepFunds()`的权限，赋予`deployer` `withdraw()`的权限
+    - 初始化合约，通过赋予`player` `withdraw()`的权限，赋予`deployer` `sweepfund()`的权限
 
 **Solution**
 
@@ -632,7 +629,7 @@ function execute(address target, bytes calldata actionData) external nonReentran
 
 问题的关键在于，他默认大家传入的参数是没问题的，将用来进行权限判断的`selector`的位置进行了硬编码，这样就导致了我们的绕过。
 
-代码验证的流程是先从`actionData`中取出要调用的函数的`selector`，然后将`selector`和我们的地址还有`target`进行`keccak256`，最后检查`permissions`，所以我们的目的就是欺骗他我们调用的是`sweepFunds` ，其实我们调用的是`withdraw`函数。
+代码验证的流程是先从`actionData`中取出要调用的函数的`selector`，然后将`selector`和我们的地址还有`target`进行`keccak256`，最后检查`permissions`，所以我们的目的就是欺骗他我们调用的是`withdraw` ，其实我们调用的是`sweepfunds`函数。
 
 ```solidity
 function getActionId(bytes4 selector, address executor, address target) public pure returns (bytes32) {
@@ -674,10 +671,11 @@ uint256 calldataOffset = 4 + 32 * 3; // calldata position where `actionData` beg
 // sweepFunds() selector
 // recovery address
 // amount
-
 ```
+**EXP**
 
+### 2024.09.01
 
-
+- 在做Damn的withdrawal，还没做出来
 
 <!-- Content_END -->
