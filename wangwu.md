@@ -14,10 +14,8 @@ timezone: Asia/Shanghai
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
-
-### 2024.07.12
+完成第一题，successful
 
 <!-- Content_END -->
