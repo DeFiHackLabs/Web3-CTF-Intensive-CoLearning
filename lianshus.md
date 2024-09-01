@@ -89,7 +89,20 @@ timezone: Asia/Shanghai
 
 [POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
 
+### 2024.09.01
 
+学习內容:
+
+这两天做了A系列1题
+
+Token: 看到版本0.6就感觉是经典的uint256 整数溢出问题，但是记得以前做题是时间锁，哪个是上溢问题，这次也以为是这样，结果是下溢问题
+
+总结了规律：
+
+1. 加法上溢，超出最大范围变成最小值
+2. 减法下溢，超出最小范围就变成最大值
+
+[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
 
 ### 2024.07.12
 
