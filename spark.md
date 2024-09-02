@@ -247,7 +247,7 @@ contract SelfiePoolExploit {
 ```
 
 
-### 2024.08.31
+### 2024.09.01
 
 - Damn Vulnerable DeFi: Backdoor
 
