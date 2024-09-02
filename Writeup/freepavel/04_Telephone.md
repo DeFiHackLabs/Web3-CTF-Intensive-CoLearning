@@ -1,6 +1,4 @@
-這關卡簡單但很有教育意義，主要是要我們理解 `msg.sender` 和 `tx.origin` 的區別。
-
-### 題目
+### Telephone
 
 在這個關卡中，我們的目標是取得 `Telephone` 合約的所有權。
 這個合約的 `changeOwner` 函數中有一個條件限制，只有在 `tx.origin` 不等於 `msg.sender` 的情況下，才能更改合約的所有者。這裡的 `tx.origin` 是最初發送交易的外部帳戶地址，而 `msg.sender` 則是直接調用合約的地址，可以是外部帳戶或其他合約。
