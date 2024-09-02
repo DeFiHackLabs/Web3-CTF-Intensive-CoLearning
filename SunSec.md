@@ -65,5 +65,13 @@ timezone: Asia/Taipei
 - DamnVulnerableDeFi #5 [The Rewarder](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#the-rewarder)
 - DamnVulnerableDeFi #6 [Selfie](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#selfie)
 
-  
+### 2024.09.01
+- DamnVulnerableDeFi #7 [Compromised](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#compromised)
+- DamnVulnerableDeFi #8 [Puppet](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet)
+- DamnVulnerableDeFi #9 [Puppet V2](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet-v2)
+
+### 2024.09.02
+- DamnVulnerableDeFi #10 [Free Rider](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#free-rider)
+- DamnVulnerableDeFi #11 [Backdoor](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#backdoor)
+
 <!-- Content_END -->

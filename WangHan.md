@@ -70,4 +70,10 @@ Create local [Solidity](https://soliditylang.org/) and [Foundry](https://github.
 - Hello Ethernaut
 - Fallback
 
+### 2024.09.01
+[Ethernaut CTF](https://ethernaut.openzeppelin.com/)
+- Fallout
+- Coin Flip
+- Telephone
+
 <!-- Content_END -->

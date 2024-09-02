@@ -8,17 +8,14 @@ This repo is a customized Foundry environment where devs can create/solve/submit
 -   Clone this repo
 -   Install forge-std library
 -   Copy the items in `.env.example` with your own credentials
--   Get some testnet eth (Sepolia is recommended as ether is easier to come by)
+-   Get some Sepolia testnet eth
 
-## Completing A Challenge
+## Solution
 
-While the challenge contracts are part of the repo (`challenge-contracts`), it's recommended that you use interfaces when interacting with the challenge contracts to avoid issues compiling when requiring old solidity versions and older versions of OpenZeppelin contracts for some of the challenges.
-
-When you think you've created the script that solves the challenge call the following:
+The solution files are placed in script/solutions/ folder, run below command to check:
 
 ```
-source .env
-forge script script/solutions/SCRIPT_FILE_NAME.s.sol:SCRIPT_CONTRACT_NAME --rpc-url $SEPOLIA_RPC
+forge script script/solutions/SCRIPT_FILE_NAME.s.sol:SCRIPT_CONTRACT_NAME --rpc-url sepolia
 ```
 
-This will run a local simulation of your transaction off chain, if your script passes the challenge, run the same `forge script ...` command again but add `--broadcast` to broadcast the transaction(s) on chain.
+This will run a local simulation of your transaction off chain, run the same `forge script ...` command again but add `--broadcast` to broadcast the transaction(s) on chain.

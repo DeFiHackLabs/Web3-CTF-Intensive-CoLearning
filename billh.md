@@ -27,4 +27,8 @@ System Setup and Challenge Environment Adjustment.
 
 Solved Latent.
 
+### 2024.09.02
+
+Solved USurper.
+
 <!-- Content_END -->

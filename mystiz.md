@@ -146,4 +146,41 @@ Important: We are also rewarded. `0x44E97aF4418b7a17AABD8090bEA0A471a366305C` ap
 
 To (almost) drain the reward distributor, we can repeatedly send the same claim in the same transaction. This is because `_setClaimed` will be called once.
 
+### 2024.09.01
+
+#### 📚 Reading: ERC20 votes?
+
+Preparation for _Damn Vulnerable DeFi: Selfie_... Maybe?
+
+- https://www.rareskills.io/post/erc20-votes-erc5805-and-erc6372
+- https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes
+
+
+### 2024.09.02
+
+Progress
+
+* Damn Vulnerable DeFi (6/18)
+* EthTaipei CTF 2023 (0/5)
+* MetaTrust CTF 2023 (0/22)
+
+#### 🏁 Damn Vulnerable DeFi: Compromised
+
+**Time used: ~45m**
+
+The two lines in README.md corresponds to the first two private keys of the trusted accounts:
+
+```plaintext
+0x7d15bba26c523683bfc3dc7cdc5d1b8a2744447597cf4da1705cf6c993063744
+0x68bd020ad186b647a691c6a5c0c1529f21ecd09dcc45241402ac60ba377c4159
+```
+
+Therefore, we can control the price by updating the median. Since we have 2 out of 3 trusted accounts compromised, it is easily achievable.
+
+We can follow the procedures to drain the pool:
+
+1. Update the price of the NFT to 0.1 ETH and buy it.
+2. Update the price of the NFT to 999.1 ETH and sell it. We will gain 999 ETH here.
+3. Update the price of the NFT to 999 ETH, pretending that nothing has happened.
+
 <!-- Content_END -->

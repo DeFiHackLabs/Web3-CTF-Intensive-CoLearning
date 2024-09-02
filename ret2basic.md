@@ -46,4 +46,8 @@ Today:
 
 1. Wrapped up Taichi private audit
 
+### 2024.09.02
+
+1. Solve onlyPwner Diversion
+
 <!-- Content_END -->

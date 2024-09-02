@@ -125,3 +125,17 @@ contract Hack {
 
 }
 ```
+## 13. Privacy
+solidity合约的每个slot存4个bytes
+变量值排布如下
+```
+0: |X    X    X    bool|
+1: |      uint256      |
+2: |uint8 uint8 uint16 |
+3: |      bytes32      |
+4: |      bytes32      |
+5: |      bytes32      |
+```
+因此所需数据data[2]在slot5中
+再对数据截断, 转换为bytes16
+参考文档: https://docs.soliditylang.org/en/v0.8.7/internals/layout_in_storage.html#
