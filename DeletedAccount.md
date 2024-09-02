@@ -482,5 +482,19 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
 
 
 
+#### [Ethernaut-22] Dex
+
+- 破關條件: 利用價格操縱漏洞，竊取 `Dex` 合約的資金，使其中一個 Token 的餘額歸零
+- 解法:
+  - 這一題的考點主要是 `X * Y = K` 恆定乘積做市商算法的漏洞
+  - 如果 swapAmount 等於 `amount * Y / X` 且沒有進行 K 值的檢查，將會導致 `swapAmount` 在幾次來回交換後，因為 `X` 值變小而使換出的 Y token 數量變多
+  - 當 DEX 不依靠去中心化價格預言機或時間加權機制，僅透過 Reserve 來實施價格發現，就會受到價格操縱攻擊
+  - 我們只需要反覆地將 token1 換到 token2，token2 再換回 token1，來回操作幾遍就會發現每次換出來的金額都會越來越大
+  - 建議自己拿算盤驗算看看 `getSwapPrice()` 函數的返回值
+
+解法:
+
+- [Ethernaut22-Dex.sh](/Writeup/DeletedAccount/Ethernaut22-Dex.sh)
+- [Ethernaut22-Dex.s.sol](/Writeup/DeletedAccount/Ethernaut22-Dex.s.sol)
 
 <!-- Content_END -->
