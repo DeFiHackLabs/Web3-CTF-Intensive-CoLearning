@@ -21,9 +21,16 @@ timezone: Asia/Shanghai
 
 ### 2024.08.31
 学习内容
-#### [[Damn Vulnerable DeFi V4] 1 | Naive Receiver ]
+#### [[Damn Vulnerable DeFi V4] 2 | Naive Receiver ]
 1.完成Damn Vulnerable DeFi V4的第二关NaiveReceiver。
 - [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Naivereceiver/NaiveReceiver.md)
 - [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Naivereceiver/NaiveReceiver.t.sol)
 
+### 2024.09.02
+学习内容
+#### [[Damn Vulnerable DeFi V4] 3 | Truster ]
+1.完成Damn Vulnerable DeFi V4的第三关Truster。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Truster/Truster.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Truster/Truster.t.sol)
+  
 <!-- Content_END -->

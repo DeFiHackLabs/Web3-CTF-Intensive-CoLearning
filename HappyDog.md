@@ -102,5 +102,39 @@ Solidity：
         forge 0.2.0 (98ab45eeb 2024-08-30T09:21:16.144880400Z)
     4. 開始建立新的Foundry專案
 
+### 2024.09.02
+** 用Foundry來玩Ethernaut **
+- [學習參考網址](https://medium.com/@tanner.dev/ethernaut-x-foundry-%E5%A6%82%E4%BD%95%E9%96%8B%E5%A7%8B%E4%BD%A0%E7%9A%84%E7%AC%AC%E4%B8%80%E5%80%8B%E4%BB%A5%E5%A4%AA%E5%9D%8A-ctf-%E6%8C%91%E6%88%B0-prerequisites-to-get-started-707c7cd10cd2)
+- 使用git上大神已將Ethernaut整理進Foundry框架的repo
+    git clone https://github.com/tannerang/ethernaut-foundry.git
+    .env檔案修改內容
+    - repo架構
+        ├── README.md
+        ├── broadcast
+        ├── cache
+        ├── challenge-contracts // 題目的合約程式碼
+        ├── challenge-info // 題目說明和提示
+        ├── foundry.toml
+        ├── lib
+        ├── out
+        ├── script
+        │   ├── setup
+        │   │   ├── EthernautHelper.sol
+        │   │   └── IEthernaut.sol
+        │   └── solutions // 解題用的部署合約
+        └── src // 解題用的攻擊合約
+
+**My First Foundry x Ethernaut - Fall back**
+![image](https://github.com/user-attachments/assets/45bebb5c-b759-415e-8bb9-f5ac75d001b8)
+1. 令人興奮的第一題，在前置環境等等都已經設定好後，我開始研究這題的Solidity 合約內容，這算是我第一次看，所以我決定要好好的仔細的理解整體脈絡跟用法，奠定一些基礎(在這次看完後我發現有些基礎是需要去稍微理解一下會更好)
+2. 這個合約算較為單純，大致了解運作模式後，針對題目去理解，目標就是"成為owner"以及”用withdraw()來歸零”，參考了大神的sol後，由於我的環境並非unix，所以有部分的設定不太一樣，首先是使用$env:來設定環境變數(但.env還是得設定好)，再來就是在執行的部分，命令必須這樣設定
+forge script script/solutions/01-Fallback.s.sol:FallbackSolution --fork-url [https://sepolia.infura.io/v3/](https://sepolia.infura.io/v3/a360f95dad004dc1bf712c848f72913b)MyprojectID
+3. 後來就順利編譯完成並broadcast出去
+
+--------------
+今日回顧與思考：
+1.在撰寫POC的部分，我可能還需要再加強Foundry的理解
+2.關於Solidity合約已經有更多的了解了，但若後面要能夠越來越厲害，必須要加強基礎的部分
+3.今天的我很棒，成功完成第一次的POC(雖然還是因為有大神在QAQ)
   
 <!-- Content_END -->
