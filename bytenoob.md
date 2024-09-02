@@ -77,6 +77,9 @@ Finish ethernaut 3 Fallout
 
 Finish ethernaut 4 5 6
 
+### 2024.09.02
+
+Finish ethernaut 7
 
 
 
