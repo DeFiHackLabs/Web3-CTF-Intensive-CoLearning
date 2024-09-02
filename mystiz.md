@@ -146,4 +146,14 @@ Important: We are also rewarded. `0x44E97aF4418b7a17AABD8090bEA0A471a366305C` ap
 
 To (almost) drain the reward distributor, we can repeatedly send the same claim in the same transaction. This is because `_setClaimed` will be called once.
 
+### 2024.09.01
+
+#### 📚 Reading: ERC20 votes?
+
+Preparation for _Damn Vulnerable DeFi: Selfie_... Maybe?
+
+- https://www.rareskills.io/post/erc20-votes-erc5805-and-erc6372
+- https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes
+
+
 <!-- Content_END -->

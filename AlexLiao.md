@@ -88,4 +88,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.01
 
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Side Entrance](https://www.damnvulnerabledefi.xyz/challenges/side-entrance/)
+
+筆記連結： [DamnVulnerableDeFi: Side Entrance](./Writeup/AlexLiao/DamnVulnerableDeFi/SideEntrance.md)
+
+### 2024.09.02
+
 <!-- Content_END -->
