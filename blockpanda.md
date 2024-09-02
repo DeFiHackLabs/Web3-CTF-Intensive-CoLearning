@@ -29,5 +29,5 @@ timezone: Asia/Shanghai
 - [Ethernaut 第二题](/Writeup/blockpanda/readme.md/09.01-ethernaut第三题.md)
 
 ### 2024.09.02
-- [Ethernaut 第三题](/Writeup/blockpanda/readme.md/Ethernaut-CoinFlip.md)
+- [Ethernaut 第三题](/Writeup/blockpanda/readme.md/Ethernaut-Coin%20Flip.md)
 <!-- Content_END -->
