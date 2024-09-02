@@ -399,6 +399,51 @@ cast send -r $RPC_OP_SEPOLIA $PRIVACY_INSTANCE "unlock(bytes16)" 0x300fbf4b66e2c
 - [Ethernaut18-MagicNumber.sh](/Writeup/DeletedAccount/Ethernaut18-MagicNumber.sh)
 - [Ethernaut18-MagicNumber.huff](/Writeup/DeletedAccount/Ethernaut18-MagicNumber.huff)
 
+### 2024.08.31
 
+- Day3 共學開始
+- 祖父送急診...本日大部分時間都在照顧老人
+- 學習時間不多，今天進度較少
+
+#### [Ethernaut-19] Alien Codex
+
+個人覺得這一題十分有趣，屬於必看必解題！
+
+- 破關條件: 把 `owner` 變成自己
+- 解法:
+  - 題目本身沒宣告 `owner`，但可以觀察到 `AlienCodex` 有繼承 Ownable
+  - `Ownable-05.sol"` 的原始碼沒給，但我們可以從 [GitHub](https://github.com/OpenZeppelin/ethernaut/blob/master/contracts/src/helpers/Ownable-05.sol#L13) 找到原始碼觀察到 `address private _owner`
+  - 繼承的合約 `Ownable` 所宣告變數，會先佔用 Storage，所以 `_owenr` 的 Slot 是在 Slot0
+  - 並且編譯都是用 Solidity 0.5.0，沒有內建 overflow/underflow 的版本，所以猜測可能是與 overflow/underflow 有關的漏洞利用
+  - 這一題的主要考點是 Array Overflow/Underflow，需要知道一個 Dynamic Array 宣告在 Storage 的時候，具體來說其中的 Elements 都會被放在哪個 Slot
+  - `codex` 這個 Dynamic Bytes32 Array 被宣告在 Slot1，因為 `contact` 會和 `_owner` 打包在一起 (`concat` 在左邊高位 `_owner`在右邊低位)
+    - **Slot2 本身**將會放的是這個 **Dynamic Array 目前的總長度**
+    - Dynamic Array 的**第一個元素**會被放在 **`keccak256(n) + 0`**，n 等於原先佔用的 slot offset (本例 `codex` 佔用 Slot2，即 `n=1`)
+    - Dynamic Array 的**第二個元素**會被放在 **`keccak256(n) + 1`**
+    - Dynamic Array 的**第三個元素**會被放在 **`keccak256(n) + 2`**，依此類推
+  - 我們的目標是控制 Slot0 的內容，乍看之下似乎無路可解
+  - 但我們有 `retract()` 可以將 Slot1 的值，從 `keccak256(0)` (即 `codex` 元素有 `0` 個) 更改為 `keecak256(2**256 - 1)` (即 `codex` 元素有 `2**256 - 1` 個)
+  - 欸！既然 `codex` 的 index 長度可以拉到 `2**256-1` 個，那是不是代表...
+  - 沒錯！我們可以利用 `revise()` 函數來達到 **任意重設指定的 Storage Slot 的內容值** 了！
+  - 為了過關，我們肯定是想要將 Slot0 的前 20 bytes 內容值修改成自己的地址的，但具體來說如何做呢？
+    - 我們需要將 `codex` 佔用的首個元素的 Slot Number，再加上某個偏移量造成 Overflow，使它能夠重新指向到 Slot0
+    - 假設上述輸出命名為 i，則 i 的計算公式為:
+    - `i = keccak256(1) + N = 0x0000...0000`
+    - 要取得 N，我們只需要將 `0xffff...ffff` 減去 `keccak256(1)` 再 `+1` 即可
+    - `N = (0xffff...ffff - keccak256(1)) + 1`
+
+```soldity
+bytes32 slot_index_of_first_element_of_codex = keccak256(abi.encode(uint256(1)));
+bytes32 max_bytes32 = bytes32(type(uint256).max);
+bytes32 array_index_that_occupied_the_slotMAX = bytes32(uint256(max_bytes32) - uint256(slot_index_of_first_element_of_codex));
+bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
+```
+- 知識點: Array Storage Layout, Array Underflow/Overflow
+
+
+解法:
+
+- [Ethernaut19-AlienCodex.sh](/Writeup/DeletedAccount/Ethernaut19-AlienCodex.sh)
+- [Ethernaut19-AlienCodex.s.sol](/Writeup/DeletedAccount/Ethernaut19-AlienCodex.s.sol)
 
 <!-- Content_END -->

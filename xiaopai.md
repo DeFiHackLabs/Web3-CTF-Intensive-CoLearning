@@ -37,5 +37,12 @@ https://www.alchemy.com/faucets/ethereum-sepolia
 2. 今天进展不多，了解了Web3-CTF的玩法
 
 ### 2024.08.30
+请假
+
+### 2024.08.31
+#### Foundry学习
+1. 看很多同学都使用Foundry来做题，了解了下。安装好了环境，发现使用cast命令调用合约确实很方便
+2. 但是涉及到签名的命令就报错，暂时没解决，很奇怪，只能先继续使用ethers.js做题
+
 
 <!-- Content_END -->

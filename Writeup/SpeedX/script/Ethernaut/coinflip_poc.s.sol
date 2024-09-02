@@ -15,7 +15,7 @@ contract CoinFlipPOCScript is Script {
 
         CoinFlip coinFlip = CoinFlip(0xbbbCEb62EFD3715016655237eBb5216Aad1d56c3);
         console.log("consecutiveWins: ", coinFlip.consecutiveWins());
-        for (uint256 i = 0; i < 20; i++) {
+        for (uint256 i = 0; i < 10; i++) {
             coinFlipPOC.flip();
         }
 

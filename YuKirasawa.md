@@ -71,6 +71,14 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 通过 Hello Ethernaut 学习了 Ethernaut 平台的交互方法。
 
+### 2024.08.31
 
+完成了 Ethernaut 的 Fallback 题目，了解了 wei、ether 等不同的 ether 单位，了解了使用 js api 发送 ether 和调用合约的方法。
+
+尝试搭建 Foundry 环境，还没有完全完成。
+
+### 2024.09.01
+
+完成了 Ethernaut 的 Fallout 题目。
 
 <!-- Content_END -->

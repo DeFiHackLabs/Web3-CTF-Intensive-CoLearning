@@ -92,5 +92,101 @@ address 类型在 Solidity 中是一个 20 字节（160 位）的值，而 uint2
 2. uint160 到 address:
 将 uint160 转换为 address 类型非常简单，只需要将其强制转换即可。
 
+### 2024.08.31
+
+#### A-Ethernaut-Recovery
+
+看了眼题目,一开始没明白什么意思,为什么会找不到地址.etherscan里是可以看到地址的,哈哈.
+直接调用`destroy()`就可以拿回资金了.
+
+去看了一眼Factory合约,答案直接都看到了,知识点是地址生成的规则,去年看过,这么久忘了,正好复习复习.
+
+##### 合约创建方式
+
+1. create
+
+create的用法很简单，就是new一个合约，并传入新合约构造函数所需的参数：
+```solidity
+
+Contract x = new Contract{value: _value}(params)
+
+```
+**CREATE如何计算地址**
+
+`新地址 = hash(创建者地址, nonce)`
+
+创建者地址不会变，但nonce可能会随时间而改变，因此用CREATE创建的合约地址不好预测。
+
+2. create2
+
+[详解](https://www.wtf.academy/docs/solidity-102/Create2/)
+和create差不多,多了一个`salt`参数
+
+**CREATE2如何计算地址**
+
+`新地址 = hash("0xFF",创建者地址, salt, initcode)`
+
+CREATE2 确保，如果创建者使用 CREATE2 和提供的 salt 部署给定的合约initcode，它将存储在 新地址 中。
+
+-------------------
+
+回到题目 Recovery 使用的是create来创建的Token合约,所以模拟对应参数就行
+
+`address token=address(
+            uint160(uint256(keccak256(abi.encodePacked(uint8(0xd6), uint8(0x94), levelAddress, uint8(0x01)))))
+        );`
+
+这里levelAddresss是已知的,`0x01`可以理解为nonce,如果再调用一次`generateToken`那么就应该是`0x02`.
+
+
+### 2024.09.01
+
+#### A-Ethernaut-MagicNumber
+
+这题第一次看的时候很懵,考察的点是`opcode`和`assembly`的使用.
+
+
+[evm.code](https://www.evm.codes/?fork=shanghai)
+[WTF 教程](https://www.wtf.academy/docs/evm-opcodes-101/)
+
+知识点很多,目前还没看完,过几天补一补.
+
+### 2024.09.02
+
+#### A-Ethernaut-AlienCodex
+
+这一题也是`storage slot` 相关的.
+因为低版本的solidity是没有溢出检查的
+```solidity
+pragma solidity ^0.4.0;
+
+contract C {
+    uint256 a;      // 0
+    uint[] b;       // 1
+    uint256 c;      // 2
+}
+
+```
+
+```
+-----------------------------------------------------
+|                      a (32)                       | <- slot 0
+-----------------------------------------------------
+|                    b.length (32)                  | <- slot 1
+-----------------------------------------------------
+|                      c (32)                       | <- slot 2
+-----------------------------------------------------
+|                        ...                        |   ......
+-----------------------------------------------------
+|                      b[0] (32)                    | <- slot `keccak256(1)`
+-----------------------------------------------------
+|                      b[1] (32)                    | <- slot `keccak256(1) + 1`
+-----------------------------------------------------
+|                        ...                        |   ......
+-----------------------------------------------------
+
+```
+就是需要codex[] 越界访问 owner
+`(2**256 - 1) + 1 = 0`
 
 <!-- Content_END -->

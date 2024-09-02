@@ -37,13 +37,12 @@ timezone: Asia/Singapore
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/selfie.md)
 
 ### 2024.09.01
-#### Damn Vulnerable DeFi - Compromised:
-
-
 #### Damn Vulnerable DeFi - Puppet:
-
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/puppet.md)
 
 ### 2024.09.02
+#### Damn Vulnerable DeFi - Compromised:
+
 
 ### 2024.09.03
 

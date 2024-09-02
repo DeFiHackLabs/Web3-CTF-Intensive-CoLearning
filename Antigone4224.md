@@ -32,6 +32,9 @@ timezone: Asia/Shanghai
 damnvulnerable defi：完成了naviereceiver和Truster
 
 
+### 2024.08.31
+
+damnvulnerable defi：完成了the rewarder，side entrance。
 
 
 

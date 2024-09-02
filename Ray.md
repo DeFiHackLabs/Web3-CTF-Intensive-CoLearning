@@ -74,5 +74,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 [Day3](Writeup/Ray/Day3.md)
 
 
+### 2024.09.01
+ 完成 etheranut 的 Telephone
+[Day4](Writeup/Ray/Day4.md)
+
+### 2024.09.02
+ 完成 etheranut 的 Token
+[Day4](Writeup/Ray/Day5.md)
 
 <!-- Content_END -->

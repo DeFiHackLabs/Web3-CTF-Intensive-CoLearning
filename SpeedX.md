@@ -161,6 +161,64 @@ msg.sender 为调用 Telephone 合约的 POC 合约地址
 这个任务很简单写个简单的 POC 调用就可以了， [参考POC 代码](Writeup/SpeedX/src/Ethernaut/telephone_poc.sol)
 
 
+昨天 Level 03 理解错了， 以为是连续的正面或者背面， 今天看了别人的原来是连续猜对， 今天修改一下代码。
+
+**Level 05 Token**
+
+这题考的是整数溢出，当出现负数就会溢出，就会出现很大的正数， 所以直接转账大于 20 就可以了。
+
+这个 Token 合约使用的 0.6.0 版本的 solidity， 不会检查溢出，现在最新版本的会报错。 但是不要使用 unchecked 
+
+
+
+[POC 代码](Writeup/SpeedX/src/Ethernaut/token_poc.sol)
+
+
+**Level 06 Delegation**
+
+直接调用 Delegation 合约 交易 data 为 delegate 合约函数 pwn()的签名
+
+```
+address(delegation).call(abi.encodeWithSignature("pwn()"));
+```
+
+A合约中 调用 B.delegatecall() B 合约中 msg.sender 与 A 合约的 msg.sender 相同 
+
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/delegation_poc.s.sol)
+
+
 ### 2024.09.01
+
+**Level 07 Force**
+
+说实话，我尝试了好几个办法直接转账， 合约调用 transfer call 都不行， 实现不知道怎么弄了， 应该是还有其他我不知道的，于是我就求助 google 了，看看别人怎么做的。
+
+原来是用的 selfdestruct,  POC 合约销毁的时候传入 Force合约地址就会把POC 合约的余额转给 Force 合约
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/force_poc.s.sol)
+
+**Level 08 Vault**
+
+这个题，我尝试看是否有办法通过构造函数传入的数据来获取到 password ，但是没有找到。
+我还是 google 去找答案了。
+
+区块链上的变量都存在 slot 中可以，通过 slot 获取到，及时他是 private 的
+
+```
+web3.eth.getStorageAt(instance.address, 1, (err,res) => {
+   contract.unlock(web3.utils.hexToAscii(res))
+   //A very strong secret password :)
+});
+```
+
+### 2024.09.02
+
+**Level 09 King**
+
+[POC 代码](Writeup/SpeedX/src/Ethernaut/king_poc.s.sol)
+
+
+
 
 <!-- Content_END -->

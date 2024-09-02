@@ -17,9 +17,7 @@ contract DexTwoSolution is Script, EthernautHelper {
         // NOTE make sure to change original function into "_createInstance()" for the correct challengeInstance address.
         address challengeInstance = _createInstance(LEVEL_ADDRESS);
 
-        // YOUR SOLUTION HERE
-        DexTwoAttacker dexTwoAttacker = new DexTwoAttacker{value: 400}(challengeInstance);
-        dexTwoAttacker.attack();
+        // Ric Li C's Solution
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);

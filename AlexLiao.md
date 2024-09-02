@@ -80,4 +80,28 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.08.31
 
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Truster](https://www.damnvulnerabledefi.xyz/challenges/truster/)
+
+筆記連結： [DamnVulnerableDeFi: Truster](./Writeup/AlexLiao/DamnVulnerableDeFi/Truster.md)
+
+### 2024.09.01
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Side Entrance](https://www.damnvulnerabledefi.xyz/challenges/side-entrance/)
+
+筆記連結： [DamnVulnerableDeFi: Side Entrance](./Writeup/AlexLiao/DamnVulnerableDeFi/SideEntrance.md)
+
+### 2024.09.02
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [The Rewarder](https://www.damnvulnerabledefi.xyz/challenges/the-rewarder/)
+
+筆記連結： [DamnVulnerableDeFi: The Rewarder](./Writeup/AlexLiao/DamnVulnerableDeFi/TheRewarder.md)
+
+### 2024.09.03
+
 <!-- Content_END -->
