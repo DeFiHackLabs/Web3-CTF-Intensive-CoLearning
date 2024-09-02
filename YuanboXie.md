@@ -36,6 +36,6 @@ timezone: Asia/Shanghai
 ### 2024.09.02
 
 - 1.Ethernaut CTF (31) - Telephone - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
-    - 
+    - 学会了 tx.origin 和 msg.sender 的区别；
 
 <!-- Content_END -->
