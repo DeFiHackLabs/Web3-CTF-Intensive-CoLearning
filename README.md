@@ -51,7 +51,7 @@ https://github.com/secureum/AMAZEX-DSS-PARIS
     - 7.Real World CTF 2024 SafeBridge (1)
 https://github.com/chaitin/Real-World-CTF-6th-Challenges/tree/main/SafeBridge
 
-    - 8.Grey Cat the Flag 2024 Milotruck challs (4)
+    - 8.Grey Cat the Flag 2024 Milotruck challs (6)
 https://github.com/MiloTruck/evm-ctf-challenges
 
 - **C.6選1系列或6選2(如果過去已經做過A系列的同學)**
