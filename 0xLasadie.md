@@ -42,7 +42,7 @@ timezone: Asia/Singapore
 
 ### 2024.09.02
 #### Damn Vulnerable DeFi - Compromised:
-- [POC](.Writeup/0xLasadie/damnvulnerabledefi/compromised.md)
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/compromised.md)
 
 
 ### 2024.09.03
