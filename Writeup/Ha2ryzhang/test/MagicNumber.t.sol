@@ -16,9 +16,7 @@ contract MagicNumberTest is Test {
     function testAttck() public {
         MagicNumFactory factory = new MagicNumFactory();
         ethernaut.registerLevel(factory);
-        address levelAddress = ethernaut.createLevelInstance{
-            value: 0.001 ether
-        }(factory);
+        address levelAddress = ethernaut.createLevelInstance(factory);
 
         bytes memory bytecode = hex"69602a60005260206000f3600052600a6016f3";
 

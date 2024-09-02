@@ -70,4 +70,8 @@ timezone: Asia/Taipei
 - DamnVulnerableDeFi #8 [Puppet](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet)
 - DamnVulnerableDeFi #9 [Puppet V2](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet-v2)
 
+### 2024.09.02
+- DamnVulnerableDeFi #10 [Free Rider](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#free-rider)
+- DamnVulnerableDeFi #11 [Backdoor](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#backdoor)
+
 <!-- Content_END -->

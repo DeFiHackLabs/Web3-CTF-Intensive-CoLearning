@@ -5,7 +5,7 @@ import {Test, console} from "../../lib/forge-std/src/Test.sol";
 import {Vm} from "../../lib/forge-std/src/Vm.sol";
 import {Elevator} from "../../src/Ethernaut/Elevator.sol";
 
-contract KingAttack is Test {
+contract ElevatorAttack is Test {
     function setUp() public {
         vm.createSelectFork(vm.rpcUrl("holesky"));
     }

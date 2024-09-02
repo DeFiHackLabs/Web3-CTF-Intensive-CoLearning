@@ -115,4 +115,15 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
   - Finally, we can return the token to SelfiePool.
   - After `ACTION_DELAY_IN_SECONDS`, we can call `SimpleGovernance.executeAction`.
 
+### 2024.09.02
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Compromised
+
+  - The basic attack vector is that we buy the nft with low price and sell it with high price.
+  - So, we should manipulate oracle. Specifically, we should control two of the three price sources to manipulate [the median price](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/compromised/TrustfulOracle.sol#L59-L61).
+  - The strange response from the server includes the base64 encoded private keys of two price sources.
+  - With the private keys, we can manipulate the nft price oracle.
+
 <!-- Content_END -->

