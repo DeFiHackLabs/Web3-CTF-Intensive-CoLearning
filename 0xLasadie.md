@@ -42,10 +42,12 @@ timezone: Asia/Singapore
 
 ### 2024.09.02
 #### Damn Vulnerable DeFi - Compromised:
+- [POC](.Writeup/0xLasadie/damnvulnerabledefi/compromised.md)
 
-#### Damn Vulnerable DeFi - Puppet V2:
 
 ### 2024.09.03
+#### Damn Vulnerable DeFi - Puppet V2:
+  
 #### Damn Vulnerable DeFi - Free Rider:
 
 #### Damn Vulnerable DeFi - Backdoor:
