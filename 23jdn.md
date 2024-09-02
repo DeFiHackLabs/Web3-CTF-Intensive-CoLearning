@@ -174,5 +174,68 @@ contract CoinFlip {
 
 [CoinFlip-poc](./Writeup/23jdn/test/ethernaut/CoinFlip.t.sol)
 
+### 20240902
+
+#### ethernaut系列-Telephone
+
+题目要求修改owner地址
+
+Telephone:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Telephone {
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function changeOwner(address _owner) public {
+        if (tx.origin != msg.sender) {
+            owner = _owner;
+        }
+    }
+}
+```
+
+分析:gas费用始终为tx.origin支付，msg.sender为合约当前调用者，通过一笔交易中采用中间人调用合约即可完成tx.origin!=msg.sender的判定
+
+[Telephone-poc](./Writeup/23jdn/test/ethernaut/Telephone.t.sol)
+
+
+#### ethernaut系列-Token
+
+题目要求增加代币
+
+Token Code:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.0;
+
+contract Token {
+    mapping(address => uint256) balances;
+    uint256 public totalSupply;
+
+    constructor(uint256 _initialSupply) public {
+        balances[msg.sender] = totalSupply = _initialSupply;
+    }
+
+    function transfer(address _to, uint256 _value) public returns (bool) {
+        require(balances[msg.sender] - _value >= 0);
+        balances[msg.sender] -= _value;
+        balances[_to] += _value;
+        return true;
+    }
+
+    function balanceOf(address _owner) public view returns (uint256 balance) {
+        return balances[_owner];
+    }
+}
+```
+0.6.0版本存在溢出，直接进行转账即可
+
+[Token-poc](./Writeup/23jdn/test/ethernaut/Token.t.sol)
 
 <!-- Content_END -->
