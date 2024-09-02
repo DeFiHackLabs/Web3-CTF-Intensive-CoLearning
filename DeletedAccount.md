@@ -446,4 +446,41 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
 - [Ethernaut19-AlienCodex.sh](/Writeup/DeletedAccount/Ethernaut19-AlienCodex.sh)
 - [Ethernaut19-AlienCodex.s.sol](/Writeup/DeletedAccount/Ethernaut19-AlienCodex.s.sol)
 
+### 2024.09.02
+
+- Day4 共學開始
+
+#### [Ethernaut-20] Denial
+
+- 破關條件: 在 `Denial` 合約仍有足夠以太幣的前提下，使其他人調用 `withdraw()` 失敗
+- 解法:
+  - 先調用 `setWithdrawPartner()` 使自己部署的攻擊合約成為 partner
+  - 在攻擊合約的 `receive()` 或 `fallback()` 函數寫一些會 Out-of-Gas 的邏輯即可
+  - 例如: 無窮迴圈
+- 知識點: Out-of-Gas DoS Attack
+
+解法:
+
+- [Ethernaut20-Denial.sh](/Writeup/DeletedAccount/Ethernaut20-Denial.sh)
+- [Ethernaut20-Denial.s.sol](/Writeup/DeletedAccount/Ethernaut20-Denial.s.sol)
+
+
+#### [Ethernaut-21] Shop
+
+- 破關條件: 把 `price` 拉到 `100` 以下
+- 解法:
+  - 使第一次呼叫 `_buyer.price()` 時，返回 `101` 來通過 if 敘述
+  - 然後再使第二次呼叫 `_buyer.price()` 時，返回 `99` 來達成過關條件
+  - 這邊沒辦法像之前一樣都用 called_count 來紀錄呼叫次數，因為 `price()` 必須是一個 view 函數
+  - 但我們可以利用 `Shop.isSold` 來知道這是第一次呼叫還是第二次呼叫
+- 知識點: Restriction of the view function, contract interface
+
+解法:
+
+- [Ethernaut21-Shop.sh](/Writeup/DeletedAccount/Ethernaut21-Shop.sh)
+- [Ethernaut21-Shop.s.sol](/Writeup/DeletedAccount/Ethernaut21-Shop.s.sol)
+
+
+
+
 <!-- Content_END -->
