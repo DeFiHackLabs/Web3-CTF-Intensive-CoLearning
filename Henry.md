@@ -30,7 +30,7 @@ Henry, 研究方向为网络安全
 [[ethernaut] 1-5 ](./Writeup/Henry/ethernaut.md)
 
 ### 2024.9.2
-TBD
+[[ethernaut] 6-10 ](./Writeup/Henry/ethernaut.md)
 
 ### 2024.9.3
 TBD
