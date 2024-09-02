@@ -23,4 +23,5 @@ timezone: Asia/Shanghai
 ### 2024.09.02
 - Ethernaut CTF中Force以及Vault两个题目，主要是需要了解到合约销毁机制，并且需要了解私有存储的读取方式.
 - [2024.9.2](./Writeup/Sivan/2024.9.2)
+  
 <!-- Content_END -->
