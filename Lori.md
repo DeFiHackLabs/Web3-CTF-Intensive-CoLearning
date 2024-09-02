@@ -97,4 +97,18 @@ function testExploit_Puppet() public {
 ```
 同样的，质押物价值也是通过uniswapv2池子里交易对数量比值作为瞬时价格，突破点也是在这。与上边不同的地在于需要将eth置换成WETH。
 
+### 2024.09.02
+[SafeMiners](https://github.com/Chocolatieee0929/ContractSafetyStudy/blob/main/damn-vulnerable-defi/test/Levels/safe-miners/SafeMiners.t.sol)
+做到这题发现自己fork的repo是V2的，明天再做更新的，有点大意了>v<
+这类问题非常经典。具体来说，当代币转账到一个未部署的地址时，攻击者可以利用 `CREATE2` 指令，通过暴力计算不同的 salt 值来预测合约地址，直至找到目标地址。然后，攻击者可以将攻击合约部署到该地址，并执行代币转账操作。
+```
+Logs:
+  🧨 Let's see if you can break it... 🧨
+  dvt.balanceOf(DEPOSIT_ADDRESS): 2000042.000000000000000000
+  dvt.balanceOf(ATTACKER): 0.000000000000000000
+  dvt.balanceOf(DEPOSIT_ADDRESS): 0.000000000000000000
+  dvt.balanceOf(ATTACKER): 2000042.000000000000000000
+  
+🎉 Congratulations, you can go to the next level! 🎉
+```
 <!-- Content_END -->

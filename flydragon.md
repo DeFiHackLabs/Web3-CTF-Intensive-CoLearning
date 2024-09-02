@@ -20,4 +20,7 @@ Complete Ethernaut CTF level 0
 ### 2024.08.31
 Complete Ethernaut CTF level 1
 
+### 2024.09.02
+Learn how to play Ethernaut with Foundry
+
 <!-- Content_END -->
