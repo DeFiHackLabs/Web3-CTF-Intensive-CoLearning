@@ -22,9 +22,12 @@ timezone: Asia/Shanghai
 ### 2024.08.30
 
 - 1.Ethernaut CTF (31) - Fallout - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
-    - 这关想教我们的如果关键函数有拼写错误会导致严重后果，要注意仔细检查代码中的 typos。
+    - 这关想教我们的如果关键函数有拼写错误会导致严重后果，要注意仔细检查代码中的 typos；
 
 ### 2024.08.31
+
+- 1.Ethernaut CTF (31) - Colin Flip - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 了解了不安全的随机数实现导致的安全问题（可预测），并学会了编写攻击合约；
 
 
 <!-- Content_END -->

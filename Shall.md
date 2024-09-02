@@ -29,4 +29,9 @@ QuillCTF-03-ConfidentialHash-Slot Peak
 - [PoC](./Writeup/Shall/confidential-hash/confidentailhash.t.sol)
 - [Writeup](./Writeup/Shall/confidential-hash/writeup.md)
 
+### 2024.09.01
+QuillCTF-04-SafeNFT-onERC721Received Reentrancy
+- [PoC](./Writeup/Shall/safeNFT/safeNFT.t.sol)
+- [Writeup](./Writeup/Shall/safeNFT/writeup.md)
+
 <!-- Content_END -->

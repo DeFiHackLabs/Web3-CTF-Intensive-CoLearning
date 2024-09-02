@@ -190,4 +190,16 @@ A合约中 调用 B.delegatecall() B 合约中 msg.sender 与 A 合约的 msg.se
 
 ### 2024.09.01
 
+**Level 07 Force**
+
+说实话，我尝试了好几个办法直接转账， 合约调用 transfer call 都不行， 实现不知道怎么弄了， 应该是还有其他我不知道的，于是我就求助 google 了，看看别人怎么做的。
+
+原来是用的 selfdestruct,  POC 合约销毁的时候传入 Force合约地址就会把POC 合约的余额转给 Force 合约
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/force_poc.s.sol)
+
+**Level 08 Vault**
+
+
+
 <!-- Content_END -->
