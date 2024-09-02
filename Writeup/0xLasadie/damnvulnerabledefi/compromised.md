@@ -6,6 +6,7 @@
     - TrustfulOracleInitializer.sol
 - Tools
     - [Foundry](https://github.com/foundry-rs/foundry)
+    - [ETH Address Tool](https://www.rfctools.com/ethereum-address-test-tool/)
 
 # Findings
 
