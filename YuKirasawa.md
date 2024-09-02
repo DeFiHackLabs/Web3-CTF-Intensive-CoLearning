@@ -81,4 +81,10 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 Ethernaut 的 Fallout 题目。
 
+### 2024.09.02
+
+完成了 Foundry 环境搭建。
+
+完成了 Ethernaut 的 CoinFlip、Telephone 题目。
+
 <!-- Content_END -->
