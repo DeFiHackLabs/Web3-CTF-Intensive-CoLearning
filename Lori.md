@@ -97,7 +97,7 @@ function testExploit_Puppet() public {
 ```
 同样的，质押物价值也是通过uniswapv2池子里交易对数量比值作为瞬时价格，突破点也是在这。与上边不同的地在于需要将eth置换成WETH。
 
-### 2024.09.02
+### 2024.09.01
 Take a break over the weekend~ 
 
 ### 2024.09.02
