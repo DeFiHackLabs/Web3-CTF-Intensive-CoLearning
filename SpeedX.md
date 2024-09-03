@@ -226,7 +226,13 @@ web3.eth.getStorageAt(instance.address, 1, (err,res) => {
 
 [POC 代码](Writeup/SpeedX/script/Ethernaut/king_poc.s.sol)
 
+**Level 10 Re-entrancy**
+
+重入漏洞，这个之前了解过，需要在转账之前，重新计算余额，否则递归调用会把余额全部花光， 因为余额并没有减少。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/reentrancy_poc.s.sol)
 
 
+### 2024.09.04
 
 <!-- Content_END -->
