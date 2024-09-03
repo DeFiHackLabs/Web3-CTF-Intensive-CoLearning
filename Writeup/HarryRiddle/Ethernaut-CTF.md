@@ -194,4 +194,19 @@ This code is implied that the contract sender does not have any code. Therefore,
 
 **Alien Codex**
 
-- Description:
+- Description: The entire storage area is `2^256` and the array will expand to entire storage by the arithmetic underflow of array length. Using `retract` to expand the array to occupy entire storage and change the value of `slot0` by `revise` function to modify the `owner` value stored in `slot0`.
+
+```javascript
+    contract AlienCodex is Ownable {
+        bool public contact;
+@>      bytes32[] public codex;
+        ...
+        function retract() public contacted {
+            codex.length--;
+        }
+
+        function revise(uint256 i, bytes32 _content) public contacted {
+            codex[i] = _content;
+        }
+    }
+```

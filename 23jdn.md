@@ -174,5 +174,166 @@ contract CoinFlip {
 
 [CoinFlip-poc](./Writeup/23jdn/test/ethernaut/CoinFlip.t.sol)
 
+### 20240902
+
+#### ethernaut系列-Telephone
+
+题目要求修改owner地址
+
+Telephone:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Telephone {
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function changeOwner(address _owner) public {
+        if (tx.origin != msg.sender) {
+            owner = _owner;
+        }
+    }
+}
+```
+
+分析:gas费用始终为tx.origin支付，msg.sender为合约当前调用者，通过一笔交易中采用中间人调用合约即可完成tx.origin!=msg.sender的判定
+
+[Telephone-poc](./Writeup/23jdn/test/ethernaut/Telephone.t.sol)
+
+
+#### ethernaut系列-Token
+
+题目要求增加代币
+
+Token Code:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.0;
+
+contract Token {
+    mapping(address => uint256) balances;
+    uint256 public totalSupply;
+
+    constructor(uint256 _initialSupply) public {
+        balances[msg.sender] = totalSupply = _initialSupply;
+    }
+
+    function transfer(address _to, uint256 _value) public returns (bool) {
+        require(balances[msg.sender] - _value >= 0);
+        balances[msg.sender] -= _value;
+        balances[_to] += _value;
+        return true;
+    }
+
+    function balanceOf(address _owner) public view returns (uint256 balance) {
+        return balances[_owner];
+    }
+}
+```
+0.6.0版本存在溢出，直接进行转账即可
+
+[Token-poc](./Writeup/23jdn/test/ethernaut/Token.t.sol)
+
+### 20240903
+
+#### ethernaut系列-Delegation
+
+题目要求修改owner
+
+Delegation code:
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Delegate {
+    address public owner;
+
+    constructor(address _owner) {
+        owner = _owner;
+    }
+
+    function pwn() public {
+        owner = msg.sender;
+    }
+}
+
+contract Delegation {
+    address public owner;
+    Delegate delegate;
+
+    constructor(address _delegateAddress) {
+        delegate = Delegate(_delegateAddress);
+        owner = msg.sender;
+    }
+
+    fallback() external {
+        (bool result,) = address(delegate).delegatecall(msg.data);
+        if (result) {
+            this;
+        }
+    }
+}
+```
+
+分析:delegatecall调用与传统的call调用的区别在于调用的语境不同，delegatecall允许一个合约在调用另一个合约时，将调用者的上下文（包括存储和 msg.sender）传递给被调用的合约，这样会导致存储变量的覆盖从而导致调用pwn()产生owner的更改。
+
+[Delegation-poc](./Writeup/23jdn/test/ethernaut/Delegation.t.sol)
+
+#### ethernaut系列-Force
+
+题目要求合约的余额大于0
+
+Force code:
+```// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Force { /*
+                   MEOW ?
+         /\_/\   /
+    ____/ o o \
+    /~____  =ø= /
+    (______)__m_m)
+                   */ }
+
+```
+
+分析:合约虽然没有fallback、revice方法处理接受eth的功能，但是如果一个合约销毁时发送的eth无条件接受。
+
+[Force-poc](./Writeup/23jdn/test/ethernaut/Force.t.sol)
+
+#### ehternaut系列-Vault
+
+题目要求打开 vault
+
+Vault code:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Vault {
+    bool public locked;
+    bytes32 private password;
+
+    constructor(bytes32 _password) {
+        locked = true;
+        password = _password;
+    }
+
+    function unlock(bytes32 _password) public {
+        if (password == _password) {
+            locked = false;
+        }
+    }
+}
+```
+分析:private变量可以通过直接访问存储槽来实现，在 Solidity 中，私有状态变量只是对合约外部的不可见性，但依然存储在区块链上.
+
+参考链接:
+[https://learnblockchain.cn/article/3398](!https://learnblockchain.cn/article/3398)
 
 <!-- Content_END -->
