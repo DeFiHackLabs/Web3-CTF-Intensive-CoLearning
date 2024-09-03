@@ -56,4 +56,15 @@ timezone: Asia/Taipei
 - [POC](./Writeup/Tanner/test/QuillCTF/CollatzPuzzle.t.sol) 
 
 
+### 2024.09.03
+
+學習內容: 
+
+- 進行 Pelusa，卡在 `require(isGoal(), "missed");`
+
+#### [QuillAudit CTF - Pelusa](./Writeup/Tanner/src/QuillCTF/Pelusa.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/Pelusa.t.sol) 
+
+
 <!-- Content_END -->
