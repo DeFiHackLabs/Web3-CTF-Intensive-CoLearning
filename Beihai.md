@@ -73,4 +73,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 - Ethernaut Level 2
 - Ethernaut Level 3
 
+### 2024.09.02
+- Ethernaut Level 4
+- Ethernaut Level 5
+
+### 2024.09.03
+- Ethernaut Level 6
+- Ethernaut Level 7
+
 <!-- Content_END -->
