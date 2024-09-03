@@ -114,4 +114,37 @@ Logs:
   
 🎉 Congratulations, you can go to the next level! 🎉
 ```
+### 2024.09.03
+[puppetV3](https://github.com/Chocolatieee0929/damn-vulnerable-defi/blob/master/test/puppet-v3/PuppetV3)
+
+In the **PuppetV3Pool** contract, the **borrow** function relies on Uniswap V3's TWAP Oracle, which uses a 10-minute interval for price averaging. While this TWAP Oracle is generally secure on the mainnet, it may be more vulnerable to manipulation when the pool has low liquidity and fewer transactions. In such scenarios, the TWAP Oracle's price is based on the first swap transaction in each block, making it easier for attackers to influence the oracle price by executing trades that affect this transaction.
+
+To get the flag for this challenge, I swapped 110e18 tokens for 99e18 WETH to manipulate the price. Meanwhile, I waited for a certain period, as longer wait times are better (refer to the TWAP calculation formula). Finally, I performed the borrowing in the next block.
+The required WETH in the lending pool dropped sharply from 3000000000000000000000000 to 143239918968367545.
+
+ps: At first, I tried to manipulate the tick by adding liquidity, but later I realized I was completely mistaken, how can adding liquidity move the tick, haha >v< I'm reviewing Uni V3 while working on the challenge.
+
+```
+[PASS] test_puppetV3() (gas: 826104)
+Logs:
+  ============= Before Attacker =============
+  Player balance 1000000000000000000
+  Player token balance 110000000000000000000
+  Lending pool token balance 1000000000000000000000000
+  Lending pool WETH balance 0
+  Lending pool WETH required 3000000000000000000000000
+   
+  ============= Price Manipulation =============
+  Swap Token: 110.000000000000000000
+  Receive WETH: 99.999999999999999999
+  time out 114s
+  Lending pool WETH required 143239918968367545
+   
+  ============= After Attacker =============
+  Player balance 856760081031632455
+  Player token balance 9397757867327790806
+  Lending pool token balance 0
+  Lending pool WETH balance 143239918968367545
+  Lending pool WETH required 0
+```
 <!-- Content_END -->
