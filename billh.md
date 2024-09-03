@@ -31,4 +31,8 @@ Solved Latent.
 
 Solved USurper.
 
+### 2024.09.03
+
+Solved ZSafe.
+
 <!-- Content_END -->
