@@ -142,4 +142,17 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/delegation_hack
 
 ### 2024.09.02
 
+#### 7. Force
+
+考察selfdestruct知识，编写一个合约，自毁时强制把一些eth转给目标合约地址即可
+
+编写攻击脚本[force_hack.s.sol](Writeup/awmpy/script/ethernaut/force_hack.s.sol)，其中转账地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+```
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/force_hack.s.sol:ForceHackScript -vvvv --broadcast
+```
+
+### 2024.09.03
+
 <!-- Content_END -->

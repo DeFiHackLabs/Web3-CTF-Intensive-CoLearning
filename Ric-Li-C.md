@@ -91,4 +91,12 @@ A.3 選 1 系列
 
         Completed 02-Fallout
 
+### 2024.09.03
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 04-Telephone
+
 <!-- Content_END -->

@@ -104,4 +104,18 @@ Link: https://www.damnvulnerabledefi.xyz/challenges/truster/
 
 Writeup: it is the arbitrary call vulnerability, attacker can forge a malicious calldata for the flash loan provider to approve allowance to the attacker, and after the flash loan is repaid, the attacker can withdraw the asset through `transferFrom`.
 
+### 2024.09.02
+
+(1) BlazCTF Maze challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/maze
+
+Writeup: The contract is written in pure Yul and utilizes Verbatim to generate bytecode for opcodes not defined by the Yul compiler. Our goal is to escape the Maze, but each attempt to move downward results in moving upward due to a bug in Verbatim mode, which restricts downward movement to twice only (see the restriction in not(iszero(sload(0xe)))). Consequently, we must find a path that requires moving downward fewer than two times.
+
+(2) DamnVulnerableDeFi V4 Free Rider Challenge
+
+Link: https://www.damnvulnerabledefi.xyz/challenges/free-rider/
+
+Writeup: The `buyMany` function calls the internal `_buyOne` function to check that the input ether is sufficient by examining `msg.value`. However, `msg.value` is used consistently throughout the transaction, allowing an attacker to submit less ether and acquire all the NFTs. Although the attacker might initially lack sufficient funds, they can borrow through Uniswap and repay later.
+
 <!-- Content_END -->

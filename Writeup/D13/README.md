@@ -10,7 +10,8 @@
 7. [06 Delegation](./script/06_Delegation.s.sol)
 8. [07 Force](./script/07_Force.s.sol)
 9. [08 Vault](./script/08_Vault.s.sol)
-10. [09 King](./script/09_King.s.sol)
+0. [09 King](./script/09_King.s.sol)
+1. [10 Re-entrancy](./script/10_Re-retrancy.s.sol)
 ### Writeup
 1. [00 Hello Ethernaut](./writeup/00_HelloEthernaut.md)
 2. [01 Fallback](./writeup/01_Fallback.md)
@@ -21,4 +22,5 @@
 7. [06 Delegation](./writeup/06_Delegation.md)
 8. [07 Force](./writeup/07_Force.md)
 9. [08 Vault](./writeup/08_Vault.md)
-10. [09 King](./writeup/09_King.md)
+0. [09 King](./writeup/09_King.md)
+1. [10 Re-entrancy](./writeup/10_Re-entrancy.md)
