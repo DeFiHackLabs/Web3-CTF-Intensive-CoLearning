@@ -2,7 +2,6 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
 import  "Ethernaut/king_poc.sol";
-import "forge-std/console.sol";
 
 contract KingTest is Test {
     King king;
@@ -14,17 +13,11 @@ contract KingTest is Test {
     }
 
     function testExploit() public {
-
         assertEq(king._king(), address(this));
         assertEq(king.prize(), 0);
         
-        kingPOC.exploit{value: 1 ether}();
-        
-        assertEq(king.prize(), 1 ether);
-        assertEq(king._king(), address(kingPOC));
-    }
-
-    receive() external payable {
-        console.log("test contract receive eth");
+        // kingPOC.exploit{value: 1 ether}();
+        // // assertEq(king.prize(), 1 ether);
+        // assertEq(king._king(), address(this));
     }
 }

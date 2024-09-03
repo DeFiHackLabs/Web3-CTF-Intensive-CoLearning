@@ -104,12 +104,4 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.03
 
-挑戰題目：
-
--   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Selfie](https://www.damnvulnerabledefi.xyz/challenges/selfie/)
-
-筆記連結： [DamnVulnerableDeFi: Selfie](./Writeup/AlexLiao/DamnVulnerableDeFi/Selfie.md)
-
-### 2024.09.04
-
 <!-- Content_END -->

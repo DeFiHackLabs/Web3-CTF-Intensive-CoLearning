@@ -34,8 +34,4 @@ writeup:[fallout](./Writeup/geyu/writeup/02_fallout.md)
 完成了 ethernaut 第 4 个练习 CoinFlip
 
 writeup:[CoinFlip](./Writeup/geyu/writeup/03_CoinFlip.md)
-### 2024.09.03
-完成了 ethernaut 第 5 个练习 Telephone
-
-writeup:[Telephone](./Writeup/geyu/writeup/04_Telephone.md)
 <!-- Content_END -->

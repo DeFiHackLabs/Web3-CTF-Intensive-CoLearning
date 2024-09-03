@@ -48,12 +48,5 @@ timezone: Asia/Shanghai
 - [level4](https://ethernaut.openzeppelin.com/level/0x478f3476358Eb166Cb7adE4666d04fbdDB56C407)
     - [POC](./Writeup/Slark/test/ethernaut//level4.t.sol)
     - 这个关卡重点在于 uint 的计算溢出，实际上 0.8.0 solidity 应该不会有这个问题了。
-
-### 2024.09.03
-
-今天打卡 A 系列 `ethernaut`，1 个关卡
-
-- [level6](https://ethernaut.openzeppelin.com/level/0x73379d8B82Fda494ee59555f333DF7D44483fD58)
-    - [POC](./Writeup/Slark/test/ethernaut//level6.t.sol)
-    - 这个关卡重点在于考察对 delegatecall 的掌握，实际上是传递了调用者 msg.sender 但修改的是 Delegation 中的数据，因此出现了问题。
+    
 <!-- Content_END -->

@@ -28,14 +28,9 @@ timezone: Asia/Taipei
 ### 2024.08.31
 
 
-學習內容:
+學習內容:
 - Ethernaut CTF - CoinFilp
 - POC: https://lalaterry.github.io/posts/Ethernaut-CoinFilp/
 
-### 2024.09.03
-
-學習內容:
-- Ethernaut CTF - Telephone
-- POC: https://lalaterry.github.io/posts/Ethernaut-Telephone/
 
 <!-- Content_END -->

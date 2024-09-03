@@ -32,12 +32,5 @@ timezone: Asia/Shanghai
 1.完成Damn Vulnerable DeFi V4的第三关Truster。
 - [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Truster/Truster.md)
 - [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Truster/Truster.t.sol)
-
-### 2024.09.03
-学习内容
-#### [[Damn Vulnerable DeFi V4] 4 | SideEntrance ]
-1.完成Damn Vulnerable DeFi V4的第三关Truster。
-- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/SideEntrance/SideEntrance.md)
-- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/SideEntrance/SideEntrance.t.sol)
-
+  
 <!-- Content_END -->

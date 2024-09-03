@@ -216,47 +216,8 @@ forge script ./script/Level01.s.sol -vvvv --private-key $PRI_KEY --rpc-url https
    1. 0x_ _ _ _ 00 00 _ _，第三位和第四位为0
    2. 第5位到第8位必定不为零
    3. 最低两位和tx.origin的最低两位相同
+
 4. 具体的PoC见[Level 13-PoC](./script/Level13.s.sol)
-
-## Level 14 - GateKeeperTwo
-
-### Target
-
-1. 学习solidity关于extcodesize的绕过
-
-### PoC
-
-1. tx.origin和msg.sender的绕过代理合约来实现
-2. extcodesize是检查代码长度，对于合约地址这个函数的返回值大于0。但是在Solidity的合约创建时，extcodesize的值也为0，因此可以在构造函数中完成攻击。
-3. 第三个绕过点就是异或的等价运算。
-4. 具体的PoC见[Level 14-PoC](./script/Level14.s.sol)
-
-## Level 15 - Naught Coin
-
-### Target
-
-1. 学习[ERC20代币协议](https://www.wtf.academy/docs/solidity-103/ERC20/)
-
-### PoC
-
-1. 时间锁只限制了player的直接转账操作
-2. ERC20代币协议支持授权，因此我们将代币授权给其他合约
-3. 其他合约将代币使用transferFrom方法转移即可
-4. 具体的PoC见[Level 15-PoC](./script/Level15.s.sol)
-
-## Level 16 - Preservation
-
-### Target
-
-1. 内存模型与DelegateCall
-
-### PoC
-
-1. 这题我们还是要理解DelegateCall的机制，DelegateCall的委托调用粗浅地理解就是只改变了code region，但是对于context仍然属于原有的合约。
-2. 对于Storage，Delegate实际上是构建了对应的映射机制，类似指针。这里可以参照[这篇博客](https://medium.com/coinmonks/ethernaut-lvl-16-preservation-walkthrough-how-to-inject-malicious-contracts-with-delegatecall-81e071f98a12)
-3. 通过1、2的分析，我们可以找到setTime的漏洞点，即修改的事实上是第0个slot的内容，而不是变量名误导我们认为的storedTime. 
-4. 在3的基础上，我们就可以修改timeZone1Library的能力，将其修改为我们的恶意合约，在恶意合约中修改slot3的内容就成功修改了Owner。
-5. 具体的PoC见[Level 16-PoC](./script/Level16.s.sol)
 
 
 

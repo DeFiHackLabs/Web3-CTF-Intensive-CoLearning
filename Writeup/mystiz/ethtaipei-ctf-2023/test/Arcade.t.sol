@@ -81,9 +81,6 @@ contract ArcadeTest is Test {
         vm.startPrank(you);
 
         // Exploit should be implemented here...
-        arcade.earn();
-        arcade.redeem();
-        arcade.changePlayer(player4);
 
         arcadeBase.solve();
         assertTrue(arcadeBase.isSolved());

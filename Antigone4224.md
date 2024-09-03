@@ -40,10 +40,6 @@ damnvulnerable defi：完成了the rewarder，side entrance。
 
 damnvulnerable defi：完成了Selfie，Compromised。
 
-### 2024.09.02
-
-damnvulnerable defi：完成了puppet v1-v2.
-
 
 
 

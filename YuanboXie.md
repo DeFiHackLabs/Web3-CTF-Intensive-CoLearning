@@ -29,5 +29,18 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Colin Flip - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 了解了不安全的随机数实现导致的安全问题（可预测），并学会了编写攻击合约；
 
+### 2024.09.01
+
+- 周天放假；
+
+### 2024.09.02
+
+- 1.Ethernaut CTF (31) - Telephone - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学会了 tx.origin 和 msg.sender 的区别；
+
+### 2024.09.03
+
+- 1.Ethernaut CTF (31) - Token - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 
 
 <!-- Content_END -->

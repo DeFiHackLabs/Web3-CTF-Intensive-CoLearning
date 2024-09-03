@@ -189,31 +189,4 @@ contract C {
 就是需要codex[] 越界访问 owner
 `(2**256 - 1) + 1 = 0`
 
-
-### 2024.09.03
-
-#### A-Ethernaut-Denial
-这题直接死循环消耗完gas即可
-
-#### A-Ethernaut-Shop
-
-攻击合约定义一个price方法 通过`isSold`判断价格,返回不同的价格
-
-#### A-Ethernaut-Dex
-
-这题是第一个碰到的defi相关的题目.题目需要把dex的余额变为0.
-
-问题出现在`getSwapPrice`方法,这个算法有问题,如果多swap几次,余额只会慢慢变多.
-
-#### A-Ethernaut-DexTwo
-
-这一题对比上一题缺少了`require((from == token1 && to == token2) || (from == token2 && to == token1), "Invalid tokens");`
-可以利用其他代币来换出token.
-
-
-
-
-
-
-
 <!-- Content_END -->

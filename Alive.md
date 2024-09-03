@@ -121,14 +121,4 @@ solidity0.8.0之前是没有溢出检查的，需要用safemath来保证数据�
 
 getSwapPrice的计算是离散且有利于swap的人的，每次swap都会导致dex合约一些损失，多次来回倒后便可将其中一个池子掏空。不过要注意一下来回倒的过程中，合约剩余token、玩家手上token之间的数学关系。例如当玩家准备倒到另一种token时，合约剩余的那种token已经不足以支付结算出要支付的token数量时，就要调整swap的数量到刚好可以换完合约剩余token的数量即可。
 
-### 2024.09.03
-
-#### 第23题DexTwo
-
-swap里并没有验证调用者要swap的代币是否是池子中的两个代币中的一个，而是只要满足ierc20即可。那么我们就可以通过构造虚假的erc20合约，用假的币换到池子里的真币。
-
-#### 第22题PuzzleWallet
-
-又是一次结合proxy对delegatecall的深入考察，这足以说delegatecall是安全漏洞的高发区。
-
 <!-- Content_END -->

@@ -38,10 +38,6 @@ Plan:
 2. Add Chainlight `Dropper` Solution to my write up https://hackmd.io/@0xgalois/HJJkjK-n0
 3. trying to solve next puzzle of paradigm ctf 2023
 
-### 2024.09.03
-
-1. Solved Cosmic Radiation, found out it was all about SQL so no writeup
-2. Trying to solve next puzzle of paradigm ctf 2023
 
 <!-- Content_END -->
 

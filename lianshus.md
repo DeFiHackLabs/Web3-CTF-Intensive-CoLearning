@@ -118,18 +118,6 @@ delegatecall : 进度非常慢，非常疑惑的一天
 
 [POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
 
-### 2024.09.03
-
-学习內容:
-
-做了A系列1题
-
-1. 昨天关于delegation疑问得到解答，原来只是对delegatecall的应用问题，纯属想太多，就是改delegation的owner
-2. 今天成功把wsl环境改好了，把token,force,delegation的poc写好了
-3. 关于 vault ，还是很神奇，深入体会到链上数据透明的性质，private的变量也能获取到
-
-[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
-
 ### 2024.07.12
 
 <!-- Content_END -->
