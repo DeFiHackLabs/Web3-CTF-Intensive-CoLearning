@@ -12,6 +12,9 @@ timezone: Europe/Helsinki
 
 <!-- Content_START -->
 
+### 2024.09.02
+4. 	Side Entrance
+
 ### 2024.08.31
 
 2. damn-vulnerable-defi Naive receiver - run test

@@ -35,4 +35,7 @@ Solved 5 - The Rewarder.
 ### 2024.09.01
 Solved 6 - Selfie.
 
+### 2024.09.02
+Solved 7 - Compromised.
+WIP 8 - Puppet.
 <!-- Content_END -->

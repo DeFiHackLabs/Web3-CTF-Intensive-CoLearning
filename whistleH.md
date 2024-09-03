@@ -64,4 +64,16 @@ timezone: Asia/Shanghai
 1. Solidity内存模型、接口
 2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
 
+### 2024.09.02
+
+当前挑战：ethernaut
+
+今日完成：Level13
+
+学习内容
+
+1. Solidity的gas机制以及类型截断
+2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+3. 今日太忙，遂只做一题，明日必当奋起直追
+
 <!-- Content_END -->

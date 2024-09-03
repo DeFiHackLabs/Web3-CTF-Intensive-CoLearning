@@ -106,3 +106,26 @@ Some thoughts: The governance contract uses `unchecked` to calculate the `timeDe
 After some searching, we use foundry's cheatcode to set the block timestamp.
 There is `warp` to set the timestamp and `skip` to skip the time.
 
+## Compromised (24/09/02)
+In this challenge, we should hack an exchange for NFT.
+The exchange only provides functions to buy and sell NFTs, and the price is determined by the oracles, basing on the prices provided by three EOA sources.
+
+So, if we want to manipulate the price, we need the access to the source EOA, and we can buy NFTs at a lower price and sell them at a higher price afterwards.
+The challenge provides two sets of hex characters. Unhexing and then base64 decoding them, we get the private keys of the two sources.
+The following is straightforward then.
+
+## Puppet (WIP)
+In this challenge, there is a lending pool to hack.
+The pool lends tokens, requiring the borrower to deposit twice the amount of ETH. (Actually there is no functions implemented to return tokens and withdraw ETH.)
+The price is determined by a uniswap's balance.
+We need to drain the pool's tokens.
+
+The uniswap starts with 10 ETH and 10 DVT, and the player has 25 ETH and 1000 DVT.
+So, we have far more assets than the uniswap, and we can manipulate the price by buying and selling tokens.
+By transferring our initial tokens to uniswap, we can drastically decrease the price of DVT from 2:1 to 2:101.
+But that is still not enough for our ETH balance to drain the pool.
+We need to further decrease the price.
+
+WIP: perhaps need more interaction with uniswap. need more knowledge about that.
+
+
