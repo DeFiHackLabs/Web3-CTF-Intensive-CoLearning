@@ -48,6 +48,10 @@ Today:
 
 ### 2024.09.02
 
-1. Solve onlyPwner Diversion
+1. Solved onlyPwner Diversion
+
+### 2024.09.03
+
+1. Solved onlyPwner SEAL911
 
 <!-- Content_END -->
