@@ -50,10 +50,10 @@ timezone: Asia/Singapore
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/puppet-v2.md)
 
 #### Damn Vulnerable DeFi - Free Rider:
-
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/free-rider.md)
+  
 #### Damn Vulnerable DeFi - Backdoor:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/backdoor.md)
-
 
 ### 2024.09.04
 
