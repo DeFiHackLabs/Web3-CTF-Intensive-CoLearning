@@ -56,4 +56,13 @@ timezone: Asia/Taipei
 解題:
   [Lev2-Fal1out](./Writeup/Clad/script/Lev3Sol.s.sol)
 
+### 2024.09.03
+學習內容:  
+目標: 取得合約的所有權
+筆記:   
+  - tx.orgin 代表最初發起這個交易的 EOA 的地址, 
+此合約的問題和風險
+  1. tx.orgin 進行權限檢查有安全風險, tx.origin 是原始用戶的地址, 攻擊者可能透過 tx.origin 調用目標合約的函數
+解題:
+  [Lev4-Phone](./Writeup/Clad/script/Lev4Sol.s.sol)
 <!-- Content_END -->
