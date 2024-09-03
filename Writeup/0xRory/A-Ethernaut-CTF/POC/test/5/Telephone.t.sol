@@ -20,6 +20,7 @@ contract TelephoneTest is Test {
   }
 
   function test_Telephone() public {
+    vm.startPrank(user);
     // This is a simple contract where you need to call the changeOwner function to change the owner of the contract to the address of your choosing.
     _attack.attack();
 
