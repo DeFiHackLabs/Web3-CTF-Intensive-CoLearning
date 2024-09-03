@@ -35,7 +35,9 @@ timezone: Asia/Shanghai
 
 有一点忙，今天只简单看了A系列一题，后续题目等和 erthernaut交互后继续
 
-[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
+[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Fallback.md
+
+
 
 
 
@@ -87,7 +89,7 @@ timezone: Asia/Shanghai
           }
       ```
 
-[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
+[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC
 
 ### 2024.09.01
 
