@@ -52,6 +52,8 @@ timezone: Asia/Singapore
 #### Damn Vulnerable DeFi - Free Rider:
 
 #### Damn Vulnerable DeFi - Backdoor:
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/backdoor.md)
+
 
 ### 2024.09.04
 
