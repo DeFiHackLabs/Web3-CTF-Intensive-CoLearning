@@ -36,6 +36,10 @@ damnvulnerable defi：完成了naviereceiver和Truster
 
 damnvulnerable defi：完成了the rewarder，side entrance。
 
+### 2024.09.02
+
+damnvulnerable defi：完成了Selfie，Compromised。
+
 
 
 

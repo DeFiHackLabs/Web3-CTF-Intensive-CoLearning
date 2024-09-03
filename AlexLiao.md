@@ -96,4 +96,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.02
 
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [The Rewarder](https://www.damnvulnerabledefi.xyz/challenges/the-rewarder/)
+
+筆記連結： [DamnVulnerableDeFi: The Rewarder](./Writeup/AlexLiao/DamnVulnerableDeFi/TheRewarder.md)
+
+### 2024.09.03
+
 <!-- Content_END -->

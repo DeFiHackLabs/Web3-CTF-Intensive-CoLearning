@@ -25,4 +25,7 @@ timezone: Asia/Taipei
 ### 2024.08.31
 今天從Ethernaut開始，完成第1~5題...明天繼續
 
+### 2024.09.02
+今天完成Ethernaut6-9題
+
 <!-- Content_END -->

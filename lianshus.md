@@ -104,6 +104,20 @@ Token: 看到版本0.6就感觉是经典的uint256 整数溢出问题，但是�
 
 [POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
 
+### 2024.09.02
+
+学习內容:
+
+做了A系列1题
+
+delegatecall : 进度非常慢，非常疑惑的一天
+
+还是没怎么搞清楚，对于 delegation 来说，当调用不存在的函数时，会触发fallback，从而导致 使用 delegate 实例去 delegate call 函数，delegate call的原理，应该时使用 delegate 的代码修改 delegation 的状态，为什么没有更改回来呢？
+
+以及，修复一个昨天的误区：用户转账超过余额给别人，但下溢后，导致自己的余额反而增加
+
+[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
+
 ### 2024.07.12
 
 <!-- Content_END -->

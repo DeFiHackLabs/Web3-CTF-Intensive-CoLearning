@@ -201,5 +201,23 @@ forge script ./script/Level01.s.sol -vvvv --private-key $PRI_KEY --rpc-url https
 
 2. 具体的PoC见[Level 12-PoC](./script/Level12.s.sol)
 
+## Level 13 - GateKeeperOne
+
+### Target
+
+1. 学习Solidity的类型转换
+2. 学习Solidity的gas
+
+### PoC
+
+1. 绕过tx.origin和msg.sender，设置中间代理合约即可
+2. 绕过gasleft()，这个只能爆破，并且要使用call来调用合约方法，否则会因为revert而终止
+3. 绕过最后的数字类型，三个条件可以得出
+   1. 0x_ _ _ _ 00 00 _ _，第三位和第四位为0
+   2. 第5位到第8位必定不为零
+   3. 最低两位和tx.origin的最低两位相同
+
+4. 具体的PoC见[Level 13-PoC](./script/Level13.s.sol)
+
 
 

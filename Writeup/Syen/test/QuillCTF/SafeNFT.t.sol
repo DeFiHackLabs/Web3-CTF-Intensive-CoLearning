@@ -61,8 +61,6 @@ contract SafeNFTTest is Test {
 
         uint256 safeNFTCount = safeNFT.balanceOf(deployer);
 
-        emit log_uint(safeNFTCount);
-
         assertEq(safeNFTCount, 5);
     }
 }

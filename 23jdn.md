@@ -172,7 +172,70 @@ contract CoinFlip {
 
 分析:该合约通过获取当前区块高度-1(由于当前交易所在区块打包上链进行广播此时是获取不到当前区块的hash的，随意采用获取上一个区块)的区块哈希值与预定义好的FACTOR进行相除来模拟一个硬币的正反面，由于FACTOR是一个很大的值相除只会得到1 or 0的结果(blockvalue是一个uint256的变量),并通过连续猜对次数的记录作为猜对次数判定。由于区块hash算一个伪随机数，所以在同样的环境下运行同样的算法即可得到一样的结果，其关键在于本地运算与目标合约的flip的调用在同一笔交易(也就是同一区块)中实现即可得到同样的hash，在计算好结果后在调用CoinFilp的flip函数代入即可猜对对应结果。
 
-**附:由于foundry还在熟悉中，以上操作均在remix上进行部署调用，后续了解foundry后补上对应poc**
+[CoinFlip-poc](./Writeup/23jdn/test/ethernaut/CoinFlip.t.sol)
 
+### 20240902
+
+#### ethernaut系列-Telephone
+
+题目要求修改owner地址
+
+Telephone:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Telephone {
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function changeOwner(address _owner) public {
+        if (tx.origin != msg.sender) {
+            owner = _owner;
+        }
+    }
+}
+```
+
+分析:gas费用始终为tx.origin支付，msg.sender为合约当前调用者，通过一笔交易中采用中间人调用合约即可完成tx.origin!=msg.sender的判定
+
+[Telephone-poc](./Writeup/23jdn/test/ethernaut/Telephone.t.sol)
+
+
+#### ethernaut系列-Token
+
+题目要求增加代币
+
+Token Code:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.0;
+
+contract Token {
+    mapping(address => uint256) balances;
+    uint256 public totalSupply;
+
+    constructor(uint256 _initialSupply) public {
+        balances[msg.sender] = totalSupply = _initialSupply;
+    }
+
+    function transfer(address _to, uint256 _value) public returns (bool) {
+        require(balances[msg.sender] - _value >= 0);
+        balances[msg.sender] -= _value;
+        balances[_to] += _value;
+        return true;
+    }
+
+    function balanceOf(address _owner) public view returns (uint256 balance) {
+        return balances[_owner];
+    }
+}
+```
+0.6.0版本存在溢出，直接进行转账即可
+
+[Token-poc](./Writeup/23jdn/test/ethernaut/Token.t.sol)
 
 <!-- Content_END -->

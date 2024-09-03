@@ -16,19 +16,19 @@ timezone: Pacific/Auckland
 <!-- Content_START -->
 
 ### 2024.08.29
-POC：  
-[[Damn Vulnerable DeFi V4] 1 | Unstoppable](./Writeup/0xE/DamnVulnerableDeFiV4/1_Unstoppable.md)  
+[[Damn Vulnerable DeFi V4] 1 | Unstoppable](./Writeup/0xE/DamnVulnerableDeFiV4/unstoppable.md)  
 
 ### 2024.08.30
-POC：  
-[[Damn Vulnerable DeFi V4] 2 | Naive Receiver](./Writeup/0xE/DamnVulnerableDeFiV4/2_NaiveReceiver.md)  
+[[Damn Vulnerable DeFi V4] 2 | Naive Receiver](./Writeup/0xE/DamnVulnerableDeFiV4/naive-receiver.md)  
 
 ### 2024.08.31
-POC:  
-[[Damn Vulnerable DeFi V4] 3 | Truster](./Writeup/0xE/DamnVulnerableDeFiV4/3_Truster.md)  
+[[Damn Vulnerable DeFi V4] 3 | Truster](./Writeup/0xE/DamnVulnerableDeFiV4/truster.md)  
 
 ### 2024.09.01
-POC:  
-[[Damn Vulnerable DeFi V4] 4 | Side Entrance](./Writeup/0xE/DamnVulnerableDeFiV4/4_SideEntrance.md)  
+[[Damn Vulnerable DeFi V4] 4 | Side Entrance](./Writeup/0xE/DamnVulnerableDeFiV4/side-entrance.md)  
+
+### 2024.09.02
+[[Damn Vulnerable DeFi V4] 5 | The Rewarder](./Writeup/0xE/DamnVulnerableDeFiV4/the-rewarder.md)
+
 
 <!-- Content_END -->
