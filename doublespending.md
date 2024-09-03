@@ -126,4 +126,14 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
   - The strange response from the server includes the base64 encoded private keys of two price sources.
   - With the private keys, we can manipulate the nft price oracle.
 
+### 2024.09.03
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Puppet
+  - We can manipulate [the oracle price](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/puppet/PuppetPool.sol#L59-L62) of PuppetPool to enable almost free borrow.
+  - At first, We can sell the token for ETH to make `uniswapPair.balance * (10 ** 18) / token.balanceOf(uniswapPair)` small
+  - Then, we [borrow](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/puppet/PuppetPool.sol#L30) all the token balance of PuppetPool with very few ETH.
+  - Finally, we can sell ETH for the token to get back tokens which are used to manipulate the oracle price of PuppetPool.
+
 <!-- Content_END -->

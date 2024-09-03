@@ -61,5 +61,21 @@ KeShin, 合约安全新人
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/6-Delegation/)
 
 ### 2024.9.3
+#### [Ethernaut CTF : 7 Force](https://ethernaut.openzeppelin.com/level/7)
+- 一个合约需要有 receive 或者 fallback来接收 ETH, 当这两个都不存在时，可以通过调用带有 payable 的函数来接收 ETH。
+- 当这些都不存在时，可以创建另一个合约，通过 selfdestruct 自毁可以将当前合约的 ETH 强制发送给某一地址，坎昆升级后，自毁只是发送走所有的 ETH ，代码不会被删除
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/7-Force/)
+
+### 2024.9.4
+
+### 2024.9.5
+
+### 2024.9.6
+
+### 2024.9.7
+
+### 2024.9.8
+
+### 2024.9.9
 
 <!-- Content_END -->

@@ -117,4 +117,23 @@ Plan:
 - [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#L185)
 - [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/test/Recovery.t.sol)
 
+### 2024.09.02
+
+#### Ethernaut CTF - [MagicNumber](https://ethernaut.openzeppelin.com/level/0x2132C7bc11De7A90B87375f282d36100a29f97a9)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#L191)
+- [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/test/MagicNumber.t.sol)
+
+#### Ethernaut CTF - [Alien-Codex](https://ethernaut.openzeppelin.com/level/0x0BC04aa6aaC163A6B3667636D798FA053D43BD11)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#195)
+- [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/test/AlienCodex.t.sol)
+
+### 2024.09.03
+
+#### Ethernaut CTF - [Denial](https://ethernaut.openzeppelin.com/level/0x2427aF06f748A6adb651aCaB0cA8FbC7EaF802e6)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#215)
+- [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/test/Denial.t.sol)
+
 <!-- Content_END -->

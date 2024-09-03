@@ -20,69 +20,17 @@ contract CoinFlipSolution is Script, EthernautHelper {
         // NOTE this is the address of your challenge contract
         address challengeInstance = createInstance(LEVEL_ADDRESS);
 
-        // Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
+        // Start of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        // End of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);
         require(levelSuccess, "Challenge not passed yet");
-        vm.stopBroadcast();
-
-        console2.log(successMessage(3));
-    }
-
-    /**
-     * Execute 1 time.
-     * Deployed challengeInstance and coinFlipAttacker contracts on Sepolia, then executed attack() function once.
-     * Ex. forge script ... ... --sig "step1()" --broadcast
-     */
-    function step1() public {
-        vm.startBroadcast(heroPrivateKey);
-        // NOTE this is the address of your challenge contract
-        address challengeInstance = createInstance(LEVEL_ADDRESS);
-        console2.log("challengeInstanceOnChain:", challengeInstance);
-
-        // YOUR SOLUTION HERE
-        CoinFlipAttacker coinFlipAttacker = new CoinFlipAttacker(
-            challengeInstance
-        );
-        console2.log("coinFlipAttackerAddress:", address(coinFlipAttacker));
-
-        console2.log("block.number:", block.number);
-        coinFlipAttacker.attack();
-
-        vm.stopBroadcast();
-
-        console2.log(successMessage(3));
-    }
-
-    /**
-     * Execute 9 times.
-     * Executed attack() function.
-     * Ex. forge script ... ... --sig "step2()" --broadcast
-     */
-    function step2() public {
-        vm.startBroadcast(heroPrivateKey);
-
-        console2.log("block.number:", block.number);
-        CoinFlipAttacker(coinFlipAttackerAddress).attack();
-
-        vm.stopBroadcast();
-
-        console2.log(successMessage(3));
-    }
-
-    /**
-     * Execute 1 time.
-     * Submitted challengeInstance.
-     * Ex. forge script ... ... --sig "step3()" --broadcast
-     */
-    function step3() public {
-        vm.startBroadcast(heroPrivateKey);
-
-        // SUBMIT CHALLENGE. (DON'T EDIT)
-        bool levelSuccess = submitInstance(challengeInstanceOnChain);
-        require(levelSuccess, "Challenge not passed yet");
-
         vm.stopBroadcast();
 
         console2.log(successMessage(3));

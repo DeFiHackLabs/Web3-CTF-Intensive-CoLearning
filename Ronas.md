@@ -49,4 +49,13 @@ timezone: Asia/Taipei
     - 偽隨機數問題
     - 撰寫攻擊合約
 
+### 2024.09.02
+
+- A. Ethernaut CTF - Level 4 
+    - `tx.origin` 及 `msg.sender` 的差異
+        - `tx.origin`: 發起交易的地址，通常為使用者的錢包地址
+        - `msg.sender`: function 的呼叫者，可以為使用者錢包，或是另一個合約
+    - 作法：寫一個合約代替直接發送，便可造成 `tx.origin` 及 `msg.sender` 出現不一致
+    - [PoC](./Writeup/Ronas/Ethernaut%20CTF/level4_telephone.sol)
+
 <!-- Content_END -->

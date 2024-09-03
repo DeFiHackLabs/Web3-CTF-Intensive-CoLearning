@@ -28,4 +28,12 @@ timezone: Asia/Shanghai
 
 熟悉基礎的 foundry 語法，解 1 題
 
+### 2024.09.02
+
+請假
+
+### 2024.09.03
+
+用 foundry 框架，解 Fallback Fallout CoinFlip
+
 <!-- Content_END -->
