@@ -118,4 +118,12 @@ Link: https://www.damnvulnerabledefi.xyz/challenges/free-rider/
 
 Writeup: The `buyMany` function calls the internal `_buyOne` function to check that the input ether is sufficient by examining `msg.value`. However, `msg.value` is used consistently throughout the transaction, allowing an attacker to submit less ether and acquire all the NFTs. Although the attacker might initially lack sufficient funds, they can borrow through Uniswap and repay later.
 
+### 2024.09.03
+
+(1) DamnVulnerableDeFi V4 Unstoppable Challenge
+
+Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/unstoppable
+
+Writeup: Our objective is to pause the vault and invoke the ownership transfer of the vault contract. This can only be achieved by failing to request a flash loan in `UnstoppableVault::flashLoan`. There is a requirement in the flash loan function, that `convertToShares(totalSupply)` should equal to `balanceBefore` value; if not, the transaction will revert. However, `balanceBefore` can be manipulated by directly depositing tokens into the vault contract, making the two values inequivalent.
+
 <!-- Content_END -->
