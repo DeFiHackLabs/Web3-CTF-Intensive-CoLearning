@@ -499,7 +499,7 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
 
 ### 2024.09.03
 
-- Day3 共學開始
+- Day5 共學開始
 
 #### [Ethernaut-23] Dex Two
 
