@@ -67,10 +67,36 @@ Yes 75%
 
 <!-- Content_START -->
 
-### 2024.08.29
-
-笔记内容
-
 ### 2024.08.30
+
+Setup Writeup folder for below CTF:
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+### 2024.09.01
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 01-Fallback
+
+### 2024.09.02
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 02-Fallout
+
+### 2024.09.03
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 04-Telephone
 
 <!-- Content_END -->

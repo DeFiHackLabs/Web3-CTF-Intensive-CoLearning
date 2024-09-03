@@ -62,10 +62,54 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+挑戰題目：
 
-### 2024.07.12
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Unstoppable](https://www.damnvulnerabledefi.xyz/challenges/unstoppable/)
+
+筆記連結： [DamnVulnerableDeFi: Unstoppable](./Writeup/AlexLiao/DamnVulnerableDeFi/Unstoppable.md)
+
+### 2024.08.30
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Naive Receiver](https://www.damnvulnerabledefi.xyz/challenges/naive-receiver/)
+
+筆記連結： [DamnVulnerableDeFi: Naive Receiver](./Writeup/AlexLiao/DamnVulnerableDeFi/NaiveReceiver.md)
+
+### 2024.08.31
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Truster](https://www.damnvulnerabledefi.xyz/challenges/truster/)
+
+筆記連結： [DamnVulnerableDeFi: Truster](./Writeup/AlexLiao/DamnVulnerableDeFi/Truster.md)
+
+### 2024.09.01
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Side Entrance](https://www.damnvulnerabledefi.xyz/challenges/side-entrance/)
+
+筆記連結： [DamnVulnerableDeFi: Side Entrance](./Writeup/AlexLiao/DamnVulnerableDeFi/SideEntrance.md)
+
+### 2024.09.02
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [The Rewarder](https://www.damnvulnerabledefi.xyz/challenges/the-rewarder/)
+
+筆記連結： [DamnVulnerableDeFi: The Rewarder](./Writeup/AlexLiao/DamnVulnerableDeFi/TheRewarder.md)
+
+### 2024.09.03
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Selfie](https://www.damnvulnerabledefi.xyz/challenges/selfie/)
+
+筆記連結： [DamnVulnerableDeFi: Selfie](./Writeup/AlexLiao/DamnVulnerableDeFi/Selfie.md)
+
+### 2024.09.04
 
 <!-- Content_END -->

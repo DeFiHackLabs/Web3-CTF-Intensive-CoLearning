@@ -14,4 +14,14 @@ timezone: Asia/Shanghai
 ### 2024.08.29
 - Ethernaut CTF中fallback以及fallout两个题目，题目比较简单，调用两次函数便可以解决.
 - [2024.8.29](./Writeup/Sivan/2024.8.29)
+### 2024.08.30
+- Ethernaut CTF中CoinFlip以及Telephone两个题目，题目比较简单，需要了解evm调用机制.
+- [2024.8.30](./Writeup/Sivan/2024.8.30)
+### 2024.08.31
+- Ethernaut CTF中Delegation以及Token两个题目，主要是利用delegatecall以及整数溢出的安全问题.
+- [2024.8.31](./Writeup/Sivan/2024.8.31)
+### 2024.09.02
+- Ethernaut CTF中Force以及Vault两个题目，主要是需要了解到合约销毁机制，并且需要了解私有存储的读取方式.
+- [2024.9.2](./Writeup/Sivan/2024.9.2)
+  
 <!-- Content_END -->

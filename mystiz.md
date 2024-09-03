@@ -29,19 +29,17 @@ Can't say yes, but I hope this could get me motivated.
 
 Progress
 
-* Damn Vulnerable DeFi (1/18)
+* Damn Vulnerable DeFi (2/18)
 * EthTaipei CTF 2023 (0/5)
 * MetaTrust CTF 2023 (0/22)
 
-#### Tools and references
-
-##### ERC-3156: Flash Loans
+#### 📚 Reading: EIP for Flash Loans
 
 Reference: https://eips.ethereum.org/EIPS/eip-3156
 
 > A flash loan is a smart contract transaction in which a lender smart contract lends assets to a borrower smart contract with the condition that the assets are returned, plus an optional fee, before the end of the transaction.
 
-##### Foundry debug tricks
+#### 🔨 Foundry debugging
 
 ```solidity
 pragma solidity =0.8.25;
@@ -73,9 +71,9 @@ This is what it looks when `vault.flashLoan(exploit, address(token), 1e18, bytes
 
 ![](Writeup/mystiz/images/20240829-dvd-unstoppable-1.png)
 
-<!-- Content_END -->
+#### 🏁 Damn Vulnerable DeFi: Unstoppable
 
-#### Damn Vulnerable DeFi: Unstoppable
+**Time used: ~1h 55m**
 
 The goal of the challenge is to pause the vault. One way to trigger is to make the `vault.flashLoan` raise an exception -- thus the vault will be stopped when `isSolved` is called.
 
@@ -85,4 +83,132 @@ try vault.flashLoan(this, asset, amount, bytes("")) { /* omitted */ } catch { /*
 // called in test/unstoppable/Unstoppable.t.sol:_isSolved() (line 106)
 ```
 
-To make this happen, we can make `convertToShares(totalSupply) != balanceBefore`. In that's the case, the transaction will be reverted -- and thus raising an exception. We can simply transfer 1 DVT to the vault.
+To make this happen, we can make `convertToShares(totalSupply) != balanceBefore`. In that's the case, the transaction will be reverted -- and thus raising an exception. We can simply transfer 1 DVT to the vault to halt the contract.
+
+#### 🏁 Damn Vulnerable DeFi: Naive Receiver
+
+**Time used: ~5h 35m**
+
+The goal of the challenge is to drain the WETH from the `NaiveReceiverPool` and the `FlashLoanReceiver` contracts (which initially had 1000 WETH and 10 WETH).
+
+Ideas:
+
+1. We can call `pool.flashLoan(receiver, address(weth), 0, bytes(""));` and it will take 1 WETH away from `FlashLoanReceiver` each time.
+1. We can use `BasicForwarder` to make `_msgSender()` to be the `NaiveReceiverPool`. However, it will always append `request.from` (you need its private key). We can bypass by calling `Multicall.multicall` from `BasicForwarder.execute`. In that way, the appended `request.from` will not be used.
+
+### 2024.08.30
+
+Progress
+
+* Damn Vulnerable DeFi (4/18)
+* EthTaipei CTF 2023 (0/5)
+* MetaTrust CTF 2023 (0/22)
+
+#### 🏁 Damn Vulnerable DeFi: Truster
+
+**Time used: ~1h 40m**
+
+The goal of the challenge is to drain the token from `TrusterLenderPool`. Additionally `flashLoan` is protected by the re-entrancy guard.
+
+Function definition for `Address.functionCall`: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v5.1/contracts/utils/Address.sol#L62-L64
+
+Since `token` is a ERC20 token, why not use the `approve` method? This allows our attacking contract to spend money on behalf of the pool, thus we can transfer funds out of the pool afterwards.
+
+#### 📚 Reading: Re-entrancy attack
+
+References:
+
+- https://medium.com/mr-efacani-teatime/%E9%96%92%E8%81%8A%E5%8A%A0%E5%AF%86%E8%B2%A8%E5%B9%A3%E6%9C%80%E6%99%AE%E9%81%8D%E7%9A%84%E6%94%BB%E6%93%8A%E6%89%8B%E6%B3%95-re-entrancy-attack-ea63e90da7a7
+- https://solidity-by-example.org/hacks/re-entrancy/
+- https://github.com/pcaversaccio/reentrancy-attacks?tab=readme-ov-file (⭐ Collection of re-entrancy attacks)
+
+#### 🏁 Damn Vulnerable DeFi: Side Entrance
+
+**Time used: ~45m**
+
+We create an `ExploitContract` to drain the funds from `SideEntranceLenderPool`. To start with, we call `flashLoan` to get 1000 ETH. We then deposit the money to the pool. Since the pool's balance is unchanged, it is considered repayed. The only difference is, we have 1000 ETH deposited to the pool.
+
+After that, we can simply withdraw the amount to the recovery wallet.
+
+### 2024.08.31
+
+Progress
+
+* Damn Vulnerable DeFi (5/18)
+* EthTaipei CTF 2023 (0/5)
+* MetaTrust CTF 2023 (0/22)
+
+#### 🏁 Damn Vulnerable DeFi: The Rewarder
+
+**Time used: ~1h 15m**
+
+Important: We are also rewarded. `0x44E97aF4418b7a17AABD8090bEA0A471a366305C` appeared on line 755 in both files. We are the 188th entry.
+
+To (almost) drain the reward distributor, we can repeatedly send the same claim in the same transaction. This is because `_setClaimed` will be called once.
+
+### 2024.09.01
+
+#### 📚 Reading: ERC20 votes?
+
+Preparation for _Damn Vulnerable DeFi: Selfie_... Maybe?
+
+- https://www.rareskills.io/post/erc20-votes-erc5805-and-erc6372
+- https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes
+
+
+### 2024.09.02
+
+Progress
+
+* Damn Vulnerable DeFi (6/18)
+* EthTaipei CTF 2023 (0/5)
+* MetaTrust CTF 2023 (0/22)
+
+#### 🏁 Damn Vulnerable DeFi: Compromised
+
+**Time used: ~45m**
+
+The two lines in README.md corresponds to the first two private keys of the trusted accounts:
+
+```plaintext
+0x7d15bba26c523683bfc3dc7cdc5d1b8a2744447597cf4da1705cf6c993063744
+0x68bd020ad186b647a691c6a5c0c1529f21ecd09dcc45241402ac60ba377c4159
+```
+
+Therefore, we can control the price by updating the median. Since we have 2 out of 3 trusted accounts compromised, it is easily achievable.
+
+We can follow the procedures to drain the pool:
+
+1. Update the price of the NFT to 0.1 ETH and buy it.
+2. Update the price of the NFT to 999.1 ETH and sell it. We will gain 999 ETH here.
+3. Update the price of the NFT to 999 ETH, pretending that nothing has happened.
+
+### 2024.09.03
+
+Progress
+
+* Damn Vulnerable DeFi (6/18)
+* EthTaipei CTF 2023 (1/5)
+* MetaTrust CTF 2023 (0/22)
+
+#### 🏁 EthTaipei CTF 2023: Arcade 🤯
+
+**Time used: ~35m**
+
+If we call `arcade.changePlayer(address(0x0));`, we can see that the event `Transfer` is called before `PlayerChanged`. Thus we are able to steal other's account by transferring the current player to the victim.
+
+![](Writeup/mystiz/images/20240903-eth-arcade.png)
+
+From _Solidity Underhanded Contest 2022_, [a submission](https://github.com/ethereum/solidity-underhanded-contest/blob/master/2022/submissions_2022/submission9_TynanRichards/SPOILERS.md) mentioned that the parameters had a bizarre evaluation order:
+
+1. the _indexed_ parameters will first be evaluated right-to-left;
+2. the non-indexed parameters will then be evaluated left-to-right.
+
+In our case, `newPlayer` will be evaluated earlier than `oldPlayer` in `event PlayerChanged(address indexed oldPlayer, address indexed newPlayer);`. Hence, the actual behaviour of the `changePlayer` function being:
+
+1. sets the current player to `newPlayer`
+2. redeems the current player's (`newPlayer`'s) score to the sender (us).
+
+Therefore we are able to steal 190 PRIZE. If we call `.earn` and `.redeem` before we exploit, we will be able to loot for another 10 PRIZE.
+
+<!-- Content_END -->

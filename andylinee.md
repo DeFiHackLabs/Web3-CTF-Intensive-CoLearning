@@ -20,4 +20,16 @@ Sign up
 今天工作比較忙碌，由於將近一年沒接觸 Solidity 和 Foundry，今天主要先看官方文件並將套件安裝完成。
 預計週末會開始練習解題！
 
+### 2024.08.30
+
+今天開始準備練習 Damn Vulnerable 題目
+
+### 2024.08.31
+
+今天開始練習 Damn Vulnerable，之後補上 write up
+
+### 2024.09.02
+
+今天繼續練習 Damn Vulnerable 題目
+
 <!-- Content_END -->
