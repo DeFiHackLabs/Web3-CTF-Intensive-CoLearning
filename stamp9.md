@@ -12,6 +12,10 @@ timezone: Europe/Helsinki
 
 <!-- Content_START -->
 
+### 2024.09.03
+5. The Rewarder
+6. Selfie
+
 ### 2024.09.02
 4. 	Side Entrance
 
