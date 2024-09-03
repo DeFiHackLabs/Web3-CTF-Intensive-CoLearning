@@ -36,6 +36,6 @@ A-Ethernaut-CTF
 
 ### 2024.09.03
 
-[Ethernaut CTF 6/31 ](./Writeup/0xRory/A-Ethernaut-CTF/6.md)
+[Ethernaut CTF 7/31 ](./Writeup/0xRory/A-Ethernaut-CTF/6.md)
 
 <!-- Content_END -->
