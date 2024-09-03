@@ -16,7 +16,9 @@ contract FallbackSolution is Script, EthernautHelper {
         // NOTE this is the address of your challenge contract
         address challengeInstance = createInstance(LEVEL_ADDRESS);
 
-        // Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
+        // Start of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
         Fallback challenge = Fallback(payable(challengeInstance));
 
         // 1. Get balance of calling address, make sure it has enough ether before calling
@@ -41,6 +43,9 @@ contract FallbackSolution is Script, EthernautHelper {
 
         // 5. Drain contract balance.
         challenge.withdraw();
+        ////////////////////////////////////////////////////////////////////////////////////
+        // End of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);
