@@ -216,7 +216,15 @@ web3.eth.getStorageAt(instance.address, 1, (err,res) => {
 
 **Level 09 King**
 
-[POC 代码](Writeup/SpeedX/src/Ethernaut/king_poc.s.sol)
+[POC 代码](Writeup/SpeedX/src/Ethernaut/king_poc.sol)
+
+### 2024.09.03
+
+**Level 09 King**
+
+使用 POC 合约给 king 合约转账，因为 POC 合约没有 fallback 函数 不能接收 ETH 导致 king 不能被别人再次取代。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/king_poc.s.sol)
 
 
 
