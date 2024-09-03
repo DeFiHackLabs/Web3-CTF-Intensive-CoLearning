@@ -17,15 +17,15 @@ timezone: Asia/Shanghai
 
 A: Damn Vulnerable DeFi V4(1/18)
 
-B: ETHTaipei2023
-- 完成了WBC和casino, Writeup
+B: ETHTaipei2023(2/5)
+- 完成了[WBC](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/ETHTaipei2023#wbc)和[casino](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/ETHTaipei2023#casino)
 
 C: Paradigm2023
 
 ### 2024.08.30
 
 A: Damn Vulnerable DeFi V4(1/18)
-- 完成了Shards
+- 完成了[Shards](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/DamnVulnerableDefi#shards)
 B: ETHTaipei2023
 
 C: Paradigm2023
@@ -34,7 +34,7 @@ C: Paradigm2023
 ### 2024.08.31
 
 A: Damn Vulnerable DeFi V4(1/18)
-- 完成Abi-smuggling
+- 完成[Abi-smuggling](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/DamnVulnerableDefi#abi-smuggling)
   
 B: ETHTaipei2023
 
@@ -48,7 +48,7 @@ C: Paradigm2023
 ### 2024.09.02
 
 A: Damn Vulnerable DeFi V4(1/18)
-- 完成withdrawal
+- 完成[withdrawal](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/DamnVulnerableDefi#withdrawal)
 
 
 ### 2024.09.03
