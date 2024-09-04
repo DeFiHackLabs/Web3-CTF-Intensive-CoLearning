@@ -212,8 +212,19 @@ contract C {
 
 
 
+### 2024.09.04
 
+#### A-Ethernaut-PuzzleWallet
 
+今天这道题卡了几个小时,最开始发现proxy的`storage slot`对不上,就开始研究.
+实际上`delegatecall`proxy合约的`proposeNewAdmin`其实就是对应 Wallet合约的`owner`(同slot 0),
+获取了`owner`权限,就可以添加whiteliste,就可以调用wallet合约的方法,观察 如果想改变proxy合约的owner 就得改变wallet合约的`maxBalance`(同样对应slot 1),可是maxBalance如果想要修改的话,又必须得保证`address(wallet).balance == 0`,所以得想办法让合约的余额等于0.
+
+分析了调用`execute`方法,发现只能发送自己的余额,而wallet的初始余额是`factory`合约的,
+所以有陷入了死胡同,`multicall`是唯一可以利用的地方,但是这个方法又有一个很巧妙设计的地方,为了`mag.value`不被重复利用,做了`selector`的判断,换个角度calldata的第二个交易如果还是`multicall`就能完美绕过.
+
+就可以存双份钱,绕过`require(balances[msg.sender] >= value, "Insufficient balance");`,
+然后就可以修改`maxBalance`为`player`地址,就结束.
 
 
 <!-- Content_END -->
