@@ -39,5 +39,7 @@ hmm... 希望这次不要分心 XD
 ### 2024.09.03
  changeOwner(address _owner) 函数，仅当 tx.origin != msg.sender 的时候，才可以修改 owner。tx.origin 是 EOA 地址，而 msg.sender 是调用该合约的地址，当 EOA 直接调用该合约时，二者相等。这里我们部署一个“中间人”合约来调用该合约，那么 tx.origin 就是你的 EOA 地址， msg.sender 就是“中间人”的地址，从而实现  tx.origin != msg.sender 。[04_Telephone](./Writeup/0xNezha/Ethernaut/04_Telephone/src/Telephone_exp.sol)
 
-
+### 2024.09.04
+ balances[msg.sender] -= _value 这里没有做安全限制，我们的初始余额是20，如果用它减去 21（向别人转账 21），则会发生数据下溢，得到一个天文数字。[05_Token](./Writeup/0xNezha/Ethernaut/05_Token.md)
+ 
 <!-- Content_END -->
