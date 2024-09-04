@@ -99,4 +99,12 @@ A.3 選 1 系列
 
         Completed 04-Telephone
 
+### 2024.09.04
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 03-CoinFlip， 05-Token
+
 <!-- Content_END -->

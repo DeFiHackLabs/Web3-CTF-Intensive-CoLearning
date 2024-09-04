@@ -3,7 +3,7 @@ Writeup/*/*/cache/
 Writeup/*/*/out/
 
 Writeup/Ric-Li-C/*.txt
-Writeup/Ric-Li-C/ethernaut-foundry/script/solutions/00-Test.s.sol
+Writeup/Ric-Li-C/ethernaut-foundry/script/solutions/*.bk.sol
 Writeup/*/*/broadcast/
 Writeup/*/*/lib/
 Writeup/*/*/.env

@@ -81,4 +81,20 @@ contract VaultSolution is Script {
 }
 ```
 
+### 2024.09.02
+#### Ethernaut
+##### 第9题 King
+1. 逻辑比较简单
+2. 遇到一个报错卡主， 原因是transfer send 发送eth的时候，对方的receive fallback不能太复杂，因为有gas上限是2300，如果发生失败可以使用call 可参考https://www.wtf.academy/docs/solidity-102/SendETH/
+```
+      transfer  _to.transfer(amount);
+      send   _to.send(amount);
+      call _to.call{value: amount}("");
+```
+
+##### 第10题 ReEntrancy
+1. 没想到思路，找到了相关可重入攻击资料，但是poc没跑通，还在找原因。
+```
+直接报 server returned an error response: error code -32000: execution reverted 很奇怪
+```
 <!-- Content_END -->

