@@ -47,5 +47,3 @@ timezone: Asia/Shanghai
 
 - 1.Ethernaut CTF (31) - Delegation - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 学会了 delegatecall 导致的权限提升攻击；
-
-<!-- Content_END -->

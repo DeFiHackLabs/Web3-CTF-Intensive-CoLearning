@@ -62,10 +62,68 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-Note
+(1) BlazCTF easy-nft challenge
 
-### 2024.07.12
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/eazy-nft
+
+Writeup: The `player` can call mint function and update the owner of a certain token through `ET:mint` function.
+
+(2) BlazCTF lockless-swap challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/lockless-swap
+
+Writeup: The reentrancy lock is not implemented in the PancakeSwap function, allowing an attacker to call the swap function and synchronize the reserve in the callback function, followed by minting liquidity tokens. Through a series of similar operations, the attacker can retrieve most of the liquidity in the pool.
+
+### 2024.08.30
+
+(1) BlazCTF Jambo challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/jambo
+
+Writeup: After decompilation, we observed that the value at storage slot 1 is initialized to the parameter: ```0x66757a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a6c616e64```. The setup function later calls ```revokeOwnership()```, but this call appears to have no impact. Upon analyzing the implementation of the answer function, we discovered that the input value must match the value at storage slot 0, and ```msg.value`` should exceed 1. Additionally, the function checks whether the caller is a contract. To bypass this check, we can initiate the attack within a constructor or by calling the contract from an EOA.
+
+(2) BlazCTF rock-paper-scissor challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/rock-paper-scissor
+
+Writeup: This is a straightforward pseudo-randomness vulnerability. By analyzing the `randomShape` function, we can determine the outcome and provide a specific input to exploit the contract.
+
+### 2024.08.31
+
+(1) DamnVulnerableDeFi V4 side-entrance challenge
+
+Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/side-entrance
+
+Writeup: there is reentrancy issue in the SideEntranceLenderPool, user can request flashloan and later deposit the borrowed asset into the pool when executing the callback function. Reentrancy lock is required to prevent such vulnerability.
+
+(2) DamnVulnerableDeFi V4 Truster challenge
+
+Link: https://www.damnvulnerabledefi.xyz/challenges/truster/
+
+Writeup: it is the arbitrary call vulnerability, attacker can forge a malicious calldata for the flash loan provider to approve allowance to the attacker, and after the flash loan is repaid, the attacker can withdraw the asset through `transferFrom`.
+
+### 2024.09.02
+
+(1) BlazCTF Maze challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/maze
+
+Writeup: The contract is written in pure Yul and utilizes Verbatim to generate bytecode for opcodes not defined by the Yul compiler. Our goal is to escape the Maze, but each attempt to move downward results in moving upward due to a bug in Verbatim mode, which restricts downward movement to twice only (see the restriction in not(iszero(sload(0xe)))). Consequently, we must find a path that requires moving downward fewer than two times.
+
+(2) DamnVulnerableDeFi V4 Free Rider Challenge
+
+Link: https://www.damnvulnerabledefi.xyz/challenges/free-rider/
+
+Writeup: The `buyMany` function calls the internal `_buyOne` function to check that the input ether is sufficient by examining `msg.value`. However, `msg.value` is used consistently throughout the transaction, allowing an attacker to submit less ether and acquire all the NFTs. Although the attacker might initially lack sufficient funds, they can borrow through Uniswap and repay later.
+
+### 2024.09.03
+
+(1) DamnVulnerableDeFi V4 Unstoppable Challenge
+
+Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/unstoppable
+
+Writeup: Our objective is to pause the vault and invoke the ownership transfer of the vault contract. This can only be achieved by failing to request a flash loan in `UnstoppableVault::flashLoan`. There is a requirement in the flash loan function, that `convertToShares(totalSupply)` should equal to `balanceBefore` value; if not, the transaction will revert. However, `balanceBefore` can be manipulated by directly depositing tokens into the vault contract, making the two values inequivalent.
 
 <!-- Content_END -->

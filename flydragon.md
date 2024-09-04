@@ -15,6 +15,16 @@ web3菜雞
 <!-- Content_START -->
 
 ### 2024.08.29
-test
+Complete Ethernaut CTF level 0
+
+### 2024.08.31
+Complete Ethernaut CTF level 1
+
+### 2024.09.02
+Learn how to play Ethernaut with Foundry
+
+### 2024.09.03
+Learn Solidity :( 
+WTF Solidity 01~10
 
 <!-- Content_END -->

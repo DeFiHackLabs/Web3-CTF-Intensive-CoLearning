@@ -13,10 +13,52 @@ timezone: Asia/Shanghai
 
 <!-- Content_START -->
 
-### 2024.08.26
+### 2024.08.29
 
-笔记内容
+A: Damn Vulnerable DeFi V4(1/18)
 
-### 2024.07.12
+B: ETHTaipei2023(2/5)
+- 完成了[WBC](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/ETHTaipei2023#wbc)和[casino](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/ETHTaipei2023#casino)
+
+C: Paradigm2023
+
+### 2024.08.30
+
+A: Damn Vulnerable DeFi V4(1/18)
+- 完成了[Shards](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/DamnVulnerableDefi#shards)
+B: ETHTaipei2023
+
+C: Paradigm2023
+- 完成BlackSheep
+
+### 2024.08.31
+
+A: Damn Vulnerable DeFi V4(1/18)
+- 完成[Abi-smuggling](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/DamnVulnerableDefi#abi-smuggling)
+  
+B: ETHTaipei2023
+
+C: Paradigm2023
+
+
+### 2024.09.01
+
+- 在做Damn的withdrawal，还没做出来
+
+### 2024.09.02
+
+A: Damn Vulnerable DeFi V4(1/18)
+- 完成[withdrawal](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/DamnVulnerableDefi#withdrawal)
+
+
+### 2024.09.03
+
+- 在做onlypwner-multisig中
+- update:解决Onlypwner-Multisig
+
+
+### 2024.09.04
+- 先尝试解决OnlyPwner-SHAPESHIFTER,学习关于Metamorphic Smart Contracts的内容
+- 解决BlazCTF2023
 
 <!-- Content_END -->
