@@ -112,4 +112,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.04
 
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Compromised](https://www.damnvulnerabledefi.xyz/challenges/compromised/)
+
+筆記連結： [DamnVulnerableDeFi: Compromised](./Writeup/AlexLiao/DamnVulnerableDeFi/Compromised.md)
+
+### 2024.09.05
+
 <!-- Content_END -->
