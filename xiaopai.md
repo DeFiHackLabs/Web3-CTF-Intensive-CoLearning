@@ -81,7 +81,7 @@ contract VaultSolution is Script {
 }
 ```
 
-### 2024.09.02
+### 2024.09.03
 #### Ethernaut
 ##### 第9题 King
 1. 逻辑比较简单
