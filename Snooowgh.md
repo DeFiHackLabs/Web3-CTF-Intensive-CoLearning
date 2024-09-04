@@ -33,8 +33,4 @@ timezone: Asia/Shanghai
 
 完成A类Ethernaut CTF的第13题
 
-### 2024.09.03
-
-完成A类Ethernaut CTF的第14-15题
-
 <!-- Content_END -->

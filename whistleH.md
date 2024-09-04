@@ -76,4 +76,17 @@ timezone: Asia/Shanghai
 2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
 3. 今日太忙，遂只做一题，明日必当奋起直追
 
+### 2024.09.03
+
+当前挑战：ethernaut
+
+今日完成：Level14、Level15、Level16
+
+学习内容
+
+1. extcodeSize的绕过、EOA和合约账户的差异
+2. ERC20的合约规范
+3. DelegateCall和Storage之间的关系，理解DelegateCall的代码、上下文的差异性
+4. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
 <!-- Content_END -->

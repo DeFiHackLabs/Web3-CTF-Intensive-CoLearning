@@ -13,13 +13,17 @@ submit instance
 
 2.1. await contract.contribute({value: 1})
 call 完后查看是否有balance，就可以send了
+
 2.2. await contract.getContribution()
 1
+
 2.3. 转 1 ether 
 await contract.send(1)
+
 2.4. await contract.owner()
 '0xe5107dee9CcC8054210FF6129cE15Eaa5bbcB1c0'
-# 最后一步，把钱取出来
+最后一步，把钱取出来
+
 2.5. await contract.withdraw()
 submit instance 
 
@@ -614,6 +618,7 @@ contract Attacker is Building {
 }
 ```
 
+
 # 13 Privacy
 
 通过脚本扫描slot 
@@ -675,6 +680,7 @@ Solidity 的存储是基于 32 字节的存储槽模型。每个槽能够容纳�
 
 如果多个状态变量的大小之和小于或等于 32 字节（例如，bool、uint8、uint16 等），它们将被打包在同一个存储槽中。
 如果一个状态变量不能完全打包到当前的存储槽中（例如，它是一个 uint256 或 bytes32 类型），它将被存储在一个新的存储槽中。
+
 
 # 14 Gatekeeper One
 
