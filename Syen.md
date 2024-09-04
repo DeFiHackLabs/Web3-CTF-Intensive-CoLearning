@@ -34,4 +34,16 @@ Web3 Dapp Developer
 
 - [SafeNFT](./Writeup/Syen/src/QuillCTF/SafeNFT/README.md)
 
+### 2024.09.02
+
+**QuillCTF**
+
+- [D31eg4t3](./Writeup/Syen/src/QuillCTF/D31eg4t3/README.md)
+
+### 2024.09.03
+
+**QuillCTF**
+
+- [CollatzPuzzle](./Writeup/Syen/src/QuillCTF/CollatzPuzzle/README.md)
+
 <!-- Content_END -->

@@ -43,4 +43,28 @@ timezone: Asia/Taipei
 - [Writeup](./Writeup/Tanner/writeup/QuillCTF/D31eg4t3.md) 
 - [POC](./Writeup/Tanner/test/QuillCTF/D31eg4t3.t.sol) 
 
+### 2024.09.02
+
+學習內容: 
+
+- 進行 CollatzPuzzle(WIP)，卡在 bad code size
+- 了解 EVM opcodes
+
+#### [QuillAudit CTF - CollatzPuzzle](./Writeup/Tanner/src/QuillCTF/CollatzPuzzle.sol)
+
+- [Writeup](./Writeup/Tanner/writeup/QuillCTF/CollatzPuzzle.md) 
+- [POC](./Writeup/Tanner/test/QuillCTF/CollatzPuzzle.t.sol) 
+
+
+### 2024.09.03
+
+學習內容: 
+
+- 進行 Pelusa，卡在 `require(isGoal(), "missed");`
+
+#### [QuillAudit CTF - Pelusa](./Writeup/Tanner/src/QuillCTF/Pelusa.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/Pelusa.t.sol) 
+
+
 <!-- Content_END -->

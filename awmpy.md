@@ -142,4 +142,45 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/delegation_hack
 
 ### 2024.09.02
 
+#### 7. Force
+
+考察selfdestruct知识，编写一个合约，自毁时强制把一些eth转给目标合约地址即可
+
+编写攻击脚本[force_hack.s.sol](Writeup/awmpy/script/ethernaut/force_hack.s.sol)，其中转账地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+```
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/force_hack.s.sol:ForceHackScript -vvvv --broadcast
+```
+
+### 2024.09.03
+
+#### 8. Valut
+
+这是一个猜密码的游戏，需要用到数据存储相关的知识
+
+每个存储槽将使用32个字节（一个字大小）
+对于每个变量来说，会根据其类型确定以字节为单位的大小
+如果可能的话，少于32字节的多个连续字段将根据以下规则被装入一个存储槽
+一个存储槽中的第一个项目以低位对齐的方式存储
+值类型只使用存储它们所需的字节数
+如果一个值类型在一个存储槽的剩余部分放不下，它将被存储在下一个存储槽
+结构和数组数据总是从一个新的存储槽开始，它们的项目根据这些规则被紧密地打包
+结构或数组数据后面的项目总是开始一个新的存储槽
+
+`locked`变量存储在slot0，`password`变量因为是32字节类型，无法存放到slot0，只能是在slot1中
+
+在foundry中使用`vm.load`来获取`password`变量内容
+
+编写攻击脚本[vault_hack.s.sol](Writeup/awmpy/script/ethernaut/vault_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+```
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/vault_hack.s.sol:VaultHackScript -vvvv --broadcast
+```
+
+
+
+### 2024.09.04
+
 <!-- Content_END -->

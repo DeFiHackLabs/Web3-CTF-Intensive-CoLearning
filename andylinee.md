@@ -28,4 +28,8 @@ Sign up
 
 今天開始練習 Damn Vulnerable，之後補上 write up
 
+### 2024.09.02
+
+今天繼續練習 Damn Vulnerable 題目
+
 <!-- Content_END -->

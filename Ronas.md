@@ -49,4 +49,28 @@ timezone: Asia/Taipei
     - 偽隨機數問題
     - 撰寫攻擊合約
 
+### 2024.09.02
+
+- A. Ethernaut CTF - Level 4 Telephone
+    - `tx.origin` 及 `msg.sender` 的差異
+        - `tx.origin`: 發起交易的地址，通常為使用者的錢包地址
+        - `msg.sender`: function 的呼叫者，可以為使用者錢包，或是另一個合約
+    - 作法：寫一個合約代替直接發送，便可造成 `tx.origin` 及 `msg.sender` 出現不一致
+    - [PoC](./Writeup/Ronas/Ethernaut%20CTF/level4_telephone.sol)
+
+### 2024.09.03
+
+- A. Ethernaut CTF - Level 5 Token
+    - 這是一個從學習 C 語言開始就會面對到的問題：整數的 overflow 與 underflow
+    - 觸發 underflow: 送超過20塊給作者或其他地址 `contract.transfer("0x31a3801499618d3c4b0225b9e06e228d4795b55d", 22)`
+
+- A. Ethernaut CTF - Level 6 Delegation
+    - `fallback()` 函數會在呼叫函數不存在時觸發
+    - 藉由呼叫 `pwn()` (不存在於 `Delegation`)觸發 `Delegation` 合約的 `fallback` 函數，觸發 `fallback` 中的 `delegatecall` 呼叫 `Delegate` 的 `pwn()` 函數，便能取得合約所有權
+    - 函數選擇器值應為 `keccak256("pwn()")` = `dd365b8b15d5d78ec041b851b68c8b985bee78bee0b87c4acf261024d8beabab` 取前四個byte `dd365b8b` (tool: https://cyberchef.org/#recipe=Keccak('256')&input=cHduKCk)
+    - PoC `sendTransaction({from:"<my wallet>", to:"<instance>", data:"0xdd365b8b"})`
+
+- takeaways
+    - delegatecall 用法
+
 <!-- Content_END -->

