@@ -289,4 +289,10 @@ abstract contract ReentrancyGuard {
 2. 馬上更新狀態變量
 3. 再把錢給別人
 
+### 2024.09.04
+# Ethernut第一題
+1. 呼叫contribute，讓contributions[my address]有值
+2. Send Ether到Fallback合約觸發receive()，讓自己變owner
+3. 呼叫withdraw()，抽走所有Ether
+
 <!-- Content_END -->
