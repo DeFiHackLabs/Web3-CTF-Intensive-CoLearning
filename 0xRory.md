@@ -38,4 +38,8 @@ A-Ethernaut-CTF
 
 [Ethernaut CTF 7/31 ](./Writeup/0xRory/A-Ethernaut-CTF/6.md)
 
+### 2024.09.04
+
+[Ethernaut CTF 8/31 ](./Writeup/0xRory/A-Ethernaut-CTF/7.md)
+
 <!-- Content_END -->
