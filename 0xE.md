@@ -31,4 +31,9 @@ timezone: Pacific/Auckland
 [[Damn Vulnerable DeFi V4] 5 | The Rewarder](./Writeup/0xE/DamnVulnerableDeFiV4/the-rewarder.md)
 
 
+### 2024.09.04
+[[Damn Vulnerable DeFi V4] 7 | Compromised](./Writeup/0xE/DamnVulnerableDeFiV4/compromised.md)  
+[[Damn Vulnerable DeFi V4] 8 | Puppet](./Writeup/0xE/DamnVulnerableDeFiV4/puppet.md)
+
+
 <!-- Content_END -->
