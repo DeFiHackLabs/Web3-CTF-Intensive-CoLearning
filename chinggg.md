@@ -62,10 +62,24 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+我浏览了 A 系列的 3 种 CTF，其中 Ethernaut 似乎浏览器中即可体验但需要连接钱包，获取 Sepolia testnet token 也要求主网 0.0001 ETH 余额，比较麻烦；QuillCTF 官网下线了，本地环境似乎也比较麻烦；Damn Vulnerable DeFi 比较经典，最近出了 v4.0.0，正好可以尝试。
 
-### 2024.07.12
+通过第一道题 unstoppable 了解了 flashloan，细节还不是特别清楚，有待研究
+
+参考：
+
+- [DamnVulnerableDeFiV4_1_Unstoppable.md](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/0xE/DamnVulnerableDeFiV4_1_Unstoppable.md)
+
+- [Writeup/Jerome/Unstoppable.md](./Writeup/Jerome/Unstoppable.md)
+
+### 2024.08.30
+
+学习了第二道题 Naive Receiver，了解了 ERC-2771 和 Multicall，还有如何利用中继器合约执行交易。
+
+参考：
+
+- [DamnVulnerableDeFiV4_2_NaiveReceiver.md](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/0xE/DamnVulnerableDeFiV4_2_NaiveReceiver.md)
 
 <!-- Content_END -->
