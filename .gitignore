@@ -9,3 +9,4 @@ Writeup/*/*/lib/
 Writeup/*/*/.env
 
 .history
+.vscode
