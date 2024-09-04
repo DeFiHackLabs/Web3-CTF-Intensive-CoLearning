@@ -491,10 +491,39 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
   - 當 DEX 不依靠去中心化價格預言機或時間加權機制，僅透過 Reserve 來實施價格發現，就會受到價格操縱攻擊
   - 我們只需要反覆地將 token1 換到 token2，token2 再換回 token1，來回操作幾遍就會發現每次換出來的金額都會越來越大
   - 建議自己拿算盤驗算看看 `getSwapPrice()` 函數的返回值
-
-解法:
+- 知識點: 不安全的價格資訊參考
 
 - [Ethernaut22-Dex.sh](/Writeup/DeletedAccount/Ethernaut22-Dex.sh)
 - [Ethernaut22-Dex.s.sol](/Writeup/DeletedAccount/Ethernaut22-Dex.s.sol)
+
+
+### 2024.09.03
+
+- Day5 共學開始
+
+#### [Ethernaut-23] Dex Two
+
+- 破關條件: 與 `Dex` 不同，這次要求把 `DexTwo` 的兩個 Token 餘額都歸零
+- 解法:
+  - `Dex` 和 `DexTwo` 很像，所以我們可以直接 Diff 看看兩者的差別
+  - ![DexTwo](/Writeup/DeletedAccount/Ethernaut23-DexTwo.png)
+  - 從上圖可以很明顯地發現到，`swap()` 函數的 `require()` 要求不見了
+  - 這意味著我們可以給定任意的 ERC20 代幣來進行 `swap()` 的動作
+    - 只要我們部署的 ERC20 合約具有 `transferFrom()` 和 `balanceOf()` 方法即可
+  - 具體上來說，一開始 `DexTwo` 合約會有各 100 個 token, 我們有各 10 個 token
+  - 要將 DexTwo 的 token1 取出來，我們要先發 100 顆 PhonyToken 給 `DexTwo`
+  - 這樣才能使得調用 `swap(from=PhonyToken, to=token1, amount=100)` 可以把 DexTwo 的 token1 全部換走
+  - 接下來再把 DexTwo 的 token2 取出來。
+  - 經過上一輪 `swap()`，DexTwo 已經有了 100 顆 PhonyToken
+  - 所以要馬我們再生成一個 PhoneyToken2，用上面的方式一樣把 token2 全部換走
+  - 要馬就是我們用 200 顆 PhoneyToken 把  token2 取走
+
+- 知識點: Arbitrary Input Vulnerability
+
+解法:
+
+- [Ethernaut23-DexTwo.sh](/Writeup/DeletedAccount/Ethernaut23-DexTwo.sh)
+- [Ethernaut23-DexTwo.s.sol](/Writeup/DeletedAccount/Ethernaut23-DexTwo.s.sol)
+
 
 <!-- Content_END -->

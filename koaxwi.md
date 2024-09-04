@@ -9,10 +9,6 @@ timezone: Europe/Helsinki
 
 ## Notes
 
-Progess:
-Group A: Damn Vulnerable DeFi: 9/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
-Group B: ...
-Group C: ...
 
 
 <!-- Content_START -->
@@ -42,10 +38,4 @@ Solved 6 - Selfie.
 ### 2024.09.02
 Solved 7 - Compromised.
 WIP 8 - Puppet.
-
-### 2024.09.03
-Solvd 8 - Puppet.
-Solvd 9 - Puppet v2.
-
-
 <!-- Content_END -->
