@@ -145,3 +145,19 @@ It turns out that one swap is enough to decrease the price to what we can afford
 However, if we only buy part of the pool's DVT each time and swap them again, the price will continuely decrease.
 The issue is that we need to swap back the DVT to WETH for the recovery, and there may be a tradeoff between the lower price and the extra swap fee.
 
+## Free Rider (24/09/04)
+This challenge provides a vulnerable NFT market.
+
+An easy logical mistake is that, the market will transfer the price of NFT to `_token.ownerOf(tokenId)` after transferring the NFT, which means the owner is already changed from the seller to the buyer.
+Another issue is, the market allows bulk offer and bulk buy. When buying multiple NTFs in a transaction, it reverts when `msg.value < priceToPay` for each token. So we only need to send the maximum of all prices, not the sum of them.
+
+Now let's check the initial setup.
+There are six NFT offers, all at the price 15 ETH.
+That means if we have 15 ETH, we can send it to the market to "buy" all NFTs, and meanwhile the market will return 6*15 ETH to us.
+However, we only holds 0.1 ETH at the beginning.
+
+If there is some flash loan... - The uniswap in this challenge is exactlly for the rescue.
+In [UniswapV2Pair](https://github.com/Uniswap/v2-core/blob/master/contracts/UniswapV2Pair.sol) there is a function `swap`.
+The pair will first transfer tokens to the receiver, then call `uniswapV2Call` on the reveiver, and finally check whether the amount and fee is paid back.
+By referring this [document](https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps), we can implement an attacker contract to so.
+
