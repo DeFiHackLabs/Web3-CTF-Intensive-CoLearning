@@ -38,4 +38,11 @@ timezone: Asia/Taipei
 - Ethernaut CTF - Telephone
 - POC: https://lalaterry.github.io/posts/Ethernaut-Telephone/
 
+
+### 2024.09.04
+
+學習內容:
+- Ethernaut CTF - Telephone
+- POC: https://lalaterry.github.io/posts/Ethernaut-Token/
+
 <!-- Content_END -->
