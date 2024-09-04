@@ -135,5 +135,20 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
   - At first, We can sell the token for ETH to make `uniswapPair.balance * (10 ** 18) / token.balanceOf(uniswapPair)` small
   - Then, we [borrow](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/puppet/PuppetPool.sol#L30) all the token balance of PuppetPool with very few ETH.
   - Finally, we can sell ETH for the token to get back tokens which are used to manipulate the oracle price of PuppetPool.
+  - Note: If we want to attack with only one transacation, we can
+    - Deploy an `Attacker` contract
+    - Attack inside the `constructor`
+    - Pay ETH to `constructor`
+    - Pay Token to `constructor` by `permit2`
+
+### 2024.09.04
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Puppet V2
+  - The attack vector is still exist like `Puppet`
+  - The differences are
+    - use WETH instead of ETH
+    - use `IUniswapV2Router02`
 
 <!-- Content_END -->
