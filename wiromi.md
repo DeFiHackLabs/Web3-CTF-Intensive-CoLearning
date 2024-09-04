@@ -38,5 +38,8 @@ timezone: Asia/Shanghai
 
 ### 2024.09.04
 
+add telephone and token 
+
+### 2024.09.05
 
 <!-- Content_END -->
