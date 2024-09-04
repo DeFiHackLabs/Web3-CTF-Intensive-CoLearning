@@ -211,4 +211,37 @@ In our case, `newPlayer` will be evaluated earlier than `oldPlayer` in `event Pl
 
 Therefore we are able to steal 190 PRIZE. If we call `.earn` and `.redeem` before we exploit, we will be able to loot for another 10 PRIZE.
 
+### 2024.09.04
+
+Progress
+
+* Damn Vulnerable DeFi (6/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+
+#### 🏁 EthTaipei CTF 2023: NFT
+
+**Time used: ~1h 15m**
+
+Re-entrance attack: During `withdraw`, the NFT is _first_ transferred from the pool to our address then decreases the `_balances[msg.sender]`. Also `onERC721Received` on the receipient's contract will be called.
+
+We can make `onERC721Received` to transfer (not deposit) the NFT, then withdraw that immediately. This heuristic should be called only once.
+
+In that case, `_balances[msg.sender] -= 1 ether` will be executed twice. For Solidity < 0.8, SafeMath is required to prevent integer overflows -- and it isn't used. Therefore, we eventually have `_balances[msg.sender] == uint256(-1 ether)`.
+
+
 <!-- Content_END -->
+
+<!-- 
+
+Stash
+
+#### 🏁 Damn Vulnerable DeFi: Puppet
+
+`calculateDepositRequired(amount)` is the amount of ETH required to lend `amount` in tokens. For instance, `calculateDepositRequired(1 ether)`
+
+1. would be `2 ether` when `uniswapPair.balance == 10 ether` and `token.balanceOf(uniswapPair) == 10 ether`,
+2. would be `1 ether` when `uniswapPair.balance == 10 ether` and `token.balanceOf(uniswapPair) == 20 ether`,
+3. would be `4 ether` when `uniswapPair.balance == 20 ether` and `token.balanceOf(uniswapPair) == 10 ether`.
+
+-->

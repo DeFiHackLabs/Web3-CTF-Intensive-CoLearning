@@ -75,6 +75,11 @@ timezone: Asia/Taipei
 - DamnVulnerableDeFi #11 [Backdoor](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#backdoor)
 
 ### 2024.09.03
-- DamnVulnerableDeFi #12 [Free Rider](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#climber)
+- DamnVulnerableDeFi #12 [Climber](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#climber)
+
+### 2024.09.04
+- DamnVulnerableDeFi #12 [Wallet Mining](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#wallet-mining-還沒解完)
+- DamnVulnerableDeFi #14 [Puppet V3](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet-v3)
+
 
 <!-- Content_END -->

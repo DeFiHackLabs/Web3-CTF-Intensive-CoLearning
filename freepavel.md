@@ -75,4 +75,11 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.02
 - Telephone > [Telephone](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/04_Telephone.md)
+
+### 2024.09.03
+- Token > [Token](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/05_Token.md)
+
+### 2024.09.04
+- Delegation > [Delegation](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/06_Delegation.md)
+
 <!-- Content_END -->

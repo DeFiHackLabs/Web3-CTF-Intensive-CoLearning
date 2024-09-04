@@ -160,4 +160,10 @@ contract BuildingImpl is Building {
 }
 ```
 
+### 2024.09.04
+#### Ethernaut - Privacy
+Vault 的进阶版，需要通过web3js获取存储的数据，需要学习下evm中是如何存储数据的
+合约地址：0x57c70Fd38b1D9B453013EF0b6021B926EA131E6e
+
+
 <!-- Content_END -->
