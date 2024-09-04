@@ -35,7 +35,7 @@ timezone: Asia/Shanghai
 
 有一点忙，今天只简单看了A系列一题，后续题目等和 erthernaut交互后继续
 
-[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Fallback.md
+POC : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Fallback.md
 
 
 
@@ -129,6 +129,19 @@ delegatecall : 进度非常慢，非常疑惑的一天
 1. 昨天关于delegation疑问得到解答，原来只是对delegatecall的应用问题，纯属想太多，就是改delegation的owner
 2. 今天成功把wsl环境改好了，把token,force,delegation的poc写好了
 3. 关于 vault ，还是很神奇，深入体会到链上数据透明的性质，private的变量也能获取到
+
+[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
+
+
+
+### 2024.09.04
+
+学习內容:
+
+做了A系列2题
+
+1. 完成 king poc,这里用的是合约接收转账后可以触发fallback和receive的特性，在这个函数中抛出异常就可以禁止更新king,这样别人转账后，king永远不变
+2. 关于重入，逻辑是通了，复现有点问题
 
 [POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
 
