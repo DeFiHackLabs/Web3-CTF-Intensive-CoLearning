@@ -77,4 +77,8 @@ timezone: Asia/Taipei
 ### 2024.09.03
 - DamnVulnerableDeFi #12 [Free Rider](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#climber)
 
+### 2024.09.04
+- DamnVulnerableDeFi #13 [Free Rider](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet-v3)
+
+
 <!-- Content_END -->
