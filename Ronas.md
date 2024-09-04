@@ -71,6 +71,17 @@ timezone: Asia/Taipei
     - PoC `sendTransaction({from:"<my wallet>", to:"<instance>", data:"0xdd365b8b"})`
 
 - takeaways
+    - fallback 觸發時機 - 合約內沒有呼叫指定的函數
+        > https://solidity-by-example.org/fallback/
     - delegatecall 用法
 
+### 2024.09.04
+
+- A. Ethernaut CTF - Level 7 Force
+    - 目標 `Force` 合約沒有 `fallback` 函數，因此無法透過 `fallback` 方式向目標發送 Ether
+    - `selfdestruct` 是一個自毀函數，可將合約身上的所有 Ether 直接轉往另一個合約
+    - [PoC]()
+- takeaways
+    - selfdestruct 函數
+    
 <!-- Content_END -->
