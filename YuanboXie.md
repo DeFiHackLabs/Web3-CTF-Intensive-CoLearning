@@ -41,6 +41,11 @@ timezone: Asia/Shanghai
 ### 2024.09.03
 
 - 1.Ethernaut CTF (31) - Token - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
-    - 
+    - 学会了整数溢出漏洞；
+
+### 2024.09.04
+
+- 1.Ethernaut CTF (31) - Delegation - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学会了 delegatecall 导致的权限提升攻击；
 
 <!-- Content_END -->
