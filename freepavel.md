@@ -67,6 +67,16 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 ### 2024.08.29
 - 打了 Ethernaut 的第 0 題 > [HelloEthernaut](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/00_HelloEthernaut.md)
 
-### 2024.07.12
+### 2024.08.30
+- fallback > [fallback](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/01_fallback.md)
+
+### 2024.08.31
+- coinfilp > [coinfilp](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/03_coinfilp.md)
+
+### 2024.09.02
+- Telephone > [Telephone](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/04_Telephone.md)
+
+### 2024.09.03
+- Token > [Token](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/05_Token.md)
 
 <!-- Content_END -->

@@ -12,9 +12,21 @@ timezone: Europe/Helsinki
 
 <!-- Content_START -->
 
+### 2024.09.03
+5. The Rewarder
+6. Selfie
+
+### 2024.09.02
+4. 	Side Entrance
+
+### 2024.08.31
+
+2. damn-vulnerable-defi Naive receiver - run test
+3. Truster
+
 ### 2024.08.29
 
-damn-vulnerable-defi unstoppable - run test
+1. damn-vulnerable-defi unstoppable - run test
 
 
 <!-- Content_END -->

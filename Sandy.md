@@ -16,9 +16,19 @@ timezone: Asia/Taipei
 ### 2024.08.29
 
 今日學習內容
-1.熟悉foundry框架
-2.用ETHTaipei-war-room/HelloWorld 試看看
+1. 熟悉foundry框架
+2. 用ETHTaipei-war-room/HelloWorld 試看看
 
-### 2024.07.12
+### 2024.08.30
+在這題ETHTaipeiWarRoomNFT卡關好久 還是想不出來...明天繼續
+
+### 2024.08.31
+今天從Ethernaut開始，完成第1~5題...明天繼續
+
+### 2024.09.02
+今天完成Ethernaut6-9題
+
+### 2024.09.03
+今天完成Ethernaut10-12題
 
 <!-- Content_END -->

@@ -30,9 +30,52 @@ KeShin, 合约安全新人
 - 所以我们先调用 contribute 随意贡献一点，然后转 ETH 到合约，receive 被触发使 owner 修改，然后调用 withdraw 取走合约所有 ETH 即可。
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/1-Fallback)
 
-
-
-
 ### 2024.08.30
+
+#### [Ethernaut CTF : 2 Fallout](https://ethernaut.openzeppelin.com/level/2)
+- 直接调用 Fal1out 函数就可以拿到 owner 权限
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/2-Fallout)
+
+#### [Ethernaut CTF : 3 CoinFlip](https://ethernaut.openzeppelin.com/level/3)
+- 随机数问题，依赖的 blockHash 和 blockNumber 都是可预测的，答案可以提前算出来
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/3-CoinFlip)
+- 本地模拟能过，但是提交到链上后，blockHash和blockNumber变了，导致答案变了，如何及时将正确结果及时提交到链上，还需要再研究研究
+
+### 2024.08.31
+- 昨天的 CoinFlip 题目的链下模拟与链上执行答案不一致的问题，是因为forge script 广播后，其区块高度已经发生了改变，所以不能直接在 script 中计算答案，应该部署一个攻击合约，在合约的逻辑中计算答案，然后提交给 CoinFlip 合约
+
+#### [Ethernaut CTF : 4 Telephone](https://ethernaut.openzeppelin.com/level/4)
+- 让 tx.origin 和 msg.sender 不一致即可
+- 我们创建一个中介合约来进行调用
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/4-Telephone)
+
+### 2024.9.1
+#### [Ethernaut CTF : 5 Token](https://ethernaut.openzeppelin.com/level/5)
+- 整数下溢问题，由于EVM版本问题，当 balance[msg.sender] < _value 时，减去之后会得到一个很大的数，会通过检查
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/5-Token)
+
+### 2024.9.2
+#### [Ethernaut CTF : 6 Delegation](https://ethernaut.openzeppelin.com/level/6)
+- 理解 delegatecall 和 call 的区别
+- 理解 abi encode 相关
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/6-Delegation/)
+
+### 2024.9.3
+#### [Ethernaut CTF : 7 Force](https://ethernaut.openzeppelin.com/level/7)
+- 一个合约需要有 receive 或者 fallback来接收 ETH, 当这两个都不存在时，可以通过调用带有 payable 的函数来接收 ETH。
+- 当这些都不存在时，可以创建另一个合约，通过 selfdestruct 自毁可以将当前合约的 ETH 强制发送给某一地址，坎昆升级后，自毁只是发送走所有的 ETH ，代码不会被删除
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/7-Force/)
+
+### 2024.9.4
+
+### 2024.9.5
+
+### 2024.9.6
+
+### 2024.9.7
+
+### 2024.9.8
+
+### 2024.9.9
 
 <!-- Content_END -->
