@@ -39,9 +39,17 @@ C: 2道
 Total: 15道
 
 ### 2024.9.4
-TBD 
 
 ### 2024.9.5
+[[ethernaut] 14, 16 ](./Writeup/Henry/ethernaut.md)
+A: 15道
+C: 2道
+Total: 17道 
+
+### 2024.9.5
+TBD
+
+### 2024.9.6
 TBD
 
 <!-- Content_END -->
