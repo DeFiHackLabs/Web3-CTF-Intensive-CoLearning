@@ -4,7 +4,7 @@ pragma solidity 0.8.21;
 import {Script, console2} from "forge-std/Script.sol";
 import {EthernautHelper} from "../setup/EthernautHelper.sol";
 
-// NOTE You can import your helper contracts & create interfaces here
+// Import challenge contract here
 import {Fallback} from "../../challenge-contracts/01-Fallback.sol";
 
 contract FallbackSolution is Script, EthernautHelper {
@@ -37,7 +37,7 @@ contract FallbackSolution is Script, EthernautHelper {
         }("");
         require(success, "Transfer failed");
 
-        // 4. Confirm that `heroAddress` have become owner of the contract.
+        // 4. Confirm that caller `heroAddress` have become owner of the contract.
         // assertEq(heroAddress, challenge.owner(), "Owner check failed");  // assertEq is only available in test scripts
         require(heroAddress == challenge.owner(), "Owner check failed");
 
