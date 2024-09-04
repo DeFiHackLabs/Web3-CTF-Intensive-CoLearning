@@ -33,6 +33,21 @@ Henry, 研究方向为网络安全
 [[ethernaut] 6-10 ](./Writeup/Henry/ethernaut.md)
 
 ### 2024.9.3
+[[ethernaut] 11-13 ](./Writeup/Henry/ethernaut.md)
+A: 13道
+C: 2道
+Total: 15道
+
+### 2024.9.4
+[[ethernaut] 14, 16 ](./Writeup/Henry/ethernaut.md)
+A: 15道
+C: 2道
+Total: 17道 
+
+### 2024.9.5
+TBD
+
+### 2024.9.6
 TBD
 
 <!-- Content_END -->
