@@ -526,4 +526,68 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
 - [Ethernaut23-DexTwo.s.sol](/Writeup/DeletedAccount/Ethernaut23-DexTwo.s.sol)
 
 
+### 2024.09.05
+
+- 09.04 身體不舒服，請假一天
+- Day6 共學開始
+
+#### [Ethernaut-24] Puzzle Wallet
+
+個人覺得這一題十分有趣，屬於必看必解題！
+
+- 破關條件: 把 `PuzzleProxy` 的 `admin` 變成自己
+- 解法:
+  - 可以看到 `PuzzleProxy` 是一個 UpgradeableProxy，Logic 合約是 `PuzzleWallet`
+  - 當涉及到 Proxy 的時候，通常都會去檢查 Storage Layout
+  - 可以發現到 `PuzzleProxy.pendingAdmin` 對應的是 `PuzzleWallet.owner`
+  - 可以發現到 `PuzzleProxy.admin` 對應的是 `PuzzleWallet.maxBalance`
+  - 這意味著我們必須要能在 `PuzzleWallet` 找到地方可以操縱 `PuzzleWallet.maxBalance`，使它的數值變成我們的錢包地址
+  - `PuzzleWallet.maxBalance` 可以在 `PuzzleWallet.init()` 函數與 `PuzzleWallet.setMaxBalance()` 函數進行更改
+  - `PuzzleWallet.init()` 這一條路應該是沒辦法走的，因為 `PuzzleWallet.maxBalance` 的值已經是設置成 `PuzzleWallet.admin` 了
+  - 我們只能嘗試走 `PuzzleWallet.setMaxBalance()` 這條路，但這要求我們要是 whitelisted 以及 `address(this).balance` 為 0
+  - 要怎麼成為 whitelisted 呢? 我們必須要使 `msg.sender == owner` 
+  - `PuzzleWallet.owner` 被宣告在 slot0，也就是與 `PuzzleProxy.pendingAdmin` 對應
+  - `PuzzleProxy.pendingAdmin` 可以透過 `PuzzleProxy.proposeNewAdmin()` 進行修改
+  - 總結目前發現：我們可以透過 `PuzzleProxy.proposeNewAdmin()` 函數的調用，使 `PuzzleWallet.owner` 被修改，進而使我們成為 `whitelisted`
+  - `onlyWhitelisted` 的問題解決掉了，下一步是找到方式讓 `address(this).balance == 0` 條件敘述通過
+  - 透過 `cast balance -r $RPC_OP_SEPOLIA $PUZZLEWALLET_INSTANCE` 指令，可以得知 `PuzzleProxy` 合約有 0.001 顆 ETH
+  - 從題目給出的代碼來看，也似乎只有 `execute()` 函數可以把 ETH 提領出來，所以這應該會是我們要嘗試的漏洞利用路徑
+  - `execute()` 函數要求我們必須使 `balances[msg.sender]` 大於欲提領的數量，意味著我們必須先使自己的 `balances[msg.sender]` 增加至 0.001 ETH
+  - 要增加 `balances[msg.sender]` 必須透過 `deposit()` 函數
+  - 由於 `PuzzleWallet.maxBalance` 等同於 `PuzzleProxy.admin`，所以 `address(this).balance <= maxBalance` 的條件敘述基本上不會正常工作
+  - 但問題在於: 我們 `deposit()` 存入 0.001 顆 ETH，也只能 `execute()` 提領出來 0.001 顆 ETH
+  - 似乎怎麼操作都會使 `PuzzleProxy` 的餘額仍然剩餘 0.001 ETH，如何繞過呢？我們可以利用 `multicall()` 函數裡的 `deletecall()`！
+  - 我們需要建構出一條 deletegatecall 鏈
+    - 首先 `PuzzleProxy` 會 delegatecall `PuzzleWallet` 的函數
+    - 我們指定 delegatecall `PuzzleWallet.multicall()`
+    - 在 `multicall()` 裡面，我們利用 `multicall()` 裡面的 delegatecall 來呼叫 `deposit()` 函數
+    - 呼叫 `deposit()` 的時候，要帶入 0.001 ETH 進去
+      - 此時 msg.sender 是我們的錢包
+      - 此時 msg.value 等於 0.001 ETH
+    - 我們透過第二組 `data` 再次呼叫 `multicall()`
+    - 第二組的 `multicall()` 再次呼叫 `deposit()`
+      - 此時 msg.sender 依舊是我們的錢包
+      - 此時 msg.value 依舊等於 0.001 ETH **(但是我們並沒有因此多提供了 0.001 ETH)**
+    - 第二組 `multicall()` 之所以可以再次呼叫 `deposit()`，是因為 `depositCalled` 的狀態值只存在於當前的 Call Frame
+      - `depositCalled`  是一個假的重入鎖，實際上根本不起作用，因為 `depositCalled = True` 的這個狀態，只存在於當前的 Call Stack
+- 解法總結:
+  1. 呼叫 `PuzzleProxy.proposeNewAdmin(_newAdmin=tx.origin)`  (使 `tx.origin` 成為了 `PuzzleWallet.owner`)
+  2. 呼叫 `PuzzleProxy.addToWhitelist(addr=tx.origin)` (使 `tx.origin` 變成了 `whitelisted`)
+  3. 建構 `PuzzleWallet.multicall()` 的 `bytes[] data`
+     1. 總共有兩組 `bytes data` 需要建構
+     2. 第一組: `deposit()`
+     3. 第二組 `multicall(deposit())`
+  4. 呼叫 `PuzzleProxy.multicall()`，並且帶入 `msg.value = 0.001 ETH`
+  5. 呼叫 `PuzzleProxy.execute(to=tx.origin, value=0.002 ETH, data="")` (把 0.002 ETH 提領出來，使 `PuzzleProxy` 的以太幣餘額歸零)
+  6. 呼叫 `PuzzleProxy.setMaxBalance(_maxBalance=uint256(uint160(tx.origin)))` (用來覆蓋 `PuzzleProxy.admin`)
+  7. 過關！
+- 知識點: Delegate Call, Storage Slot Collision
+- 
+
+
+解法:
+
+- [Ethernaut24-PuzzleWallet.sh](/Writeup/DeletedAccount/Ethernaut24-PuzzleWallet.sh)
+- [Ethernaut24-PuzzleWallet.s.sol](/Writeup/DeletedAccount/Ethernaut24-PuzzleWallet.s.sol)
+
 <!-- Content_END -->
