@@ -85,25 +85,25 @@ receive()   fallback()
 
 1. 部署合约，此时的 owner 为部署者地址
 
-   ![image-20240904003823592](..\pict\1.png)
+   ![image-20240904003823592](../pict/1.png)
 
 2. 使用第二个地址调用 contribute 函数赞助,这里赞助值不能高于0.001ether,也就是1 Finey
 
-   ![image-20240904003823592](..\pict\2.png)
+   ![image-20240904003823592](../pict/2.png)
 
 3. 查看当前的赞助余额大于 0
 
-   ![image-20240904003823592](..\pict\3.png)
+   ![image-20240904003823592](../pict/3.png)
 
 4. 发送 eth
 
-   ![image-20240904003823592](..\pict\4.png)
+   ![image-20240904003823592](../pict/4.png)
 
 5. 调用，注意，这里，calldata 即为要发送的 msg.data 值，这里不可以填
 
-   ![image-20240904003823592](..\pict\5.png)查看合约 owner，成功改变
+   ![image-20240904003823592](../pict/5.png)查看合约 owner，成功改变
 
-   ![image-20240904003823592](..\pict\6.png)
+   ![image-20240904003823592](../pict/6.png)
 
 ## console
 
@@ -214,4 +214,4 @@ forge test --match-path test/Fallback.t.sol -vvvv
 
 可以看到，最终在攻击后打印出的 owner 和前两次打印值不一样
 
-![image-20240904004054654](..\pict\image-20240904004054654.png)
+![image-20240904004054654](../pict/image-20240904004054654.png)
