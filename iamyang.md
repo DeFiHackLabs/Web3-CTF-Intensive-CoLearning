@@ -37,12 +37,16 @@ timezone: Asia/Shanghai
 
 完成 Ethernaut 第五题
 
+### 2024.09.03
+
+完成 Ethernaut 第五题
+
 ### 2024.09.04
 
-完成 Ethernaut 第六题
+完成 Ethernaut 第五题
 
 ### 2024.09.05
 
-完成 Ethernaut 第七题
+完成 Ethernaut 第六题
 
 <!-- Content_END -->
