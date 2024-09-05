@@ -241,7 +241,14 @@ web3.eth.getStorageAt(instance.address, 1, (err,res) => {
 继续下一关
 
 **Level 11 Elevator**
+电梯的 POC 合约我显示了 Building接口
 
+
+### 2024.09.05
+**Level 12 Privacy**
+今天继续下一关 
+
+### 2024.09.06
 
 
 
