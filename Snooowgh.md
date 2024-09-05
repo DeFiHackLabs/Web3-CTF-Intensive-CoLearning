@@ -41,4 +41,8 @@ timezone: Asia/Shanghai
 
 完成A类Ethernaut CTF的第16-18题
 
+### 2024.09.05
+
+完成A类Ethernaut CTF的第19题
+
 <!-- Content_END -->
