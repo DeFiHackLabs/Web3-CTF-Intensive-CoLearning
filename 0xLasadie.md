@@ -57,28 +57,32 @@ timezone: Asia/Singapore
 
 ### 2024.09.04
 #### Damn Vulnerable DeFi - Climber:
-
-#### Damn Vulnerable DeFi - Wallet Mining:
+- Attempted this challenge but could not finish within the day.
 
 
 ### 2024.09.05
+#### Damn Vulnerable DeFi - Climber:
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/climber.md)
+
+
+### 2024.09.06
+#### Damn Vulnerable DeFi - Wallet Mining:
+
 #### Damn Vulnerable DeFi - Puppet V3:
 
 #### Damn Vulnerable DeFi - ABI Smuggling:
 
 
-### 2024.09.06
+### 2024.09.07
 #### Damn Vulnerable DeFi - Shards:
 
 #### Damn Vulnerable DeFi - Curvy Puppet:
 
-
-### 2024.09.07
+### 2024.09.08
 #### Damn Vulnerable DeFi - Withdrawal:
 
 #### ETH Taipei CTF 2023 - HelloWorld:
 
-### 2024.09.08
 ### 2024.09.09
 ### 2024.09.10
 ### 2024.09.11
