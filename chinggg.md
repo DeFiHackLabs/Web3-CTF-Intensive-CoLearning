@@ -82,4 +82,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 - [DamnVulnerableDeFiV4_2_NaiveReceiver.md](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/0xE/DamnVulnerableDeFiV4_2_NaiveReceiver.md)
 
+### 2024.09.04
+
+学习了第三道题 Truster，合约中  `target.functionCall()` 可以调用任意函数，可以利用这个漏洞授权自己转移池中的代到恢复地址。
+
+参考：
+
+- [DamnVulnerableDeFiV4_3_truster.md](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/0xE/DamnVulnerableDeFiV4/truster.md)
+
 <!-- Content_END -->

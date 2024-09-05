@@ -289,4 +289,17 @@ abstract contract ReentrancyGuard {
 2. 馬上更新狀態變量
 3. 再把錢給別人
 
+### 2024.09.04
+# Ethernut第一題
+1. 呼叫contribute，讓contributions[my address]有值
+2. Send Ether到Fallback合約觸發receive()，讓自己變owner
+3. 呼叫withdraw()，抽走所有Ether
+
+### 2024.09.05
+# Ethernut第二題
+- 在舊版的solidity, Constructor不是Contructor(), 而是合約名稱
+- 這題的合約的Constructor有typo => Fal1out
+- 因此該合約的Constructor為空的
+- 可以直接呼叫Fal1out將owner改為自己
+
 <!-- Content_END -->

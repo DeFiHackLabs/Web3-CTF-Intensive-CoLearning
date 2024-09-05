@@ -85,6 +85,14 @@ Finish ethernaut 7
 
 Finish ethernaut token and vault
 
+### 2024.09.04
+
+Finish ethernaut king and re-entrancy
+
+### 2024.09.05
+
+Finish ethernaut elevator
+
 
 
 <!-- Content_END -->

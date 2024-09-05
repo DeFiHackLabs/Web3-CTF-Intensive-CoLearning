@@ -161,3 +161,11 @@ In [UniswapV2Pair](https://github.com/Uniswap/v2-core/blob/master/contracts/Unis
 The pair will first transfer tokens to the receiver, then call `uniswapV2Call` on the reveiver, and finally check whether the amount and fee is paid back.
 By referring this [document](https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps), we can implement an attacker contract to so.
 
+## Backdoor (WIP)
+Although there is only one challenge source `WalletRegistry`, the deployer actually uses a lot of library contracts.
+Theses contracts are about multi signature wallets.
+We need to create several wallets, and the registry will perform some checks and transfer tokens to the wallet.
+After that, we need to transfer the tokens out.
+
+I have not check the details inside the libraries, but nearly all ways I can think of are checked by the registry, including directly calling `proxyCreated`, creating the wallet using different singleton, skip setting up the wallet, having the player as one of the wallet owner, set a fallback manager for the wallet... All of them are checked. Need to investigate and understand the libraries.
+

