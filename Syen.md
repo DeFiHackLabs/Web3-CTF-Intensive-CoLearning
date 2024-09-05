@@ -56,6 +56,6 @@ Web3 Dapp Developer
 
 **QuillCTF**
 
-- [TrueXOR](./Writeup/Syen/src/QuillCTF/Pelusa/README.md)
+- [Pelusa](./Writeup/Syen/src/QuillCTF/Pelusa/README.md)
 
 <!-- Content_END -->
