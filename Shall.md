@@ -34,4 +34,19 @@ QuillCTF-04-SafeNFT-onERC721Received Reentrancy
 - [PoC](./Writeup/Shall/safeNFT/safeNFT.t.sol)
 - [Writeup](./Writeup/Shall/safeNFT/writeup.md)
 
+### 2024.09.02
+QuillCTF-05-d31eg4t3-DelegateCall
+- [PoC](./Writeup/Shall/d31eg4t3/d31eg4t3.t.sol)
+- [Writeup](./Writeup/Shall/d31eg4t3/writeup.md)
+
+### 2024.09.03
+QuillCTF-07-Truexor-gasleft()
+- [PoC](./Writeup/Shall/true-xor/truexor.t.sol)
+- [Writeup](./Writeup/Shall/true-xor/writeup.md)
+
+### 2024.09.04
+QuillCTF-08-Pelusa-Create2
+- [PoC](./Writeup/Shall/pelusa/pelusa.t.sol)
+- [Writeup](./Writeup/Shall/pelusa/writeup.md)
+
 <!-- Content_END -->

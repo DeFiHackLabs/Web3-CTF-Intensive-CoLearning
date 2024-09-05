@@ -45,7 +45,13 @@ contract NaughtCoinSolution is Script, EthernautHelper {
         // NOTE make sure to change original function into "_createInstance()" for the correct challengeInstance address.
         address challengeInstance = _createInstance(LEVEL_ADDRESS);
 
-        // Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
+        // Start of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        // End of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);

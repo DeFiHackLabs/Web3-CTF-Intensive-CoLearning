@@ -26,6 +26,8 @@ The Ethernaut level 1- 获取合约拥有权，并提取余额
 
 
 ### 2024.08.31
+The Ethernaut level 1
+
 调试了好久，终于成功了。
 
 在 sepolia 重新部署了一个 level01 的 `Fallback` [合约](https://sepolia.etherscan.io/address/0xF6a32a802127712efAAED091Fa946492460Cb703#code)。
@@ -36,10 +38,12 @@ The Ethernaut level 1- 获取合约拥有权，并提取余额
 2. 调用 `attack` 方法，该方法调用 `Fallback` 合约的 `contribute` 方法，存入一笔资金。再直接发送 1 wei 给 `Fallback` 合约，从而获取 `owner` 权限。
 3. 最后再调用 `Fallback` 合约的 `withdraw` 方法（此时已经具有 `owner` 权限），成功提取所有资金
 
-![示例代码](Writeup/phipupt/ethernaut/image.png)
+![示例代码](Writeup/phipupt/ethernaut/level01.png)
 
 
 ### 2024.09.01
+The Ethernaut level 2  
+
 这道题的构造函数是 `Fal1out`，合约名叫 `Fallout`。不仔细检查，完全看不出来区别。
 
 本题想考的知识点应该是：在 Solidity 0.4.22 之前，可以使用与合约同名的函数作为构造函数。从 Solidity 0.4.22 开始，应使用 `constructor` 关键字。
@@ -67,6 +71,80 @@ cast send \
 ```
 
 再次调用上面的 `owner` 方法，返回发送者地址 `0x3EBA4347974cF00b7ba130797e5DbfAB33D8Ef4b`。
+
+
+### 2024.09.02
+The Ethernaut level 3
+
+这个挑战要求在一次投币游戏中通过猜测投币的结果连续正确10次。
+
+为了在连续猜对10次，必须预测 `blockValue`，并在调用 `flip` 函数时提供正确的 `_guess` 参数。
+
+基于以上的分析，可以设计如下步骤来连续正确猜测10次：
+
+1. 部署一个新的合约(`Attacker`)，该合约能够计算并预测 `CoinFlip` 合约的投币结果。
+2. 使用该合约调用 `CoinFlip` 合约的 `flip` 函数，这样每次都能提供正确的 `_guess` 参数。
+3. 重复调用多次
+
+示例合约在[这里](Writeup/phipupt/ethernaut/script/Level03.s.sol)
+
+链上记录：
+- level(`CoinFlip`) 新实例：https://sepolia.etherscan.io/address/0x7ECf6bB565c69ccfac8F5d4b3D785AB78a00F677
+- attacker 合约：https://sepolia.etherscan.io/address/0xdce3c80980837bfb66524bc0ccf3d2f5db5ae8ff
+
+![alt text](Writeup/phipupt/ethernaut/level03.png)
+
+
+### 2024.09.03
+The Ethernaut level 4
+
+Ethernaut的第4关要求获得合约的owner权限。
+
+要获得owner权限，需要调用 `changeOwner` 方法，但条件是 `tx.origin != msg.sender`。
+
+这个条件可以通过使用一个中间合约来绕过，通过中间合约去调用目标合约来实现。此时
+- `tx.origin` = 发送交易者
+- `msg.sender` = 中间合约地址
+
+示例合约在[这里](Writeup/phipupt/ethernaut/script/Level04.s.sol)
+
+链上记录：
+- level(`Telephone`) 新实例：0x231014b0FEf1C0AF96189700a43221fACF1DfF7E
+- attacker 合约：https://sepolia.etherscan.io/address/0xa380337b31833736daa3a044a41e5fb821d15128
+- 可以使用 `cast call` 命令来调用目标合约的 `owner` 函数来获取 `owner` 地址。：
+`cast call 0x231014b0FEf1C0AF96189700a43221fACF1DfF7E "owner()(address)" --rpc-url sepolia`
+
+
+### 2024.09.04
+The Ethernaut level 5
+
+Ethernaut的第 5 关要求获得更多的token。
+
+合约看起来没什么问题，但是 solidity 版本用的是是 0.6，没有处理整型的下溢/溢出。
+
+因此，只需要发送大于 20 的值，比如 21，就可以获得 21 个token
+
+直接使用 Foundry 的命令: 
+
+查询余额：
+
+```
+cast call <level address> \
+"balanceOf(address)(uint256)" <receiver> \
+--rpc-url sepolia
+```
+
+转账（获取更多token）
+```
+cast send <level address> \
+"transfer(address,uint256)(bool)" <receiver> 21 \
+--rpc-url sepolia \
+--private-key <deployer private key> 
+```
+
+链上记录：
+- level(`Token`) 新实例：[0xC8622C44a00a6d01a0c63390eD54E111ef56282f](https://sepolia.etherscan.io/address/0xC8622C44a00a6d01a0c63390eD54E111ef56282f)
+- receiver: 0x5859FdBE15be13b4413F0E5F96Ce27364F6E21C8
 
 
 <!-- Content_END -->

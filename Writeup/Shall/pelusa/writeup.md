@@ -1,0 +1,1 @@
+The key is to calculate a wanted address by create2 opcode. In addition, the detegatecall should change the storage of the crafted attacker contract. Notably, the code length should be 0, so we should initate the call from the constructor.

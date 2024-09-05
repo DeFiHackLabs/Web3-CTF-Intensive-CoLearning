@@ -27,4 +27,12 @@ System Setup and Challenge Environment Adjustment.
 
 Solved Latent.
 
+### 2024.09.02
+
+Solved USurper.
+
+### 2024.09.03
+
+Solved ZSafe.
+
 <!-- Content_END -->
