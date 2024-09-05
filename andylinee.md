@@ -38,8 +38,13 @@ Sign up
 
 今天練習 Damn Vulnerable DeFi v4 的 Naive Receiver
 - [Writeup](https://hackmd.io/@andylinee/ry-E2HVnA)
+- [POC](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/andylinee/DamnVulnerableDeFiV4/NaiveReceiver.t.sol)
 
 ### 2024.09.04
 今天練習 Damn Vulnerable DeFi v4 的 Truster
+
+### 2024.09.05
+
+今天把 Damn Vulnerable DeFi v4 的 Naive Receiver 的 Writeup 和 POC 補齊。
 
 <!-- Content_END -->
