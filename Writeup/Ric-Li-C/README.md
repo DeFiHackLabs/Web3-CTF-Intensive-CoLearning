@@ -11,4 +11,4 @@ The CTFs and respective solution files are listed below:
 
 ## Ethcc CTF 2023 (5)
 
-## Paradigm CTF 2023 (17)
+## BlazCTF 2023 (14)

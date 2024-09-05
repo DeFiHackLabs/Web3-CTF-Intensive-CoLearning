@@ -35,11 +35,7 @@ timezone: Asia/Shanghai
 
 有一点忙，今天只简单看了A系列一题，后续题目等和 erthernaut交互后继续
 
-POC : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Fallback.md
-
-
-
-
+POC -- Fallback : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Fallback.md
 
 ### 2024.08.31
 
@@ -89,7 +85,9 @@ POC : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Wr
           }
       ```
 
-[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC
+POC -- CoinFlip : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/CoinFlip.md
+
+POC -- Telephone: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Telephone.md
 
 ### 2024.09.01
 
@@ -104,7 +102,7 @@ Token: 看到版本0.6就感觉是经典的uint256 整数溢出问题，但是�
 1. 加法上溢，超出最大范围变成最小值
 2. 减法下溢，超出最小范围就变成最大值
 
-[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
+POC -- Token: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Teoken.md
 
 ### 2024.09.02
 
@@ -118,7 +116,7 @@ delegatecall : 进度非常慢，非常疑惑的一天
 
 以及，修复一个昨天的误区：用户转账超过余额给别人，但下溢后，导致自己的余额反而增加
 
-[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
 
 ### 2024.09.03
 
@@ -130,9 +128,7 @@ delegatecall : 进度非常慢，非常疑惑的一天
 2. 今天成功把wsl环境改好了，把token,force,delegation的poc写好了
 3. 关于 vault ，还是很神奇，深入体会到链上数据透明的性质，private的变量也能获取到
 
-[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
-
-
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
 
 ### 2024.09.04
 
@@ -143,7 +139,20 @@ delegatecall : 进度非常慢，非常疑惑的一天
 1. 完成 king poc,这里用的是合约接收转账后可以触发fallback和receive的特性，在这个函数中抛出异常就可以禁止更新king,这样别人转账后，king永远不变
 2. 关于重入，逻辑是通了，复现有点问题
 
-[POC]: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+### 2024.09.05
+
+学习內容:
+
+做了A系列2题
+
+1. 整理了之前题目的 poc
+2. 关于重入,复现成功，找出了两个坑，继承的时候同时继承了receive函数，导致转账后直接进 receive而不进fallback
+3. 关于电梯，虽然通过接口确保了外部合约一定有指定函数，但是函数逻辑可以由外部定义，在调用相同参数的情况下可以返回不同的值，还是很神奇
+4. 整理到了 9.1 号，后续的不能光测试了，还要写部署交互的了，继续学习foundry
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
 
 ### 2024.07.12
 

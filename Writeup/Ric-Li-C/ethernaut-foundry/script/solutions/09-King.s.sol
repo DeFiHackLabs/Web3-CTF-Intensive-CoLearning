@@ -5,7 +5,7 @@ import {Script, console2} from "forge-std/Script.sol";
 import {EthernautHelper} from "../setup/EthernautHelper.sol";
 
 // NOTE You can import your helper contracts & create interfaces here
-import "../../src/09-KingAttacker.sol";
+import {King} from "../../challenge-contracts/09-King.sol";
 
 contract KingSolution is Script, EthernautHelper {
     address constant LEVEL_ADDRESS = 0x3049C00639E6dfC269ED1451764a046f7aE500c6;
@@ -20,6 +20,14 @@ contract KingSolution is Script, EthernautHelper {
         ////////////////////////////////////////////////////////////////////////////////////
         // Start of Ric Li C's Solution
         ////////////////////////////////////////////////////////////////////////////////////
+        // Step 1: Get King contract;
+        King king = King(payable(challengeInstance));
+
+        // Step 2: Call `XXXXX()` function of King contract,
+
+        // Step 3: Confirm that caller `heroAddress` has successfully obtained ownership of the King contract.
+        address heroAddress = vm.addr(heroPrivateKey);
+        require(heroAddress == king.owner(), "Owner check failed");
 
         ////////////////////////////////////////////////////////////////////////////////////
         // End of Ric Li C's Solution

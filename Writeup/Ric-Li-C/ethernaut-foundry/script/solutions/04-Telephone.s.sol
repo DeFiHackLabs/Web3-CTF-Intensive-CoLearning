@@ -26,7 +26,7 @@ contract TelephoneSolution is Script, EthernautHelper {
         //         TelephoneCaller contract calls `changeOwner()` function in Telephone contract;
         caller.invokeChangeOwner();
 
-        // Step 3: Confirm that caller `heroAddress` have become owner of the Telephone contract.
+        // Step 3: Confirm that caller `heroAddress` has successfully obtained ownership of the Telephone contract.
         address heroAddress = vm.addr(heroPrivateKey);
         Telephone telephone = Telephone(challengeInstance);
         require(heroAddress == telephone.owner(), "Owner check failed");
