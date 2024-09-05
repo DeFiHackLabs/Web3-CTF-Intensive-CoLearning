@@ -227,4 +227,17 @@ contract C {
 然后就可以修改`maxBalance`为`player`地址,就结束.
 
 
+### 2024.09.05
+
+#### A-Ethernaut-Motorbike
+
+是个uups的合约,实际上逻辑合约是没有init的,因为proxy合约`delegatecall`了`initialize`.
+验证发现逻辑合约的`upgrader`和`horsePower`确实都是0,没有初始化的.
+既然没有初始化,意味着可以调用`initialize`让自己变成`upgrader`,然后升级合约.
+
+这题是要让合约`selfdestruct`,写个攻击合约,带个`selfdestruct`方法,然后调用`upgradeToAndCall`
+即可. 
+
+貌似 foundry test中 `selfdestruct` 无效,所以 poc 中后面手动处理了
+
 <!-- Content_END -->
