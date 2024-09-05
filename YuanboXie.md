@@ -46,3 +46,9 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Delegation - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 学会了 delegatecall 导致的权限提升攻击；
 
+### 2024.09.05
+
+- 1.Ethernaut CTF (31) - Force - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学习了 selfdestruct，同时领悟到通过合约来攻击合约可以实现很多 tx 本身无法实现的操作，因为合约有更强的能力；
+
+
