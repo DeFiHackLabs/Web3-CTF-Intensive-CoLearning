@@ -420,4 +420,38 @@ contract Reentrance {
 [Reentrance-poc](./Writeup/23jdn/test/ethernaut/Reentrance.t.sol)
 
 
+### 20240905 
+
+#### ethernaut系列-Elevator
+
+题目要求电梯达到顶层
+
+Elevator code:
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+```
+
+1
+
+
 <!-- Content_END -->
