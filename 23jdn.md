@@ -172,7 +172,286 @@ contract CoinFlip {
 
 分析:该合约通过获取当前区块高度-1(由于当前交易所在区块打包上链进行广播此时是获取不到当前区块的hash的，随意采用获取上一个区块)的区块哈希值与预定义好的FACTOR进行相除来模拟一个硬币的正反面，由于FACTOR是一个很大的值相除只会得到1 or 0的结果(blockvalue是一个uint256的变量),并通过连续猜对次数的记录作为猜对次数判定。由于区块hash算一个伪随机数，所以在同样的环境下运行同样的算法即可得到一样的结果，其关键在于本地运算与目标合约的flip的调用在同一笔交易(也就是同一区块)中实现即可得到同样的hash，在计算好结果后在调用CoinFilp的flip函数代入即可猜对对应结果。
 
-**附:由于foundry还在熟悉中，以上操作均在remix上进行部署调用，后续了解foundry后补上对应poc**
+[CoinFlip-poc](./Writeup/23jdn/test/ethernaut/CoinFlip.t.sol)
+
+### 20240902
+
+#### ethernaut系列-Telephone
+
+题目要求修改owner地址
+
+Telephone:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Telephone {
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function changeOwner(address _owner) public {
+        if (tx.origin != msg.sender) {
+            owner = _owner;
+        }
+    }
+}
+```
+
+分析:gas费用始终为tx.origin支付，msg.sender为合约当前调用者，通过一笔交易中采用中间人调用合约即可完成tx.origin!=msg.sender的判定
+
+[Telephone-poc](./Writeup/23jdn/test/ethernaut/Telephone.t.sol)
+
+
+#### ethernaut系列-Token
+
+题目要求增加代币
+
+Token Code:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.0;
+
+contract Token {
+    mapping(address => uint256) balances;
+    uint256 public totalSupply;
+
+    constructor(uint256 _initialSupply) public {
+        balances[msg.sender] = totalSupply = _initialSupply;
+    }
+
+    function transfer(address _to, uint256 _value) public returns (bool) {
+        require(balances[msg.sender] - _value >= 0);
+        balances[msg.sender] -= _value;
+        balances[_to] += _value;
+        return true;
+    }
+
+    function balanceOf(address _owner) public view returns (uint256 balance) {
+        return balances[_owner];
+    }
+}
+```
+0.6.0版本存在溢出，直接进行转账即可
+
+[Token-poc](./Writeup/23jdn/test/ethernaut/Token.t.sol)
+
+### 20240903
+
+#### ethernaut系列-Delegation
+
+题目要求修改owner
+
+Delegation code:
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Delegate {
+    address public owner;
+
+    constructor(address _owner) {
+        owner = _owner;
+    }
+
+    function pwn() public {
+        owner = msg.sender;
+    }
+}
+
+contract Delegation {
+    address public owner;
+    Delegate delegate;
+
+    constructor(address _delegateAddress) {
+        delegate = Delegate(_delegateAddress);
+        owner = msg.sender;
+    }
+
+    fallback() external {
+        (bool result,) = address(delegate).delegatecall(msg.data);
+        if (result) {
+            this;
+        }
+    }
+}
+```
+
+分析:delegatecall调用与传统的call调用的区别在于调用的语境不同，delegatecall允许一个合约在调用另一个合约时，将调用者的上下文（包括存储和 msg.sender）传递给被调用的合约，这样会导致存储变量的覆盖从而导致调用pwn()产生owner的更改。
+
+[Delegation-poc](./Writeup/23jdn/test/ethernaut/Delegation.t.sol)
+
+#### ethernaut系列-Force
+
+题目要求合约的余额大于0
+
+Force code:
+```// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Force { /*
+                   MEOW ?
+         /\_/\   /
+    ____/ o o \
+    /~____  =ø= /
+    (______)__m_m)
+                   */ }
+
+```
+
+分析:合约虽然没有fallback、revice方法处理接受eth的功能，但是如果一个合约销毁时发送的eth无条件接受。
+
+[Force-poc](./Writeup/23jdn/test/ethernaut/Force.t.sol)
+
+#### ehternaut系列-Vault
+
+题目要求打开 vault
+
+Vault code:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Vault {
+    bool public locked;
+    bytes32 private password;
+
+    constructor(bytes32 _password) {
+        locked = true;
+        password = _password;
+    }
+
+    function unlock(bytes32 _password) public {
+        if (password == _password) {
+            locked = false;
+        }
+    }
+}
+```
+分析:private变量可以通过直接访问存储槽来实现，在 Solidity 中，私有状态变量只是对合约外部的不可见性，但依然存储在区块链上.
+
+参考链接:
+[https://learnblockchain.cn/article/3398](!https://learnblockchain.cn/article/3398)
+
+[Vault-poc](./Writeup/23jdn/test/ethernaut/Vault.t.sol)
+
+### 20240904
+
+#### ethernaut系列-King
+
+题目要求阻止他人获得king
+
+King code:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract King {
+    address king;
+    uint256 public prize;
+    address public owner;
+
+    constructor() payable {
+        owner = msg.sender;
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    receive() external payable {
+        require(msg.value >= prize || msg.sender == owner);
+        payable(king).transfer(msg.value);
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    function _king() public view returns (address) {
+        return king;
+    }
+}
+```
+
+分析:创建一个不可接受eth转账的合约即可更改对应逻辑
+
+[King-poc](./Writeup/23jdn/test/ethernaut/King.t.sol)
+
+#### ethernaut系列-Reentrance
+
+题目要求清空合约资产
+
+Reentrance Code:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.12;
+
+import "openzeppelin-contracts/math/SafeMath.sol";
+
+contract Reentrance {
+    using SafeMath for uint256;
+
+    mapping(address => uint256) public balances;
+
+    function donate(address _to) public payable {
+        balances[_to] = balances[_to].add(msg.value);
+    }
+
+    function balanceOf(address _who) public view returns (uint256 balance) {
+        return balances[_who];
+    }
+
+    function withdraw(uint256 _amount) public {
+        if (balances[msg.sender] >= _amount) {
+            (bool result,) = msg.sender.call{value: _amount}("");
+            if (result) {
+                _amount;
+            }
+            balances[msg.sender] -= _amount;
+        }
+    }
+
+    receive() external payable {}
+}
+```
+
+分析:重入攻击
+
+[Reentrance-poc](./Writeup/23jdn/test/ethernaut/Reentrance.t.sol)
+
+
+### 20240905 
+
+#### ethernaut系列-Elevator
+
+题目要求电梯达到顶层
+
+Elevator code:
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+```
+
+1
 
 
 <!-- Content_END -->

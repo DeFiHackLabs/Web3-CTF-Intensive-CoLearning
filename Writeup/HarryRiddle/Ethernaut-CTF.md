@@ -194,4 +194,27 @@ This code is implied that the contract sender does not have any code. Therefore,
 
 **Alien Codex**
 
-- Description:
+- Description: The entire storage area is `2^256` and the array will expand to entire storage by the arithmetic underflow of array length. Using `retract` to expand the array to occupy entire storage and change the value of `slot0` by `revise` function to modify the `owner` value stored in `slot0`.
+
+```javascript
+    contract AlienCodex is Ownable {
+        bool public contact;
+@>      bytes32[] public codex;
+        ...
+        function retract() public contacted {
+            codex.length--;
+        }
+
+        function revise(uint256 i, bytes32 _content) public contacted {
+            codex[i] = _content;
+        }
+    }
+```
+
+**Denial**
+
+- Description: In the `withdraw` function, the `partner` and `owner` will be transfer ether from contract. However, `partner` is withdrawal with `call` methods and `owner` is used by `transfer`. We can prevent the anyone calling the `withdraw` function by using all the gas limit in withdrawal transaction. To do this, we implement the `partner` is the receivable contract having `receive` fallback consume all gas limits.
+
+**Shop**
+
+- Description: The `Shop` contract is dependent on the `price` function of `msg.sender`. So we just make other contract having `price` function return the value based on `Shop::isSold` variable

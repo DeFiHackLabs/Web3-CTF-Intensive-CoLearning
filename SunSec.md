@@ -65,5 +65,23 @@ timezone: Asia/Taipei
 - DamnVulnerableDeFi #5 [The Rewarder](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#the-rewarder)
 - DamnVulnerableDeFi #6 [Selfie](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#selfie)
 
-  
+### 2024.09.01
+- DamnVulnerableDeFi #7 [Compromised](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#compromised)
+- DamnVulnerableDeFi #8 [Puppet](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet)
+- DamnVulnerableDeFi #9 [Puppet V2](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet-v2)
+
+### 2024.09.02
+- DamnVulnerableDeFi #10 [Free Rider](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#free-rider)
+- DamnVulnerableDeFi #11 [Backdoor](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#backdoor)
+
+### 2024.09.03
+- DamnVulnerableDeFi #12 [Climber](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#climber)
+
+### 2024.09.04
+- DamnVulnerableDeFi #13 [Wallet Mining](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#wallet-mining-還沒解完)
+- DamnVulnerableDeFi #14 [Puppet V3](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet-v3)
+
+### 2024.09.05
+- DamnVulnerableDeFi #15 [ABI Smuggling](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#abi-smuggling)
+
 <!-- Content_END -->

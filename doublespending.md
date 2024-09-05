@@ -115,4 +115,54 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
   - Finally, we can return the token to SelfiePool.
   - After `ACTION_DELAY_IN_SECONDS`, we can call `SimpleGovernance.executeAction`.
 
+### 2024.09.02
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Compromised
+
+  - The basic attack vector is that we buy the nft with low price and sell it with high price.
+  - So, we should manipulate oracle. Specifically, we should control two of the three price sources to manipulate [the median price](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/compromised/TrustfulOracle.sol#L59-L61).
+  - The strange response from the server includes the base64 encoded private keys of two price sources.
+  - With the private keys, we can manipulate the nft price oracle.
+
+### 2024.09.03
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Puppet
+  - We can manipulate [the oracle price](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/puppet/PuppetPool.sol#L59-L62) of PuppetPool to enable almost free borrow.
+  - At first, We can sell the token for ETH to make `uniswapPair.balance * (10 ** 18) / token.balanceOf(uniswapPair)` small
+  - Then, we [borrow](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/puppet/PuppetPool.sol#L30) all the token balance of PuppetPool with very few ETH.
+  - Finally, we can sell ETH for the token to get back tokens which are used to manipulate the oracle price of PuppetPool.
+  - Note: If we want to attack with only one transacation, we can
+    - Deploy an `Attacker` contract
+    - Attack inside the `constructor`
+    - Pay ETH to `constructor`
+    - Pay Token to `constructor` by `permit2`
+
+### 2024.09.04
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Puppet V2
+  - The attack vector is still exist like `Puppet`
+  - The differences are
+    - use WETH instead of ETH
+    - use `IUniswapV2Router02`
+
+### 2024.09.05
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Backdoor
+  - We find that [`proxyCreated`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/backdoor/WalletRegistry.sol#L67) will ensure the [`setup`](https://github.com/safe-global/safe-smart-account/blob/bf943f80fec5ac647159d26161446ac5d716a294/contracts/Safe.sol#L95-L104) process is fine
+  - So, we can check if there is something missed
+  - We can see that <`to`, `data`> and <`paymentToken`, `payment`, `paymentReceiver`> are not checked.
+  - However, `proxyCreated` is called after `setup`, so we do not have any token to transfer
+  - Then, we can check the logic of `setupModules(to, data)`
+  - Finally, we find that `delegate` call is allowed [here](https://github.com/safe-global/safe-smart-account/blob/bf943f80fec5ac647159d26161446ac5d716a294/contracts/base/ModuleManager.sol#L35-L39).
+  - So, we can let the wallet approve the token to anyone by manipulate the <`to`, `data`> input.
+  - Finally, we can use `transferFrom` to rug the token of the wallet.
+
 <!-- Content_END -->

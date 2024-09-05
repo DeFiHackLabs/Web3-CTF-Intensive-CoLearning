@@ -106,3 +106,66 @@ Some thoughts: The governance contract uses `unchecked` to calculate the `timeDe
 After some searching, we use foundry's cheatcode to set the block timestamp.
 There is `warp` to set the timestamp and `skip` to skip the time.
 
+## Compromised (24/09/02)
+In this challenge, we should hack an exchange for NFT.
+The exchange only provides functions to buy and sell NFTs, and the price is determined by the oracles, basing on the prices provided by three EOA sources.
+
+So, if we want to manipulate the price, we need the access to the source EOA, and we can buy NFTs at a lower price and sell them at a higher price afterwards.
+The challenge provides two sets of hex characters. Unhexing and then base64 decoding them, we get the private keys of the two sources.
+The following is straightforward then.
+
+## Puppet (24/09/03)
+In this challenge, there is a lending pool to hack.
+The pool lends tokens, requiring the borrower to deposit twice the amount of ETH. (Actually there is no functions implemented to return tokens and withdraw ETH.)
+The price is determined by a uniswap's balance.
+We need to drain the pool's tokens.
+
+The uniswap starts with 10 ETH and 10 DVT, and the player has 25 ETH and 1000 DVT.
+So, we have far more assets than the uniswap, and we can manipulate the price by buying and selling tokens.
+By simply transferring our initial tokens to uniswap, we can drastically decrease the price of DVT from 2:1 to 2:101.
+But that is still not enough for our ETH balance to drain the pool.
+We need to further decrease the price.
+
+If we use uniswap to sell DVT for ETH, we will get `10 - 10 * 10 / 1010` (around 9.9) ETH from the uniswap.
+Now uniswap has 0.1 ETH and 1010 DVT, therefore the price is 0.2:1010, and we can buy the pool's DVT at a lower price.
+
+By the way:
+1. The uniswap interface provided by the challenge is missing some `payable` modifier. [Ref](https://docs.uniswap.org/contracts/v1/reference/interfaces#solidity-1)
+2. Seems the player nonce is only increased when constructing contracts in forge, not when executing(send) other transactions? And I think it is impossible to include every step in a single transaction.
+
+## Puppet V2 (24/09/03)
+Now the uniswap V1 is replaced with V2.
+The puppet pool switches to use the uniswap library to the the price.
+
+The uniswap has 10 WETH and 100 DVT, and the player has 20 ETH and 10000 DVT. The pool has 1M DVT.
+The player's assets are still far more than the uniswap, and the V1 to V2 change does not resolve this problem.
+Let's try to manipulate the price again by interacting with the uniswap V2.
+
+It turns out that one swap is enough to decrease the price to what we can afford.
+However, if we only buy part of the pool's DVT each time and swap them again, the price will continuely decrease.
+The issue is that we need to swap back the DVT to WETH for the recovery, and there may be a tradeoff between the lower price and the extra swap fee.
+
+## Free Rider (24/09/04)
+This challenge provides a vulnerable NFT market.
+
+An easy logical mistake is that, the market will transfer the price of NFT to `_token.ownerOf(tokenId)` after transferring the NFT, which means the owner is already changed from the seller to the buyer.
+Another issue is, the market allows bulk offer and bulk buy. When buying multiple NTFs in a transaction, it reverts when `msg.value < priceToPay` for each token. So we only need to send the maximum of all prices, not the sum of them.
+
+Now let's check the initial setup.
+There are six NFT offers, all at the price 15 ETH.
+That means if we have 15 ETH, we can send it to the market to "buy" all NFTs, and meanwhile the market will return 6*15 ETH to us.
+However, we only holds 0.1 ETH at the beginning.
+
+If there is some flash loan... - The uniswap in this challenge is exactlly for the rescue.
+In [UniswapV2Pair](https://github.com/Uniswap/v2-core/blob/master/contracts/UniswapV2Pair.sol) there is a function `swap`.
+The pair will first transfer tokens to the receiver, then call `uniswapV2Call` on the reveiver, and finally check whether the amount and fee is paid back.
+By referring this [document](https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps), we can implement an attacker contract to so.
+
+## Backdoor (WIP)
+Although there is only one challenge source `WalletRegistry`, the deployer actually uses a lot of library contracts.
+Theses contracts are about multi signature wallets.
+We need to create several wallets, and the registry will perform some checks and transfer tokens to the wallet.
+After that, we need to transfer the tokens out.
+
+I have not check the details inside the libraries, but nearly all ways I can think of are checked by the registry, including directly calling `proxyCreated`, creating the wallet using different singleton, skip setting up the wallet, having the player as one of the wallet owner, set a fallback manager for the wallet... All of them are checked. Need to investigate and understand the libraries.
+

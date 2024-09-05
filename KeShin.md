@@ -51,10 +51,43 @@ KeShin, 合约安全新人
 
 ### 2024.9.1
 #### [Ethernaut CTF : 5 Token](https://ethernaut.openzeppelin.com/level/5)
+- 整数下溢问题，由于EVM版本问题，当 balance[msg.sender] < _value 时，减去之后会得到一个很大的数，会通过检查
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/5-Token)
 
 ### 2024.9.2
+#### [Ethernaut CTF : 6 Delegation](https://ethernaut.openzeppelin.com/level/6)
+- 理解 delegatecall 和 call 的区别
+- 理解 abi encode 相关
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/6-Delegation/)
 
 ### 2024.9.3
+#### [Ethernaut CTF : 7 Force](https://ethernaut.openzeppelin.com/level/7)
+- 一个合约需要有 receive 或者 fallback来接收 ETH, 当这两个都不存在时，可以通过调用带有 payable 的函数来接收 ETH。
+- 当这些都不存在时，可以创建另一个合约，通过 selfdestruct 自毁可以将当前合约的 ETH 强制发送给某一地址，坎昆升级后，自毁只是发送走所有的 ETH ，代码不会被删除
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/7-Force/)
+
+### 2024.9.4
+#### [Ethernaut CTF : 8 Vault](https://ethernaut.openzeppelin.com/level/8)
+- 虽然 password 被标记为 private 不能直接读取，但是我们可以通过 foundry 直接从合约的存储槽 slot 位置直接读取出值
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/8-Vault/)
+
+#### [Ethernaut CTF : 9 King](https://ethernaut.openzeppelin.com/level/9)
+- 转一点钱就可以拿到合约的 king 
+- 但是提交 instance 的时候，他们会再次尝试获取拿到 king ，我们看到其合约用的是 transfer ,有 gas 限制，我们只需要在攻击合约的 receive 中实现复杂的逻辑，使其尝试失败既可以
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/9-King/)
+
+
+### 2024.9.5
+#### [Ethernaut CTF : 10 Reentrance](https://ethernaut.openzeppelin.com/level/10)
+- 使用重入攻击
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/10-Reentrance/)
+
+### 2024.9.6
+
+### 2024.9.7
+
+### 2024.9.8
+
+### 2024.9.9
 
 <!-- Content_END -->

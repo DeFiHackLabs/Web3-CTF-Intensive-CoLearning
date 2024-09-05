@@ -27,5 +27,31 @@ Henry, 研究方向为网络安全
 [[Blaz CTF 2023] Hello World](./Writeup/Henry/blazctf-2023-helloworld.md)  
 
 ### 2024.9.1
+[[ethernaut] 1-5 ](./Writeup/Henry/ethernaut.md)
+
+### 2024.9.2
+[[ethernaut] 6-10 ](./Writeup/Henry/ethernaut.md)
+
+### 2024.9.3
+[[ethernaut] 11-13 ](./Writeup/Henry/ethernaut.md)
+A: 13道
+C: 2道
+Total: 15道
+
+### 2024.9.4
+
+### 2024.9.5
+[[ethernaut] 14, 16, 17 ](./Writeup/Henry/ethernaut.md)
+A: 16道
+C: 2道
+Total: 18道 
+
+
+### 2024.9.5
+今天请假有事 CyberTech NYC
+
+
+### 2024.9.6
+TBD
 
 <!-- Content_END -->

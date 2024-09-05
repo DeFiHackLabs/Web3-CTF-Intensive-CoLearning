@@ -5,7 +5,7 @@ import {Script, console2} from "forge-std/Script.sol";
 import {EthernautHelper} from "../setup/EthernautHelper.sol";
 
 // NOTE You can import your helper contracts & create interfaces here
-import "../../src/23-DexTwoAttacker.sol";
+import {King} from "../../challenge-contracts/09-King.sol";
 
 contract DexTwoSolution is Script, EthernautHelper {
     address constant LEVEL_ADDRESS = 0xf59112032D54862E199626F55cFad4F8a3b0Fce9;
@@ -17,7 +17,22 @@ contract DexTwoSolution is Script, EthernautHelper {
         // NOTE make sure to change original function into "_createInstance()" for the correct challengeInstance address.
         address challengeInstance = _createInstance(LEVEL_ADDRESS);
 
-        // Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
+        // Start of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
+        // Step 1: Get King contract;
+        King king = King(payable(challengeInstance));
+
+        // Step 2: Call `XXXXX()` function of King contract,
+        //         YYYYY;
+
+        // Step 3: Confirm that caller `heroAddress` has successfully obtained ownership of the King contract.
+        address heroAddress = vm.addr(heroPrivateKey);
+        require(heroAddress == king.owner(), "Owner check failed");
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        // End of Ric Li C's Solution
+        ////////////////////////////////////////////////////////////////////////////////////
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);

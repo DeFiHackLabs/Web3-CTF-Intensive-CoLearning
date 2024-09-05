@@ -1,5 +1,5 @@
 ---
-[
+timezone: America/Los_Angeles
 ---
 # wangtl175
 
@@ -110,5 +110,29 @@ uint test = 2;
 test = test.mul(3);
 test = test.add(5);
 ```
+
+### 2024.09.02
+
+#### delegatecall
+
+`delegatecall`是委托调用的意思，考虑用户`A`通过合约`B`来`delegatecall`合约`C`时，合约`C`的上下文是`B`的，`msg.sender`是`A`的地址，只有逻辑是`C`的。如果函数改变了存储中的变量，真正改变的也是`B`中的存储。为此，合约`B`和合约`C`的变量存储布局必须相同。
+
+
+### 2024.09.03
+
+#### 删除合约
+
+坎昆升级以前，`selfdestruct(addr)`可以用来删除合约，并将合约剩余ETH转移到指定地址`addr`。
+
+坎昆升级后，`selfdestruct`仅会被用来将合约中的ETH转移到指定地址。如果想要删除合约，则只有当合约的创建和自毁发生在同一笔交易时才能生效。
+
+使用`selfdestruct`转移ETH时，即使目标合约没有receive和fallback函数，也能成功转移
+
+
+### 2024.09.04
+
+#### 合约private
+
+把合约的一个变量设置private，只是能限制其他合约的访问。但是链上的一切都是公开的，[这里](https://sepolia.etherscan.io/tx/0x9aa9f09a53fa632706cd303324410e87150a1953deef9e2d6d338aa60830ab1f/advanced#statechange)可以看到这个交易中的状态变化，其中包含了private变量
 
 <!-- Content_END -->

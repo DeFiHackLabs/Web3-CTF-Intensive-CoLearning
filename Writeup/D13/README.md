@@ -9,6 +9,12 @@
 6. [05 Token](./script/05_Token.s.sol)
 7. [06 Delegation](./script/06_Delegation.s.sol)
 8. [07 Force](./script/07_Force.s.sol)
+9. [08 Vault](./script/08_Vault.s.sol)
+0. [09 King](./script/09_King.s.sol)
+1. [10 Re-entrancy](./script/10_Re-retrancy.s.sol)
+2. [11 Elevator](./script/11_Elevator.s.sol)
+3. [12 Privacy](./script/12_Privacy.s.sol)
+4. [13 GatekeeperOne](./script/13_GatekeeperOne.s.sol)
 
 ### Writeup
 1. [00 Hello Ethernaut](./writeup/00_HelloEthernaut.md)
@@ -19,3 +25,9 @@
 6. [05 Token](./writeup/05_Token.md)
 7. [06 Delegation](./writeup/06_Delegation.md)
 8. [07 Force](./writeup/07_Force.md)
+9. [08 Vault](./writeup/08_Vault.md)
+0. [09 King](./writeup/09_King.md)
+1. [10 Re-entrancy](./writeup/10_Re-entrancy.md)
+2. [11 Elevator](./writeup/11_Elevator.md)
+3. [12 Privacy](./writeup/12_Privacy.md)
+4. [13 GatekeeperOne](./writeup/13_GatekeeperOne.md)
