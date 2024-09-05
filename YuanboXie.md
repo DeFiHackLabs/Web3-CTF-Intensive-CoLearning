@@ -10,6 +10,8 @@ timezone: Asia/Shanghai
 
 ## Notes
 
+<!-- Content_START -->
+
 ### 2024.08.29
 
 - 1.Ethernaut CTF (31) - Hello Ethernaut - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
@@ -51,4 +53,4 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Force - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 学习了 selfdestruct，同时领悟到通过合约来攻击合约可以实现很多 tx 本身无法实现的操作，因为合约有更强的能力；
 
-
+<!-- Content_END -->
