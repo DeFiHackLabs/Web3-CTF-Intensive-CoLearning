@@ -30,10 +30,16 @@ timezone: Asia/Shanghai
 
 ### 2024.09.02
 
-請假
+熟悉基礎的 foundry 語法
 
 ### 2024.09.03
 
-用 foundry 框架，解 Fallback Fallout CoinFlip
+建立 foundry 框架解題，fallback fallout flipcoin
+
+### 2024.09.04
+
+add telephone and token 
+
+### 2024.09.05
 
 <!-- Content_END -->

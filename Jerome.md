@@ -32,5 +32,26 @@ timezone: Asia/Shanghai
 1.完成Damn Vulnerable DeFi V4的第三关Truster。
 - [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Truster/Truster.md)
 - [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Truster/Truster.t.sol)
-  
+
+### 2024.09.03
+学习内容
+#### [[Damn Vulnerable DeFi V4] 4 | SideEntrance ]
+1.完成Damn Vulnerable DeFi V4的第四关SideEntrance。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/SideEntrance/SideEntrance.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/SideEntrance/SideEntrance.t.sol)
+
+### 2024.09.04
+学习内容
+#### [[Damn Vulnerable DeFi V4] 5 | The Rewarder ]
+1.完成Damn Vulnerable DeFi V4的第五关TheRewarder。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/TheRewarder/TheRewarder.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/TheRewarder/TheRewarder.t.sol)
+
+### 2024.09.05
+学习内容
+#### [[Damn Vulnerable DeFi V4] 6 | Selfie ]
+1.完成Damn Vulnerable DeFi V4的第六关Selfie。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Selfie/Selfie.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Selfie/Selfie.t.sol)
+
 <!-- Content_END -->

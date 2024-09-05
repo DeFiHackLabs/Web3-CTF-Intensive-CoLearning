@@ -44,4 +44,14 @@ QuillCTF-07-Truexor-gasleft()
 - [PoC](./Writeup/Shall/true-xor/truexor.t.sol)
 - [Writeup](./Writeup/Shall/true-xor/writeup.md)
 
+### 2024.09.04
+QuillCTF-08-Pelusa-Create2
+- [PoC](./Writeup/Shall/pelusa/pelusa.t.sol)
+- [Writeup](./Writeup/Shall/pelusa/writeup.md)
+
+### 2024.09.05
+QuillCTF-09-WETH10-StealToken
+- [PoC](./Writeup/Shall/weth10/weth10.t.sol)
+- [Writeup](./Writeup/Shall/weth10/writeup.md)
+
 <!-- Content_END -->

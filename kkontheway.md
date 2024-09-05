@@ -54,5 +54,15 @@ A: Damn Vulnerable DeFi V4(1/18)
 ### 2024.09.03
 
 - 在做onlypwner-multisig中
+- update:解决Onlypwner-Multisig
+
+
+### 2024.09.04
+- 先尝试解决OnlyPwner-SHAPESHIFTER,学习关于Metamorphic Smart Contracts的内容
+- 解决BlazCTF2023
+
+### 2024.09.05
+- SHAPESHIFTER没啥思路
+- BlazCTF2023-Lockless-Swap
 
 <!-- Content_END -->

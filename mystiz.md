@@ -183,4 +183,65 @@ We can follow the procedures to drain the pool:
 2. Update the price of the NFT to 999.1 ETH and sell it. We will gain 999 ETH here.
 3. Update the price of the NFT to 999 ETH, pretending that nothing has happened.
 
+### 2024.09.03
+
+Progress
+
+* Damn Vulnerable DeFi (6/18)
+* EthTaipei CTF 2023 (1/5)
+* MetaTrust CTF 2023 (0/22)
+
+#### 🏁 EthTaipei CTF 2023: Arcade 🤯
+
+**Time used: ~35m**
+
+If we call `arcade.changePlayer(address(0x0));`, we can see that the event `Transfer` is called before `PlayerChanged`. Thus we are able to steal other's account by transferring the current player to the victim.
+
+![](Writeup/mystiz/images/20240903-eth-arcade.png)
+
+From _Solidity Underhanded Contest 2022_, [a submission](https://github.com/ethereum/solidity-underhanded-contest/blob/master/2022/submissions_2022/submission9_TynanRichards/SPOILERS.md) mentioned that the parameters had a bizarre evaluation order:
+
+1. the _indexed_ parameters will first be evaluated right-to-left;
+2. the non-indexed parameters will then be evaluated left-to-right.
+
+In our case, `newPlayer` will be evaluated earlier than `oldPlayer` in `event PlayerChanged(address indexed oldPlayer, address indexed newPlayer);`. Hence, the actual behaviour of the `changePlayer` function being:
+
+1. sets the current player to `newPlayer`
+2. redeems the current player's (`newPlayer`'s) score to the sender (us).
+
+Therefore we are able to steal 190 PRIZE. If we call `.earn` and `.redeem` before we exploit, we will be able to loot for another 10 PRIZE.
+
+### 2024.09.04
+
+Progress
+
+* Damn Vulnerable DeFi (6/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+
+#### 🏁 EthTaipei CTF 2023: NFT
+
+**Time used: ~1h 15m**
+
+Re-entrance attack: During `withdraw`, the NFT is _first_ transferred from the pool to our address then decreases the `_balances[msg.sender]`. Also `onERC721Received` on the receipient's contract will be called.
+
+We can make `onERC721Received` to transfer (not deposit) the NFT, then withdraw that immediately. This heuristic should be called only once.
+
+In that case, `_balances[msg.sender] -= 1 ether` will be executed twice. For Solidity < 0.8, SafeMath is required to prevent integer overflows -- and it isn't used. Therefore, we eventually have `_balances[msg.sender] == uint256(-1 ether)`.
+
+
 <!-- Content_END -->
+
+<!-- 
+
+Stash
+
+#### 🏁 Damn Vulnerable DeFi: Puppet
+
+`calculateDepositRequired(amount)` is the amount of ETH required to lend `amount` in tokens. For instance, `calculateDepositRequired(1 ether)`
+
+1. would be `2 ether` when `uniswapPair.balance == 10 ether` and `token.balanceOf(uniswapPair) == 10 ether`,
+2. would be `1 ether` when `uniswapPair.balance == 10 ether` and `token.balanceOf(uniswapPair) == 20 ether`,
+3. would be `4 ether` when `uniswapPair.balance == 20 ether` and `token.balanceOf(uniswapPair) == 10 ether`.
+
+-->

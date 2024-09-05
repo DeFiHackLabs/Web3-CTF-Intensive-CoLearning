@@ -216,7 +216,31 @@ web3.eth.getStorageAt(instance.address, 1, (err,res) => {
 
 **Level 09 King**
 
-[POC 代码](Writeup/SpeedX/src/Ethernaut/king_poc.s.sol)
+[POC 代码](Writeup/SpeedX/src/Ethernaut/king_poc.sol)
+
+### 2024.09.03
+
+**Level 09 King**
+
+使用 POC 合约给 king 合约转账，因为 POC 合约没有 fallback 函数 不能接收 ETH 导致 king 不能被别人再次取代。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/king_poc.s.sol)
+
+**Level 10 Re-entrancy**
+
+重入漏洞，这个之前了解过，需要在转账之前，重新计算余额，否则递归调用会把余额全部花光， 因为余额并没有减少。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/reentrancy_poc.s.sol)
+
+
+### 2024.09.04
+今天继续 Re entrancy POC 已经写好了， test 也通过了，但是 script 上正式就是不行呢， 奇怪了
+
+又重新部署了一下代码， 重新跑 POC script 过了
+
+继续下一关
+
+**Level 11 Elevator**
 
 
 

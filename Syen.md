@@ -38,6 +38,18 @@ Web3 Dapp Developer
 
 **QuillCTF**
 
-- [D31eg4t3](./Writeup/Syen/src/QuillCTF/D31eg4t3/D31eg4t3.sol)
+- [D31eg4t3](./Writeup/Syen/src/QuillCTF/D31eg4t3/README.md)
+
+### 2024.09.03
+
+**QuillCTF**
+
+- [CollatzPuzzle](./Writeup/Syen/src/QuillCTF/CollatzPuzzle/README.md)
+
+### 2024.09.04
+
+**QuillCTF**
+
+- [TrueXOR](./Writeup/Syen/src/QuillCTF/TrueXOR/README.md)
 
 <!-- Content_END -->

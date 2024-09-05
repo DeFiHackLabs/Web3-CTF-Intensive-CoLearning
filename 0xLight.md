@@ -86,4 +86,10 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.9.2
 [oilver](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/oilver.md)
+
+### 2024.9.3
+[blazctf hello world](https://github.com/JadeLight7/blazctf2023/blob/main/helloworld.md)
+
+### 2024.9.4
+[rock-paper-scissor](https://github.com/JadeLight7/blazctf2023/blob/main/rock-paper-scissor.md)
 <!-- Content_END -->
