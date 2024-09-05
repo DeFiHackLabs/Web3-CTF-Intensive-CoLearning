@@ -35,4 +35,9 @@
 - A 系列 DamnVulnerableDeFi - side entrance
   - 撰寫 writeup
 
+### 2024.09.04
+
+- A 系列 DamnVulnerableDeFi - the rewarder
+  - 撰寫 writeup
+
 <!-- Content_END -->

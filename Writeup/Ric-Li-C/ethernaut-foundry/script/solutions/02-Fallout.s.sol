@@ -31,11 +31,11 @@ contract FalloutSolution is Script, EthernautHelper {
         ////////////////////////////////////////////////////////////////////////////////////
         // Start of Ric Li C's Solution
         ////////////////////////////////////////////////////////////////////////////////////
-        // 1. Call `Fal1out()` function to make caller owner of the contract;
+        // Step 1. Call `Fal1out()` function to make caller owner of the contract;
         Fallout challenge = Fallout(challengeInstance);
         challenge.Fal1out();
 
-        // 2. Confirm that caller `heroAddress` is now owner of the contract.
+        // Step 2. Confirm that caller `heroAddress` has successfully obtained ownership of the Fallout contract.
         address heroAddress = vm.addr(heroPrivateKey);
         require(heroAddress == challenge.owner(), "Owner check failed");
         ////////////////////////////////////////////////////////////////////////////////////

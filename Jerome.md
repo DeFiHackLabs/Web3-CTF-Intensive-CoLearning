@@ -36,8 +36,15 @@ timezone: Asia/Shanghai
 ### 2024.09.03
 学习内容
 #### [[Damn Vulnerable DeFi V4] 4 | SideEntrance ]
-1.完成Damn Vulnerable DeFi V4的第三关Truster。
+1.完成Damn Vulnerable DeFi V4的第四关SideEntrance。
 - [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/SideEntrance/SideEntrance.md)
 - [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/SideEntrance/SideEntrance.t.sol)
+
+### 2024.09.04
+学习内容
+#### [[Damn Vulnerable DeFi V4] 5 | The Rewarder ]
+1.完成Damn Vulnerable DeFi V4的第五关TheRewarder。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/TheRewarder/TheRewarder.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/TheRewarder/TheRewarder.t.sol)
 
 <!-- Content_END -->

@@ -132,9 +132,116 @@ forge script script/solutions/01-Fallback.s.sol:FallbackSolution --fork-url [htt
 3. 後來就順利編譯完成並broadcast出去
 
 --------------
+
 今日回顧與思考：
 1.在撰寫POC的部分，我可能還需要再加強Foundry的理解
 2.關於Solidity合約已經有更多的了解了，但若後面要能夠越來越厲害，必須要加強基礎的部分
-3.今天的我很棒，成功完成第一次的POC(雖然還是因為有大神在QAQ)
+3.今天的我很棒，成功完成第一次的POC(雖然還是因為有大神在QAQ
+
+------------
+
+### 2024.09.04
+**深入Solidity**
+1.基本語法
+'''Solidity
+SPDX-License-Identifier:MIT  --合約可以複製使用，但不負責任
+SPDX-License-Identifier:UNLICENSED  --不希望被改寫或使用
+pragma solidity ^ 0.7.0;  --0.7.0以上之版本均適用
+pragma solidity >=0.7.0 < 0.9.0 --只適用於0.7.0~0.9.0之間
+
+變數宣告型態(Variable)
+string public myName = "Apple"; //字串的宣告
+bool public myBooking = false; //布林值宣告
+address public myAddress = 0xCXXXXX.....; //儲存地址的的宣告
+uint public myNumber=0~2^n ; //無符號的整數宣告
+uint256 public myUnit256=2^256-1 //uint後方加數字為256bits
+int public myIntNumber=-1;  //有符號的整數宣告
+
+狀態變數(State Variables)
+unit value = 1 --在鏈上，可被所有合約訪問
+
+局部變數(Local Variable)
+function getValue() public view returns(uint){
+	uint value = 1
+} --只有呼叫這個函數時才會存在
+
+contract myCounter{   --合約主體
+  --合約內的各種函式--
+  constructor() {}; --構造函數，初始化合約的狀態變量
+  //最常初始化的是將owner=msg.sender，或是owner為一個可交易的地址
+  
+  
+  function Name() public/internal/external/private{};
+				  可見度--內外部/內部及繼承/外部，內部要用this.f()/純內部
+	function Name() public view/pure/payable{};
+								狀態修飾--只讀/不讀不寫/可接收以太幣	
+	struct Name {參數1,參數2...}; --結構體，定義新的數據類型
+	
+	modifier Name() {require(參數1,參數2); _;}; --函式修飾器(修改函數行為)
+	
+	mapping(key=>value) name; --映射，鍵對到值
+	
+	event EventName(參數1,參數2...);--事件監聽
+	
+	emit EventName(參數1,參數2...);--觸發event之指令
+	
+	enum EnumName{參數1,參數2...};--列舉
+}
+'''
+2.Inherit(繼承)
+'''Solidity
+pragma solidity ^0.7.0 ;
+contract myContract1{ 
+  uint256 private _myNumber;
+  //myContract1使用的function為internal
+  function getNumber1() internal view returns(uint256){
+    return _myNumber;
+  }
+}
+//「myContract2」繼承「myContract1」
+contract  myContract2 is myContract1{  
+  function getNumber2() private view returns(uint256){
+  //可返回「myContract1」的function到「myContract2」的function
+  return getNumber1();
+  //也就是說，2繼承了1的getNumber1，1的設定為internal所以2也能用
+  }
+}
+'''
+3.Constructor 的繼承
+'''Solidity
+//A合約，有個name變量及一個構造函數，在部屬這個合約時需要傳遞一個字串'_name'，字串會被存在'name'中
+contract A{
+  string public name;
+  constructor(string memory _name){
+    name=_name;
+  }
+}
+//B合約，有個text變量及一個構造函數，在部屬這個合約時需要傳遞一個字串'_text'，字串會被存在'text'中
+contract B{
+  string public text;
+  constructor(string memory _text){
+    text=_text;
+  }
+}
+//第一種繼承方式
+contract C is A("Ivy"),B("Ivy is a girl"){}
+//合約C同時繼承'A'和'B'，也直接將Ivy傳給了A，將Ivy is a girl給B，所以不需要提供參數給C
+//當我知道父合約的構造函數應該要接受什麼樣的參數並且不打算在子合約修改時可以使用
+
+//第二種繼承方式
+contract C is A,B{
+  constructor(string memory _name,string memory _text) A(_name) B(_text) { }
+}
+//C繼承A和B但是沒有直接把參數給他們，而是在C的構造函數中才傳遞參數，所以當C部署時需要傳遞兩個參數
+//較為靈活的方式來傳遞參數
+'''
+4.Array
+'''Solidity
+contract Array{
+uint[] public dynamicArray; // 動態陣列(dynamic array)，可改變 
+uint[3] public fixedArray; // 固定陣列(fixed array)-不可改變
+uint[3] public wrongArray=[1,2,3,4]; //固定內容只有3個但你寫了4個會出錯
+}
+'''
   
 <!-- Content_END -->

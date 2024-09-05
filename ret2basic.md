@@ -54,4 +54,9 @@ Today:
 
 1. Solved onlyPwner SEAL911
 
+### 2024.09.04
+
+1. Investigated an issue with calling external function within the same contract with `this` keyword, such as `this.functionCall()`. I found that the msg.sender during this call with be `address(this)`, not the EOA address who initiated the tx.
+2. Investigated an issue with using `offset` to access a portion of calldata in solidity assembly block.
+
 <!-- Content_END -->

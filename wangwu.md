@@ -29,5 +29,7 @@ timezone: Asia/Shanghai
 完成ethernaut第5题 
 ### 2024.09.03
 完成ethernaut第6题 
+### 2024.09.04
+完成ethernaut第7题
 
 <!-- Content_END -->
