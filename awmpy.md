@@ -174,13 +174,42 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/force_hack.s.so
 
 编写攻击脚本[vault_hack.s.sol](Writeup/awmpy/script/ethernaut/vault_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
 
+
 执行脚本发起攻击
 ```
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/vault_hack.s.sol:VaultHackScript -vvvv --broadcast
 ```
 
-
-
 ### 2024.09.04
+
+#### 9. King
+
+这是一个关于DOS攻击的游戏
+区块链上较为常见的攻击方式有`消耗过高的GAS`、`External call导致合约不受控`
+
+[WTF-Solidity案例](https://github.com/AmazingAng/WTF-Solidity/blob/main/S09_DoS/readme.md)
+
+[消耗GAS过高的案例](https://solidity-by-example.org/hacks/denial-of-service/)
+
+这个挑战就是要通过`External call`的方式，让其他人无法获得王位
+
+`King`合约中实现了一个`receive`函数，会在转账给这个合约时触发，但转账金额要大于当前King的prize，通过校验后就会将Ether转给当前King，再把`msg.sender`设置为新的king
+
+而这里又没有规定King是EOA还是合约
+
+因此有了以下攻击思路:
+1. 编写一个合约，给`King`合约转账触发`King`合约的`receive`函数来使攻击合约成为King
+2. 攻击合约中实现一个估计将交易revert掉的`receive`方法让其他人无法再向King转账，以次实现DOS的目的
+
+编写攻击合约[king_hack.sol](Writeup/awmpy/src/ethernaut/king_hack.sol)
+编写攻击脚本[king_hack.s.sol](Writeup/awmpy/src/ethernaut/king_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+```
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/king_hack.s.sol:KingHackScript -vvvv --broadcast
+```
+
+
+### 2024.09.05
 
 <!-- Content_END -->

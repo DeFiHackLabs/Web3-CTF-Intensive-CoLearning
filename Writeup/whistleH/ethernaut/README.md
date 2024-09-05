@@ -258,5 +258,29 @@ forge script ./script/Level01.s.sol -vvvv --private-key $PRI_KEY --rpc-url https
 4. 在3的基础上，我们就可以修改timeZone1Library的能力，将其修改为我们的恶意合约，在恶意合约中修改slot3的内容就成功修改了Owner。
 5. 具体的PoC见[Level 16-PoC](./script/Level16.s.sol)
 
+## Level 17 - Recovery
+
+### Target
+
+1. 掌握合约内创建合约的地址
+
+### PoC
+
+1. 题目的意思是SimpleToken的地址需要你找到
+
+2. 因为没有存储在Storage，所以只能用其他方法获取
+
+3. 合约的地址计算为 = keccak256(RLP(address, nonce))
+
+   1. address就是当前Recovery的地址
+   2. nonce表示创建的第几个合约，那么当前情况就1
+   3. RLP是一种编码方式，具体可以参考Solidity相关文档，但是实际就是在address和nonce前添加bytes
+
+4. 经过计算得到地址，通过selfdestruct就能够利用
+
+5. 具体的PoC见[Level 17-PoC](./script/Level17.s.sol)
+
+   
+
 
 

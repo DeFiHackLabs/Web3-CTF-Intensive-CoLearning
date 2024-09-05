@@ -67,4 +67,16 @@ timezone: Asia/Taipei
 - [POC](./Writeup/Tanner/test/QuillCTF/Pelusa.t.sol) 
 
 
+### 2024.09.04
+
+學習內容: 
+
+- 完成 Pelusa
+
+#### [QuillAudit CTF - Pelusa](./Writeup/Tanner/src/QuillCTF/Pelusa.sol)
+
+- [Writeup](./Writeup/Tanner/writeup/QuillCTF/Pelusa.md) 
+- [POC](./Writeup/Tanner/test/QuillCTF/Pelusa.t.sol) 
+
+
 <!-- Content_END -->

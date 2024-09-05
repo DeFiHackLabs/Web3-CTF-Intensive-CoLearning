@@ -23,5 +23,10 @@ timezone: Asia/Shanghai
 ### 2024.09.02
 - Ethernaut CTF中Force以及Vault两个题目，主要是需要了解到合约销毁机制，并且需要了解私有存储的读取方式.
 - [2024.9.2](./Writeup/Sivan/2024.9.2)
-  
+### 2024.09.03
+- Ethernaut CTF中King以及Reentrance两个题目，主要是需要了解到合约错误处理机制，合约可以拒绝接收eth；另一题是经典的重入问题.
+- [2024.9.3](./Writeup/Sivan/2024.9.3)
+### 2024.09.04
+- Ethernaut CTF中Elevator以及Privacy两个题目，主要是需要合理控制合约调用的流程，并且需要了解合约存储方式.
+- [2024.9.4](./Writeup/Sivan/2024.9.4)
 <!-- Content_END -->

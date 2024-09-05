@@ -426,5 +426,16 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
 
 ### 2024.09.04
 
+1. Damn Vulnerable DeFi - Backdoor
+   [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/11-backdoor/11-backdoor-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/11-backdoor/Backdoor.t.sol)
+
+2. Damn Vulnerable DeFi - Climber
+   [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/12-climber/12-climber-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/12-climber/Climber.t.sol)
+
+
+### 2024.09.05
+
 
 <!-- Content_END -->
