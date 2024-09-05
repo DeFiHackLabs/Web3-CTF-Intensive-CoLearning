@@ -27,9 +27,22 @@ timezone: Asia/Shanghai
 
 配好了foundry环境和damn vulnerable defi仓库，完成了unstoppable。
 
+### 2024.08.30
+
+damnvulnerable defi：完成了naviereceiver和Truster
 
 
+### 2024.08.31
 
+damnvulnerable defi：完成了the rewarder，side entrance。
+
+### 2024.09.02
+
+damnvulnerable defi：完成了Selfie，Compromised。
+
+### 2024.09.03
+
+damnvulnerable defi：完成了puppetv1-v2（writeup对应day5...）
 
 
 <!-- Content_END -->

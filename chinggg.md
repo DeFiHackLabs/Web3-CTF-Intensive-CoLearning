@@ -64,14 +64,22 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.08.29
 
-我浏览了 A 系列的 3 种 CTF，其中 Ethernaut 似乎浏览器中即可体验但需要连接钱包，获取 Sepolia testnet token 也要求主网 0.0001 ETH 余额，比较麻烦；QuillCTF 官网下线了，本地环境似乎也比较麻烦；Damn Vulnerable DeFi 比较经典，o最近出了 v4.0.0，正好可以尝试。
+我浏览了 A 系列的 3 种 CTF，其中 Ethernaut 似乎浏览器中即可体验但需要连接钱包，获取 Sepolia testnet token 也要求主网 0.0001 ETH 余额，比较麻烦；QuillCTF 官网下线了，本地环境似乎也比较麻烦；Damn Vulnerable DeFi 比较经典，最近出了 v4.0.0，正好可以尝试。
 
 通过第一道题 unstoppable 了解了 flashloan，细节还不是特别清楚，有待研究
 
 参考：
 
-- [Writeup/0xE/[Damn Vulnerable DeFi V4] 1 | Unstoppable.md](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/0xE/%5BDamn%20Vulnerable%20DeFi%20V4%5D%201%20%7C%20Unstoppable.md)
+- [DamnVulnerableDeFiV4_1_Unstoppable.md](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/0xE/DamnVulnerableDeFiV4_1_Unstoppable.md)
 
 - [Writeup/Jerome/Unstoppable.md](./Writeup/Jerome/Unstoppable.md)
+
+### 2024.08.30
+
+学习了第二道题 Naive Receiver，了解了 ERC-2771 和 Multicall，还有如何利用中继器合约执行交易。
+
+参考：
+
+- [DamnVulnerableDeFiV4_2_NaiveReceiver.md](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/0xE/DamnVulnerableDeFiV4_2_NaiveReceiver.md)
 
 <!-- Content_END -->

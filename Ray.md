@@ -64,10 +64,22 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.30
+完成 ethernaut 的 Fallback 和 Fallout
+[Day2](Writeup/Ray/Day2.md)
 
-笔记内容
 
-### 2024.07.12
+### 2024.08.31
+完成 ethernaut 的 CoinFlip
+[Day3](Writeup/Ray/Day3.md)
+
+
+### 2024.09.01
+ 完成 etheranut 的 Telephone
+[Day4](Writeup/Ray/Day4.md)
+
+### 2024.09.02
+ 完成 etheranut 的 Token
+[Day4](Writeup/Ray/Day5.md)
 
 <!-- Content_END -->

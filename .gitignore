@@ -1,5 +1,11 @@
 Writeup/.DS_Store
-Writeup/Slark/cache/
-Writeup/Slark/out/
+Writeup/*/*/cache/
+Writeup/*/*/out/
+
+Writeup/Ric-Li-C/*.txt
+Writeup/Ric-Li-C/ethernaut-foundry/script/solutions/*.bk.sol
+Writeup/*/*/broadcast/
+Writeup/*/*/lib/
+Writeup/*/*/.env
 
 .history

@@ -24,6 +24,18 @@ Start to play Damn Vulnerable DeFi.
 Solved 1 - Unstoppable.
 Trying to solve 2 - Naive Receiver.
 
+### 2024.08.30
+Solved 2 - Naive Receiver.
+Solved 3 - Truster.
 
+### 2024.08.31
+Solved 4 - Side Entrance.
+Solved 5 - The Rewarder.
 
+### 2024.09.01
+Solved 6 - Selfie.
+
+### 2024.09.02
+Solved 7 - Compromised.
+WIP 8 - Puppet.
 <!-- Content_END -->
