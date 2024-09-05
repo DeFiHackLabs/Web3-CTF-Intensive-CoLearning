@@ -82,4 +82,7 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 ### 2024.09.04
 - Delegation > [Delegation](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/06_Delegation.md)
 
+### 2024.09.05
+- Force > [Force](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/08_Force.md)
+
 <!-- Content_END -->
