@@ -594,6 +594,8 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
 
 個人覺得這一題十分有用，屬於必看必解題！
 
+**此關卡在 Dencun 升級後無法被解掉，因為 Dencun 升級後，不允許 selfdestruct() 清空合約代碼** (除非欲 selfdestruct 的合約是在同一個 Transaction 創建的)
+
 - 破關條件: 把 `Engine` 合約自毀掉
 - 解法:
   - Instance 將會是 `Motorbike` 合約
