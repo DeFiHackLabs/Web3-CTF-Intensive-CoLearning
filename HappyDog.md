@@ -1,7 +1,7 @@
 ---
 timezone: Asia/Taipei
 ---
-#HappyDog
+##HappyDog
 1. 我是隻快樂的小狗:)
 2. 努力努力努力
 
@@ -11,12 +11,11 @@ timezone: Asia/Taipei
 
 ### 2024.08.29
 
-新手小白決定從Ethernaut CTF開始
+#新手小白決定從Ethernaut CTF開始
 今天解第一題hello Ethernaut
 1. 下載Meta Mesk的extension，實施註冊
 2. 把網路改成測試網路Sepolia
-
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/7774fde7-005d-44d4-addc-66fb8267870a/7b25146e-4c26-401a-a321-c3587a5afafc/image.png)
+![image](https://github.com/user-attachments/assets/fcc73e9e-2663-416a-b909-a2228c71af05)
 
 3. 在Ethernaut的網頁按F12開啟開發者工具和網頁互動
 4. 按照裡面的提示輸入一些可以互動的字句
@@ -29,29 +28,17 @@ timezone: Asia/Taipei
 [google cloud可以免費拿0.05](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)
 [這裡](https://sepolia-faucet.pk910.de/)花點時間可以慢慢拿
 6. 由於截止目前為止我們都是跟這個遊戲本身的合約在互動，所以為了開始第一次的嘗試，我們要開始一個新案例，點點最下面的開始新實例，metamesk會要你同意一筆交易，稍等一下
-
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/7774fde7-005d-44d4-addc-66fb8267870a/f06686f9-83e3-4f53-a939-26ae69e25406/image.png)
-
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/7774fde7-005d-44d4-addc-66fb8267870a/e4903f8d-90af-4684-a228-bb565f8a28fa/image.png)
-
+![image](https://github.com/user-attachments/assets/b349ace7-4a77-48ab-ac4f-093f57cc105b)
 7. 獲得新實例後一樣能夠用幾個指令跟他互動
     `await contract.info()`
 一開始的我以為輸入完就能夠提交這個案例，殊不知…..我是個小丑இ௰இ
-
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/7774fde7-005d-44d4-addc-66fb8267870a/34855164-b12d-4808-a331-30c98e648691/image.png)
-
+![image](https://github.com/user-attachments/assets/54d82929-3f59-4a9c-8d2b-98f3f59c1af5)
 8. 去爬了一些文，了解人家運作的過程後，我才更明白整個互動的模式，總之就開始解謎之旅
-
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/7774fde7-005d-44d4-addc-66fb8267870a/679e40cf-93a1-44a8-811e-944721a76c97/image.png)
-
+![image](https://github.com/user-attachments/assets/e8972ddd-3c1e-4531-896e-e1e30653257b)
 9. 看到需要password，回頭到ABI中查看，發現真的有一個Password的function
-
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/7774fde7-005d-44d4-addc-66fb8267870a/4b706249-9617-40de-bdc4-cf9954b13e0c/image.png)
-
-    ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/7774fde7-005d-44d4-addc-66fb8267870a/06c9c9fb-4c26-4540-bc10-a895b1605dc1/image.png)
-
+![image](https://github.com/user-attachments/assets/6eff278f-aea7-4e94-be25-b48111b83b9a)
 10. 獲得密碼後輸入await contract.authenticate(’ethernaut0’)
-     ![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/7774fde7-005d-44d4-addc-66fb8267870a/a02937aa-705f-4849-9dac-667f11b890c2/image.png)
+![image](https://github.com/user-attachments/assets/853e6bf8-27f9-453a-ab1a-77bc12945cbf)
 
 ----------------
 
@@ -63,10 +50,6 @@ timezone: Asia/Taipei
   3.用POC解2題以上
 
 ----------------
-
-Solidity：
-  一種高級編程語言，用於編寫和部署在以太坊（Ethereum）區塊鏈上的智能合約。它是以太坊開發的主要語言，設計上類似於 JavaScript 和 C++，使開發者能夠創建去中心化應用（DApps）和各種自動化合約。
-  (明日將基本語法補充進來)
 
 ### 2024.08.30
 不小心感冒了，今日將環境架設完畢，並學習Solidity的基本語法
@@ -140,7 +123,7 @@ forge script script/solutions/01-Fallback.s.sol:FallbackSolution --fork-url [htt
 
 1.基本語法
 
-'''Solidity
+```Solidity
 SPDX-License-Identifier:MIT  --合約可以複製使用，但不負責任
 SPDX-License-Identifier:UNLICENSED  --不希望被改寫或使用
 pragma solidity ^ 0.7.0;  --0.7.0以上之版本均適用
@@ -177,11 +160,11 @@ contract myCounter{   --合約主體
 	emit EventName(參數1,參數2...);--觸發event之指令	
 	enum EnumName{參數1,參數2...};--列舉
 }
-'''
+```
 
 2.Inherit(繼承)
 
-'''Solidity
+```Solidity
 pragma solidity ^0.7.0 ;
 contract myContract1{ 
   uint256 private _myNumber;
@@ -198,11 +181,11 @@ contract  myContract2 is myContract1{
   //也就是說，2繼承了1的getNumber1，1的設定為internal所以2也能用
   }
 }
-'''
+```
 
 3.Constructor 的繼承
 
-'''Solidity
+```Solidity
 //A合約，有個name變量及一個構造函數，在部屬這個合約時需要傳遞一個字串'_name'，字串會被存在'name'中
 contract A{
   string public name;
@@ -229,12 +212,12 @@ contract C is A,B{
 }
 //C繼承A和B但是沒有直接把參數給他們，而是在C的構造函數中才傳遞參數，所以當C部署時需要傳遞兩個參數
 //較為靈活的方式來傳遞參數
-'''
+```
 
 
 ### 2024.09.05
 4.Array
-'''Solidity
+```Solidity
 //基本宣告
 contract Array{
 uint[] public dynamicArray; // 動態陣列(dynamic array)，可改變 
@@ -252,11 +235,11 @@ contract Array{
 		delete myArray[1] ;//輸出[1,0,777,4](刪掉第二個數字)
 	}
 }
-'''
+```
 
 5.Struct 自定義結構體-創建遊戲角色
 
-'''Solidity
+```Solidity
 struct Person{ 
   //設定我的角色   
   string name;   
@@ -300,7 +283,7 @@ function exemplePerson() public {
   //把people[0]的年紀改成35歲了
   _person.olds = 35;
 }
-'''
+```
 
 其中上面有使用到的Storage和Memory的差別
     - Storage：永久儲存在區塊鏈的變量
@@ -311,8 +294,7 @@ function exemplePerson() public {
 - 選擇狀態的列舉，和Struct很像，不過他是拿來描述"狀態”
 - 例如:我們網購的時候，會有訂單的狀態-等待出貨、運送中、已到達
 
-'''Solidity
-
+```Solidity
 contract testEnum{  
 	enum orderStatus{ 
 	//列舉狀態      
@@ -343,8 +325,7 @@ contract testEnum{
 	 delete currentOrder;//他會把currentOrder重置到pending
  }
 }
-
-'''
+```
 
 ---------
 
