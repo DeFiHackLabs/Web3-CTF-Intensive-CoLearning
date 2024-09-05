@@ -199,10 +199,25 @@ Rubixi hack
 >> 一個把當前合約毀滅並把剩餘ether轉換到指定地址
 >> ###### 解題 (失敗)
 
+
+### 2024.09.04
+>#### Ethernaut CTF (7/31)
+>>##### Delegation
+>>##### 目標：強迫收款
+>>##### 先備知識
+>> - [selfdestruct](https://solidity-by-example.org/hacks/self-destruct/) deprecate
+>> 一個把當前合約毀滅並把剩餘ether轉換到指定地址
+>> ###### 解題 (失敗)
+
 >#### Ethernaut CTF (8/31)
 >>##### Vault
 >>##### 目標：Unlock the vault
->>##### 先備知識
->> - 如何獲取變數位置
+
 ### 2024.09.05
+>>##### 先備知識
+>> - 如何使用`getStorageAt`獲取變數
+>> >>https://docs.soliditylang.org/en/v0.8.10/internals/layout_in_storage.html
+>> 1.
+>> contract.unlock(await web3.eth.getStorageAt(contract.address, 1))
+>> 2.得到答案
 <!-- Content_END -->
