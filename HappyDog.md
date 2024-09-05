@@ -1,14 +1,9 @@
 ---
 timezone: Asia/Taipei
 ---
-
-# {你的名字}
-
-1. 自我介绍
-我是隻快樂的小狗:)
-
-3. 你认为你会完成本次残酷学习吗？
-努力努力努力
+#HappyDog
+1. 我是隻快樂的小狗:)
+2. 努力努力努力
 
 ## Notes
 
@@ -142,7 +137,9 @@ forge script script/solutions/01-Fallback.s.sol:FallbackSolution --fork-url [htt
 
 ### 2024.09.04
 **深入Solidity**
+
 1.基本語法
+
 '''Solidity
 SPDX-License-Identifier:MIT  --合約可以複製使用，但不負責任
 SPDX-License-Identifier:UNLICENSED  --不希望被改寫或使用
@@ -166,29 +163,24 @@ function getValue() public view returns(uint){
 } --只有呼叫這個函數時才會存在
 
 contract myCounter{   --合約主體
-  --合約內的各種函式--
-  constructor() {}; --構造函數，初始化合約的狀態變量
-  //最常初始化的是將owner=msg.sender，或是owner為一個可交易的地址
-  
-  
-  function Name() public/internal/external/private{};
-				  可見度--內外部/內部及繼承/外部，內部要用this.f()/純內部
+  	--合約內的各種函式--
+	constructor() {}; --構造函數，初始化合約的狀態變量
+  	//最常初始化的是將owner=msg.sender，或是owner為一個可交易的地址
+  	function Name() public/internal/external/private{};
+		可見度--內外部/內部及繼承/外部，內部要用this.f()/純內部
 	function Name() public view/pure/payable{};
-								狀態修飾--只讀/不讀不寫/可接收以太幣	
+		狀態修飾--只讀/不讀不寫/可接收以太幣	
 	struct Name {參數1,參數2...}; --結構體，定義新的數據類型
-	
-	modifier Name() {require(參數1,參數2); _;}; --函式修飾器(修改函數行為)
-	
-	mapping(key=>value) name; --映射，鍵對到值
-	
-	event EventName(參數1,參數2...);--事件監聽
-	
-	emit EventName(參數1,參數2...);--觸發event之指令
-	
+	modifier Name() {require(參數1,參數2); _;}; --函式修飾器(修改函數行為)	
+	mapping(key=>value) name; --映射，鍵對到值	
+	event EventName(參數1,參數2...);--事件監聽	
+	emit EventName(參數1,參數2...);--觸發event之指令	
 	enum EnumName{參數1,參數2...};--列舉
 }
 '''
+
 2.Inherit(繼承)
+
 '''Solidity
 pragma solidity ^0.7.0 ;
 contract myContract1{ 
@@ -207,7 +199,9 @@ contract  myContract2 is myContract1{
   }
 }
 '''
+
 3.Constructor 的繼承
+
 '''Solidity
 //A合約，有個name變量及一個構造函數，在部屬這個合約時需要傳遞一個字串'_name'，字串會被存在'name'中
 contract A{
@@ -223,6 +217,7 @@ contract B{
     text=_text;
   }
 }
+
 //第一種繼承方式
 contract C is A("Ivy"),B("Ivy is a girl"){}
 //合約C同時繼承'A'和'B'，也直接將Ivy傳給了A，將Ivy is a girl給B，所以不需要提供參數給C
@@ -235,13 +230,129 @@ contract C is A,B{
 //C繼承A和B但是沒有直接把參數給他們，而是在C的構造函數中才傳遞參數，所以當C部署時需要傳遞兩個參數
 //較為靈活的方式來傳遞參數
 '''
+
+
+### 2024.09.05
 4.Array
 '''Solidity
+//基本宣告
 contract Array{
 uint[] public dynamicArray; // 動態陣列(dynamic array)，可改變 
 uint[3] public fixedArray; // 固定陣列(fixed array)-不可改變
 uint[3] public wrongArray=[1,2,3,4]; //固定內容只有3個但你寫了4個會出錯
 }
+//使用Array
+contract Array{
+	uint[] public myArray=[1,2,3,4];
+	function exemple() public {
+		myArray.push(4); //輸出[1,2,3,4]
+		uint x= myArray[1]; //輸出x=2
+		myArray[2]=777; //輸出[1,2,777,4]
+		myArray.pop(); //輸出[1,2,777] (刪除最後一個數字)
+		delete myArray[1] ;//輸出[1,0,777,4](刪掉第二個數字)
+	}
+}
 '''
+
+5.Struct 自定義結構體-創建遊戲角色
+
+'''Solidity
+struct Person{ 
+  //設定我的角色   
+  string name;   
+  uint olds;   
+  string girl; 
+}
+//引用另一個Struct
+struct home{ 
+  //設定家的儲存結構   
+  string homeAddress;  
+  Person[] people; //調用剛剛做的struct
+  mapping(uint=>Person[]) personIndex; //幫每一台車做編號 
+}
+//宣告方式
+Person public person; //宣告為變數
+Person[] public people;//宣告很多個人為變數
+
+//在function裡面的宣告
+function exemplePerson() public {
+  // 位置宣告，直接依照順序賦值給Person，簡單明瞭，適合屬性清楚且固定
+  Person memory person1 = Person("John", 30, "no");
   
+  // 鍵值宣告，明確指定每個屬性的名稱，可以避免順序錯誤，屬性較多時適用
+  Person memory person2 = Person({name: "Alice", olds: 25, girl: "yes"});
+  
+  // 逐步賦值，先宣告一個變數然後一個個給他們值，適合動態修改或處理的狀態
+  Person memory person3;
+  person3.name = "Bob";
+  person3.olds = 40;
+  person3.girl = "no";
+
+  // 使用陣列和推送方法
+  home storage myHome; //宣告一個myHome的變數，使用到home的結構
+  //把剛剛宣告的person1放到myHome裡面，由於上面有宣告people是一個Person[]的陣列，所以用push
+  myHome.people.push(person1);
+  myHome.people.push(person2);
+  myHome.people.push(person3);
+  
+  //將myHome.people陣列中的第0個元素拿出來，並存在_person變數中，算是一個修改屬性的行為
+  Person storage _person = myHome.people[0];
+  //把people[0]的年紀改成35歲了
+  _person.olds = 35;
+}
+'''
+
+其中上面有使用到的Storage和Memory的差別
+    - Storage：永久儲存在區塊鏈的變量
+    - Memory：暫存的變量，用完就會被移除了
+    - 所以上面那個Person storage _person = myHome.people[0];若把storage改成memory的話就沒辦法修改
+    
+6.Enum列舉
+- 選擇狀態的列舉，和Struct很像，不過他是拿來描述"狀態”
+- 例如:我們網購的時候，會有訂單的狀態-等待出貨、運送中、已到達
+
+'''Solidity
+
+contract testEnum{  
+	enum orderStatus{ 
+	//列舉狀態      
+	pending,   
+	shipped,   
+	completed,     
+	} 
+	//enum 可以宣告為狀態變數
+	orderStatus public currentOrder;
+	//Enum 可被 Struct使用
+	//建立一個struct然後引用剛剛的列舉
+	struct Order{   
+	  address buyer;   
+	  orderStatus status;  
+	 }
+	Order[] public orders;//將剛剛的struct宣告成陣列，可以放很多訂單	
+	//用function來使用enum
+	function get() public view returns(orderStatus) {
+	  return currentOrder;//可以告訴你現在currentOrder的狀態，因為是view他只能看
+	}
+ function set(orderStatus _status) public {
+	 currentOrder= _status;//他接受一個orderStatus型別的輸入，然後把他設定為currentOrder的值，你就能修改目前的訂單狀態
+ }
+ function ship() public {
+	 currentOrder= orderStatus.shipped;//他直接將狀態改成運送中
+ }
+ function reset() public  {
+	 delete currentOrder;//他會把currentOrder重置到pending
+ }
+}
+
+'''
+
+---------
+
+今天在思考將智能合約結合聯邦式學習是否可行
+雖然學習的進度不快..但持續以自己的步調進行中
+可能沒辦法寫太多學習的題目
+但我相信我這些基底打完可以快速的成長的(?)吧
+每天堅持來這邊撰寫，我就會進步的!
+
+---------
 <!-- Content_END -->
