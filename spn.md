@@ -33,4 +33,7 @@ metatrustctf byteVault（详见[wp](https://github.com/spn21/Web3-CTF-Intensive-
 ### 2024.09.03
 [ETHstaking](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/ETHStaking.md)
 上课摸鱼读合约效率太差了（悲）
+
+### 2024.09.04
+[foo](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/foo.md)（大吃一顿bushi） 
 <!-- Content_END -->

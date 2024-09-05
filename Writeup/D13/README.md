@@ -12,6 +12,9 @@
 9. [08 Vault](./script/08_Vault.s.sol)
 0. [09 King](./script/09_King.s.sol)
 1. [10 Re-entrancy](./script/10_Re-retrancy.s.sol)
+2. [11 Elevator](./script/11_Elevator.s.sol)
+3. [12 Privacy](./script/12_Privacy.s.sol)
+
 ### Writeup
 1. [00 Hello Ethernaut](./writeup/00_HelloEthernaut.md)
 2. [01 Fallback](./writeup/01_Fallback.md)
@@ -24,3 +27,5 @@
 9. [08 Vault](./writeup/08_Vault.md)
 0. [09 King](./writeup/09_King.md)
 1. [10 Re-entrancy](./writeup/10_Re-entrancy.md)
+2. [11 Elevator](./writeup/11_Elevator.md)
+3. [12 Privacy](./writeup/12_Privacy.md)

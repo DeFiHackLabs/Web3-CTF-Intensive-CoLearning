@@ -105,6 +105,14 @@ A.3 選 1 系列
 
     1.Ethernaut CTF (31)
 
-        Completed 03-CoinFlip， 05-Token
+        Completed 03-CoinFlip, 05-Token
+
+### 2024.09.05
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 06-Delegation, 07-Force, 08-Vault
 
 <!-- Content_END -->
