@@ -15,6 +15,8 @@
 2. [11 Elevator](./script/11_Elevator.s.sol)
 3. [12 Privacy](./script/12_Privacy.s.sol)
 4. [13 GatekeeperOne](./script/13_GatekeeperOne.s.sol)
+5. [14 GatekeeperTwo](./script/14_GatekeeperTwo.s.sol)
+
 
 ### Writeup
 1. [00 Hello Ethernaut](./writeup/00_HelloEthernaut.md)
@@ -31,3 +33,4 @@
 2. [11 Elevator](./writeup/11_Elevator.md)
 3. [12 Privacy](./writeup/12_Privacy.md)
 4. [13 GatekeeperOne](./writeup/13_GatekeeperOne.md)
+5. [14 GatekeeperTwo](./writeup/14_GatekeeperTwo.md)
