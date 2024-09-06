@@ -30,5 +30,17 @@ timezone: Pacific/Auckland
 ### 2024.09.02
 [[Damn Vulnerable DeFi V4] 5 | The Rewarder](./Writeup/0xE/DamnVulnerableDeFiV4/the-rewarder.md)
 
+### 2024.09.03
+[[Damn Vulnerable DeFi V4] 6 | Selfie](./Writeup/0xE/DamnVulnerableDeFiV4/selfie.md) 
+
+### 2024.09.04
+[[Damn Vulnerable DeFi V4] 7 | Compromised](./Writeup/0xE/DamnVulnerableDeFiV4/compromised.md)  
+[[Damn Vulnerable DeFi V4] 8 | Puppet](./Writeup/0xE/DamnVulnerableDeFiV4/puppet.md)
+
+### 2024.09.05
+[[Damn Vulnerable DeFi V4] 9 | Puppet V2](./Writeup/0xE/DamnVulnerableDeFiV4/puppet-v2.md)
+
+### 2024.09.06
+[[Damn Vulnerable DeFi V4] 10 | Free Rider](./Writeup/0xE/DamnVulnerableDeFiV4/free-rider.md)
 
 <!-- Content_END -->

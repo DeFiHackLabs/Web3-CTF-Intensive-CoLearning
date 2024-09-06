@@ -40,7 +40,14 @@ damnvulnerable defi：完成了the rewarder，side entrance。
 
 damnvulnerable defi：完成了Selfie，Compromised。
 
+### 2024.09.03
 
+damnvulnerable defi：完成了puppetv1-v2（writeup对应day5...）
+
+
+### 2024.09.05
+
+damnvulnerable defi：完成了free-rider，backdoor。
 
 
 <!-- Content_END -->

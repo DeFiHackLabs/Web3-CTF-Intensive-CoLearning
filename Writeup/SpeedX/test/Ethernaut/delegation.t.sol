@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.22;
+
 import "forge-std/Test.sol";
 import "Ethernaut/delegation.sol";
 
@@ -9,7 +12,7 @@ contract DelegationTest is Test {
     function setUp() public {
         delegate = new Delegate(address(0x01));
         delegation = new Delegation(address(delegate));
-    }   
+    }
 
     function test_delegateCall() public {
 

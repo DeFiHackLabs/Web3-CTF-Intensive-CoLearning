@@ -81,4 +81,34 @@ contract VaultSolution is Script {
 }
 ```
 
+### 2024.09.03
+#### Ethernaut
+##### 第9题 King
+1. 逻辑比较简单
+2. 遇到一个报错卡主， 原因是transfer send 发送eth的时候，对方的receive fallback不能太复杂，因为有gas上限是2300，如果发生失败可以使用call 可参考https://www.wtf.academy/docs/solidity-102/SendETH/
+```
+      transfer  _to.transfer(amount);
+      send   _to.send(amount);
+      call _to.call{value: amount}("");
+```
+
+##### 第10题 ReEntrancy
+1. 没想到思路，找到了相关可重入攻击资料，但是poc没跑通，还在找原因。
+```
+直接报 server returned an error response: error code -32000: execution reverted 很奇怪
+```
+### 2024.09.04
+#### Ethernaut
+##### 第10题 ReEntrancy
+1. 终于找到了昨天报错的原因，cast send 时候传入的函数签名不对，本来应该是 uint256 但是传了 address。 居然不报函数找不到异常...太难排错了，在remix调试都没看出来
+
+##### 第11题 Elevator
+1. 很简单，记录当前是第几次调用，第一次返回false， 第二次返回true即可。
+
+##### 第12题 Privacy
+1. 了解变量的存储结构 + vm.load 即可解决。
+
+### 2024.09.05
+请假
+
 <!-- Content_END -->

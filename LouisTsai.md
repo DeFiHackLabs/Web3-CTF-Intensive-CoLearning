@@ -118,4 +118,34 @@ Link: https://www.damnvulnerabledefi.xyz/challenges/free-rider/
 
 Writeup: The `buyMany` function calls the internal `_buyOne` function to check that the input ether is sufficient by examining `msg.value`. However, `msg.value` is used consistently throughout the transaction, allowing an attacker to submit less ether and acquire all the NFTs. Although the attacker might initially lack sufficient funds, they can borrow through Uniswap and repay later.
 
+### 2024.09.03
+
+(1) DamnVulnerableDeFi V4 Unstoppable Challenge
+
+Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/unstoppable
+
+Writeup: Our objective is to pause the vault and invoke the ownership transfer of the vault contract. This can only be achieved by failing to request a flash loan in `UnstoppableVault::flashLoan`. There is a requirement in the flash loan function, that `convertToShares(totalSupply)` should equal to `balanceBefore` value; if not, the transaction will revert. However, `balanceBefore` can be manipulated by directly depositing tokens into the vault contract, making the two values inequivalent.
+
+### 2024.09.04
+
+(1) Ethernaut Force Challenge
+
+Link: https://ethernaut.openzeppelin.com/level/0xb6c2Ec883DaAac76D8922519E63f875c2ec65575
+
+Writeup: Although a contract does not have `receive` and `fallback` to accept ether deposit, user can still force the contract to accept ether by `selfdesturct` low level call to transfer ether to the destination contract.
+
+(2) Ethernaut Vault Challenge
+
+Link: https://ethernaut.openzeppelin.com/level/0xB7257D8Ba61BD1b3Fb7249DCd9330a023a5F3670
+
+Writeup: The state variable with private visibility can still be queried on blockchain, in the vault contract, we can simply calculate the storage slot of the state variable and check the corresponding value using Alchemy Composer.
+
+### 2024.09.05
+
+(1) DamnVulnerableDeFi V4 Naive Receiver Challenge
+
+Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/naive-receiver
+
+Writeup: Writeup: The vulnerability stems from how ERC-2771 and multicall are implemented in older OpenZeppelin versions, where msg.sender is extracted from the last 20 bytes of the call data. An attacker can exploit this by appending an address to the call data, thereby manipulating the msg.sender value.
+
 <!-- Content_END -->

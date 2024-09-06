@@ -15,6 +15,7 @@ timezone: Asia/Taipei
 
 Complete Ethernaut CTF level 0
 
-### 2024.08.31
+### 2024.09.02
+請假
 
 <!-- Content_END -->

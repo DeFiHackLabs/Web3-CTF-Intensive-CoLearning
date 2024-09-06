@@ -97,4 +97,14 @@ timezone: Asia/Shanghai
 
 1. start write PoC using foundry
 
+### 2024.09.03
+
+今天做了什么
+
+1. Learn Foundry
+
+明天做什么
+
+1. start write PoC using foundry
+
 <!-- Content_END -->

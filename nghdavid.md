@@ -222,5 +222,84 @@ contract Logic2 {
 ### UUPS與Transparent Proxy的目的
 - 解決function selector collision
 
+### 2024.09.03
+# How to prevent reentrancy attack
+### 使用重入鎖
+重入鎖是一種重入函數的modifier，包含一開始是0的狀態變量(_status)，一開始檢查_status是否為0，接著馬上把_status改為1，等最後結束後才把_status改為0。這樣攻擊合約一定要等調用結束才能再發起第二次的調用。也因此重入攻擊無法成功。
+
+```jsx
+uint256 private _status; // 重入锁
+
+// 重入锁
+modifier nonReentrant() {
+    // 在第一次调用 nonReentrant 时，_status 将是 0
+    require(_status == 0, "ReentrancyGuard: reentrant call");
+    // 在此之后对 nonReentrant 的任何调用都将失败
+    _status = 1;
+    _;
+    // 调用结束，将 _status 恢复为0
+    _status = 0;
+}
+```
+### Openzeppelin code
+
+[OpenZeppelin ReentrancyGuard](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v5.0.1/contracts/utils/ReentrancyGuard.sol)
+
+```jsx
+abstract contract ReentrancyGuard {
+    uint256 private constant NOT_ENTERED = 1;
+    uint256 private constant ENTERED = 2;
+
+    uint256 private _status;
+
+    error ReentrancyGuardReentrantCall();
+
+    constructor() {
+        _status = NOT_ENTERED;
+    }
+
+    // 重入鎖在這裡
+    modifier nonReentrant() {
+        _nonReentrantBefore();
+        _;
+        _nonReentrantAfter();
+    }
+
+    function _nonReentrantBefore() private {
+        // On the first call to nonReentrant, _status will be NOT_ENTERED
+        if (_status == ENTERED) {
+            revert ReentrancyGuardReentrantCall();
+        }
+
+        // Any calls to nonReentrant after this point will fail
+        _status = ENTERED;
+    }
+
+    function _nonReentrantAfter() private {
+        _status = NOT_ENTERED;
+    }
+
+    function _reentrancyGuardEntered() internal view returns (bool) {
+        return _status == ENTERED;
+    }
+}
+```
+### Checks-effect-interaction
+1. 檢查狀態變量
+2. 馬上更新狀態變量
+3. 再把錢給別人
+
+### 2024.09.04
+# Ethernut第一題
+1. 呼叫contribute，讓contributions[my address]有值
+2. Send Ether到Fallback合約觸發receive()，讓自己變owner
+3. 呼叫withdraw()，抽走所有Ether
+
+### 2024.09.05
+# Ethernut第二題
+- 在舊版的solidity, Constructor不是Contructor(), 而是合約名稱
+- 這題的合約的Constructor有typo => Fal1out
+- 因此該合約的Constructor為空的
+- 可以直接呼叫Fal1out將owner改為自己
 
 <!-- Content_END -->

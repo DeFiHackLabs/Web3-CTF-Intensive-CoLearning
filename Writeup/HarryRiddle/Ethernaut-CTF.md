@@ -210,3 +210,11 @@ This code is implied that the contract sender does not have any code. Therefore,
         }
     }
 ```
+
+**Denial**
+
+- Description: In the `withdraw` function, the `partner` and `owner` will be transfer ether from contract. However, `partner` is withdrawal with `call` methods and `owner` is used by `transfer`. We can prevent the anyone calling the `withdraw` function by using all the gas limit in withdrawal transaction. To do this, we implement the `partner` is the receivable contract having `receive` fallback consume all gas limits.
+
+**Shop**
+
+- Description: The `Shop` contract is dependent on the `price` function of `msg.sender`. So we just make other contract having `price` function return the value based on `Shop::isSold` variable

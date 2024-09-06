@@ -9,6 +9,7 @@ timezone: Asia/Shanghai
    Web Hacker, try to learn Web3 security
 
 2. 你认为你会完成本次残酷学习吗？
+
    Try my best!
 
 ## Notes
@@ -74,6 +75,37 @@ timezone: Asia/Shanghai
 
 1. Solidity的gas机制以及类型截断
 2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
-3. 今日太忙，遂只做一题，明日必当奋起直追
+
+碎碎念
+
+1. 今日太忙，遂只做一题，明日必当奋起直追
+
+### 2024.09.03
+
+当前挑战：ethernaut
+
+今日完成：Level14、Level15、Level16
+
+学习内容
+
+1. extcodeSize的绕过、EOA和合约账户的差异
+2. ERC20的合约规范
+3. DelegateCall和Storage之间的关系，理解DelegateCall的代码、上下文的差异性
+4. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
+### 2024.09.04
+
+当前挑战：ethernaut
+
+今日完成：Level17
+
+学习内容
+
+1. 合约内被创建合约的地址
+2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
+碎碎念
+
+1. 题目的难度增加，开学的事情也在增加，Solidity基础不足的问题还在暴露，希望能完成40题的计划
 
 <!-- Content_END -->

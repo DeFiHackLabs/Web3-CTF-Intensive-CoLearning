@@ -87,4 +87,16 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 Ethernaut 的 CoinFlip、Telephone 题目。
 
+### 2024.09.03
+
+完成了 Ethernaut 的 Token、Delegation、Force 题目。
+
+### 2024.09.04
+
+完成了 Ethernaut 的 Vault、King、Reentrance、Elevator 题目。
+
+### 2024.09.05
+
+完成了 Ethernaut 的 Privacy、GatekeeperOne、GatekeeperTwo、NaughtCoin、Preservation、Recovery 题目。
+
 <!-- Content_END -->

