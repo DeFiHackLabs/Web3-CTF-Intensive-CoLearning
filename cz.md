@@ -49,4 +49,10 @@ timezone: America/New_York
 
 - Damn Vulnerable DeFi V4 - #6 Selfie
 - POC: https://github.com/lzhan195/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/cz/POC.md
+
+### 2024.09.05
+學習內容:
+
+- Damn Vulnerable DeFi V4 - #7 Compromised
+- POC: https://github.com/lzhan195/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/cz/POC.md
 <!-- Content_END -->
