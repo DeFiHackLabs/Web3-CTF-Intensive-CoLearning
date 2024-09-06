@@ -143,4 +143,18 @@ Plan:
 - [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#218)
 - [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/src/ShopHacker.sol)
 
+### 2024.09.05
+
+#### Ethernaut CTF - [Dex](https://ethernaut.openzeppelin.com/level/0xB468f8e42AC0fAe675B56bc6FDa9C0563B61A52F)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#222)
+<!-- - [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/src/ShopHacker.sol) -->
+
+### 2024.09.06
+
+#### Ethernaut CTF - [DexTwo](https://ethernaut.openzeppelin.com/level/0xf59112032D54862E199626F55cFad4F8a3b0Fce9)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#241)
+<!-- - [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/src/ShopHacker.sol) -->
+
 <!-- Content_END -->
