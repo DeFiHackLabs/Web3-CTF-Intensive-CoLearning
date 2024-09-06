@@ -234,7 +234,11 @@ In that case, `_balances[msg.sender] -= 1 ether` will be executed twice. For Sol
 
 #### 🏳️ Damn Vulnerable DeFi: Climber
 
-**Time used: 4h25m and ongoing...**
+**Time used: 5h30m and ongoing...**
+
+#### 📚 Reading: ERC1967 - Universal Upgradeable Proxy Standard (UUPS)
+
+https://hackmd.io/@KryptoCampDev/Web3-Proxy-Contract?utm_source=preview-mode&utm_medium=rec#ERC1967
 
 <!-- Content_END -->
 
