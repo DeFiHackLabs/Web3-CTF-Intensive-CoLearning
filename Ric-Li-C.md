@@ -121,6 +121,6 @@ A.3 選 1 系列
 
     1.Ethernaut CTF (31)
 
-        Completed 09-King, 10-Reentrance
+        Completed 09-King, 10-Reentrance, 11-Elevator, 12-Privacy
 
 <!-- Content_END -->
