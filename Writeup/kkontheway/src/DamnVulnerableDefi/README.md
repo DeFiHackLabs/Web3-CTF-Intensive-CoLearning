@@ -1,6 +1,10 @@
 - [Shards](#shards)
 - [Abi-smuggling](#abi-smuggling)
 - [Withdrawal](#withdrawal)
+- [Wallet Mining](#wallet-mining)
+  - [Desc](#desc)
+  - [Code](#code)
+  - [Solution](#solution)
 
 ## Shards
 
@@ -358,4 +362,87 @@ l1Gateway.grantRoles(player, l1Gateway.OPERATOR_ROLE());
 所以我们可以直接伪造。
 
 
+## Wallet Mining
 
+
+### Desc
+
+```jsx
+There’s a contract that incentivizes users to deploy Safe wallets, rewarding them with 1 DVT. It integrates with an upgradeable authorization mechanism, only allowing certain deployers (a.k.a. wards) to be paid for specific deployments.
+
+The deployer contract only works with a Safe factory and copy set during deployment. It looks like the [Safe singleton factory](https://github.com/safe-global/safe-singleton-factory) is already deployed.
+
+The team transferred 20 million DVT tokens to a user at `0x8be6a88D3871f793aD5D5e24eF39e1bf5be31d2b`, where her plain 1-of-1 Safe was supposed to land. But they lost the nonce they should use for deployment.
+
+To make matters worse, there's been rumours of a vulnerability in the system. The team's freaked out. Nobody knows what to do, let alone the user. She granted you access to her private key.
+
+You must save all funds before it's too late!
+
+Recover all tokens from the wallet deployer contract and send them to the corresponding ward. Also save and return all user's funds.
+
+In a single transaction.
+```
+
+### Code
+
+- AuthorizerFactory.sol
+    - cook
+        - 用于创建Safe钱包的代理工厂合约地址
+- AuthorizerUpgradeable.sol
+    - 实现合约
+- TransparentProxy.sol
+    - 代理合约
+- WalletDeployer.sol
+    - cpy safe钱包的实现合约地址
+    - 用来给Gnosis的部署者分发奖励
+    - can
+    - rule
+    - drop
+
+### Solution
+
+正如描述所说，当团队试图将 `2000` 万个代币转移给 '`0x8be6a88D3871f793aD5D5e24eF39e1bf5be31d2b` 的用户但丢失了 `nonce`.这意味着此地址没有合约。我们可以使用 `CREATE2` 创建一个具有相同地址的帐户。  我们可以使用`SafeProxyFactory::createProxyWithNonce` 来暴力破解地址。
+
+```solidity
+  function createProxyWithNonce(address _singleton, bytes memory initializer, uint256 saltNonce) public returns (SafeProxy proxy) {
+      // If the initializer changes the proxy address should change too. Hashing the initializer data is cheaper than just concatinating it
+      bytes32 salt = keccak256(abi.encodePacked(keccak256(initializer), saltNonce));
+      proxy = deployProxy(_singleton, initializer, salt);
+      emit ProxyCreation(proxy, _singleton);
+  }
+```
+
+我们可以编写一个循环来进行爆破
+
+```solidity
+for (uint256 i = 0; i < 10000; i++) {
+    SafeProxy proxy = proxyFactory.createProxyWithNonce(
+        address(singletonCopy),
+        initializer,
+        i
+    );
+    if (address(proxy) == USER_DEPOSIT_ADDRESS) {
+        console.log("Wallet deployed at address: ", address(proxy));
+        console.log("with Nonce: ", i);
+        break;
+    }
+}
+```
+
+接下来要考虑的问题是，已经在WalletDeployer中的1e18的token怎么取走，`WalletDeployer::drop`函数依赖于授权者合约来检查允许哪个用户创建钱包并获得奖励，`AuthorizerUpgradeable`是一个可升级的合约，可以通过透明代理模式进行升级我发现他的初始化是错误的，因为代理合约和实现合约之间的存储布局不同，因此会导致冲突。
+
+```solidity
+contract TransparentProxy is ERC1967Proxy {
+    address public upgrader = msg.sender;  // slot 0
+}
+---
+
+contract AuthorizerUpgradeable {
+    uint256 public needsInit = 1;  // slot 0
+    mapping(address => mapping(address => uint256)) private wards; // slot 1
+}
+```
+
+`needsInit`变量与代理的`upgrader`变量存储在同一存储槽中。这意味着，当`AuthorizerUpgradeable::init`函数时， `needsInit`变量将设置为`0` ，但之后调用`TransparentProxy::setUpgrader`时，代理的`upgrader`变量将设置为`needsInit`者的地址，从而有效地用非零值，从而允许重新初始化
+
+这样我们就可以重新初始化AuthorizerUpgradeable合约，并且将wards设置为users地址，因为用户向我们提供了他们的私钥来保存他们的资金，所以我现在可以将 2000 万个 DVT 代币从安全钱包转回给用户，并从钱包中转回 1 个 DVT 代币到原来的ward中。
