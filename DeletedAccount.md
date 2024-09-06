@@ -638,4 +638,35 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
 - [Ethernaut25-Motorbike.sh](/Writeup/DeletedAccount/Ethernaut25-Motorbike.sh)
 - [Ethernaut25-Motorbike.s.sol](/Writeup/DeletedAccount/Ethernaut25-Motorbike.s.sol)
 
+### 2024.09.06
+
+
+#### [Ethernaut-26] DoubleEntryPoint
+
+- 卡關了...沒看得很懂這題要做什麼才能過關，先跳過，改天再回頭看
+- 明天要比工作日還要早起出門上課，先解 Ethernaut-27 水題當作簽到...
+
+
+#### [Ethernaut-27] Good Samaritan
+
+- 破關條件: 把 `Wallet` 合約的 `Coin.balances`  清空
+- 解法:
+  - 已知我們可以透過 `GoodSamaritan.requestDonation() -> Wallet.donate10()` 把幣取走，但這意味著我們得呼叫 100000 次才能過關，太慢了
+  - 除了 `Wallet.donate10()` 以外，還有 `Wallet.transferRemainder()` 可以直接把所有 balances 轉走，這應該就是我們要找到的利用點
+  - 我們要找到一個地方使得 `Wallet.transferRemainder()` 被觸發，進而過關
+  - 要做到這件事，只能使 `if (keccak256(abi.encodeWithSignature("NotEnoughBalance()")) == keccak256(err))` 敘述返回 True
+  - 這意味著我們要在 `try wallet.donate10(msg.sender)` 的執行過程中想辦法觸發 `NotEnoughBalance()` 這個 custom error
+  - 只要 `dest_` 是一個合約，我們就可以使 `Coin.transfer()` 呼叫 callback function: `INotifyable(dest_).notify(amount_);`
+  - 然後我們在 `INotifyable(dest_).notify(amount_);` 的執行過程中觸發 `NotEnoughBalance()` custom error 就好了！
+- 解法總結:
+  - 寫一個合約，它會呼叫 `GoodSamaritan.requestDonation()`
+  - 這個合約需要實現一個 `notify(uint256)` 函數
+  - 這個 `notify(uint256)` 函數會無條件地觸發 `NotEnoughBalance()` custom error
+
+吐槽: 這題居然三顆星...前一題解不出來，它居然只有兩顆星？？？囧
+
+- [Ethernaut27-GoodSamaritan.sh](/Writeup/DeletedAccount/Ethernaut27-GoodSamaritan.sh)
+- [Ethernaut27-GoodSamaritan.s.sol](/Writeup/DeletedAccount/Ethernaut27-GoodSamaritan.s.sol)
+
+
 <!-- Content_END -->

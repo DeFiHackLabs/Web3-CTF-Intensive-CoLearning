@@ -154,6 +154,19 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 
 POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
 
+### 2024.09.06
+
+学习內容:
+
+做了A系列1题
+
+1. 今天做的privacy也是关于存储的题，准备明天好好看一下soldiity 的存储部分，然后好好记录
+2. 学习了使用 foudry 和链上程序的交互，包括数据的查看，函数的调用
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
+
 ### 2024.07.12
 
 <!-- Content_END -->

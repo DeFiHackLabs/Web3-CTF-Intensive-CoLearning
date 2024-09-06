@@ -229,6 +229,12 @@ We can make `onERC721Received` to transfer (not deposit) the NFT, then withdraw 
 
 In that case, `_balances[msg.sender] -= 1 ether` will be executed twice. For Solidity < 0.8, SafeMath is required to prevent integer overflows -- and it isn't used. Therefore, we eventually have `_balances[msg.sender] == uint256(-1 ether)`.
 
+### 2024.09.06
+
+
+#### 🏳️ Damn Vulnerable DeFi: Climber
+
+**Time used: 4h25m and ongoing...**
 
 <!-- Content_END -->
 

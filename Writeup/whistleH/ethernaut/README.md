@@ -267,20 +267,64 @@ forge script ./script/Level01.s.sol -vvvv --private-key $PRI_KEY --rpc-url https
 ### PoC
 
 1. 题目的意思是SimpleToken的地址需要你找到
-
 2. 因为没有存储在Storage，所以只能用其他方法获取
-
 3. 合约的地址计算为 = keccak256(RLP(address, nonce))
 
    1. address就是当前Recovery的地址
    2. nonce表示创建的第几个合约，那么当前情况就1
    3. RLP是一种编码方式，具体可以参考Solidity相关文档，但是实际就是在address和nonce前添加bytes
-
 4. 经过计算得到地址，通过selfdestruct就能够利用
-
 5. 具体的PoC见[Level 17-PoC](./script/Level17.s.sol)
 
-   
+## Level 18 - Magic Number
 
+### Targer
 
+1. 学习EVM OPCODE
+2. 学习EVM部署合约的过程
+
+### PoC
+
+1. 这道题其实要我们实现一个能够返回42这个数字的合约，但是要求这个合约地址的代码不超过10个字节
+
+2. 为了实现这个需求，传统的构造函数是不足以满足的
+
+3. 类似写Shellcode，我们需要利用EVM的OPCODE来实现我们的需求
+
+   ```assembly
+   PUSH1 0x2A
+   PUSH1 0x80
+   MSTORE		// 这一步就是实现将0x2a(42)写入内存中
+   PUSH1 0x20
+   PUSH1 0x80
+   RETURN		// 这一步实现将32字节从0x80返回
+   ```
+
+4. 在构造合约的时候，我们实际就是向地址0x0存储数据，因此我们可以使用cast，也可以在合约中构造内联汇编来实现
+
+   ```solidity
+   contract SendTransaction {
+       constructor () {
+           assembly {
+               mstore(0, 0x602A60805260206080F3)
+               return(0x16,0x0a)
+           }
+       }
+   }
+   ```
+
+5. 具体的PoC见[Level 18-PoC](./script/Level18.s.sol)
+
+## Level 20 - Denial
+
+### Target 
+
+1. 学习Gas限制的DoS攻击方式
+
+### PoC
+
+1. 这题不能使用revert来限制对于owner的转账，因为使用的底层的call方法来进行转账
+2. 除了使用revert/不写接受eth的方法来进行DoS之外，还可以使用gas限制来进行DoS攻击
+3. 在我们的fallback函数中增加死循环从而增加gas的消耗，最后使得交易失败
+4. 具体的PoC见[Level 20-PoC](./script/Level20.s.sol)
 
