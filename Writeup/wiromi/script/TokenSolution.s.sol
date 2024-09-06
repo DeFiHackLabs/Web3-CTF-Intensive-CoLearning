@@ -12,7 +12,7 @@ contract TokenSolution is Script {
     function run() external {
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
 
-        new MoreToken(tokenInstance, vm.envAddress("ADDRESS"));
+        //new MoreToken(tokenInstance, vm.envAddress("ADDRESS"));
 
         tokenInstance.transfer(address(0), 21);
 
