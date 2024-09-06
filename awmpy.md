@@ -33,23 +33,28 @@ timezone: Asia/Shanghai
 查看合约代码后发现receive方法中满足贡献值>0与发送交易的value>0时会将owner设置为sender
 
 首先用小于0.001eth向合约捐献，调用contribute()函数，使我们拥有贡献值
-```
+
+``` bash
 await contract.contribute.sendTransaction({ from: player, value: toWei('0.0009')})
 ```
+
 向合约发送一些eth，触发receive，获取owner
-```
+
+``` bash
 await sendTransaction({from: player, to: contract.address, value: toWei('0.000001')})
 ```
+
 调用withdraw提取余额
-```
+
+``` bash
 await contract.owner()
 ```
-
 
 #### 2. Fallout
 
 这个合约中构造函数拼写错误导致任何人都可以调用Fal1out函数来获取owner权限
-```
+
+``` bash
 await contract.Fal1out()
 ```
 
@@ -64,11 +69,13 @@ await contract.Fal1out()
 被攻击的合约地址需要写成ethernaut生成的合约地址
 
 ##### remix
+
 使用remix部署[合约](Writeup/awmpy/remix/ethernaut_coin_flip_hack.sol)，写入ethernaut合约地址作为target
 
 调用10次flip函数，即可过关
 
 ##### foundry
+
 在`Writeup/awmpy`目录下执行`forge init`初始化forge项目
 
 将CoinFlip的代码复制到[coin_flip.sol](Writeup/awmpy/src/ethernaut/coin_flip.sol)
@@ -78,7 +85,8 @@ await contract.Fal1out()
 编写脚本[coin_flip_hack.s.sol](Writeup/awmpy/script/ethernaut/coin_flip_hack.s.sol)，计算guess并调用ethernaut生成的合约，脚本中直接写死合约地址
 
 执行命令进行调用10次后，即可过关
-```
+
+``` bash
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/coin_flip_hack.s.sol:CoinFlipHackScript -vvvv --broadcast
 ```
 
@@ -89,18 +97,22 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/coin_flip_hack.
 这个挑战的核心点在于考察`msg.sender`和`tx.origin`的知识，`msg.sender`可能是EOA或合约，`tx.origin`只能是EOA
 
 因此只需要实现以下调用链即可：
-```
+
+``` bash
 EOA ==> AttackContract ==> TelephoneContract
 ```
 
 编写攻击合约[telephone_hack.sol](Writeup/awmpy/src/ethernaut/telephone_hack.sol)
 部署攻击合约，部署时指定合约地址为ethernaut生成的合约地址
-```
+
+``` bash
 forge create --constructor-args "0xFce4169EcEa2f8FA0A12B0312C96Beb8d8734E76" --rpc-url https://1rpc.io/holesky --private-key $PRIVATE_KEY src/ethernaut/telephone_hack.sol:TelephoneHack
 ```
+
 编写执行脚本[telephone_hack.s.sol](Writeup/awmpy/script/ethernaut/telephone_hack.s.sol)，其中攻击合约地址为刚部署的攻击合约地址
 执行脚本发起攻击
-```
+
+``` bash
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/telephone_hack.s.sol:TelephoneHackScript -vvvv --broadcast
 ```
 
@@ -113,7 +125,8 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/telephone_hack.
 编写攻击脚本[token_hack.s.sol](Writeup/awmpy/script/ethernaut/token_hack.s.sol)，其中实例化Token合约使用ethernaut提供的合约地址
 
 执行脚本发起攻击
-```
+
+``` bash
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/token_hack.s.sol:TokenHackScript -vvvv --broadcast
 ```
 
@@ -134,11 +147,10 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/token_hack.s.so
 编写攻击脚本[delegation_hack.s.sol](Writeup/awmpy/script/ethernaut/delegation_hack.s.sol)，其中实例化Token合约使用ethernaut提供的合约地址
 
 执行脚本发起攻击
-```
+
+``` bash
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/delegation_hack.s.sol:DelegationHackScript -vvvv --broadcast
 ```
-
-
 
 ### 2024.09.02
 
@@ -149,7 +161,8 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/delegation_hack
 编写攻击脚本[force_hack.s.sol](Writeup/awmpy/script/ethernaut/force_hack.s.sol)，其中转账地址使用ethernaut提供的合约地址
 
 执行脚本发起攻击
-```
+
+``` bash
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/force_hack.s.sol:ForceHackScript -vvvv --broadcast
 ```
 
@@ -174,9 +187,9 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/force_hack.s.so
 
 编写攻击脚本[vault_hack.s.sol](Writeup/awmpy/script/ethernaut/vault_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
 
-
 执行脚本发起攻击
-```
+
+``` bash
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/vault_hack.s.sol:VaultHackScript -vvvv --broadcast
 ```
 
@@ -198,6 +211,7 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/vault_hack.s.so
 而这里又没有规定King是EOA还是合约
 
 因此有了以下攻击思路:
+
 1. 编写一个合约，给`King`合约转账触发`King`合约的`receive`函数来使攻击合约成为King
 2. 攻击合约中实现一个估计将交易revert掉的`receive`方法让其他人无法再向King转账，以次实现DOS的目的
 
@@ -205,10 +219,10 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/vault_hack.s.so
 编写攻击脚本[king_hack.s.sol](Writeup/awmpy/script/ethernaut/king_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
 
 执行脚本发起攻击
-```
+
+``` bash
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/king_hack.s.sol:KingHackScript -vvvv --broadcast
 ```
-
 
 ### 2024.09.05
 
@@ -217,11 +231,13 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/king_hack.s.sol
 `Re-entrancy`是一种常见的攻击手法，利用合约external call外部合约时，外部合约故意回call原始合约，让原始合约再次执行external call，直到达成攻击者目的或GAS耗尽，由于攻击者会二次或多次进入目标合约，故被称为重入攻击
 
 在`Re-entrancy`合约的`withdraw`函数中:
+
 1. 先检查提款者的余额是否足够
 2. 将`_amount`转入提款者账户
 3. 最后修改提款者的余额
 
 攻击手法:
+
 1. 攻击合约调用`donate`函数，存入一些Ether
 2. 攻击合约调用`withdraw`函数，提取存入的Ether，让external call触发攻击合约的`receive`函数
 3. 攻击合约的`receive`函数再次调用目标合约的`withdraw`函数
@@ -231,7 +247,8 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/king_hack.s.sol
 编写攻击脚本[reentrance_hack.s.sol](Writeup/awmpy/script/ethernaut/reentrance_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
 
 执行脚本发起攻击
-```
+
+``` bash
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/reentrance_hack.s.sol:ReentranceHackScript -vvvv --broadcast
 ```
 
@@ -243,11 +260,39 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/reentrance_hack
 编写攻击脚本[elevator_hack.s.sol](Writeup/awmpy/script/ethernaut/elevator_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
 
 执行脚本发起攻击
-```
+
+``` bash
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/elevator_hack.s.sol:ElevatorHackScript -vvvv --broadcast
 ```
 
-
 ### 2024.09.06
+
+#### 12. Privacy
+
+这一提与Valut十分相似，都是需要通过获取变量的值来通关，核心点还是变量存储的问题，找到密码所在的slot
+
+经过以下推算可以得知`data[2]`存储在`slot5`中
+|var                                 |bytes    |slot |
+|------------------------------------|---------|-----|
+|bool public locked                  |1        |0    |
+|uint256 public ID                   |32       |1    |
+|uint8 private flattening            |1        |2    |
+|uint8 private denomination          |1        |2    |
+|uint16 private awkwardness          |2        |2    |
+|bytes32[3] private data[0]          |32       |3    |
+|bytes32[3] private data[1]          |32       |4    |
+|bytes32[3] private data[2]          |32       |5    |
+
+读取slot5值即可通关
+
+编写攻击脚本[privacy_hack.s.sol](Writeup/awmpy/script/ethernaut/privacy_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/privacy_hack.s.sol:PrivacyHackScript -vvvv --broadcast
+```
+
+### 2024.09.07
 
 <!-- Content_END -->
