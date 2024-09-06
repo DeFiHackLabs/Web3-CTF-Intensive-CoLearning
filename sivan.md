@@ -29,4 +29,10 @@ timezone: Asia/Shanghai
 ### 2024.09.04
 - Ethernaut CTF中Elevator以及Privacy两个题目，主要是需要合理控制合约调用的流程，并且需要了解合约存储方式.
 - [2024.9.4](./Writeup/Sivan/2024.9.4)
+### 2024.09.05
+- Ethernaut CTF中GatekeeperOne以及GatekeeperTwo两个题目，主要是需要了解以太坊运行机制，包括调用机制、gas扣除机制、类型转换、合约部署机制等.
+- [2024.9.5](./Writeup/Sivan/2024.9.5)
+### 2024.09.06
+- Ethernaut CTF中NaughtCoin以及Preservation两个题目，主要是需要了解以太坊ERC20代币的使用规则，以及delegatecall 的存储和访问规则。
+- [2024.9.6](./Writeup/Sivan/2024.9.6)
 <!-- Content_END -->

@@ -41,4 +41,13 @@ timezone: Asia/Shanghai
 
 完成A类Ethernaut CTF的第16-18题
 
+### 2024.09.05
+
+完成A类Ethernaut CTF的第19题
+
+### 2024.09.06
+
+完成A类Ethernaut CTF的第20-22题
+熟悉foundry使用
+
 <!-- Content_END -->

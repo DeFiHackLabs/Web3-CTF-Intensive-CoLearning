@@ -151,4 +151,30 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
     - use WETH instead of ETH
     - use `IUniswapV2Router02`
 
+### 2024.09.05
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Backdoor
+  - We find that [`proxyCreated`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/backdoor/WalletRegistry.sol#L67) will ensure the [`setup`](https://github.com/safe-global/safe-smart-account/blob/bf943f80fec5ac647159d26161446ac5d716a294/contracts/Safe.sol#L95-L104) process is fine
+  - So, we can check if there is something missed
+  - We can see that <`to`, `data`> and <`paymentToken`, `payment`, `paymentReceiver`> are not checked.
+  - However, `proxyCreated` is called after `setup`, so we do not have any token to transfer
+  - Then, we can check the logic of `setupModules(to, data)`
+  - Finally, we find that `delegate` call is allowed [here](https://github.com/safe-global/safe-smart-account/blob/bf943f80fec5ac647159d26161446ac5d716a294/contracts/base/ModuleManager.sol#L35-L39).
+  - So, we can let the wallet approve the token to anyone by manipulate the <`to`, `data`> input.
+  - Finally, we can use `transferFrom` to rug the token of the wallet.
+
+### 2024.09.06
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Free Rider
+
+  - ## From [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/free-rider/FreeRiderNFTMarketplace.sol#L108), we can buy nft for free
+    - `payable(_token.ownerOf(tokenId)).sendValue(priceToPay)` actually pay to the new owner (i.e. msg.sender) instead of the previous owner
+  - However, we need to have enough ETH to bypass the check [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/free-rider/FreeRiderNFTMarketplace.sol#L97) when buying the first NFT.
+  - We find that we can use [the flashswap of uniswap v2](https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps)
+    - Put the above logic inside `uniswapV2Call`
+
 <!-- Content_END -->

@@ -140,5 +140,12 @@ Link: https://ethernaut.openzeppelin.com/level/0xB7257D8Ba61BD1b3Fb7249DCd9330a0
 
 Writeup: The state variable with private visibility can still be queried on blockchain, in the vault contract, we can simply calculate the storage slot of the state variable and check the corresponding value using Alchemy Composer.
 
+### 2024.09.05
+
+(1) DamnVulnerableDeFi V4 Naive Receiver Challenge
+
+Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/naive-receiver
+
+Writeup: Writeup: The vulnerability stems from how ERC-2771 and multicall are implemented in older OpenZeppelin versions, where msg.sender is extracted from the last 20 bytes of the call data. An attacker can exploit this by appending an address to the call data, thereby manipulating the msg.sender value.
 
 <!-- Content_END -->

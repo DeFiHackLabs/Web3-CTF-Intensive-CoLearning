@@ -78,8 +78,14 @@ KeShin, 合约安全新人
 
 
 ### 2024.9.5
+#### [Ethernaut CTF : 10 Reentrance](https://ethernaut.openzeppelin.com/level/10)
+- 在我们攻击合约中重入 withdraw 函数
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/10-Reentrance/)
 
 ### 2024.9.6
+#### [Ethernaut CTF : 11 Elevator](https://ethernaut.openzeppelin.com/level/11)
+- 在攻击合约中实现 isLastFloor 接口即可
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/11-Elevator/)
 
 ### 2024.9.7
 
