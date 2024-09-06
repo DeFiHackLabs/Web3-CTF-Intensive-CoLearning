@@ -127,8 +127,15 @@ getSwapPrice的计算是离散且有利于swap的人的，每次swap都会导致
 
 swap里并没有验证调用者要swap的代币是否是池子中的两个代币中的一个，而是只要满足ierc20即可。那么我们就可以通过构造虚假的erc20合约，用假的币换到池子里的真币。
 
-#### 第22题PuzzleWallet
+#### 第24题PuzzleWallet
 
 又是一次结合proxy对delegatecall的深入考察，这足以说delegatecall是安全漏洞的高发区。
+
+### 2024.09.06
+
+#### 第25题Motorbike
+
+另外坎昆升级之后这道题其实就解不了了，因为selfdestruct不再会真正的销毁代码（除非在construtor里），从而合约地址的size永远无法变为0。
+不过还是讲讲思路，利用delegacall的特性，先调initialize()获得upgrade的身份，再通过upgradeToAndCall()传入要执行的内容即可达到销毁engine的目的。
 
 <!-- Content_END -->
