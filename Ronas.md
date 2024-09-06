@@ -71,6 +71,28 @@ timezone: Asia/Taipei
     - PoC `sendTransaction({from:"<my wallet>", to:"<instance>", data:"0xdd365b8b"})`
 
 - takeaways
+    - fallback 觸發時機 - 合約內沒有呼叫指定的函數
+        > https://solidity-by-example.org/fallback/
     - delegatecall 用法
+
+### 2024.09.04
+
+- A. Ethernaut CTF - Level 7 Force
+    - 目標 `Force` 合約沒有 `fallback` 函數，因此無法透過 `fallback` 方式向目標發送 Ether
+    - `selfdestruct` 是一個自毀函數，可將合約身上的所有 Ether 直接轉往另一個合約
+    - [PoC](/Writeup/Ronas/Ethernaut%20CTF/level7_force.sol)
+- takeaways
+    - selfdestruct 函數
+
+### 2024.09.05
+
+- A. Ethernaut CTF - Level 8 Vault
+    - 由於區塊鏈的公開透明特性，可以直接從合約的 storage 取得這些私有變數值 `web3.eth.getStorageAt(contract.address, 1)`
+    - 解碼取得 password 值 `web3.utils.hexToAscii("0x412076657279207374726f6e67207365637265742070617373776f7264203a29")`
+    - Exploit `contract.unlock("0x412076657279207374726f6e67207365637265742070617373776f7264203a29")`
+
+- takeaways
+    - nothing is private in the blockchain
+    - any private data should either be stored off-chain, or carefully encrypted
 
 <!-- Content_END -->

@@ -19,8 +19,6 @@
 
 部署时会将 Creation Bytecode + Runtime Bytecode 发送到节点
 
-6004358060011660105760011c6017565b6003026001015b60805260206080f3
-
 1. Runtime Bytecode
 
 分析 `collatzIteration` 代码，传入参数 `n` 为偶数则返回 `n / 2`, 为奇数返回 `3 * n + 1`

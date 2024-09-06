@@ -25,12 +25,28 @@ timezone: Asia/Shanghai
 
 完成 Ethernaut 第二题
 
-### 2024.09.01
+### 2024.08.31
 
 完成 Ethernaut 第三题
 
-### 2024.09.02
+### 2024.09.01
 
 完成 Ethernaut 第四题
+
+### 2024.09.02
+
+完成 Ethernaut 第五题
+
+### 2024.09.03
+
+完成 Ethernaut 第五题
+
+### 2024.09.04
+
+完成 Ethernaut 第六题
+
+### 2024.09.05
+
+完成 Ethernaut 第七题
 
 <!-- Content_END -->

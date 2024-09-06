@@ -114,7 +114,7 @@ So, if we want to manipulate the price, we need the access to the source EOA, an
 The challenge provides two sets of hex characters. Unhexing and then base64 decoding them, we get the private keys of the two sources.
 The following is straightforward then.
 
-## Puppet (WIP)
+## Puppet (24/09/03)
 In this challenge, there is a lending pool to hack.
 The pool lends tokens, requiring the borrower to deposit twice the amount of ETH. (Actually there is no functions implemented to return tokens and withdraw ETH.)
 The price is determined by a uniswap's balance.
@@ -122,10 +122,101 @@ We need to drain the pool's tokens.
 
 The uniswap starts with 10 ETH and 10 DVT, and the player has 25 ETH and 1000 DVT.
 So, we have far more assets than the uniswap, and we can manipulate the price by buying and selling tokens.
-By transferring our initial tokens to uniswap, we can drastically decrease the price of DVT from 2:1 to 2:101.
+By simply transferring our initial tokens to uniswap, we can drastically decrease the price of DVT from 2:1 to 2:101.
 But that is still not enough for our ETH balance to drain the pool.
 We need to further decrease the price.
 
-WIP: perhaps need more interaction with uniswap. need more knowledge about that.
+If we use uniswap to sell DVT for ETH, we will get `10 - 10 * 10 / 1010` (around 9.9) ETH from the uniswap.
+Now uniswap has 0.1 ETH and 1010 DVT, therefore the price is 0.2:1010, and we can buy the pool's DVT at a lower price.
 
+By the way:
+1. The uniswap interface provided by the challenge is missing some `payable` modifier. [Ref](https://docs.uniswap.org/contracts/v1/reference/interfaces#solidity-1)
+2. Seems the player nonce is only increased when constructing contracts in forge, not when executing(send) other transactions? And I think it is impossible to include every step in a single transaction.
+
+## Puppet V2 (24/09/03)
+Now the uniswap V1 is replaced with V2.
+The puppet pool switches to use the uniswap library to the the price.
+
+The uniswap has 10 WETH and 100 DVT, and the player has 20 ETH and 10000 DVT. The pool has 1M DVT.
+The player's assets are still far more than the uniswap, and the V1 to V2 change does not resolve this problem.
+Let's try to manipulate the price again by interacting with the uniswap V2.
+
+It turns out that one swap is enough to decrease the price to what we can afford.
+However, if we only buy part of the pool's DVT each time and swap them again, the price will continuely decrease.
+The issue is that we need to swap back the DVT to WETH for the recovery, and there may be a tradeoff between the lower price and the extra swap fee.
+
+## Free Rider (24/09/04)
+This challenge provides a vulnerable NFT market.
+
+An easy logical mistake is that, the market will transfer the price of NFT to `_token.ownerOf(tokenId)` after transferring the NFT, which means the owner is already changed from the seller to the buyer.
+Another issue is, the market allows bulk offer and bulk buy. When buying multiple NTFs in a transaction, it reverts when `msg.value < priceToPay` for each token. So we only need to send the maximum of all prices, not the sum of them.
+
+Now let's check the initial setup.
+There are six NFT offers, all at the price 15 ETH.
+That means if we have 15 ETH, we can send it to the market to "buy" all NFTs, and meanwhile the market will return 6*15 ETH to us.
+However, we only holds 0.1 ETH at the beginning.
+
+If there is some flash loan... - The uniswap in this challenge is exactlly for the rescue.
+In [UniswapV2Pair](https://github.com/Uniswap/v2-core/blob/master/contracts/UniswapV2Pair.sol) there is a function `swap`.
+The pair will first transfer tokens to the receiver, then call `uniswapV2Call` on the reveiver, and finally check whether the amount and fee is paid back.
+By referring this [document](https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps), we can implement an attacker contract to so.
+
+## Backdoor (24/09/05 - 06)
+This challenge introduces a new topic: multisignature wallet.
+Although there is only one challenge source `WalletRegistry`, the deployer actually uses a lot of library contracts.
+
+First starting with checking the `WalletRegistry` source code, we find that, we need to use `SafeProxyFactory::createProxyWithCallback` to callback the `proxyCreated` function, and the registry will check:
+- the factory and singleton must be the specified ones
+- the initializer data must be a `setup` call
+- the multisignature wallet only has one owner - the pre-defined beneficiary
+- the threshold is also `1`
+- the wallet has no `fallbackManager`
+Afterwards, the registry will send token to the wallet, and we need to transfer that token out.
+
+Then there are a lot of source code to read.
+The wallet itself is a `SafeProxy`, and every call is delegated to the `Safe` singleton.
+`Safe` and other base contracts it inherits have all the logics for the multisignature wallet.
+When deploying, the `initializer` will be used to call the setup methods.
+
+Note that we can construct the wallet with the owner as the beneficiaries, and control other parameters as well.
+Regardless of the registry's check, what can we do to get the token?
+- Call the `proxyCreated` directly by ourself
+- Deploy the wallet with different implentation (different factory, different singleton ...)
+- Setup the wallet with two owners (beneficiary and us) and threshold `1`, and sign the transfer transaction by our keys
+- Setup the wallet with `fallbackManager`, and it will be used as fallback method of `FallbackManager`
+
+Since theses ways cannot work, we need a more thorough investigation about the wallet setup,
+and we find that there is a deletagecall to `to` with `data`, which means we can let the wallet do anything!
+At the initializing period, the wallet has no tokens yet, so we can make it to approve us to spend the tokens.
+We can actually change the singleton to perform more actions.
+
+There may be some tricks writing the delegated functions.
+When approving, it is easier to put the addresses of the token and spender in the calldata.
+Or, we can either hardcode the addresses or use `immutable` modifier to store them.
+However, if we use keep the addresses in storage as usual, the wallet will cannot read from **its** storage.
+
+## Climber (24/09/06)
+In this challenge, there is a `ClimberVault` behind proxy, and a `ClimberTimelock` as the owner.
+
+We start with checking the methods we can call:
+- `ERC1967Proxy`: the only external method is the fallback method
+- `ClimberVault`: all non-view public / external methods have modifier
+- `ClimberVault`'s parent classes: `Initializable` has no public methods; `OwnableUpgradeable` and `UUPSUpgradeable` requires `onlyOwner`
+- `ClimberTimelock`: we can call `execute`, and its implementation is weird
+
+The `ClimberTimelock` works like `SimpleGovernance` in Selfie challenge.
+Proposers can `schedule` operation, and after some delay everyone can trigger its execution.
+The abnormal thing is, the `execute` method is asking all parameters about the operation, then it executes the operation, and finally checks the state after execution.
+By making an illegal operation legal during the execution, we can call the vault as its owner.
+
+If we execute random operations, the check will fail as its `known` is false, so it must be properly `schedule`d.
+There is also a delay check, but we can update it to `0` during the execution.
+
+We are thinking of scheduling the operation itself inside the operation at first,
+but since scheduling uses exactly the calldata as execution, perhaps it requires some manipulation to pass the whole calldata to `schedule`?
+What's more, `schedule` requires `PROPOSER_ROLE`. Though `ADMIN_ROLE` is proposer's admin role, it only means admins can manage propsers, rather than admins having proposers' capabilities.
+Later we realized that we can instead grant the role to an attacker contract, and let the contract to schedule the operation.
+
+When it comes to the vault part, even the owner cannot withdraw all tokens immediately.
+However, since we can bypass `onlyOwner` of `_authorizeUpgrade`, we can just switch the vault's implementation, and do whatever we want.
 

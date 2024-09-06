@@ -28,4 +28,26 @@ timezone: Asia/Shanghai
 
 熟悉基礎的 foundry 語法，解 1 題
 
+### 2024.09.02
+
+熟悉基礎的 foundry 語法
+
+### 2024.09.03
+
+建立 foundry 框架解題，fallback fallout flipcoin
+
+### 2024.09.04
+
+add telephone and token 
+
+### 2024.09.05
+
+請假
+
+### 2024.09.06
+
+add delegatioin  and force
+
+
+
 <!-- Content_END -->

