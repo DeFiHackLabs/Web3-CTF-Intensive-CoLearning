@@ -47,4 +47,8 @@ Sign up
 
 今天把 Damn Vulnerable DeFi v4 的 Naive Receiver 的 Writeup 和 POC 補齊。
 
+### 2024.09.06
+
+今天預計練習 Damn Vulnerable DeFi v4 的 Side Entrance。
+
 <!-- Content_END -->
