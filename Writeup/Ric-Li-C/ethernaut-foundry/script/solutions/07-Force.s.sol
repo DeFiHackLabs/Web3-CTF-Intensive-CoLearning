@@ -24,9 +24,7 @@ contract ForceSolution is Script, EthernautHelper {
 
         // Step 2: Call `forceSend()` function of the EtherSender contract,
         //         with 1 wei as msg.value;
-        sender.forceSend{value: 1e-18 ether}(
-            payable(challengeInstance)
-        );
+        sender.forceSend{value: 1 wei}(payable(challengeInstance));
 
         // Step 3: Confirm that the Force contract has non-zero balance now.
         uint256 balance = challengeInstance.balance;

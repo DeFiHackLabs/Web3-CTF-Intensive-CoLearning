@@ -115,4 +115,12 @@ A.3 選 1 系列
 
         Completed 06-Delegation, 07-Force, 08-Vault
 
+### 2024.09.06
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 09-King, 10-Reentrance
+
 <!-- Content_END -->
