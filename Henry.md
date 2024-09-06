@@ -41,14 +41,14 @@ Total: 15道
 ### 2024.9.4
 
 ### 2024.9.5
-[[ethernaut] 14, 16 ](./Writeup/Henry/ethernaut.md)
-A: 15道
+[[ethernaut] 14, 16, 17 ](./Writeup/Henry/ethernaut.md)
+A: 16道
 C: 2道
-Total: 17道 
+Total: 18道 
 
 
 ### 2024.9.5
-TBD
+今天请假有事 CyberTech NYC
 
 
 ### 2024.9.6

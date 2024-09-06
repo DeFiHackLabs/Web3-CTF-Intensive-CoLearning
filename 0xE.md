@@ -37,5 +37,7 @@ timezone: Pacific/Auckland
 [[Damn Vulnerable DeFi V4] 7 | Compromised](./Writeup/0xE/DamnVulnerableDeFiV4/compromised.md)  
 [[Damn Vulnerable DeFi V4] 8 | Puppet](./Writeup/0xE/DamnVulnerableDeFiV4/puppet.md)
 
+### 2024.09.05
+[[Damn Vulnerable DeFi V4] 9 | Puppet V2](./Writeup/0xE/DamnVulnerableDeFiV4/puppet-v2.md)
 
 <!-- Content_END -->

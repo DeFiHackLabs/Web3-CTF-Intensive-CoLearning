@@ -235,5 +235,33 @@ contract Hack {
 然后调用该合约的destroy函数获取所有eth
 
 ## 19. MagicNumber
-明天再看
+
+智能合约包含2部分
+
+- 初始化代码(构造函数逻辑)
+    - evm创建合约时运行
+- 运行时代码(其他逻辑)
+    - 实际的执行逻辑, 题目限制10bytes, 需要返回bytes32的数字42
+
+```
+合约初始化代码
+600a
+600c
+6000
+39    ---- CODECOPY(0x00, 0x0c, 0x0a)  复制0c位置开始, 长度10个bytes的代码
+600a
+6000
+f3    ---- RETURN(0x00, 0x0a)  返回0x00位置开始, 长度0x0a的数据
+---
+合约运行时代码
+602a  
+6080
+52    ---- MSTORE(0x80, 0x2a) 将0x2a(42)存到0x80位置
+6020
+6080
+f3    ---- RETURN(0x80, 0x20) 返回0x80位置, 长度0x20的值
+
+最终合约代码: 600a600c600039600a6000f3602a60805260206080f3
+```
+
 参考: https://medium.com/coinmonks/ethernaut-lvl-19-magicnumber-walkthrough-how-to-deploy-contracts-using-raw-assembly-opcodes-c50edb0f71a2

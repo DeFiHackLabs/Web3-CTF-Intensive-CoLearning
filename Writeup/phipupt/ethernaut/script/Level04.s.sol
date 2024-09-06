@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {Script} from "forge-std/Script.sol";
-import {Telephone} from "../src/lelvel04/Telephone.sol";
+import {Telephone} from "../src/level04/Telephone.sol";
 
 contract Attacker {
     address targetAddr;
