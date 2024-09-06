@@ -44,9 +44,9 @@ timezone: America/New_York
 - Damn Vulnerable DeFi V4 - #5 TheRewarder: claimRewards function allows one valid claim to receive multiple payouts
 - POC: https://github.com/lzhan195/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/cz/POC.md
 
-2024.09.03
+### 2024.09.03
 學習內容:
 
-Damn Vulnerable DeFi V4 - #6 Selfie
-POC: https://github.com/lzhan195/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/cz/POC.md
+- Damn Vulnerable DeFi V4 - #6 Selfie
+- POC: https://github.com/lzhan195/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/cz/POC.md
 <!-- Content_END -->
