@@ -2,9 +2,6 @@
 - [Abi-smuggling](#abi-smuggling)
 - [Withdrawal](#withdrawal)
 - [Wallet Mining](#wallet-mining)
-  - [Desc](#desc)
-  - [Code](#code)
-  - [Solution](#solution)
 
 ## Shards
 
@@ -365,7 +362,7 @@ l1Gateway.grantRoles(player, l1Gateway.OPERATOR_ROLE());
 ## Wallet Mining
 
 
-### Desc
+**Desc**
 
 ```jsx
 There’s a contract that incentivizes users to deploy Safe wallets, rewarding them with 1 DVT. It integrates with an upgradeable authorization mechanism, only allowing certain deployers (a.k.a. wards) to be paid for specific deployments.
@@ -383,7 +380,7 @@ Recover all tokens from the wallet deployer contract and send them to the corres
 In a single transaction.
 ```
 
-### Code
+**Code**
 
 - AuthorizerFactory.sol
     - cook
@@ -399,7 +396,7 @@ In a single transaction.
     - rule
     - drop
 
-### Solution
+**Solution**
 
 正如描述所说，当团队试图将 `2000` 万个代币转移给 '`0x8be6a88D3871f793aD5D5e24eF39e1bf5be31d2b` 的用户但丢失了 `nonce`.这意味着此地址没有合约。我们可以使用 `CREATE2` 创建一个具有相同地址的帐户。  我们可以使用`SafeProxyFactory::createProxyWithNonce` 来暴力破解地址。
 
