@@ -21,7 +21,7 @@ contract FallbackSolution is Script, EthernautHelper {
         ////////////////////////////////////////////////////////////////////////////////////
         Fallback challenge = Fallback(payable(challengeInstance));
 
-        // Step 1. Get balance of calling address, make sure it has enough ether before calling
+        // Step 1. Get balance of calling account, make sure it has enough ether before calling;
         address heroAddress = vm.addr(heroPrivateKey);
         uint256 balance = address(heroAddress).balance;
         console2.log("Balance of address:", heroAddress, "is", balance);

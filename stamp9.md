@@ -11,6 +11,8 @@ timezone: Europe/Helsinki
 ## Notes
 
 <!-- Content_START -->
+### 2024.09.05
+8. Puppet
 
 ### 2024.09.04
 6. Selfie

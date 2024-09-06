@@ -107,4 +107,8 @@ contract VaultSolution is Script {
 
 ##### 第12题 Privacy
 1. 了解变量的存储结构 + vm.load 即可解决。
+
+### 2024.09.05
+请假
+
 <!-- Content_END -->

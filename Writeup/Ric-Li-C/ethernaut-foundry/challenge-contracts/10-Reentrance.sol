@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.12;
 
-import "openzeppelin-contracts-06/math/SafeMath.sol";
+import "./lib/openzeppelin-contracts-06/math/SafeMath.sol";
 
 // NOTE our goal is to drain all the ether from the contract
 contract Reentrance {

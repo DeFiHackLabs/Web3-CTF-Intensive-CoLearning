@@ -47,4 +47,11 @@ timezone: Asia/Shanghai
 - [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/TheRewarder/TheRewarder.md)
 - [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/TheRewarder/TheRewarder.t.sol)
 
+### 2024.09.05
+学习内容
+#### [[Damn Vulnerable DeFi V4] 6 | Selfie ]
+1.完成Damn Vulnerable DeFi V4的第六关Selfie。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Selfie/Selfie.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Selfie/Selfie.t.sol)
+
 <!-- Content_END -->

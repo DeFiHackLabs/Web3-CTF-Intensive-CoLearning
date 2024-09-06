@@ -34,4 +34,7 @@ timezone: Asia/Taipei
 ### 2024.09.04
 今天比較忙 只完成Ethernaut 第13題
 
+### 2024.09.05
+今天 只完成Ethernaut 第14題 gatekeeperone 好難喔..還用錯instance address 一直算不出來
+
 <!-- Content_END -->
