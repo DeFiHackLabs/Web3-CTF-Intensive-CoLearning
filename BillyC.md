@@ -51,4 +51,7 @@ https://hackmd.io/@0xbc000/SyY4Evy2R
 ### 2024.09.05
 1. ethernaut level11
 
+### 2024.09.06
+1. ethernaut level12
+
 <!-- Content_END -->
