@@ -2,6 +2,8 @@
 - [Abi-smuggling](#abi-smuggling)
 - [Withdrawal](#withdrawal)
 - [Wallet Mining](#wallet-mining)
+- [Puppet V1](#puppet-v1)
+- [Puppet V2](#puppet-v2)
 
 ## Shards
 
@@ -443,3 +445,12 @@ contract AuthorizerUpgradeable {
 `needsInit`变量与代理的`upgrader`变量存储在同一存储槽中。这意味着，当`AuthorizerUpgradeable::init`函数时， `needsInit`变量将设置为`0` ，但之后调用`TransparentProxy::setUpgrader`时，代理的`upgrader`变量将设置为`needsInit`者的地址，从而有效地用非零值，从而允许重新初始化
 
 这样我们就可以重新初始化AuthorizerUpgradeable合约，并且将wards设置为users地址，因为用户向我们提供了他们的私钥来保存他们的资金，所以我现在可以将 2000 万个 DVT 代币从安全钱包转回给用户，并从钱包中转回 1 个 DVT 代币到原来的ward中。
+
+
+## Puppet V1
+
+简单的Uniswap价格操控
+
+## Puppet V2
+
+也是简单的价格操控，多换几次就好了

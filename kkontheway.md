@@ -68,5 +68,5 @@ A: Damn Vulnerable DeFi V4(3/18)
 ### 2024.09.06
 - 解决[WalletMining](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/DamnVulnerableDefi#wallet-mining)(Damn Vulnerable DeFi V4 - 4/18)
 
-
+- 解决Puppet V1，Puppet V2（Damn Vulnerable DeFi V4 - 6/18）
 <!-- Content_END -->
