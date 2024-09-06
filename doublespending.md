@@ -165,4 +165,16 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
   - So, we can let the wallet approve the token to anyone by manipulate the <`to`, `data`> input.
   - Finally, we can use `transferFrom` to rug the token of the wallet.
 
+### 2024.09.06
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Free Rider
+
+  - ## From [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/free-rider/FreeRiderNFTMarketplace.sol#L108), we can buy nft for free
+    - `payable(_token.ownerOf(tokenId)).sendValue(priceToPay)` actually pay to the new owner (i.e. msg.sender) instead of the previous owner
+  - However, we need to have enough ETH to bypass the check [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/free-rider/FreeRiderNFTMarketplace.sol#L97) when buying the first NFT.
+  - We find that we can use [the flashswap of uniswap v2](https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps)
+    - Put the above logic inside `uniswapV2Call`
+
 <!-- Content_END -->

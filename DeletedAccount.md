@@ -526,4 +526,147 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
 - [Ethernaut23-DexTwo.s.sol](/Writeup/DeletedAccount/Ethernaut23-DexTwo.s.sol)
 
 
+### 2024.09.05
+
+- 09.04 身體不舒服，請假一天
+- Day6 共學開始
+
+#### [Ethernaut-24] Puzzle Wallet
+
+個人覺得這一題十分有趣，屬於必看必解題！
+
+- 破關條件: 把 `PuzzleProxy` 的 `admin` 變成自己
+- 解法:
+  - 可以看到 `PuzzleProxy` 是一個 UpgradeableProxy，Logic 合約是 `PuzzleWallet`
+  - 當涉及到 Proxy 的時候，通常都會去檢查 Storage Layout
+  - 可以發現到 `PuzzleProxy.pendingAdmin` 對應的是 `PuzzleWallet.owner`
+  - 可以發現到 `PuzzleProxy.admin` 對應的是 `PuzzleWallet.maxBalance`
+  - 這意味著我們必須要能在 `PuzzleWallet` 找到地方可以操縱 `PuzzleWallet.maxBalance`，使它的數值變成我們的錢包地址
+  - `PuzzleWallet.maxBalance` 可以在 `PuzzleWallet.init()` 函數與 `PuzzleWallet.setMaxBalance()` 函數進行更改
+  - `PuzzleWallet.init()` 這一條路應該是沒辦法走的，因為 `PuzzleWallet.maxBalance` 的值已經是設置成 `PuzzleWallet.admin` 了
+  - 我們只能嘗試走 `PuzzleWallet.setMaxBalance()` 這條路，但這要求我們要是 whitelisted 以及 `address(this).balance` 為 0
+  - 要怎麼成為 whitelisted 呢? 我們必須要使 `msg.sender == owner` 
+  - `PuzzleWallet.owner` 被宣告在 slot0，也就是與 `PuzzleProxy.pendingAdmin` 對應
+  - `PuzzleProxy.pendingAdmin` 可以透過 `PuzzleProxy.proposeNewAdmin()` 進行修改
+  - 總結目前發現：我們可以透過 `PuzzleProxy.proposeNewAdmin()` 函數的調用，使 `PuzzleWallet.owner` 被修改，進而使我們成為 `whitelisted`
+  - `onlyWhitelisted` 的問題解決掉了，下一步是找到方式讓 `address(this).balance == 0` 條件敘述通過
+  - 透過 `cast balance -r $RPC_OP_SEPOLIA $PUZZLEWALLET_INSTANCE` 指令，可以得知 `PuzzleProxy` 合約有 0.001 顆 ETH
+  - 從題目給出的代碼來看，也似乎只有 `execute()` 函數可以把 ETH 提領出來，所以這應該會是我們要嘗試的漏洞利用路徑
+  - `execute()` 函數要求我們必須使 `balances[msg.sender]` 大於欲提領的數量，意味著我們必須先使自己的 `balances[msg.sender]` 增加至 0.001 ETH
+  - 要增加 `balances[msg.sender]` 必須透過 `deposit()` 函數
+  - 由於 `PuzzleWallet.maxBalance` 等同於 `PuzzleProxy.admin`，所以 `address(this).balance <= maxBalance` 的條件敘述基本上不會正常工作
+  - 但問題在於: 我們 `deposit()` 存入 0.001 顆 ETH，也只能 `execute()` 提領出來 0.001 顆 ETH
+  - 似乎怎麼操作都會使 `PuzzleProxy` 的餘額仍然剩餘 0.001 ETH，如何繞過呢？我們可以利用 `multicall()` 函數裡的 `deletecall()`！
+  - 我們需要建構出一條 deletegatecall 鏈
+    - 首先 `PuzzleProxy` 會 delegatecall `PuzzleWallet` 的函數
+    - 我們指定 delegatecall `PuzzleWallet.multicall()`
+    - 在 `multicall()` 裡面，我們利用 `multicall()` 裡面的 delegatecall 來呼叫 `deposit()` 函數
+    - 呼叫 `deposit()` 的時候，要帶入 0.001 ETH 進去
+      - 此時 msg.sender 是我們的錢包
+      - 此時 msg.value 等於 0.001 ETH
+    - 我們透過第二組 `data` 再次呼叫 `multicall()`
+    - 第二組的 `multicall()` 再次呼叫 `deposit()`
+      - 此時 msg.sender 依舊是我們的錢包
+      - 此時 msg.value 依舊等於 0.001 ETH **(但是我們並沒有因此多提供了 0.001 ETH)**
+    - 第二組 `multicall()` 之所以可以再次呼叫 `deposit()`，是因為 `depositCalled` 的狀態值只存在於當前的 Call Frame
+      - `depositCalled`  是一個假的重入鎖，實際上根本不起作用，因為 `depositCalled = True` 的這個狀態，只存在於當前的 Call Stack
+- 解法總結:
+  1. 呼叫 `PuzzleProxy.proposeNewAdmin(_newAdmin=tx.origin)`  (使 `tx.origin` 成為了 `PuzzleWallet.owner`)
+  2. 呼叫 `PuzzleProxy.addToWhitelist(addr=tx.origin)` (使 `tx.origin` 變成了 `whitelisted`)
+  3. 建構 `PuzzleWallet.multicall()` 的 `bytes[] data`
+     1. 總共有兩組 `bytes data` 需要建構
+     2. 第一組: `deposit()`
+     3. 第二組 `multicall(deposit())`
+  4. 呼叫 `PuzzleProxy.multicall()`，並且帶入 `msg.value = 0.001 ETH`
+  5. 呼叫 `PuzzleProxy.execute(to=tx.origin, value=0.002 ETH, data="")` (把 0.002 ETH 提領出來，使 `PuzzleProxy` 的以太幣餘額歸零)
+  6. 呼叫 `PuzzleProxy.setMaxBalance(_maxBalance=uint256(uint160(tx.origin)))` (用來覆蓋 `PuzzleProxy.admin`)
+  7. 過關！
+- 知識點: Delegate Call, Storage Slot Collision
+- 
+
+
+解法:
+
+- [Ethernaut24-PuzzleWallet.sh](/Writeup/DeletedAccount/Ethernaut24-PuzzleWallet.sh)
+- [Ethernaut24-PuzzleWallet.s.sol](/Writeup/DeletedAccount/Ethernaut24-PuzzleWallet.s.sol)
+
+#### [Ethernaut-25] Motorbike
+
+個人覺得這一題十分有用，屬於必看必解題！
+
+**此關卡在 Dencun 升級後無法被解掉，因為 Dencun 升級後，不允許 selfdestruct() 清空合約代碼** (除非欲 selfdestruct 的合約是在同一個 Transaction 創建的)
+
+- 破關條件: 把 `Engine` 合約自毀掉
+- 解法:
+  - Instance 將會是 `Motorbike` 合約
+  - 透過觀察 `Motorbike` 合約，我們可以觀察到它的 `constructor()` 調用了 `Engine.initialize()` 函數
+  - 在 `Engine.initialize()` 函數內，我們可以觀察到它為 `Motorbike` 的 slot0 和 slot1 分別設置了 `1000` 與 `msg.sender`
+    - 我們可以透過以下指令驗證這件事:
+    - `cast storage -r $RPC_OP_SEPOLIA $MOTORBIKE_INSTANCE 0` -> msg.sender
+    - `cast storage -r $RPC_OP_SEPOLIA $MOTORBIKE_INSTANCE 1 | cast to-dec` -> 1000
+  - 如果要讓 `Engine` 自毀掉，我們必須找到一個地方，可以以 `Engine` 的 context 去呼叫自毀合約的邏輯代碼
+  - 這個任意執行代碼的觸發點，看起來在 `Engine._upgradeToAndCall()` 函數內
+    - 但 `Engine._upgradeToAndCall()` 是 internal 函數
+  - 我們只能透過 `Engine.upgradeToAndCallI()` 函數來訪問它
+  - 但是我們必須要通過 `require(msg.sender == upgrader)` 的檢查，意味著我們得先讓自己成為 `upgrader`
+  - 只有 `Engine.initialize()` 可以設置 upgrader，也就是 `Motorbike` 的 slot0
+  - 漏洞點在於 `Engine` 本身也是一個部署在網路上的 Logic 合約
+  - 但是 `initialize()` 函數只會經過 `initializer` 這個 modifier 的檢查
+  - `initializer` 簡單來說會檢查當前這個合約的 context 是不是已經被 initialized
+  - 如果沒有被 initialized，則 `initializer` 的檢查通過，可以繼續進行被掛載了 `initializer` modifier 的合約
+    - 具體來說，代碼可以參考這裡 https://github.com/openzeppelin/openzeppelin-contracts/blob/8e02960/contracts/proxy/Initializable.sol#L36
+  - 但是回過頭來看 `Motorbike` 合約是使用 delegatecall 來進行 `Engine.initialize()`
+  - **這意味著只有 `Motorbike` 被 initialized 了，但是 `Engine` 本身並沒有被 initialized**
+    - 請記住: `Engine` 本身也是部署在網路上的一個合約
+  - 所以此時我們如果直接呼叫 `Engine.initialize()` (a.k.a. 不透過 `Motorbike`) 是可以呼叫成功的
+    - 因為 `Initializable` 這個抽象合約的 `require(_initializing || _isConstructor() || !_initialized)` 檢查會通過
+  - 於是我們就可以成功變成 `upgrader`
+  - 變成了 `Engine.upgrader` (Motorbike.slot0) 之後，我們就可以呼叫 `Engine.upgradeToAndCall()` 了
+  - 我們可以呼叫 `Engine._upgradeToAndCall()` 使 `Engine` 執行我們部署好的合約的 `selfdestruct` 指令了
+- 解法總結:
+  - 我們需要先寫一個 `BustingEngine` 合約
+  - 裡面有一個會執行 `selfdestruct()` 的函數，我們就叫它 `bust()` 好了。
+  - 用自己的錢包，呼叫 `Engine.initialize()`，使自己的錢包成為 `upgrader`。
+    - `Engine` 合約地址，可以透過 `cast storage -r $RPC_OP_SEPOLIA $MOTORBIKE_INSTANCE 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc` 找到
+  - 用自己的錢包，呼叫 `Engine.upgradeToAndCall(newImplementation＝BustingEngine, data="bust()")`
+    - `Engine` 會透過 delegatecall 借用我們的 `selfdestruct()` 邏輯代碼，把自己銷毀掉
+  - 過關！
+    - 過程中我們除了需要和 `Motorbike` 獲取 `Engine` 的實際合約地址以外，基本上不需要和 `Motorbike` 互動。
+  
+解法:
+
+- [Ethernaut25-Motorbike.sh](/Writeup/DeletedAccount/Ethernaut25-Motorbike.sh)
+- [Ethernaut25-Motorbike.s.sol](/Writeup/DeletedAccount/Ethernaut25-Motorbike.s.sol)
+
+### 2024.09.06
+
+
+#### [Ethernaut-26] DoubleEntryPoint
+
+- 卡關了...沒看得很懂這題要做什麼才能過關，先跳過，改天再回頭看
+- 明天要比工作日還要早起出門上課，先解 Ethernaut-27 水題當作簽到...
+
+
+#### [Ethernaut-27] Good Samaritan
+
+- 破關條件: 把 `Wallet` 合約的 `Coin.balances`  清空
+- 解法:
+  - 已知我們可以透過 `GoodSamaritan.requestDonation() -> Wallet.donate10()` 把幣取走，但這意味著我們得呼叫 100000 次才能過關，太慢了
+  - 除了 `Wallet.donate10()` 以外，還有 `Wallet.transferRemainder()` 可以直接把所有 balances 轉走，這應該就是我們要找到的利用點
+  - 我們要找到一個地方使得 `Wallet.transferRemainder()` 被觸發，進而過關
+  - 要做到這件事，只能使 `if (keccak256(abi.encodeWithSignature("NotEnoughBalance()")) == keccak256(err))` 敘述返回 True
+  - 這意味著我們要在 `try wallet.donate10(msg.sender)` 的執行過程中想辦法觸發 `NotEnoughBalance()` 這個 custom error
+  - 只要 `dest_` 是一個合約，我們就可以使 `Coin.transfer()` 呼叫 callback function: `INotifyable(dest_).notify(amount_);`
+  - 然後我們在 `INotifyable(dest_).notify(amount_);` 的執行過程中觸發 `NotEnoughBalance()` custom error 就好了！
+- 解法總結:
+  - 寫一個合約，它會呼叫 `GoodSamaritan.requestDonation()`
+  - 這個合約需要實現一個 `notify(uint256)` 函數
+  - 這個 `notify(uint256)` 函數會無條件地觸發 `NotEnoughBalance()` custom error
+
+吐槽: 這題居然三顆星...前一題解不出來，它居然只有兩顆星？？？囧
+
+- [Ethernaut27-GoodSamaritan.sh](/Writeup/DeletedAccount/Ethernaut27-GoodSamaritan.sh)
+- [Ethernaut27-GoodSamaritan.s.sol](/Writeup/DeletedAccount/Ethernaut27-GoodSamaritan.s.sol)
+
+
 <!-- Content_END -->

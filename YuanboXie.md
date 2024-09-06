@@ -53,4 +53,9 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Force - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 学习了 selfdestruct，同时领悟到通过合约来攻击合约可以实现很多 tx 本身无法实现的操作，因为合约有更强的能力；
 
+### 2024.09.06
+
+- 1.Ethernaut CTF (31) - Vault - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 说明的 private 变量并不是真正的 private，相反，链上所有的数据本质上都是公开的。要真正保护隐私变量的话，得需要用到零知识证明或者同态加密；
+
 <!-- Content_END -->
