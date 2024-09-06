@@ -71,4 +71,12 @@ timezone: Asia/Shanghai
     - [POC](./Writeup/Slark/test/ethernaut//level9.t.sol)
     - 这个关卡打破游戏规则的核心，就是参与以后，阻止下一次转账的执行，那么可以创建一个攻击合约，在 constructor 中参与游戏，在 fallback 中制止游戏，即可达到目标
 
+### 2024.09.06
+
+今天打卡 A 系列 `ethernaut`，1 个关卡
+- [level10](https://ethernaut.openzeppelin.com/level/0x2a24869323C0B13Dff24E196Ba072dC790D52479)
+    - [POC](./Writeup/Slark/test/ethernaut//level10.t.sol)
+    - 这个关卡主要是利用了 withdraw 的业务逻辑漏洞 —— 先转账再变更记录，所以可以在 receive 时再次调用函数执行转账
+
+
 <!-- Content_END -->
