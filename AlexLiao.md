@@ -126,6 +126,14 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 筆記連結： [DamnVulnerableDeFi: Puppet](./Writeup/AlexLiao/DamnVulnerableDeFi/Puppet.md)
 
-### 2024.09.05
+### 2024.09.06
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Puppet V2](https://www.damnvulnerabledefi.xyz/challenges/puppet-v2/)
+
+筆記連結： [DamnVulnerableDeFi: Puppet V2](./Writeup/AlexLiao/DamnVulnerableDeFi/PuppetV2.md)
+
+### 2024.09.07
 
 <!-- Content_END -->
