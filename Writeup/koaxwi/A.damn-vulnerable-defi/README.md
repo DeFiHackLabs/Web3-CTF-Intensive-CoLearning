@@ -161,11 +161,62 @@ In [UniswapV2Pair](https://github.com/Uniswap/v2-core/blob/master/contracts/Unis
 The pair will first transfer tokens to the receiver, then call `uniswapV2Call` on the reveiver, and finally check whether the amount and fee is paid back.
 By referring this [document](https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps), we can implement an attacker contract to so.
 
-## Backdoor (WIP)
+## Backdoor (24/09/05 - 06)
+This challenge introduces a new topic: multisignature wallet.
 Although there is only one challenge source `WalletRegistry`, the deployer actually uses a lot of library contracts.
-Theses contracts are about multi signature wallets.
-We need to create several wallets, and the registry will perform some checks and transfer tokens to the wallet.
-After that, we need to transfer the tokens out.
 
-I have not check the details inside the libraries, but nearly all ways I can think of are checked by the registry, including directly calling `proxyCreated`, creating the wallet using different singleton, skip setting up the wallet, having the player as one of the wallet owner, set a fallback manager for the wallet... All of them are checked. Need to investigate and understand the libraries.
+First starting with checking the `WalletRegistry` source code, we find that, we need to use `SafeProxyFactory::createProxyWithCallback` to callback the `proxyCreated` function, and the registry will check:
+- the factory and singleton must be the specified ones
+- the initializer data must be a `setup` call
+- the multisignature wallet only has one owner - the pre-defined beneficiary
+- the threshold is also `1`
+- the wallet has no `fallbackManager`
+Afterwards, the registry will send token to the wallet, and we need to transfer that token out.
+
+Then there are a lot of source code to read.
+The wallet itself is a `SafeProxy`, and every call is delegated to the `Safe` singleton.
+`Safe` and other base contracts it inherits have all the logics for the multisignature wallet.
+When deploying, the `initializer` will be used to call the setup methods.
+
+Note that we can construct the wallet with the owner as the beneficiaries, and control other parameters as well.
+Regardless of the registry's check, what can we do to get the token?
+- Call the `proxyCreated` directly by ourself
+- Deploy the wallet with different implentation (different factory, different singleton ...)
+- Setup the wallet with two owners (beneficiary and us) and threshold `1`, and sign the transfer transaction by our keys
+- Setup the wallet with `fallbackManager`, and it will be used as fallback method of `FallbackManager`
+
+Since theses ways cannot work, we need a more thorough investigation about the wallet setup,
+and we find that there is a deletagecall to `to` with `data`, which means we can let the wallet do anything!
+At the initializing period, the wallet has no tokens yet, so we can make it to approve us to spend the tokens.
+We can actually change the singleton to perform more actions.
+
+There may be some tricks writing the delegated functions.
+When approving, it is easier to put the addresses of the token and spender in the calldata.
+Or, we can either hardcode the addresses or use `immutable` modifier to store them.
+However, if we use keep the addresses in storage as usual, the wallet will cannot read from **its** storage.
+
+## Climber (24/09/06)
+In this challenge, there is a `ClimberVault` behind proxy, and a `ClimberTimelock` as the owner.
+
+We start with checking the methods we can call:
+- `ERC1967Proxy`: the only external method is the fallback method
+- `ClimberVault`: all non-view public / external methods have modifier
+- `ClimberVault`'s parent classes: `Initializable` has no public methods; `OwnableUpgradeable` and `UUPSUpgradeable` requires `onlyOwner`
+- `ClimberTimelock`: we can call `execute`, and its implementation is weird
+
+The `ClimberTimelock` works like `SimpleGovernance` in Selfie challenge.
+Proposers can `schedule` operation, and after some delay everyone can trigger its execution.
+The abnormal thing is, the `execute` method is asking all parameters about the operation, then it executes the operation, and finally checks the state after execution.
+By making an illegal operation legal during the execution, we can call the vault as its owner.
+
+If we execute random operations, the check will fail as its `known` is false, so it must be properly `schedule`d.
+There is also a delay check, but we can update it to `0` during the execution.
+
+We are thinking of scheduling the operation itself inside the operation at first,
+but since scheduling uses exactly the calldata as execution, perhaps it requires some manipulation to pass the whole calldata to `schedule`?
+What's more, `schedule` requires `PROPOSER_ROLE`. Though `ADMIN_ROLE` is proposer's admin role, it only means admins can manage propsers, rather than admins having proposers' capabilities.
+Later we realized that we can instead grant the role to an attacker contract, and let the contract to schedule the operation.
+
+When it comes to the vault part, even the owner cannot withdraw all tokens immediately.
+However, since we can bypass `onlyOwner` of `_authorizeUpgrade`, we can just switch the vault's implementation, and do whatever we want.
 
