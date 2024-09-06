@@ -42,4 +42,12 @@ add telephone and token
 
 ### 2024.09.05
 
+請假
+
+### 2024.09.06
+
+add delegatioin  and force
+
+
+
 <!-- Content_END -->
