@@ -234,3 +234,6 @@
 [submodule "Writeup/Snooowgh/A_Ethernaut/foundry_writeup/lib/forge-std"]
 	path = Writeup/Snooowgh/A_Ethernaut/foundry_writeup/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/billh/Curta/PairAssetManager/lib/forge-std"]
+	path = Writeup/billh/Curta/PairAssetManager/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
