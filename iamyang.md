@@ -49,4 +49,8 @@ timezone: Asia/Shanghai
 
 完成 Ethernaut 第七题
 
+### 2024.09.06
+
+完成 Ethernaut 第八题
+
 <!-- Content_END -->
