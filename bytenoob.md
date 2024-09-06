@@ -93,6 +93,10 @@ Finish ethernaut king and re-entrancy
 
 Finish ethernaut elevator
 
+### 2024.09.06
+
+Finish ethernaut privacy
+
 
 
 <!-- Content_END -->
