@@ -137,5 +137,6 @@ swap里并没有验证调用者要swap的代币是否是池子中的两个代币
 
 另外坎昆升级之后这道题其实就解不了了，因为selfdestruct不再会真正的销毁代码（除非在construtor里），从而合约地址的size永远无法变为0。
 不过还是讲讲思路，利用delegacall的特性，先调initialize()获得upgrade的身份，再通过upgradeToAndCall()传入要执行的内容即可达到销毁engine的目的。
+这几天实在太忙，已经请两天假了，今天就只够时间做一道了。明天开始再追追进度。
 
 <!-- Content_END -->
