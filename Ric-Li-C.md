@@ -67,10 +67,60 @@ Yes 75%
 
 <!-- Content_START -->
 
-### 2024.08.29
-
-笔记内容
-
 ### 2024.08.30
+
+Setup Writeup folder for below CTF:
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+### 2024.09.01
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 01-Fallback
+
+### 2024.09.02
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 02-Fallout
+
+### 2024.09.03
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 04-Telephone
+
+### 2024.09.04
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 03-CoinFlip, 05-Token
+
+### 2024.09.05
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 06-Delegation, 07-Force, 08-Vault
+
+### 2024.09.06
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 09-King, 10-Reentrance, 11-Elevator, 12-Privacy
 
 <!-- Content_END -->

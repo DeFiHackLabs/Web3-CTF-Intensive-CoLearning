@@ -14,10 +14,24 @@ timezone: Asia/Shanghai
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+完成ethernaut第1题 
 
-### 2024.07.12
+### 2024.08.30
+完成ethernaut第2题  fallback
+
+### 2024.08.31
+完成ethernaut第3题 
+### 2024.09.01
+完成ethernaut第4题 
+### 2024.09.02
+完成ethernaut第5题 
+### 2024.09.03
+完成ethernaut第6题 
+### 2024.09.04
+完成ethernaut第7题
+### 2024.09.05
+完成ethernaut第8题
 
 <!-- Content_END -->

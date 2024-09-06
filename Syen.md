@@ -10,10 +10,52 @@ Web3 Dapp Developer
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+**QuillCTF**
 
-### 2024.07.12
+- [Road Closed](./Writeup/Syen/src/QuillCTF/RoadClosed/README.md)
+
+### 2024.08.30
+
+**QuillCTF**
+
+- [Road Closed](./Writeup/Syen/src/QuillCTF/VIPBank/README.md)
+
+### 2024.08.31
+
+**QuillCTF**
+
+- [Confidential Hash](./Writeup/Syen/src/QuillCTF/ConfidentialHash/README.md)
+
+### 2024.09.01
+
+**QuillCTF**
+
+- [SafeNFT](./Writeup/Syen/src/QuillCTF/SafeNFT/README.md)
+
+### 2024.09.02
+
+**QuillCTF**
+
+- [D31eg4t3](./Writeup/Syen/src/QuillCTF/D31eg4t3/README.md)
+
+### 2024.09.03
+
+**QuillCTF**
+
+- [CollatzPuzzle](./Writeup/Syen/src/QuillCTF/CollatzPuzzle/README.md)
+
+### 2024.09.04
+
+**QuillCTF**
+
+- [TrueXOR](./Writeup/Syen/src/QuillCTF/TrueXOR/README.md)
+
+### 2024.09.05
+
+**QuillCTF**
+
+- [Pelusa](./Writeup/Syen/src/QuillCTF/Pelusa/README.md)
 
 <!-- Content_END -->

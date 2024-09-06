@@ -1,5 +1,5 @@
 ---
-timezone: Pacific/Auckland
+timezone: Asia/Shanghai
 ---
 
 > 请在上边的 timezone 添加你的当地时区，这会有助于你的打卡状态的自动化更新，如果没有添加，默认为北京时间 UTC+8 时区
@@ -64,10 +64,32 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+[AMAZEX-DSS-PARIS Challenge1](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/Operation%20magic%20redemption.md)//笔记和POC都在链接里，不知道昨天是忘记改上面时区了还是什么算我miss了，>:
+### 2024.08.30
 
-### 2024.07.12
+[ModernWETH](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/ModernWETH.md)//解题和POC
 
+[LendingPool](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/LendingPool.md)
+
+### 2024.8.31
+
+[Rescue POSI Token](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/Operation%20Rescue%20POSI%20Token!.md)
+
+[balloon-vault](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/balloon-vault.md)
+
+### 2024.9.1
+[yieldPool](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/yieldPool.md)
+
+[crystalDAO](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/crystalDAO.md)
+
+### 2024.9.2
+[oilver](https://github.com/JadeLight7/AMAZEX-DSS-PARIS/blob/main/oilver.md)
+
+### 2024.9.3
+[blazctf hello world](https://github.com/JadeLight7/blazctf2023/blob/main/helloworld.md)
+
+### 2024.9.4
+[rock-paper-scissor](https://github.com/JadeLight7/blazctf2023/blob/main/rock-paper-scissor.md)
 <!-- Content_END -->

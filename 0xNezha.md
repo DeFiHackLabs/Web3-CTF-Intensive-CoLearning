@@ -5,52 +5,6 @@ timezone: Asia/Shanghai
 > 请在上边的 timezone 添加你的当地时区，这会有助于你的打卡状态的自动化更新，如果没有添加，默认为北京时间 UTC+8 时区
 > 时区请参考以下列表，请移除 # 以后的内容
 
-timezone: Pacific/Honolulu # 夏威夷-阿留申标准时间 (UTC-10)
-
-timezone: America/Anchorage # 阿拉斯加标准时间 (UTC-9)
-
-timezone: America/Los_Angeles # 太平洋标准时间 (UTC-8)
-
-timezone: America/Denver # 山地标准时间 (UTC-7)
-
-timezone: America/Chicago # 中部标准时间 (UTC-6)
-
-timezone: America/New_York # 东部标准时间 (UTC-5)
-
-timezone: America/Halifax # 大西洋标准时间 (UTC-4)
-
-timezone: America/St_Johns # 纽芬兰标准时间 (UTC-3:30)
-
-timezone: America/Sao_Paulo # 巴西利亚时间 (UTC-3)
-
-timezone: Atlantic/Azores # 亚速尔群岛时间 (UTC-1)
-
-timezone: Europe/London # 格林威治标准时间 (UTC+0)
-
-timezone: Europe/Berlin # 中欧标准时间 (UTC+1)
-
-timezone: Europe/Helsinki # 东欧标准时间 (UTC+2)
-
-timezone: Europe/Moscow # 莫斯科标准时间 (UTC+3)
-
-timezone: Asia/Dubai # 海湾标准时间 (UTC+4)
-
-timezone: Asia/Kolkata # 印度标准时间 (UTC+5:30)
-
-timezone: Asia/Dhaka # 孟加拉国标准时间 (UTC+6)
-
-timezone: Asia/Bangkok # 中南半岛时间 (UTC+7)
-
-timezone: Asia/Shanghai # 中国标准时间 (UTC+8)
-
-timezone: Asia/Taipei # 台灣标准时间 (UTC+8)
-
-timezone: Asia/Tokyo # 日本标准时间 (UTC+9)
-
-timezone: Australia/Sydney # 澳大利亚东部标准时间 (UTC+10)
-
-timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
-
 ---
 
 # 0xNezha
@@ -64,10 +18,31 @@ hmm... 希望这次不要分心 XD
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+配置相关环境，使用 Foundry Cast 与合约交互，完成 Ethernaut 之 [00_Hello Ethernaut](./Writeup/0xNezha/Ethernaut/00_Hello%20Ethernaut.md) 
 
-### 2024.07.12
+### 2024.08.30
+在以太坊智能合约中，receive 函数是一个特殊的函数，用于接收以太币。当合约地址接收到以太币时，这个函数会被自动调用。[01_Fallback](./Writeup/0xNezha/Ethernaut/01_Fallback.md) 
 
+### 2024.08.31
+在 0.4.22 版本之前, 构造函数被定义为合约的同名函数（该语法在0.5.0之后弃用）。合约作者准备把Fal1out() 作为 合约 Fallout 的构造函数，以在合约部署时调用。但很不巧，笔误写错了，导致任何人都可以调用。[02_Fallout](./Writeup/0xNezha/Ethernaut/02_Fallout.md)
+
+### 2024.09.01
+周日休息XD
+
+### 2024.09.02
+一个猜硬币函数，输入参数是 true/false , 判断逻辑是：区块hash 与 FACTOR 进行除法运算，结果等于 1 则 side 这个变量为 true，不等于 1 则变量为 false。
+判断输入参数是否等于函数的运算结果。相等则加 1 分，不相等则分数清零。
+通过编写一个有着相同运算逻辑的合约，对结果进行提前运算。然后调用目标合约的函数，把运算结果输入进去，实现每次都猜中。[03_CoinFlip](./Writeup/0xNezha/Ethernaut/03_CoinFlip/src/CoinFlip_exp.sol)
+
+### 2024.09.03
+ changeOwner(address _owner) 函数，仅当 tx.origin != msg.sender 的时候，才可以修改 owner。tx.origin 是 EOA 地址，而 msg.sender 是调用该合约的地址，当 EOA 直接调用该合约时，二者相等。这里我们部署一个“中间人”合约来调用该合约，那么 tx.origin 就是你的 EOA 地址， msg.sender 就是“中间人”的地址，从而实现  tx.origin != msg.sender 。[04_Telephone](./Writeup/0xNezha/Ethernaut/04_Telephone/src/Telephone_exp.sol)
+
+### 2024.09.04
+ balances[msg.sender] -= _value 这里没有做安全限制，我们的初始余额是20，如果用它减去 21（向别人转账 21），则会发生数据下溢，得到一个天文数字。[05_Token](./Writeup/0xNezha/Ethernaut/05_Token.md)
+ 
+
+ ### 2024.09.05
+ 外部地址 A 通过 合约 B 来 delegatecall 合约 C ，实现在 B 的上下文环境中运行 C 的代码，进而修改 B 的数据。另外，如果调用 B 合约时 B 合约中没有任何匹配的函数时，会触发 B 的 fallback 函数。[06_Delegation](./Writeup/0xNezha/Ethernaut/06_Delegation.md)
 <!-- Content_END -->

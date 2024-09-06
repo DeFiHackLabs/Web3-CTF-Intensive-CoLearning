@@ -64,11 +64,84 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.08.29
 
-笔记内容
-### 2024.08.30
+Solidity 中文文档学习
+Solidity 详解
 
-笔记内容
-
+Solidity 源文件结构
+SPDX 版权许可标识
+Pragma
+版本标识
+导入其他源文件
+注释
+合约结构
+状态变量
+函数
+函数 修改器modifier
+事件 Event
+错误(Errors)
+结构体
+枚举类型
+类型
+值类型
+引用类型
+映射
+操作符
+基本类型之间的转换
+字面常量与基本类型的转换
+单位和全局变量
+以太币Ether 单位
+时间单位
+特殊变量和函数
+保留关键字
+表达式和控制结构
+控制结构
+函数调用
+通过 new 创建合约
+表达式计算顺序
+赋值
+作用域和声明
+算术运算的检查模式与非检查模式
+错误处理及异常：Assert, Require, Revert
+合约
+创建合约
 ### 2024.08.30
+Solidity 持续学习
+
+状态变量在储存中的布局
+映射和动态数组
+JSON 输出
+变量在内存布局
+与存储中布局的不同
+CallData 布局
+清理变量
+Source Mappings
+The Optimizer
+Benefits of Optimizing Solidity Code
+Differences between Optimized and Non-Optimized Code
+Optimizer Parameter Runs
+Opcode-Based Optimizer Module
+Yul-Based Optimizer Module
+合约的元数据
+字节码中元数据哈希的编码
+自动化接口生成和 以太坊注释规范格式Ethereum Nature Specification Format(natspec) 的使用方法
+源代码验证的使用方法
+应用二进制接口说明
+基本设计
+函数选择器Function Selector
+参数编码
+类型编码
+编码的设计准则
+编码的形式化说明
+函数选择器Function Selector 和参数编码
+例子
+动态类型的使用
+事件
+错误编码
+JSON
+严格编码模式
+非标准打包模式（Non-standard Packed Mode）
+事件索引参数的编码
+
+### 2024.08.31
 
 <!-- Content_END -->

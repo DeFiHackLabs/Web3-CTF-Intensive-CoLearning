@@ -9,11 +9,11 @@ interface Instance {
     function getCleared() external view returns (bool);
 }
 
-contract CounterTest is Test {
+contract ContractTest00 is Test {
     function setUp() public {
     }
 
-    function testExploit() public {
+    function testExploit0() public {
         Vm vm = Vm(address(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D));
         vm.createSelectFork(vm.rpcUrl("https://rpc.ankr.com/eth_sepolia"));
         
