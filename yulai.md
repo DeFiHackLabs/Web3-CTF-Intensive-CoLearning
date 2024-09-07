@@ -200,7 +200,7 @@ contract BuyerImpl {
 单纯看合约没啥问题，不过合约继承了 ERC20 合约，该合约还有其它转账的方法，比如 TransferFrom
 可以用 TransferFrom 进行转账，不会走到 lockTokens 的逻辑
 
-### 2024.08.07
+### 2024.09.07
 #### Ethernaut - Recovery
 不是很懂这题要考察什么？考察如何提前计算合约地址？反正是从浏览器中找到了合约地址，调用了自毁方法，就通过了...
 
