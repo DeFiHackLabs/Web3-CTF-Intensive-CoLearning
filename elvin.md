@@ -450,6 +450,11 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
    [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/03-lendingPool/Challenge3.t.sol)
 
 ### 2024.09.07
+1. Secureum AMAZEX-DSS-PARIS - Challenge 5
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/05-balloon-vault/05-balloon-vault-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/05-balloon-vault/Challenge5.t.sol)
+
+### 2024.09.07
 
 
 <!-- Content_END -->
