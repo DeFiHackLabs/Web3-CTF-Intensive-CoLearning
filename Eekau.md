@@ -220,4 +220,10 @@ Rubixi hack
 >> 1.
 >> contract.unlock(await web3.eth.getStorageAt(contract.address, 1))
 >> 2.得到答案
+
+### 2024.09.06
+>#### Ethernaut CTF (8/31)
+>>##### King
+>>##### 目標:破壞它
+>>##### 先備知識
 <!-- Content_END -->

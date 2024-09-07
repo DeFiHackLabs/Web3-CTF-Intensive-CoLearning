@@ -111,4 +111,9 @@ contract VaultSolution is Script {
 ### 2024.09.05
 请假
 
+### 2024.09.06
+#### Ethernaut
+##### 第13题 GateKeeper
+1. 卡在这题， 本来eth就不多，循环了几百次快没了，感觉得循环到上千次才能触发 gasleft() / 8191 == 0 明天领点eth再试试。
+
 <!-- Content_END -->

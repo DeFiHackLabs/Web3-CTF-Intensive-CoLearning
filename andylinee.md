@@ -47,4 +47,14 @@ Sign up
 
 今天把 Damn Vulnerable DeFi v4 的 Naive Receiver 的 Writeup 和 POC 補齊。
 
+### 2024.09.06
+
+今天預計練習 Damn Vulnerable DeFi v4 的 Side Entrance。
+
+### 2024.09.07
+
+新增 Damn Vulnerable DeFi v4 - Truster 的 POC: 
+- [Truster.t.sol](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/andylinee/DamnVulnerableDeFiV4/Truster.t.sol)
+- [TrusterExploiter.sol](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/andylinee/DamnVulnerableDeFiV4/TrusterExploiter.sol)
+
 <!-- Content_END -->

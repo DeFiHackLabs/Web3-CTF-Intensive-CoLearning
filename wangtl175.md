@@ -135,4 +135,35 @@ test = test.add(5);
 
 把合约的一个变量设置private，只是能限制其他合约的访问。但是链上的一切都是公开的，[这里](https://sepolia.etherscan.io/tx/0x9aa9f09a53fa632706cd303324410e87150a1953deef9e2d6d338aa60830ab1f/advanced#statechange)可以看到这个交易中的状态变化，其中包含了private变量
 
+
+### 2024.09.05
+
+pass
+
+### 2024.09.06
+
+#### 发送ETH
+
+共有三种方法发送ETH，分别是`transfer`, `send`, `call`
+
+##### transfer
+- 用法是`接收方地址.transfer(发送ETH数额)`。
+- `transfer()`的gas限制是2300，足够用于转账，但对方合约的`fallback()`或`receive()`函数不能实现太复杂的逻辑。
+- `transfer()`如果转账失败，**会自动`revert`（回滚交易）。**
+
+##### send
+- 用法是`接收方地址.send(发送ETH数额)`。
+- `send()`的gas限制是2300，足够用于转账，但对方合约的`fallback()`或`receive()`函数不能实现太复杂的逻辑。
+- `send()`如果转账失败，不会`revert`。
+- `send()`的返回值是`bool`，代表着转账成功或失败，需要额外代码处理一下。
+
+
+##### call
+- 用法是`接收方地址.call{value: 发送ETH数额}("")`。
+- `call()`**没有gas限制**，可以支持对方合约`fallback()`或`receive()`函数实现复杂逻辑。
+- `call()`如果转账失败，不会`revert`。
+- `call()`的返回值是`(bool, bytes)`，其中bool代表着转账成功或失败，需要额外代码处理一下。
+
+`transfer`失败会自动`revert`，`call`没有gas限制。推荐使用顺序：`call`, `transfer`, `send`
+
 <!-- Content_END -->

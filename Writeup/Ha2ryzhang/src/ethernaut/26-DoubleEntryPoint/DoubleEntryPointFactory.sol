@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "src/core/Level.sol";
+import "src/ethernaut/core/Level.sol";
 import "./DoubleEntryPoint.sol";
 
 contract DoubleEntryPointFactory is Level {

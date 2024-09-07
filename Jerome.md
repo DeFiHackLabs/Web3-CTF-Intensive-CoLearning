@@ -54,4 +54,11 @@ timezone: Asia/Shanghai
 - [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Selfie/Selfie.md)
 - [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Selfie/Selfie.t.sol)
 
+### 2024.09.06
+学习内容
+#### [[Damn Vulnerable DeFi V4] 7 | Compromised ]
+1.完成Damn Vulnerable DeFi V4的第七关Compromised。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Compromised/Compromised.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Compromised/Compromised.t.sol)
+
 <!-- Content_END -->

@@ -67,13 +67,14 @@ timezone: Asia/Singapore
 
 ### 2024.09.06
 #### Damn Vulnerable DeFi - Wallet Mining:
-
+- Attempted this challenge but did not clear. Will put on hold and revisit later.
+  
 #### Damn Vulnerable DeFi - Puppet V3:
-
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/puppet-v3.md)
+  
+### 2024.09.07
 #### Damn Vulnerable DeFi - ABI Smuggling:
 
-
-### 2024.09.07
 #### Damn Vulnerable DeFi - Shards:
 
 #### Damn Vulnerable DeFi - Curvy Puppet:
