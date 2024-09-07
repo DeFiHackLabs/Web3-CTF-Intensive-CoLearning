@@ -61,8 +61,9 @@ function _computeOraclePrice() private view returns (uint256) {
 ### Attack steps:
 
 1. Sign an off-chain approval to allow the attack contract to transfer the player's DVT tokens during the attack. This eliminates the need for an additional on-chain approval transaction, which is crucial since the challenge limits the player to a single transaction.
-1. Swap out most of the ETH for DVT tokens in the Uniswap V1 pair to significantly lower the DVT token price.
-1. Borrow all the DVT token from the lending pool.
+2. Swap out most of the ETH for DVT tokens in the Uniswap V1 pair to significantly lower the DVT token price.
+3. Borrow all the DVT token from the lending pool.
+4. Transfer the rescued ETH to the `recovery` address.
 
 ## PoC test case
 

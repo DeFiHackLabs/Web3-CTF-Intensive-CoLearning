@@ -54,7 +54,9 @@ function _buyOne(uint256 tokenId) private {
 }
 ```
 
-In the `buyMany()` function, the only requirement is that `msg.value` must be greater than `priceToPay` (15 ETH). The function does not check if `msg.value` is greater than the total price for all the NFTs being purchased (i.e., priceToPay multiplied by the number of NFTs). As a result, you can buy any number of NFTs, but only need to pay 15 ETH in total.
+However, there is a common business logic flaw:
+
+In the `buyMany()` function, the only payment requirement is that `msg.value` must be greater than `priceToPay` (15 ETH). The function does not check if `msg.value` is greater than the total price for all the NFTs being purchased (i.e., priceToPay multiplied by the number of NFTs). As a result, you can buy any number of NFTs, but only need to pay 15 ETH in total.
 
 ### Attack steps:
 
