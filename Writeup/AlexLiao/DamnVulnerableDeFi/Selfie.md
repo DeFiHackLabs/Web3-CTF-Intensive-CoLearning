@@ -90,6 +90,7 @@ Do you see the vulnerability? To queue an action, you need to control half of th
 
 1. Initiate a flash loan to borrow the maximum amount of DVT tokens and use them to queue an action that executes the `emergencyExit()` function during the loan.
 2. Wait 2 days (using `vm.warp(block.timestamp + 2 days)` in test), then execute the queued action by calling the `executeAction()` function.
+3. Transfer the rescued token to the `recovery` address.
 
 ## PoC test case
 
