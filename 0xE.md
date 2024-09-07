@@ -43,4 +43,7 @@ timezone: Pacific/Auckland
 ### 2024.09.06
 [[Damn Vulnerable DeFi V4] 10 | Free Rider](./Writeup/0xE/DamnVulnerableDeFiV4/free-rider.md)
 
+### 2024.09.07
+[[Damn Vulnerable DeFi V4] 11 | Backdoor](./Writeup/0xE/DamnVulnerableDeFiV4/backdoor.md)
+
 <!-- Content_END -->
