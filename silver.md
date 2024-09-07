@@ -760,6 +760,8 @@ contract CallPuppet{
     }
 }
 ```
+
+### 2024.09.07
 #### privacy
 
 题目
@@ -802,9 +804,7 @@ await web3.eth.getStorageAt("0xd0173f719C91d8B53cb4e45758A18C0Bc007214a",5)
 知道key为0x8051fab8ce920ecc5ba128fd3edc66f0。
 
 
-
-
-### 2024.09.07
-
 ### 2024.09.08
+
+### 2024.09.09
 <!-- Content_END -->
