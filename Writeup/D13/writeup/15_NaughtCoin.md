@@ -33,7 +33,6 @@
     - [[中文] WTF Solidity极简入门: 31. ERC20](https://github.com/AmazingAng/WTF-Solidity/tree/main/31_ERC20)
 - 理解完 ERC20 後，看回來題目。題目要求我們把自己的代幣歸零，歸零的方法就是把代幣通通轉出去，轉出去可以透過**轉帳(transfer), 授權轉帳(transferFrom)** 兩種方式，但是`transfer()`已經被題目實作而且限制 10 年後才能領取。所以這裡我們只要使用**授權轉帳**  的方法就可以把自己的錢轉出去了。  
 **授權轉帳**在上一點介紹ERC20的時候有提到過，要先透過**授權**給別的地址，別的地址才可以控制我們的代幣，所以這題的攻擊流程如下：  
-  1. **授權**給攻擊合約:  
-  `approve(address(attacker), 1000000 * (10**18))`
-  2. 使用**授權轉帳**把我們錢包的代幣轉出：  `transferFrom(me, address(attacker), 1000000 * (10**18)`  
-  p.s. 我的攻擊合約就是關卡合約實例本身 😆
+  1. **授權**給自己:  
+  `approve(address(wallet), 1000000 * (10**18))`
+  2. 使用**授權轉帳**把我們錢包的代幣轉回去關卡實例：  `transferFrom(me, address(level15), 1000000 * (10**18)`  
