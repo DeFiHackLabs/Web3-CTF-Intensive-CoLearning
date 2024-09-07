@@ -295,4 +295,95 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/privacy_hack.s.
 
 ### 2024.09.07
 
+#### 13. Gatekeeper One
+
+这一题有3道门，需要三道门全部通过才可以通关
+
+第一道门要求`msg.sender != tx.origin`，只需要使用合约而不是EOA调用目标合约即可
+第二道门要求gasleft能被8191整除，这个需要在合约中爆破一下，多调用几次目标
+第三道门的条件比较多，需要将`tx.origin`转成bytes8`bytes8(uint64(uint160(tx.origin)))`，再使用AND运算将从右往左数的3-4bytes修改掉，即可通过第三关`bytes8(uint64(uint160(tx.origin))) & 0xFFFFFFFF0000FFFF`
+
+编写攻击合约[gatekeeper_one_hack.sol](Writeup/awmpy/src/ethernaut/gatekeeper_one_hack.sol)
+编写攻击脚本[gatekeeper_one_hack.s.sol](Writeup/awmpy/script/ethernaut/gatekeeper_one_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/gatekeeper_one_hack.s.sol:GatekeeperOneHackScript -vvvv --broadcast
+```
+
+#### 14. Gatekeeper Two
+
+这一道题同样有三道门
+
+第一道门还是要求`msg.sender != tx.origin`，只需要使用合约而不是EOA调用目标合约即可
+第二道门中有`extcodesize`和`assembly`，`extcodesize`是一种opcode，用来取指定地址的合约大小，单位为bytes，第二道门的检查需要确保`extcodesize(calller())`的值等于0
+第一道门要求caller必须是合约，第二道门又要求caller的`extcodesize`必须是0，唯一能满足条件的只有不包含runtime code的合约
+runtime code是最终留在区块链上执行的代码，可以被不断重复调用、执行，creation code是执行一次初始化合约的状态后就消失，因此我们只需要把攻击代码写到`construst`中，不写其他的func，即可通过第二道门
+第三道门中有一个`^`，代表bitwise的XOR异或运算，需要将`uint64(_gatekey)`与`type(uint64).max`位置交换，就能取得正确的key，需要将原本的`msg.sender()`改成`address(this)`也就是攻击合约
+
+``` bash
+uint64 key = uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ type(uint64).max);
+```
+
+编写攻击合约[gatekeeper_two_hack.sol](Writeup/awmpy/src/ethernaut/gatekeeper_two_hack.sol)
+编写攻击脚本[gatekeeper_two_hack.s.sol](Writeup/awmpy/script/ethernaut/gatekeeper_two_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址，脚本中只需要new攻击合约即可，因为攻击合约只实现了`construst`
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/gatekeeper_two_hack.s.sol:GatekeeperTwoHackScript -vvvv --broadcast
+```
+
+#### 15. Naught Coin
+
+这一道题需要把自己的余额清空
+
+`lockTokens`中限制了`msg.sender`不能是player，因此需要通过攻击合约来发送转账请求
+
+攻击思路:
+player将所有代币授权给攻击合约，攻击合约调用`transferFrom`函数把player的代币清空，from写player地址，to写攻击合约本身或其他地址
+
+编写攻击合约[naught_coin_hack.sol](Writeup/awmpy/src/ethernaut/naught_coin_hack.sol)
+编写攻击脚本[naught_coin_hack.s.sol](Writeup/awmpy/script/ethernaut/naught_coin_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/naught_coin_hack.s.sol:NaughtCoinHackScript -vvvv --broadcast
+```
+
+#### 16. Preservation
+
+这一题有两个合约`Preservation`与`LibraryContract`，两个合约之间使用了`delegatecall`
+
+`Preservation`中有4个storage变量，timeZone1Library位于slot0，timeZone2Library位于slot1，owner位于slot2，storedTime位于slot3
+`LibraryContract`中只有1个storage变量，storedTime位于slot0
+当调用`Preservation`的`setFirstTime`函数时，会`delegatecall`到`LibraryContract`的`setTime`方法来修改storedTime变量
+漏洞就出现在两个合约的slot0所存储的变量不同，`Preservation`在进行`delegatecall`到`LibraryContract`的`setTime`时修改的是本地的slot0，也就是timeZone1Library
+这样就可以用攻击合约调用`setFirstTime`函数来将timeZone1Library改成攻击合约
+改成攻击合约后再次调用`setFirstTime`函数，就会调用到攻击合约的`setTime`，可以在攻击合约的`setTime`中修改owner，因为是`delegatecall`，此处修改的也是`Preservation`的owner，以此获取合约控制权
+第一次调用`setFirstTime`调用链
+
+``` bash
+EOA ==> AttackContract ==> Preservation ==> LibraryContract ==> setTime ==> 篡改Preservation的timeZone1Library为AttackContract
+```
+
+第二次调用`setFirstTime`调用链
+
+``` bash
+EOA ==> AttackContract ==> Preservation ==> AttackContract ==> settime ==> 篡改Preservation的owner为player
+```
+
+编写攻击合约[preservation_hack.sol](Writeup/awmpy/src/ethernaut/preservation_hack.sol)
+编写攻击脚本[preservation_hack.s.sol](Writeup/awmpy/script/ethernaut/preservation_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/preservation_hack.s.sol:PreservationHackScript -vvvv --broadcast
+```
+
+### 2024.09.08
+
 <!-- Content_END -->
