@@ -760,6 +760,47 @@ contract CallPuppet{
     }
 }
 ```
+#### privacy
+
+题目
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Privacy {
+    bool public locked = true; //0
+    uint256 public ID = block.timestamp;//1
+    uint8 private flattening = 10;
+    uint8 private denomination = 255;
+    uint16 private awkwardness = uint16(block.timestamp);//2
+    bytes32[3] private data;//3,4,5,data[2]在slot 5
+
+    constructor(bytes32[3] memory _data) {
+        data = _data;
+    }
+
+    function unlock(bytes16 _key) public {
+        require(_key == bytes16(data[2]));
+        locked = false;
+    }
+}
+```
+
+其中，下面的三个变量会存在同一个slot内，所以按顺序，data[2]是在slot 5。
+
+    uint8 private flattening = 10;
+    uint8 private denomination = 255;
+    uint16 private awkwardness = uint16(block.timestamp);//2
+
+所以：
+```
+await web3.eth.getStorageAt("0xd0173f719C91d8B53cb4e45758A18C0Bc007214a",5)
+'0x8051fab8ce920ecc5ba128fd3edc66f02209821198cefc62f0c776dc3ff679f0'
+```
+
+知道key为0x8051fab8ce920ecc5ba128fd3edc66f0。
+
 
 
 
