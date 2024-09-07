@@ -35,4 +35,8 @@ Solved USurper.
 
 Solved ZSafe.
 
+### 2024.09.06
+
+Solved PairAssetManager.
+
 <!-- Content_END -->

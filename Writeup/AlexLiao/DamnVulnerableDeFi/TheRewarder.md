@@ -66,7 +66,7 @@ However, there is a logical flaw in how the claim status is updated. The functio
 ### Attack steps:
 
 1. Construct an array of duplicate token claims and call the `claimRewards` function to claim additional rewards.
-2. Transfer all the claimed rewards to the recovery address.
+2. Transfer all the claimed rewards to the `recovery` address.
 
 ## PoC test case
 

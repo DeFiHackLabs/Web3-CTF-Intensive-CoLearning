@@ -10,7 +10,7 @@ timezone: Europe/Helsinki
 ## Notes
 
 Progess:
-Group A: Damn Vulnerable DeFi: 10/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
+Group A: Damn Vulnerable DeFi: 12/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
 Group B: ...
 Group C: ...
 
@@ -58,5 +58,9 @@ Solvd 10 - Free Rider.
 
 ### 2024.09.05
 WIP 11 - Backdoor.
+
+### 2024.09.06
+Solvd 11 - Backdoor.
+Solvd 12 - Climber.
 
 <!-- Content_END -->

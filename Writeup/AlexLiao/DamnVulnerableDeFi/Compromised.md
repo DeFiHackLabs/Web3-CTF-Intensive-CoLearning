@@ -62,8 +62,8 @@ We can confirm that they correspond to two of the oracles. Exploiting these addr
 1. Retrieve the private keys of the trusted oracles from the hint.
 2. Impersonate the oracles to set the NFT price to a very low value (1 wei) and purchase it.
 3. Impersonate the oracles again to set the NFT price to a high value (e.g., 999 ETH) and sell it.
-4. Restore the original oracle prices.
-5. Transfer the rescued ETH from the exchange to the `recovery` address.
+4. Transfer the rescued ETH to the `recovery` address.
+5. Restore the original oracle prices.
 
 ## PoC test case
 

@@ -1,1 +1,2 @@
 ethernaut=src/ethernaut
+openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/

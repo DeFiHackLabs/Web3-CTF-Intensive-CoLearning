@@ -92,4 +92,10 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.9.4
 [rock-paper-scissor](https://github.com/JadeLight7/blazctf2023/blob/main/rock-paper-scissor.md)
+
+### 2024.9.5
+请假
+
+### 2024.9.6
+blazectf eazy-ctf  验证我们要有20个ntf，只需要mint20个，这个ctf前面还是比较简单，但是这两天事太多了，等过段时间做点难的
 <!-- Content_END -->

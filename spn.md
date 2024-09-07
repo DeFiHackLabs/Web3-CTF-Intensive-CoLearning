@@ -36,4 +36,10 @@ metatrustctf byteVault（详见[wp](https://github.com/spn21/Web3-CTF-Intensive-
 
 ### 2024.09.04
 [foo](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/foo.md)（大吃一顿bushi） 
+
+### 2024.09.05
+[Achilles](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/achilles.md)（经典看一半uniswapv2然后跑去看v3v4，时间消磨.jpg） 
+
+### 2024.09.06
+[ByteDance](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/ByteDance.md)复习了一天的OpCode
 <!-- Content_END -->

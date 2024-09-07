@@ -63,4 +63,8 @@ Today:
 
 1. Investigated a super-duper complex reentrancy issue during work
 
+### 2024.09.06
+
+1. Wrapped up onlyPwner. Now I solved all challs.
+
 <!-- Content_END -->

@@ -240,4 +240,56 @@ contract C {
 
 貌似 foundry test中 `selfdestruct` 无效,所以 poc 中后面手动处理了
 
+### 2024.09.06
+
+#### A-Ethernaut-DoubleEntryPoint
+
+这题分析业务看了有点久,不太明白想要干啥.
+
+`CryptoVault`中的`underlying`是不应该被transfer的,
+`require(token != underlying, "Can't transfer underlying token");`做了判断,可是`sweptTokensRecipient`的`token`是`LegacyToken`(LGT), `LegacyToken`的transfer又是代理的`DoubleEntryPoint`(DET)
+
+```solidity
+function transfer(address to, uint256 value) public override returns (bool) {
+    if (address(delegate) == address(0)) {
+        return super.transfer(to, value);
+    } else {
+        return delegate.delegateTransfer(to, value, msg.sender);
+    }
+}
+```
+`delegate`调用的其实就是DET,
+这里的`delegateTransfer`的`origSender`是`CryptoVault`,
+
+所以 `CryptoVault`中的`DET`最后会被转移为0
+
+
+`DET`中有个 `modifier fortaNotify()`
+
+```solidity
+
+modifier fortaNotify() {
+    address detectionBot = address(forta.usersDetectionBots(player));
+
+    // Cache old number of bot alerts
+    uint256 previousValue = forta.botRaisedAlerts(detectionBot);
+
+    // Notify Forta
+    forta.notify(player, msg.data);
+
+    // Continue execution
+    _;
+
+    // Check if alarms have been raised
+    if (forta.botRaisedAlerts(detectionBot) > previousValue) revert("Alert has been triggered, reverting");
+}
+
+```
+
+`Foeta`允许用户设置机器人来提醒交易,需要自己定义个合约,如果交易有问题调用`raiseAlert`这个modifier
+就会`revert`.
+最后实现Bot的`handleTransaction`方法判断`originSender == cryptoVault`来触发`raiseAlert`.
+
+
+
 <!-- Content_END -->

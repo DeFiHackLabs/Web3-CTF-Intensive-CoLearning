@@ -78,5 +78,15 @@ timezone: Asia/Taipei
 - [Writeup](./Writeup/Tanner/writeup/QuillCTF/Pelusa.md) 
 - [POC](./Writeup/Tanner/test/QuillCTF/Pelusa.t.sol) 
 
+### 2024.09.06
+
+學習內容: 
+
+- 完成 WETH10
+
+#### [QuillAudit CTF - WETH10](./Writeup/Tanner/src/QuillCTF/WETH10.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/WETH10.t.sol) 
+
 
 <!-- Content_END -->
