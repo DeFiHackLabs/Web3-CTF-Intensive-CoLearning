@@ -136,4 +136,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.07
 
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Free Rider](https://www.damnvulnerabledefi.xyz/challenges/free-rider/)
+
+筆記連結： [DamnVulnerableDeFi: Free Rider](./Writeup/AlexLiao/DamnVulnerableDeFi/FreeRider.md)
+
+### 2024.09.08
+
 <!-- Content_END -->
