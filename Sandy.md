@@ -39,4 +39,7 @@ timezone: Asia/Taipei
 
 ### 2024.09.06
 今天完成Ethernaut15-17題
+
+### 2024.09.07
+今天完成Ethernaut 第18 題
 <!-- Content_END -->

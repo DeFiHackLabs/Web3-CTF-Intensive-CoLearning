@@ -58,4 +58,9 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Vault - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 说明的 private 变量并不是真正的 private，相反，链上所有的数据本质上都是公开的。要真正保护隐私变量的话，得需要用到零知识证明或者同态加密；
 
+### 2024.09.07
+
+- 1.Ethernaut CTF (31) - King - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 收获：在传统领域的很多逻辑是不会出错的，但是在链上，收款地址本身也可以是程序逻辑的一部分，这种思维在 web3 里一定要转变过来，反是和第三方地址交互的地方都可以通过布置特定合约来实现恶意目的；
+
 <!-- Content_END -->

@@ -45,6 +45,9 @@ writeup:[Token](./Writeup/geyu/writeup/05_Token.md)
 
 ### 2024.09.05
 完成了 ethernaut 第 7 个练习 Token
-
 writeup:[Token](./Writeup/geyu/writeup/06_Delegation.md)
+### 2024.09.07
+完成了 ethernaut 第 8 个练习 Force
+writeup:[Token](./Writeup/geyu/writeup/07_Force.md)
+
 <!-- Content_END -->
