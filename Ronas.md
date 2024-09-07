@@ -43,7 +43,7 @@ timezone: Asia/Taipei
 - A. Ethernaut CTF - Level 3 Coin Flip
     - 此題如同大部分偽隨機數的問題，產生隨機數的種子可預測，隨機數便可預測，此題運用區塊雜湊除以一個固定的 FACTOR，兩者皆為已知情況下，所產生的隨機數便不安全，產生的硬幣正反面結果便可預測，破壞此遊戲理想勝應有的 50% 勝率
     - 由於手算每次正反面結果有點辛苦，編寫攻擊合約來達成是較可行的做法
-    - [PoC](./Writeup/Ronas/Ethernaut%20CTF/level3_coinflip.sol)
+    - [PoC](./Writeup/Ronas/Ethernaut%20CTF/PoC/level3_coinflip.sol)
 
 - takeaways
     - 偽隨機數問題
@@ -56,7 +56,7 @@ timezone: Asia/Taipei
         - `tx.origin`: 發起交易的地址，通常為使用者的錢包地址
         - `msg.sender`: function 的呼叫者，可以為使用者錢包，或是另一個合約
     - 作法：寫一個合約代替直接發送，便可造成 `tx.origin` 及 `msg.sender` 出現不一致
-    - [PoC](./Writeup/Ronas/Ethernaut%20CTF/level4_telephone.sol)
+    - [PoC](./Writeup/Ronas/Ethernaut%20CTF/PoC/level4_telephone.sol)
 
 ### 2024.09.03
 
@@ -80,8 +80,24 @@ timezone: Asia/Taipei
 - A. Ethernaut CTF - Level 7 Force
     - 目標 `Force` 合約沒有 `fallback` 函數，因此無法透過 `fallback` 方式向目標發送 Ether
     - `selfdestruct` 是一個自毀函數，可將合約身上的所有 Ether 直接轉往另一個合約
-    - [PoC]()
+    - [PoC](/Writeup/Ronas/Ethernaut%20CTF/PoC/level7_force.sol)
 - takeaways
     - selfdestruct 函數
-    
+
+### 2024.09.05
+
+- A. Ethernaut CTF - Level 8 Vault
+    - 由於區塊鏈的公開透明特性，可以直接從合約的 storage 取得這些私有變數值 `web3.eth.getStorageAt(contract.address, 1)`
+    - 解碼取得 password 值 `web3.utils.hexToAscii("0x412076657279207374726f6e67207365637265742070617373776f7264203a29")`
+    - Exploit `contract.unlock("0x412076657279207374726f6e67207365637265742070617373776f7264203a29")`
+
+- takeaways
+    - nothing is private in the blockchain
+    - any private data should either be stored off-chain, or carefully encrypted
+
+### 2024.09.06
+
+- [A. Ethernaut CTF - Level 9 King](/Writeup/Ronas/Ethernaut%20CTF/level9.md)
+
+
 <!-- Content_END -->

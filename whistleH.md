@@ -108,4 +108,16 @@ timezone: Asia/Shanghai
 
 1. 题目的难度增加，开学的事情也在增加，Solidity基础不足的问题还在暴露，希望能完成40题的计划
 
+### 2024.09.06
+
+当前挑战：ethernaut
+
+今日完成：Level18、Level20
+
+学习内容
+
+1. EVM OPCODE
+2. 利用gas限制实现DoS攻击
+3. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
 <!-- Content_END -->

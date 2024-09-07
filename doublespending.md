@@ -151,4 +151,49 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
     - use WETH instead of ETH
     - use `IUniswapV2Router02`
 
+### 2024.09.05
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Backdoor
+  - We find that [`proxyCreated`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/backdoor/WalletRegistry.sol#L67) will ensure the [`setup`](https://github.com/safe-global/safe-smart-account/blob/bf943f80fec5ac647159d26161446ac5d716a294/contracts/Safe.sol#L95-L104) process is fine
+  - So, we can check if there is something missed
+  - We can see that <`to`, `data`> and <`paymentToken`, `payment`, `paymentReceiver`> are not checked.
+  - However, `proxyCreated` is called after `setup`, so we do not have any token to transfer
+  - Then, we can check the logic of `setupModules(to, data)`
+  - Finally, we find that `delegate` call is allowed [here](https://github.com/safe-global/safe-smart-account/blob/bf943f80fec5ac647159d26161446ac5d716a294/contracts/base/ModuleManager.sol#L35-L39).
+  - So, we can let the wallet approve the token to anyone by manipulate the <`to`, `data`> input.
+  - Finally, we can use `transferFrom` to rug the token of the wallet.
+
+### 2024.09.06
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Free Rider
+
+  - ## From [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/free-rider/FreeRiderNFTMarketplace.sol#L108), we can buy nft for free
+    - `payable(_token.ownerOf(tokenId)).sendValue(priceToPay)` actually pay to the new owner (i.e. msg.sender) instead of the previous owner
+  - However, we need to have enough ETH to bypass the check [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/free-rider/FreeRiderNFTMarketplace.sol#L97) when buying the first NFT.
+  - We find that we can use [the flashswap of uniswap v2](https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps)
+    - Put the above logic inside `uniswapV2Call`
+
+### 2024.09.07
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Climber
+  - If we want to transfer all token of `ClimberVault`, we have three potential choices:
+    - `withdraw`: `onlyOwner`
+    - `sweepFunds`: `onlySweeper`
+    - `upgradeToAndCall`: `onlyOwner`
+  - `sweeper` can only be set while [initialize](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberVault.sol#L42). It is unlikely compromised.
+  - `owner` is the `ClimberTimelock`. It is more likely compromised. Then, `upgradeToAndCall` is more dangerous than `withdraw`
+  - So, we need `ClimberTimelock` to call `upgradeToAndCall`. We must call [`execute`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L72) in this case.
+- It seem that we actor as `ClimberTimelock` itself to do arbitrary call including `upgradeToAndCall` until the check [here](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L94)
+- To bypass the check
+  - We should make scheduled operation can be executed immediatedly. So, we can update dely to zero [here](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L101).
+  - We should call `schedule`.
+    - [For `address(this)` is the role admin of `PROPOSER_ROLE`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L35). We can update `PROPOSER_ROLE` to malicious contract.
+    - We can call the malicious contract and let it schedule the executions.
+
 <!-- Content_END -->

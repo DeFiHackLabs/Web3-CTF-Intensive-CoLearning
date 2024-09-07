@@ -152,7 +152,7 @@ forge script --chain anvil --rpc-url anvil script/Ethernaut/coinflip_poc.s.sol:C
 
 ### 2024.08.31
 
-今天完成 Ethernaut Level 04 Telephone
+今天完成 Ethernaut **Level 04 Telephone**
 
 tx.origin 为交易from 地址
 
@@ -241,8 +241,57 @@ web3.eth.getStorageAt(instance.address, 1, (err,res) => {
 继续下一关
 
 **Level 11 Elevator**
+电梯的 POC 合约我显示了 Building接口
 
 
+### 2024.09.05
+**Level 12 Privacy**
+今天继续下一关 
+
+### 2024.09.06
+零点了 6 号了， 在这里写了， 这一关还是使用 web3.eth.getStorageAt(address, index) 函数来解决， 但是这一次稍微复杂一点就是，不足 32 字节并且合并后不会超过32 字节的变量会使用同一个槽 slot
+
+经过分析， bool locked 使用一个 32 字节 slot index 0 (因为后面 ID 是 32 字节）， uint256 ID 32 字节 使用 slot 1， uint8 flatting 1字节, uint8 denomination 1字节 , uint16 awkwardness 两个字节， 他们三个一共 4 个字节 后面的 data[0] 32字节， 所以他们三个 flatting， denomination， awkwardness 可以使用 一个 slot , slot 2
+
+| Slot index | Fields|
+|-------------|-------------|
+|slot-0 | locked|
+|slot-1 | ID|
+|slot-2 | awkwardness|denomination|flattening|
+|slot-3 | data[0]|
+|slot-4 | data[1]|
+|slot-5 | data[2]|
+
+unlock 函数判断的是 传入的 key 是否等于 bytes16(data[2]) 
+
+通过 data[2]就是 slot 5,   web3.eth.getStorageAt(address, 5) 0x8de7238b78942005fea750232d184d0ce84a53d569bd7c825b99b79d02c50d1c
+
+bytes16(data[2]) 从左边截取 16 个字节 0x8de7238b78942005fea750232d184d0c， 我开始从右边截取的，不对，我又从左边截取 16 个字节
+
+然后直接在 console 中 发起交易 
+
+```
+await contract.unlock("0x8de7238b78942005fea750232d184d0c")
+```
+
+[POC 代码](Writeup/SpeedX/src/Ethernaut/privacy_poc.sol)
+
+
+下一题
+
+**Level 13 GatekeeperOne**
+
+### 2024.09.07
+
+昨天卡在 gateTwo gasleft()， 看了文档说 调用函数的时候可以设置 gas， 但是现在不知道 gasleft 的时候具体花费了多少 gas ，所以不知道 调用 enter的时候设置多少 gas 合适
+
+test 测试没有问题 但是script 上链 上不去 不知道为什么，先跳过下一题了
+
+
+**Level 14 GatekeeperTow**
+
+
+### 2024.09.08
 
 
 <!-- Content_END -->

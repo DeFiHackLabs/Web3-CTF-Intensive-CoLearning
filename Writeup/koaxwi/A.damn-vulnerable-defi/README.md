@@ -161,3 +161,88 @@ In [UniswapV2Pair](https://github.com/Uniswap/v2-core/blob/master/contracts/Unis
 The pair will first transfer tokens to the receiver, then call `uniswapV2Call` on the reveiver, and finally check whether the amount and fee is paid back.
 By referring this [document](https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps), we can implement an attacker contract to so.
 
+## Backdoor (24/09/05 - 06)
+This challenge introduces a new topic: multisignature wallet.
+Although there is only one challenge source `WalletRegistry`, the deployer actually uses a lot of library contracts.
+
+First starting with checking the `WalletRegistry` source code, we find that, we need to use `SafeProxyFactory::createProxyWithCallback` to callback the `proxyCreated` function, and the registry will check:
+- the factory and singleton must be the specified ones
+- the initializer data must be a `setup` call
+- the multisignature wallet only has one owner - the pre-defined beneficiary
+- the threshold is also `1`
+- the wallet has no `fallbackManager`
+Afterwards, the registry will send token to the wallet, and we need to transfer that token out.
+
+Then there are a lot of source code to read.
+The wallet itself is a `SafeProxy`, and every call is delegated to the `Safe` singleton.
+`Safe` and other base contracts it inherits have all the logics for the multisignature wallet.
+When deploying, the `initializer` will be used to call the setup methods.
+
+Note that we can construct the wallet with the owner as the beneficiaries, and control other parameters as well.
+Regardless of the registry's check, what can we do to get the token?
+- Call the `proxyCreated` directly by ourself
+- Deploy the wallet with different implentation (different factory, different singleton ...)
+- Setup the wallet with two owners (beneficiary and us) and threshold `1`, and sign the transfer transaction by our keys
+- Setup the wallet with `fallbackManager`, and it will be used as fallback method of `FallbackManager`
+
+Since theses ways cannot work, we need a more thorough investigation about the wallet setup,
+and we find that there is a deletagecall to `to` with `data`, which means we can let the wallet do anything!
+At the initializing period, the wallet has no tokens yet, so we can make it to approve us to spend the tokens.
+We can actually change the singleton to perform more actions.
+
+There may be some tricks writing the delegated functions.
+When approving, it is easier to put the addresses of the token and spender in the calldata.
+Or, we can either hardcode the addresses or use `immutable` modifier to store them.
+However, if we use keep the addresses in storage as usual, the wallet will cannot read from **its** storage.
+
+## Climber (24/09/06)
+In this challenge, there is a `ClimberVault` behind proxy, and a `ClimberTimelock` as the owner.
+
+We start with checking the methods we can call:
+- `ERC1967Proxy`: the only external method is the fallback method
+- `ClimberVault`: all non-view public / external methods have modifier
+- `ClimberVault`'s parent classes: `Initializable` has no public methods; `OwnableUpgradeable` and `UUPSUpgradeable` requires `onlyOwner`
+- `ClimberTimelock`: we can call `execute`, and its implementation is weird
+
+The `ClimberTimelock` works like `SimpleGovernance` in Selfie challenge.
+Proposers can `schedule` operation, and after some delay everyone can trigger its execution.
+The abnormal thing is, the `execute` method is asking all parameters about the operation, then it executes the operation, and finally checks the state after execution.
+By making an illegal operation legal during the execution, we can call the vault as its owner.
+
+If we execute random operations, the check will fail as its `known` is false, so it must be properly `schedule`d.
+There is also a delay check, but we can update it to `0` during the execution.
+
+We are thinking of scheduling the operation itself inside the operation at first,
+but since scheduling uses exactly the calldata as execution, perhaps it requires some manipulation to pass the whole calldata to `schedule`?
+What's more, `schedule` requires `PROPOSER_ROLE`. Though `ADMIN_ROLE` is proposer's admin role, it only means admins can manage propsers, rather than admins having proposers' capabilities.
+Later we realized that we can instead grant the role to an attacker contract, and let the contract to schedule the operation.
+
+When it comes to the vault part, even the owner cannot withdraw all tokens immediately.
+However, since we can bypass `onlyOwner` of `_authorizeUpgrade`, we can just switch the vault's implementation, and do whatever we want.
+
+## Wallet Minging (24/09/07)
+In this challenge, we need to rescue funds from a contract `WalletDeployer` as well as another address of an un-deployed contract.
+
+Start with code auditing. `TransparentProxy`, as a proxy, is having a storage variable `upgrader` at slot 0, whose position will easily collide with other variables the implemention.
+In this case, the `AuthorizerUpgradeable` has `needsInit` at the same slot, indicating whether the contract can be initialized.
+
+When `AuthorizerFactory` deploys the proxy with `AuthorizerUpgradeable`, the `upgrader` (as well as `needsInit`) will first be set as `msg.sender`, and then it will be set to `0` in `AuthorizerUpgradeable.init`.
+`AuthorizerFactory` do check `needsInit` is zero, however it updates `upgrader` next, which also updates `needsInit`.
+With this vulnerability, we can re-`init` the contract.
+
+The `AuthorizerUpgradeable` is used in `WalletDeployer`'s `can` implementation, which is required in `drop`.
+So we can deploy our `Safe` and get reward. 
+Since one deployment is enough to drain the fund of `WalletDeployer`, we can rescue the fund together with the deposit wallet.
+
+Therefore, the `Safe` address should be the user's deposit wallet.
+The challenge allows us to use user's private key, so we can assume it is using a minimal setup (user as the only owner, threshold 1, all other parameter empty), and then bruteforce the `nonceSalt` to find the address.
+If we are using other tools than `forge test`, we can directly **call** `createProxyWithNonce` to get the address, without actually deploying it.
+But in the forge context, seems we cannot call functions without changing the state.
+
+The `Safe` is deployed by `create2`, which has deterministic addresses at `keccak256( 0xff ++ address ++ salt ++ keccak256(init_code))[12:]` ([Ref](https://eips.ethereum.org/EIPS/eip-1014)).
+The test script has imported a library `Create2`, which provides the utility to calculate the address.
+Note `salt` here is not `nonceSalt`.
+After correctly providing the parameters, it turns out the nonce is `13`.
+Finally, we can deploy the wallet, and sign a transfer transaction with user's private key.
+
+Note: In realworld, we should hardcode the nonce and signature rather than finding / signing them at runtime. Otherwise, gas cost / secret key leakage.

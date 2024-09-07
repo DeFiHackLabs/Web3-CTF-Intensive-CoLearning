@@ -46,4 +46,16 @@ Web3 Dapp Developer
 
 - [CollatzPuzzle](./Writeup/Syen/src/QuillCTF/CollatzPuzzle/README.md)
 
+### 2024.09.04
+
+**QuillCTF**
+
+- [TrueXOR](./Writeup/Syen/src/QuillCTF/TrueXOR/README.md)
+
+### 2024.09.05
+
+**QuillCTF**
+
+- [Pelusa](./Writeup/Syen/src/QuillCTF/Pelusa/README.md)
+
 <!-- Content_END -->

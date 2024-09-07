@@ -97,4 +97,23 @@ contract VaultSolution is Script {
 ```
 直接报 server returned an error response: error code -32000: execution reverted 很奇怪
 ```
+### 2024.09.04
+#### Ethernaut
+##### 第10题 ReEntrancy
+1. 终于找到了昨天报错的原因，cast send 时候传入的函数签名不对，本来应该是 uint256 但是传了 address。 居然不报函数找不到异常...太难排错了，在remix调试都没看出来
+
+##### 第11题 Elevator
+1. 很简单，记录当前是第几次调用，第一次返回false， 第二次返回true即可。
+
+##### 第12题 Privacy
+1. 了解变量的存储结构 + vm.load 即可解决。
+
+### 2024.09.05
+请假
+
+### 2024.09.06
+#### Ethernaut
+##### 第13题 GateKeeper
+1. 卡在这题， 本来eth就不多，循环了几百次快没了，感觉得循环到上千次才能触发 gasleft() / 8191 == 0 明天领点eth再试试。
+
 <!-- Content_END -->

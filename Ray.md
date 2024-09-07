@@ -75,14 +75,20 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 
 ### 2024.09.01
- 完成 etheranut 的 Telephone
+ 完成 ethernaut 的 Telephone
 [Day4](Writeup/Ray/Day4.md)
 
 ### 2024.09.03
- 完成 etheranut 的 Token
+ 完成 ethernaut 的 Token
 [Day5](Writeup/Ray/Day5.md)
 
 ### 2024.09.04
- 完成 etheranut 的 Force
+ 完成 ethernaut 的 Force
 [Day6](Writeup/Ray/Day6.md)
+
+### 2024.09.06
+完成 ethernaut 的 Vault
+[Day7](Writeup/Ray/Day7.md)
+
+
 <!-- Content_END -->

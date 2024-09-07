@@ -25,6 +25,9 @@ Can't say yes, but I hope this could get me motivated.
 
 目標：完成 Damn Vulnerable DeFi + EthTaipei CTF 2023 及 MetaTrust CTF 2023。
 
+> [!NOTE]
+> 2024.09.07：我覺得能不看題解做完 Damn Vulnerable DeFi 已經很足夠了...
+
 ### 2024.08.29
 
 Progress
@@ -229,6 +232,37 @@ We can make `onERC721Received` to transfer (not deposit) the NFT, then withdraw 
 
 In that case, `_balances[msg.sender] -= 1 ether` will be executed twice. For Solidity < 0.8, SafeMath is required to prevent integer overflows -- and it isn't used. Therefore, we eventually have `_balances[msg.sender] == uint256(-1 ether)`.
 
+### 2024.09.06
+
+#### 🏳️ Damn Vulnerable DeFi: Climber
+
+**Time used: 5h 30m and ongoing...**
+
+#### 📚 Reading: ERC1967 - Universal Upgradeable Proxy Standard (UUPS)
+
+https://hackmd.io/@KryptoCampDev/Web3-Proxy-Contract?utm_source=preview-mode&utm_medium=rec#ERC1967
+
+### 2024.09.07
+
+Progress
+
+* Damn Vulnerable DeFi (7/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+
+#### 🏁 Damn Vulnerable DeFi: Climber
+
+**Time used: ~6h 20m**
+
+The vulnerability comes from `ClimberTimelock.execute`. The "ready for execution" check comes after the user-provided functions are called.
+
+The goal is to find a way to make `getOperationState(id)` to be `OperationState.ReadyForExecution`. Otherwise, the entire call will be reverted and the exploit will be useless.
+
+I thought of something like making keccak256(abi.encode(...))` returning the same values of two items, but that would require either (1) hash collision, or (2) ambiguity from `abi.encode`. Of course that wouldn't be (1), and (2) is not doable according to https://ethereum.stackexchange.com/questions/113188/can-abi-encode-receive-different-values-and-return-the-same-result.
+
+Eventually, I created a contract (took me so long to figure out) that enrolls the proper parameters to `ClimberTimelock.schedule`. Also, we would need to make the exploit contract an admin/proposer; and to update the delay to zero for immediate action.
+
+With the exploit contract promoted to an admin, we can upgrade `ClimberVault` and inject a function to drain the tokens in the vault.
 
 <!-- Content_END -->
 
