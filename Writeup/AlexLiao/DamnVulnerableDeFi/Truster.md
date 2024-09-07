@@ -143,7 +143,7 @@ contract TrusterChallenge is Test {
             "token balance in the pool contract", token.balanceOf(address(pool)), token.decimals()
         );
         emit log_named_decimal_uint(
-            "token balance in the recovery contract", token.balanceOf(address(recovery)), token.decimals()
+            "token balance in the recovery", token.balanceOf(address(recovery)), token.decimals()
         );
 
         AttackTrusterLenderPool maliciousContract = new AttackTrusterLenderPool(address(pool), address(token), recovery);
@@ -154,7 +154,7 @@ contract TrusterChallenge is Test {
             "token balance in the pool contract", token.balanceOf(address(pool)), token.decimals()
         );
         emit log_named_decimal_uint(
-            "token balance in the recovery contract", token.balanceOf(address(recovery)), token.decimals()
+            "token balance in the recovery", token.balanceOf(address(recovery)), token.decimals()
         );
     }
 
@@ -177,16 +177,16 @@ contract TrusterChallenge is Test {
 ```
 Ran 2 tests for test/truster/Truster.t.sol:TrusterChallenge
 [PASS] test_assertInitialState() (gas: 21997)
-[PASS] test_truster() (gas: 421513)
+[PASS] test_truster() (gas: 420959)
 Logs:
   -------------------------- Before exploit --------------------------
   token balance in the pool contract: 1000000.000000000000000000
-  token balance in the recovery contract: 0.000000000000000000
+  token balance in the recovery: 0.000000000000000000
   -------------------------- After exploit --------------------------
   token balance in the pool contract: 0.000000000000000000
-  token balance in the recovery contract: 1000000.000000000000000000
+  token balance in the recovery: 1000000.000000000000000000
 
-Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 7.18ms (512.42µs CPU time)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 6.10ms (310.00µs CPU time)
 
-Ran 1 test suite in 264.62ms (7.18ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)
+Ran 1 test suite in 256.57ms (6.10ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)
 ```

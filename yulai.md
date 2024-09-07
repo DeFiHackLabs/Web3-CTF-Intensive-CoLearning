@@ -195,5 +195,10 @@ contract BuyerImpl {
 }
 ```
 
+### 2024.09.06
+#### Ethernaut - Naught Coin
+单纯看合约没啥问题，不过合约继承了 ERC20 合约，该合约还有其它转账的方法，比如 TransferFrom
+可以用 TransferFrom 进行转账，不会走到 lockTokens 的逻辑
+
 
 <!-- Content_END -->
