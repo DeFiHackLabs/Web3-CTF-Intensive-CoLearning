@@ -174,13 +174,80 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/force_hack.s.so
 
 编写攻击脚本[vault_hack.s.sol](Writeup/awmpy/script/ethernaut/vault_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
 
+
 执行脚本发起攻击
 ```
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/vault_hack.s.sol:VaultHackScript -vvvv --broadcast
 ```
 
-
-
 ### 2024.09.04
+
+#### 9. King
+
+这是一个关于DOS攻击的游戏
+区块链上较为常见的攻击方式有`消耗过高的GAS`、`External call导致合约不受控`
+
+[WTF-Solidity案例](https://github.com/AmazingAng/WTF-Solidity/blob/main/S09_DoS/readme.md)
+
+[消耗GAS过高的案例](https://solidity-by-example.org/hacks/denial-of-service/)
+
+这个挑战就是要通过`External call`的方式，让其他人无法获得王位
+
+`King`合约中实现了一个`receive`函数，会在转账给这个合约时触发，但转账金额要大于当前King的prize，通过校验后就会将Ether转给当前King，再把`msg.sender`设置为新的king
+
+而这里又没有规定King是EOA还是合约
+
+因此有了以下攻击思路:
+1. 编写一个合约，给`King`合约转账触发`King`合约的`receive`函数来使攻击合约成为King
+2. 攻击合约中实现一个估计将交易revert掉的`receive`方法让其他人无法再向King转账，以次实现DOS的目的
+
+编写攻击合约[king_hack.sol](Writeup/awmpy/src/ethernaut/king_hack.sol)
+编写攻击脚本[king_hack.s.sol](Writeup/awmpy/script/ethernaut/king_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+```
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/king_hack.s.sol:KingHackScript -vvvv --broadcast
+```
+
+
+### 2024.09.05
+
+#### 10. Re-entrancy
+
+`Re-entrancy`是一种常见的攻击手法，利用合约external call外部合约时，外部合约故意回call原始合约，让原始合约再次执行external call，直到达成攻击者目的或GAS耗尽，由于攻击者会二次或多次进入目标合约，故被称为重入攻击
+
+在`Re-entrancy`合约的`withdraw`函数中:
+1. 先检查提款者的余额是否足够
+2. 将`_amount`转入提款者账户
+3. 最后修改提款者的余额
+
+攻击手法:
+1. 攻击合约调用`donate`函数，存入一些Ether
+2. 攻击合约调用`withdraw`函数，提取存入的Ether，让external call触发攻击合约的`receive`函数
+3. 攻击合约的`receive`函数再次调用目标合约的`withdraw`函数
+4. 重复2-3直到目标合约中所有的Ether都被转走，而修改提款者余额这一步永远不会执行
+
+编写攻击合约[reentrance_hack.sol](Writeup/awmpy/src/ethernaut/reentrance_hack.sol)
+编写攻击脚本[reentrance_hack.s.sol](Writeup/awmpy/script/ethernaut/reentrance_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+```
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/reentrance_hack.s.sol:ReentranceHackScript -vvvv --broadcast
+```
+
+#### 11. Elevator
+
+这一题比较简单，攻击合约中实现一个`isLastFloor`方法，并且第一次被调用时return false，第二次被调用时return true就能将top设置为true
+
+编写攻击合约[elevator_hack.sol](Writeup/awmpy/src/ethernaut/elevator_hack.sol)
+编写攻击脚本[elevator_hack.s.sol](Writeup/awmpy/script/ethernaut/elevator_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+```
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/elevator_hack.s.sol:ElevatorHackScript -vvvv --broadcast
+```
+
+
+### 2024.09.06
 
 <!-- Content_END -->

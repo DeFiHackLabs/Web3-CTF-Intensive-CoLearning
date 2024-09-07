@@ -11,6 +11,13 @@ timezone: Europe/Helsinki
 ## Notes
 
 <!-- Content_START -->
+### 2024.09.05
+8. Puppet
+
+### 2024.09.04
+6. Selfie
+7. Comprimised
+
 
 ### 2024.09.03
 5. The Rewarder

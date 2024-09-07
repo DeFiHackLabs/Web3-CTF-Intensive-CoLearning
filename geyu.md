@@ -38,4 +38,13 @@ writeup:[CoinFlip](./Writeup/geyu/writeup/03_CoinFlip.md)
 完成了 ethernaut 第 5 个练习 Telephone
 
 writeup:[Telephone](./Writeup/geyu/writeup/04_Telephone.md)
+### 2024.09.04
+完成了 ethernaut 第 6 个练习 Token
+
+writeup:[Token](./Writeup/geyu/writeup/05_Token.md)
+
+### 2024.09.05
+完成了 ethernaut 第 7 个练习 Token
+
+writeup:[Token](./Writeup/geyu/writeup/06_Delegation.md)
 <!-- Content_END -->

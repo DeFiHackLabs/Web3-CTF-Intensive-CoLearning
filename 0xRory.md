@@ -30,4 +30,20 @@ A-Ethernaut-CTF
 
 [Ethernaut CTF 4/31 ](./Writeup/0xRory/A-Ethernaut-CTF/4.md)
 
+### 2024.09.02
+
+[Ethernaut CTF 5/31 ](./Writeup/0xRory/A-Ethernaut-CTF/5.md)
+
+### 2024.09.03
+
+[Ethernaut CTF 7/31 ](./Writeup/0xRory/A-Ethernaut-CTF/6.md)
+
+### 2024.09.04
+
+[Ethernaut CTF 8/31 ](./Writeup/0xRory/A-Ethernaut-CTF/7.md)
+
+### 2024.09.05
+
+[Ethernaut CTF 9/31 ](./Writeup/0xRory/A-Ethernaut-CTF/8.md)
+
 <!-- Content_END -->

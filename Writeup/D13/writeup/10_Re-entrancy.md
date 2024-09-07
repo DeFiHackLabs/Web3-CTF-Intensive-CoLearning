@@ -9,7 +9,7 @@
 ### 提示
 1. 沒被信任的(untrusted)合約可以在你意料之外的地方執行程式碼
 1. fallback 方法
-1. 拋出(throw)/恢復(revert) 的通知
+1. 拋出 (throw)/恢復(revert) 的通知
 1. 有的時候攻擊一個合約的最好方式是使用另一個合約
 1. 查看上方幫助頁面 "Beyond the console" 章節
 

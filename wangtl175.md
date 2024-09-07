@@ -128,4 +128,11 @@ test = test.add(5);
 
 使用`selfdestruct`转移ETH时，即使目标合约没有receive和fallback函数，也能成功转移
 
+
+### 2024.09.04
+
+#### 合约private
+
+把合约的一个变量设置private，只是能限制其他合约的访问。但是链上的一切都是公开的，[这里](https://sepolia.etherscan.io/tx/0x9aa9f09a53fa632706cd303324410e87150a1953deef9e2d6d338aa60830ab1f/advanced#statechange)可以看到这个交易中的状态变化，其中包含了private变量
+
 <!-- Content_END -->

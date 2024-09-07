@@ -336,4 +336,122 @@ contract Vault {
 参考链接:
 [https://learnblockchain.cn/article/3398](!https://learnblockchain.cn/article/3398)
 
+[Vault-poc](./Writeup/23jdn/test/ethernaut/Vault.t.sol)
+
+### 20240904
+
+#### ethernaut系列-King
+
+题目要求阻止他人获得king
+
+King code:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract King {
+    address king;
+    uint256 public prize;
+    address public owner;
+
+    constructor() payable {
+        owner = msg.sender;
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    receive() external payable {
+        require(msg.value >= prize || msg.sender == owner);
+        payable(king).transfer(msg.value);
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    function _king() public view returns (address) {
+        return king;
+    }
+}
+```
+
+分析:创建一个不可接受eth转账的合约即可更改对应逻辑
+
+[King-poc](./Writeup/23jdn/test/ethernaut/King.t.sol)
+
+#### ethernaut系列-Reentrance
+
+题目要求清空合约资产
+
+Reentrance Code:
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.12;
+
+import "openzeppelin-contracts/math/SafeMath.sol";
+
+contract Reentrance {
+    using SafeMath for uint256;
+
+    mapping(address => uint256) public balances;
+
+    function donate(address _to) public payable {
+        balances[_to] = balances[_to].add(msg.value);
+    }
+
+    function balanceOf(address _who) public view returns (uint256 balance) {
+        return balances[_who];
+    }
+
+    function withdraw(uint256 _amount) public {
+        if (balances[msg.sender] >= _amount) {
+            (bool result,) = msg.sender.call{value: _amount}("");
+            if (result) {
+                _amount;
+            }
+            balances[msg.sender] -= _amount;
+        }
+    }
+
+    receive() external payable {}
+}
+```
+
+分析:重入攻击
+
+[Reentrance-poc](./Writeup/23jdn/test/ethernaut/Reentrance.t.sol)
+
+
+### 20240905 
+
+#### ethernaut系列-Elevator
+
+题目要求电梯达到顶层
+
+Elevator code:
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+```
+
+1
+
+
 <!-- Content_END -->

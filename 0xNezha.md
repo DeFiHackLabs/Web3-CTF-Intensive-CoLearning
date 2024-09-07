@@ -39,5 +39,10 @@ hmm... 希望这次不要分心 XD
 ### 2024.09.03
  changeOwner(address _owner) 函数，仅当 tx.origin != msg.sender 的时候，才可以修改 owner。tx.origin 是 EOA 地址，而 msg.sender 是调用该合约的地址，当 EOA 直接调用该合约时，二者相等。这里我们部署一个“中间人”合约来调用该合约，那么 tx.origin 就是你的 EOA 地址， msg.sender 就是“中间人”的地址，从而实现  tx.origin != msg.sender 。[04_Telephone](./Writeup/0xNezha/Ethernaut/04_Telephone/src/Telephone_exp.sol)
 
+### 2024.09.04
+ balances[msg.sender] -= _value 这里没有做安全限制，我们的初始余额是20，如果用它减去 21（向别人转账 21），则会发生数据下溢，得到一个天文数字。[05_Token](./Writeup/0xNezha/Ethernaut/05_Token.md)
+ 
 
+ ### 2024.09.05
+ 外部地址 A 通过 合约 B 来 delegatecall 合约 C ，实现在 B 的上下文环境中运行 C 的代码，进而修改 B 的数据。另外，如果调用 B 合约时 B 合约中没有任何匹配的函数时，会触发 B 的 fallback 函数。[06_Delegation](./Writeup/0xNezha/Ethernaut/06_Delegation.md)
 <!-- Content_END -->
