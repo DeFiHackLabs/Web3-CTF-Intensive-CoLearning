@@ -37,6 +37,33 @@ timezone: Asia/Shanghai
 
 POC -- Fallback : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Fallback.md
 
+### 2024.08.30
+
+补充打卡：
+
+学习內容:
+
+这两天做了A系列2题
+
+1. Fallout: 感觉很简单的一道题，可以直接调用函数修改合约 owner，但是没看懂那个真实实例的讲解
+
+2. CoinFlip: 链上没有随机数的体验？区块信息一切都是透明的，函数调用就在同一个区块里，对作弊码有了更深的体验，在同一个函数调用中也能改变区块号，太牛了，所以作弊码是高于所有函数的？
+
+   ```solidity
+       function test_attack() public {
+           console.log("before",coin.consecutiveWins());
+   
+           for(uint256 i=0;i<10;i++){
+               attackContract.attack();
+               uint256 nextblock = block.number+1;
+               vm.roll(nextblock);
+           }
+           console.log("after",coin.consecutiveWins());
+       }
+   ```
+
+POC -- CoinFlip : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/CoinFlip.md
+
 ### 2024.08.31
 
 尖锐爆铭，昨天做了题，但没交pr，应该是忙着下班以为自己提了
@@ -84,8 +111,6 @@ POC -- Fallback : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/
               }
           }
       ```
-
-POC -- CoinFlip : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/CoinFlip.md
 
 POC -- Telephone: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Telephone.md
 
@@ -164,6 +189,28 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 2. 学习了使用 foudry 和链上程序的交互，包括数据的查看，函数的调用
 
 POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
+
+
+
+### 2024.09.07
+
+学习內容:
+
+做了A系列1题
+
+今天主要是关于 合约中状态变量存储的学习，大概理解了 storage与插槽，具体内容，让我整理出一篇 blog吧
+
+先大概梳理一下重点：
+
+1. 合约状态变量转为16进制后相当于存储在一个 2 的256次方的数组中，每32字节空间相当于一个插槽，从0开始计数，每个插槽初始化为 0（最终存储只有不为0的插槽会存）
+2. 每个变量根据类型具有不同的内存大小，根据定义顺序紧凑存储，直到占满32字节
+3. 对于复杂数据类型，定义顺序的插槽可能只存储长度，或者对应的插槽号，值数据实际存储在经过运算的（例如keccack（插槽号））的插槽中，然后连续存储知道存储所有值
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
 
 
 
