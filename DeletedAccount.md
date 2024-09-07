@@ -668,5 +668,44 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
 - [Ethernaut27-GoodSamaritan.sh](/Writeup/DeletedAccount/Ethernaut27-GoodSamaritan.sh)
 - [Ethernaut27-GoodSamaritan.s.sol](/Writeup/DeletedAccount/Ethernaut27-GoodSamaritan.s.sol)
 
+### 2024.09.07
+
+- 今天上防衛課一整天，爆幹累
+- 但還是要要求自己至少解一題...
+
+
+#### [Ethernaut-28] Gatekeeper Three
+
+打開題目後快速掃了一下，感覺是最簡單的 Gatekeeper，應該是要複習前面學到的內容。
+
+- 破關條件：通過 `enter()` 的三道 modifier 考驗，使自己成為一個 entrant
+- 解法:
+  - `gateOne()`，沒什麼難的
+    - 需要寫一個合約，呼叫 `construct0r()` 使自已的合約(`msg.sender`)成為 `owner`
+  - `gateTwo()`，使 `allowEntrance` 為 True
+    - 需要呼叫 `trick.checkPassword(_password)` 並使它返回 True
+    - 但 `trick` 此時還沒被賦值，所以要先呼叫 `createTrick()` 使 `trick` 被 new 出來
+    - 然後，再呼叫 `SimpleTrick.checkPassword(_password)`
+      - `password` 是 private 的，所以我們不太能直接用 Solidity 呼叫得到
+      - 但我們可以用 `eth_getStorage` 先在鏈下拿到 password
+      - 意味著我們要先呼叫 `GatekeeperThree.createTrick()` 再執行一系列操作
+    - `gateThree()` 要求 `GatekeeperThree` 合約至少有 0.001 ETH 以上
+      - 並且轉回來給攻擊合約是失敗的
+      - 這意味著我們要寫一個 `receive()` 函數，裡面返回 False
+      - 我們可以直接用 `revert()` 來做到 `.send()` 會返回 False 這件事
+  - 解法整理:
+    - 寫一個攻擊合約
+    - 攻擊合約會先呼叫 `GatekeeperThree.createTrick()`
+    - 然後用 `eth_getStorage` 獲取到 `SimpleTrick.slot2` 的內容值，作為 `password`
+    - 呼叫 `GatekeeperThree.getAllowance(password)` 把 `password` 帶進去
+    - 呼叫 `GatekeeperThree.construct0r()` 使攻擊合約成為 `owner`
+    - 給 `GatekeeperThree` 0.001 以上的 ether
+    - 攻擊合約也需要寫一個 `receive()` 函數，裡面只有寫了一行 `revert()`
+    - 完成，呼叫 `enter()` 來過關！
+
+- [Ethernaut28-GatekeeperThree.sh](/Writeup/DeletedAccount/Ethernaut28-GatekeeperThree.sh)
+- [Ethernaut28-GatekeeperThree.s.sol](/Writeup/DeletedAccount/Ethernaut28-GatekeeperThree.s.sol)zz
+
+過程中好像 Submit Instance 按太快，導致關卡通過一直失敗，一頭霧水XD
 
 <!-- Content_END -->

@@ -97,6 +97,10 @@ Finish ethernaut elevator
 
 Finish ethernaut privacy
 
+### 2024.09.07
+
+Finish ethernaut gatekeeper one
+
 
 
 <!-- Content_END -->

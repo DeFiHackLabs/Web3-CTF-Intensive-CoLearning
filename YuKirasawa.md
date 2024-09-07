@@ -103,4 +103,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 Ethernaut 的 MagicNum、AlienCodex、Denial、Shop、Dex、DexTwo 题目。
 
+### 2024.09.07
+
+完成了 Ethernaut 的 PuzzleWallet、Motorbike、GoodSamaritan、GatekeeperThree、Switch 题目，DoubleEntryPoint 还没完全看懂。
+
 <!-- Content_END -->
