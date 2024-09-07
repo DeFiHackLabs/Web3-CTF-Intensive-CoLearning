@@ -39,4 +39,8 @@ Solved ZSafe.
 
 Solved PairAssetManager.
 
+### 2024.09.07
+
+Solved StakeFrens.
+
 <!-- Content_END -->
