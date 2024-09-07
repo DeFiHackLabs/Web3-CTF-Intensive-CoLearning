@@ -50,3 +50,6 @@ Plan:
 
 <!-- Content_END -->
 
+### 2024.09.07
+
+1. Writing Writeups
