@@ -131,4 +131,15 @@ timezone: Asia/Shanghai
 1. 逻辑漏洞
 2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
 
+### 2024.09.08
+
+当前挑战：ethernaut
+
+今日完成：Level22、Level23
+
+学习内容
+
+1. DEX以及价格操纵漏洞
+2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
 <!-- Content_END -->
