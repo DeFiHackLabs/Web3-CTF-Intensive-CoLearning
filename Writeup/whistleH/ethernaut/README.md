@@ -342,3 +342,42 @@ forge script ./script/Level01.s.sol -vvvv --private-key $PRI_KEY --rpc-url https
 4. 实现的思路是查看两次调用之间发生了什么，发现在isSold变量的值上存在差异，因此可以构造差异性形成逻辑分支。
 5. 具体的PoC见[Level 21-PoC](./script/Level21.s.sol)
 
+## Level 22 - DEX
+
+### Target
+
+1. 学习DEX以及token兑换
+2. 学习基于整数的价格操纵漏洞
+
+### PoC
+
+1. 这题的关键在于针对汇率的计算，对于漏洞的理解可以基于下列的手动推算过程。
+
+   ```
+   // 10 token1 换成 10 token2
+   token1			token2			token1(DEX)		token2(DEX)
+   0				20				110				90
+   // 20 token2 全部换成token1
+   24				0				86				110
+   ```
+
+2. 经过简单的推算，我们可以只是简单的汇率兑换，我们的token就增多了。这实际上是因为汇率计算时采用的是整数除法，这中间产生了误差。
+3. 我们的策略就是将手上的tokenA全部转换为tokenB，同时因为减少了池子中的tokenB，拉高了tokenB的汇率，tokenB能够换回更多的tokenA。
+4. 以此类推，我们可以在DEX无法一次性吃下我们手上的全部token时，将另一种token全部收入囊中。
+5. 具体的PoC见[Level 22-PoC](./script/Level22.s.sol)
+
+## Level 23 - DexTWO
+
+### Target
+
+1. 学习DEX
+2. 学习并部署ERC20代币
+
+### PoC
+
+1. 在一题的基础上，我们要实现对于token1和token2的一网打尽
+2. 经过分析，我们可以看到，单纯在token1和token2之间进行交换是没办法完成一网打尽的
+3. 在DexTWO的swap函数中不再要求只进行token1和token2之间的交换
+4. 因此，我们只需要部署一个token3，让token3参与交换，就可以将token1和token2中剩余的那个一网打尽
+5. 具体的PoC见[Level 23-PoC](./script/Level23.s.sol)
+
