@@ -386,4 +386,141 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/preservation_ha
 
 ### 2024.09.08
 
+#### 17. Recovery
+
+这一题需要找出新创建的`SimpleToken`合约地址，可通过etherscan或自己算
+然后调用合约的`destroy`方法即可
+
+使用`keccack256(RLP_encode(address, nonce))`可计算出合约地址，是由'creator address'及其nonce经过RLP编码后，在经过keccack256算法取最右边160bits
+
+address：是合约创建者的地址，也就是`Recovery`的地址
+nonce：是合约发送的总交易数量，如果是EOA会从0开始计算，而合约是从1开始计算，假设`Recovery`是新创建的合约，那么nonce值就是1
+
+通过以下算法计算新合约地址
+
+``` bash
+address newAddress = address(uint160(uint256(keccak256(abi.encodePacked(
+    bytes1(0xd6),
+    bytes1(0x94),
+    challengeInstance,
+    bytes1(0x01)
+)))));
+```
+
+编写攻击合约[recovery_hack.sol](Writeup/awmpy/src/ethernaut/recovery_hack.sol)
+编写攻击脚本[recovery_hack.s.sol](Writeup/awmpy/script/ethernaut/recovery_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/recovery_hack.s.sol:RecoveryHackScript -vvvv --broadcast
+```
+
+#### 18. MagicNumber
+
+此次目标是部署一个小于10 opcode的合约
+如果按照往常写solidity合约后部署，即使只有1个函数，也会超过10opcode，因此我们要想办法写出一个最轻量的bytescode合约
+
+bytescode会分成creation code和runtime code，由于检查是否通关是通过EXTCODESIZE，所以我们的runtime code不能大于10个opcode。接下来分成creation code和runtime code两部分来分析
+
+##### Runtime Code
+
+solver需要42作为返回值，42对应的十六进制数字是0x2a
+return对应的opcode是RETURN，但RETURN(p, s)需要两个参数，p是返回值在内存中的位置，s是返回值的大小。这意味着0x2a需要先存到内存中才能被返回，因此还需要第二个opcode MSTORE(p, v)。MSTORE的参数中p是存储值在内存中的位置，v是存储值。而为了得到RETURN和MSTORE这两个opcode所需要的参数，还需要利用PUSH1这个opcode来把参数推入stack，所以Runtime Code会使用到的opcode共有3个
+
+| OPCODE | NAME   |
+|--------|--------|
+| 0x60   | PUSH1  |
+| 0x52   | MSTORE |
+| 0xf3   | RETURN |
+
+接着就按照顺序开始：
+1. 先用MSTORE将42（0x2a）存储到内存中
+
+EVM在执行opcode时，基本上参数都是从stack最上方pop出的值，由于stack的特性是后进先出，所以在执行MSTORE(p, v)时，需要先被PUSH1进入stack的参数是v，也就是0x2a
+然后要被PUSH1的参数才是p，因为没有要求要放在内存的哪个位置，所以可以随意挑选，但通常0x80之前的位置都有其他用途，比如0x40就是free memory pointer，所以default从0x80开始存储，就选择0x80用来存储p
+
+| OPCODE | DETAIL |
+|--------|--------|
+| 602a   | push 0x2a in stack. Value(v) param to MSTORE(0x60) |
+| 6080   | push 0x80 in stack. Position(p) param to MSTORE    |
+| 52     | store value,v=0x2a in position p=0x80 in memory    |
+
+2. 再用RETURN将42(0x2a)返回
+
+由于前面用MSTORE将42写入了memory，现在就可以使用RETURN将42返回
+RETURN(p, s)也需要两个参数，需要先被PUSH1进入stack的是s(返回值的大小)，因为返回值42是uint256，大小为32bytes，也就是0x20
+然后需要被PUSH1进入stack的值是p(返回值在memory中的位置)，也就是0x80
+
+| OPCOE | DETAIL |
+|-------|--------|
+| 6020  | push 0x20 in stack. Size(s) param to RETURN(0xf3) |
+| 6080  | push 0x80 in stack. Postion(p) param to RETURN    |
+| f3    | RETURN value=0x2a, size=0x20, position=0x80       |
+
+最后将上述两个步骤的opcode合并到一起就是：602a60805260206080f3，刚好组成了10个bytes大小的Runtime Code
+
+##### Creation Code
+
+接下来要组存Creation Code来讲Runtime Code部署到链上。Creation Code实际的操作是先把Runtime Code加载到memory中，再将其返回给EVM，随后EVM会把602a60805260206080f3这串bytescode存储到链上，而这部分不需要我们处理
+
+将Runtime Code代码加载到memory中的opcode是CODECOPY(d,p,s)，需要3个参数，d代表memory中复制代码的目标位置，p代表Runtime Code的当前位置，s则代表以byte为单位的代码大小。而返回给EVM同样是使用RETURN(p,s)，因为这两个opcode都有参数所以同样也需要用PUSH1把参数推入到stack中。
+
+因此Creation Code会用到3个opcode
+| OPCODE | NAME |
+|--------|------|
+| 0x60   | PUSH1 |
+| 0xf3   | RETURN |
+| 0x39   | CODECOPY |
+
+接着就按照顺序开始：
+1. 先用CODECOPY将Runtime Code复制到memory中
+
+同样基于EVM Stack的后进先出原则，所以在执行CODECOPY(d, p, s)时需要先PUSH1进入stack的值是s(代码大小，以bytes为单位)，也就是Runtime Code的大小10bytes，所以s值等于0x0a
+
+第二个要被PUSH1的参数是p，也就是Runtime Code的位置。由于Creation Code还未完成，无法确定Runtime Code的真正位置，先留空
+
+第三个要被PUSH1的参数是d，也就是memory中复制代码的目标位置，直接选用0x00这个位置即可，因为当EVM执行到COPYCODE代表已经到了程序执行尾端，所以这时编译器已不需要之前提到的0x40 free memory pointer了
+
+| OPCODE | DETAIL |
+|--------|--------|
+| 600a   | push 0x0a in stack. size of runtime code 10 bytes |
+| 60??   | push ??(un) unknown in stack. Position(p) param to COPYCODE |
+| 6000   | push 0x00 in stack. Destination(d) param to COPYCODE |
+| 39     | COPYCODE |
+
+2. 再用RETURN将Runtime Code返回给EVM
+
+由于前面通过COPYCODE把Runtime Code写入到了memory中，接下来使用RETURN把Runtime Code返回给EVM
+
+RETURN(p, s)需要两个参数，需要先被PUSH1进入stack的是s(返回值的大小)，因为返回值大小就是Runtime Code的大小10bytes，因此s的值是0x0a
+然后需要被PUSH1进入stack的值是p(返回值在memory中的位置)，也就是0x00
+
+| OPCOE | DETAIL |
+|-------|--------|
+| 600a  | push 0x0a in stack. Size(s) param to RETURN(0xf3) |
+| 6000  | push 0x00 in stack. Postion(p) param to RETURN    |
+| f3    | RETURN size=0x0a, position=0x00                   |
+
+再将上述两个步骤的opcode组合起来就是：600a60??600039600a6000f3，组成12个bytes大小的Creation Code，知道了Creation Code的大小就可以把??给填上，也就是0x0c，因此最终的opcode就是：600a600c600039600a6000f3
+
+再把Creation Code与Runtime Code拼接在一起就是
+
+600a600c600039600a6000f3(Creation Code) + 602a60805260206080f3(Runtime Code) = 600a600c600039600a6000f3602a60805260206080f3
+
+这就是我们要部署的合约
+
+
+编写攻击合约[magic_number_hack.sol](Writeup/awmpy/src/ethernaut/magic_number_hack.sol)
+编写攻击脚本[magic_number_hack.s.sol](Writeup/awmpy/script/ethernaut/magic_number_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/magic_number_hack.s.sol:MagicNumberHackScript -vvvv --broadcast
+```
+
+
+### 2024.09.09
+
 <!-- Content_END -->
