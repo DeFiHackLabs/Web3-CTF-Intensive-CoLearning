@@ -12,8 +12,7 @@ contract Level15Solution is Script {
     function run() public{
         vm.startBroadcast();
 
-        // fill the player address
-        address myWallet = 0x45E50C61d05794e8aD0B704cd05E424111122116;
+        address myWallet = 0x45E50C61d05794e8aD0B704cd05E424111122116; // fill the player address
         uint256 myBalance = _naughtInstance.balanceOf(myWallet);
         console.log("Current Balance : ", myBalance);
 

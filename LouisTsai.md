@@ -156,4 +156,12 @@ Link: https://ethernaut.openzeppelin.com/level/0x7ae0655F0Ee1e7752D7C62493CEa1E6
 
 Writeup: There is a delegatecall vulnerability in the contract. When the `setFirstTime` and `setSecondTime` functions are invoked, the `timeZone1Library` and `timeZone2Library` data are altered, respectively. An attacker can update the `timeZone1Library` address to a malicious address, causing a delegatecall to the malicious LibraryContract, which can then transfer ownership of the Preservation contract.
 
+### 2024.09.07
+
+(1) Ethernaut King Challenge
+
+Link: https://ethernaut.openzeppelin.com/level/0x3049C00639E6dfC269ED1451764a046f7aE500c6
+
+Writeup: First create a contract to become the king, without `receive` or `fallback` functions. If another user attempts to become the `king` by sending ether, the transaction will revert, causing a Denial of Service issue.
+
 <!-- Content_END -->

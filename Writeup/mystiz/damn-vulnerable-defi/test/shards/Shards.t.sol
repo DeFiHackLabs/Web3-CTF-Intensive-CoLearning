@@ -11,6 +11,7 @@ import {
     DamnValuableNFT
 } from "../../src/shards/ShardsNFTMarketplace.sol";
 import {DamnValuableStaking} from "../../src/DamnValuableStaking.sol";
+import {ExploitContract} from "./ExploitContract.sol";
 
 contract ShardsChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -114,7 +115,7 @@ contract ShardsChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_shards() public checkSolvedByPlayer {
-        
+        new ExploitContract(marketplace, token, recovery);
     }
 
     /**

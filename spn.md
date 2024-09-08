@@ -42,4 +42,7 @@ metatrustctf byteVault（详见[wp](https://github.com/spn21/Web3-CTF-Intensive-
 
 ### 2024.09.06
 [ByteDance](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/ByteDance.md)复习了一天的OpCode
+
+### 2024.09.07
+今天晚上一直在看VMCTF的claim-guard，还在调试（不知道思路会不会出错了😭）
 <!-- Content_END -->

