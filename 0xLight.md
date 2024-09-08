@@ -108,7 +108,7 @@ blazectf eazy-ctf  验证我们要有20个ntf，只需要mint20个，这个ctf�
 
 [evm puzzles](http://www.kaipaansinua.top/index.php/2024/09/08/evm-puzzles1/)//自己尝试做字节码的题
 
-blazectf 后面题太难了，tony疯了我也疯了，找找其他靶场做
+blazectf 后面题太难了，tony疯了我也疯了，要是都像amazex dss Paris全都有测试环境就好了，c里面的靶场都看了看，太难了不适合我，打算做点其他的事
 
 
 <!-- Content_END -->
