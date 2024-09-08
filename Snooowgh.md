@@ -54,5 +54,8 @@ timezone: Asia/Shanghai
 
 完成A类Ethernaut CTF的第23题
 
+### 2024.09.08
+
+完成A类Ethernaut CTF的第24题
 
 <!-- Content_END -->
