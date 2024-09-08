@@ -1290,7 +1290,7 @@ eaebef7f15fdaa66ecd4533eefea23a183ced29967ea67bc4219b0f1f8b0d3ba // id
 ![Screenshot 2024-09-06 at 3.35.56 PM](https://hackmd.io/_uploads/H1Oy-NO3A.png)
  
 - 最後再把救援的token,還給tokenBridge.
-- 
+
 [POC](./damn-vulnerable-defi/test/withdrawal/Withdrawal.t.sol) :
 
 ```
