@@ -10,7 +10,7 @@ timezone: Europe/Helsinki
 ## Notes
 
 Progess:
-Group A: Damn Vulnerable DeFi: 12/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
+Group A: Damn Vulnerable DeFi: 14/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
 Group B: ...
 Group C: ...
 
@@ -66,5 +66,8 @@ Solved 12 - Climber.
 
 ### 2024.09.07
 Solved 13 - Wallet Mining.
+
+### 2024.09.07
+Solved 14 - Puppet V3. (Analysis WIP)
 
 <!-- Content_END -->
