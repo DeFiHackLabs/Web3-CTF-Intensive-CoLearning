@@ -67,7 +67,7 @@ Solved 12 - Climber.
 ### 2024.09.07
 Solved 13 - Wallet Mining.
 
-### 2024.09.07
+### 2024.09.08
 Solved 14 - Puppet V3. (Analysis WIP)
 
 <!-- Content_END -->
