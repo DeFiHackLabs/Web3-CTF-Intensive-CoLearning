@@ -4,7 +4,7 @@
 
 > 題目: https://ethernaut.openzeppelin.com/level/0x473c8dF98DFd41304Bff2c5945B9f73e30f5c013
 
-原始碼
+原始碼:
 ```
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;

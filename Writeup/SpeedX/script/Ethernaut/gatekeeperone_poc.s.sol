@@ -20,7 +20,7 @@ contract GatekeeperOnePocScript is Script {
       // console.log("tx origin", tx.origin);
       console.log("msg.sender", msg.sender);
 
-      try  gatekeeperOnePoc.exploit(bytes8(0x00000001_00001f38)) {
+      try  gatekeeperOnePoc.exploit{gas: 30311}(bytes8(0x00000001_00001f38)) {
         console.log("exploit success");
       } catch Error(string memory reason) {
           console.log("exploit failed", reason);

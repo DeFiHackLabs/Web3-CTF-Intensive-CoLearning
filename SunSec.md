@@ -78,7 +78,7 @@ timezone: Asia/Taipei
 - DamnVulnerableDeFi #12 [Climber](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#climber)
 
 ### 2024.09.04
-- DamnVulnerableDeFi #13 [Wallet Mining](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#wallet-mining-還沒解完)
+- DamnVulnerableDeFi #13 [Wallet Mining 還沒解完](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#wallet-mining-還沒解完)
 - DamnVulnerableDeFi #14 [Puppet V3](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet-v3)
 
 ### 2024.09.05
@@ -87,4 +87,11 @@ timezone: Asia/Taipei
 ### 2024.09.06
 - DamnVulnerableDeFi #16 [Shards](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#shards)
 
+### 2024.09.07
+- DamnVulnerableDeFi #17 [Curvy Puppet 題目應該有問題](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#curvy-puppet-還沒解完)
+- DamnVulnerableDeFi #18 [Withdrawal](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#withdrawal)
+
+### 2024.09.08
+- DamnVulnerableDeFi Recap
+  
 <!-- Content_END -->
