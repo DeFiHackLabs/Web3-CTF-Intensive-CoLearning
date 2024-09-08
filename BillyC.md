@@ -54,4 +54,11 @@ https://hackmd.io/@0xbc000/SyY4Evy2R
 ### 2024.09.06
 1. ethernaut level12
 
+### 2024.09.07
+1. ethernaut level13
+
+### 2024.09.08
+1. ethernaut level14
+2. Damn Vulnerable Defi - The Rewarder
+
 <!-- Content_END -->

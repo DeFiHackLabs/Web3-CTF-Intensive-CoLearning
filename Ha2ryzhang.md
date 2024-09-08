@@ -291,5 +291,10 @@ modifier fortaNotify() {
 最后实现Bot的`handleTransaction`方法判断`originSender == cryptoVault`来触发`raiseAlert`.
 
 
+### 2024.09.07
+
+#### A-Ethernaut-GoodSamaritan
+
+这题`requestDonation`里catch到错误了,会判断是否是`NotEnoughBalance()`,是的话就转走剩余的coin,所以实现`notify`来判断`amount==10`(转走剩余的coin肯定不等于10),然后revert同样的错误就行
 
 <!-- Content_END -->

@@ -152,7 +152,7 @@ forge script --chain anvil --rpc-url anvil script/Ethernaut/coinflip_poc.s.sol:C
 
 ### 2024.08.31
 
-今天完成 Ethernaut Level 04 Telephone
+今天完成 Ethernaut **Level 04 Telephone**
 
 tx.origin 为交易from 地址
 
@@ -283,6 +283,15 @@ await contract.unlock("0x8de7238b78942005fea750232d184d0c")
 
 ### 2024.09.07
 
+昨天卡在 gateTwo gasleft()， 看了文档说 调用函数的时候可以设置 gas， 但是现在不知道 gasleft 的时候具体花费了多少 gas ，所以不知道 调用 enter的时候设置多少 gas 合适
+
+test 测试没有问题 但是script 上链 上不去 不知道为什么，先跳过下一题了
+
+
+**Level 14 GatekeeperTow**
+
+
+### 2024.09.08
 
 
 <!-- Content_END -->

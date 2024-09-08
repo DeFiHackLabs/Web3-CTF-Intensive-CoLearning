@@ -93,4 +93,14 @@ timezone: Asia/Taipei
   1. Delegation 合約找不到對應的 function selector 而進入 fallback function, 讓 delagatecall 呼叫 Delegate 合約的 pwn()
 解題:
   [Lev6-Delegation](./Writeup/Clad/script/Lev6Sol.s.sol)
+
+### 2024.09.07
+學習內容:  
+目標: 讓合約餘額大於 0
+筆記:   
+  - selfdestruct
+  - selfdestruct(address payable recipient)
+  - 因為目標合約甚麼都沒有, 也無功能使用, 所以另建一個合約, 把原合約用 selfdestruct 後, 並給 1wei 讓合約大於 0
+解題:
+  [Lev7-Force](./Writeup/Clad/script/Lev7Sol.s.sol)
 <!-- Content_END -->

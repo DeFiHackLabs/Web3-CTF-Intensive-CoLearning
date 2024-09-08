@@ -88,6 +88,9 @@ KeShin, 合约安全新人
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/11-Elevator/)
 
 ### 2024.9.7
+#### [Ethernaut CTF : 12 Privacy](https://ethernaut.openzeppelin.com/level/12)
+- 使用 forge inspect Privacy storage 可以查看合约的存储槽布局
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/12-Privacy/)
 
 ### 2024.9.8
 

