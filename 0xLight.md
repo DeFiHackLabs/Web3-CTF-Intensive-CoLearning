@@ -101,5 +101,12 @@ blazectf eazy-ctf  验证我们要有20个ntf，只需要mint20个，这个ctf�
 
 ### 2024.9.7
 我服了，昨天写了忘提交了
+
 [LocklessPancakePair](https://github.com/JadeLight7/blazctf2023/blob/main/LocklessPancakePair.md)
+
+### 2024.9.8
+
+[evm puzzles](http://www.kaipaansinua.top/index.php/2024/09/08/evm-puzzles1/)//自己尝试做字节码的题
+
+
 <!-- Content_END -->
