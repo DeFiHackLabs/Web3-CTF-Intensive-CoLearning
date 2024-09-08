@@ -144,4 +144,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.08
 
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Backdoor](https://www.damnvulnerabledefi.xyz/challenges/backdoor/)
+
+筆記連結： [DamnVulnerableDeFi: Backdoor](./Writeup/AlexLiao/DamnVulnerableDeFi/Backdoor.md)
+
+### 2024.09.09
+
 <!-- Content_END -->
