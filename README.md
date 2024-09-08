@@ -89,7 +89,7 @@ https://github.com/fiveoutofnine/tardis
     4. Top4-Top5 每人 100 Dai 學習獎勵金
 
 ## 如何报名和打卡？
-
+<details>
 因为残酷共学的报名和打卡是基于 GitHub 进行开展的，如果你是非开发者或者对 git 操作不熟悉，请先阅读此文档：[残酷共学 GitHub 新手教程](https://www.notion.so/lxdao/GitHub-53fca5ba49bb40c69e4e40e69f58f416) - 这个文档还需要进行优化
 
 - 报名:
@@ -113,7 +113,7 @@ https://github.com/fiveoutofnine/tardis
     <!-- Content_END -->
     ```
     - 日期格式为 `### 2024.07.11`，请不要随意更改
-
+</details>
 ## Web3 CTF 残酷共學打卡记录表
 
 ✅ = Done ⭕️ = Missed ❌ = Failed
