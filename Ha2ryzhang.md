@@ -297,4 +297,11 @@ modifier fortaNotify() {
 
 这题`requestDonation`里catch到错误了,会判断是否是`NotEnoughBalance()`,是的话就转走剩余的coin,所以实现`notify`来判断`amount==10`(转走剩余的coin肯定不等于10),然后revert同样的错误就行
 
+### 2024.09.08
+
+#### A-Ethernaut-GatekeeperThree
+
+1. `gateOne()`:attack合约调用`construct0r()`即可,这里方法写错了,并不是构造器.
+2. `gateTwo()`:调用`getAllowance(uint256 _password)`来校验trick的密码,因为`password`是`private`的,可以通过`storage slot`获取,poc里是带创建关卡一起的,所以直接用了`block.timestamp`
+3. `gateThree()`:给合约转账大于0.001e,并且attack合约在接受e的时候`revert`就好 
 <!-- Content_END -->
