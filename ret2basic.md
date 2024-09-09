@@ -74,6 +74,10 @@ Today:
 
 ### 2024.09.08
 
-1. Solved two Milotruck challs: Meta Staking and Gnosis Unsafe.
+1. Solved a Milotruck chall: Gnosis Unsafe.
+
+### 2024.09.09
+
+1. Solved a Milotruck chall: Meta Staking.
 
 <!-- Content_END -->
