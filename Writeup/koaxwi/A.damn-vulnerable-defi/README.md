@@ -265,4 +265,32 @@ Right after the swap, we have 101 ETH (-1 wei, to be exact), but the deposit req
 Using `skip` to fast forward the time, we can see the price is decreasing every second.
 Skipping 70 seconds, we can afford the total deposit.
 
-This challenge is actually easy to solve but hard to explain, perhaps I will analyze it tomorrow...
+The uniswap v3 pool provides concentrated liquidity.
+For a uniswap v2 pool holding 100 WETH and 100 DVT, we can swap 100 DVT for only 50 WETH (not considering fee).
+For v3, we can swap them at the rate near `1:1`, as long as the liquidity is enough.
+In the challenge setup, the deployer has set the tick range as `[-60, 60]`, which means the rate can be `1.006:1 ~ 1:1.006` (a tick is 0.01%).
+If we try to swap all our tokens, the actual swap is 100.602242132672209194 DVT for 99.999999999999999999 WETH, approximately `1.006:1`.
+The uniswap pool only has 1 wei WETH now.
+
+Then why 70s?
+It's still hard for me to understand how uniswap v3 works (about the observations)...
+
+## ABI Smuggling (24/09/09)
+A `SelfAuthorizedVault` implementing `AuthorizedExecutor`.
+Both `withdraw` and `sweepFunds` of the vault require the caller is itself, therefore we directly go to check the `AuthorizedExecutor`.
+
+There is an `execute` function where it can call itself as long as the caller has the premission to use the selector.
+However, the way it fetches selector is vulnerable: `selector := calldataload(4 + 32 * 3)`.
+The function signature is `execute(address target, bytes calldata actionData)`, and the normal calldata layout is:
+
+```
+0x00-0x04   selector (0x1cff79cd)
+0x04-0x24   address target
+0x24-0x44   offset of actionData (0x40)
+0x44-0x64   length of actionData
+0x64-....   actionData
+```
+
+By changing the offset, we can manipulate the real position of malicious `actionData`, and leave a legitimate one for the check.
+If using `abi.encodeWithSelector`, things become easier as we only need to append the fake data.
+
