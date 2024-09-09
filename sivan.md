@@ -35,4 +35,7 @@ timezone: Asia/Shanghai
 ### 2024.09.06
 - Ethernaut CTF中NaughtCoin以及Preservation两个题目，主要是需要了解以太坊ERC20代币的使用规则，以及delegatecall 的存储和访问规则。
 - [2024.9.6](./Writeup/Sivan/2024.9.6)
+### 2024.09.08
+- Ethernaut CTF中Recovery以及Denial两个题目，主要是需要了解以太坊合约地址计算规则，以及如何在自己合约中使得交易失败。
+- [2024.9.8](./Writeup/Sivan/2024.9.8)
 <!-- Content_END -->

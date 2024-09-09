@@ -88,7 +88,10 @@ timezone: Asia/Taipei
 - DamnVulnerableDeFi #16 [Shards](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#shards)
 
 ### 2024.09.07
-- DamnVulnerableDeFi #17 [Curvy Puppet 還沒解完](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#curvy-puppet-還沒解完)
+- DamnVulnerableDeFi #17 [Curvy Puppet 題目應該有問題](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#curvy-puppet-還沒解完)
 - DamnVulnerableDeFi #18 [Withdrawal](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#withdrawal)
-- 
+
+### 2024.09.08
+- DamnVulnerableDeFi Recap
+  
 <!-- Content_END -->

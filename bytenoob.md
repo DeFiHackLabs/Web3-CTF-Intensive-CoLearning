@@ -101,6 +101,10 @@ Finish ethernaut privacy
 
 Finish ethernaut gatekeeper one
 
+### 2024.09.08
+
+Finish ethernaut gatekeeper two
+
 
 
 <!-- Content_END -->

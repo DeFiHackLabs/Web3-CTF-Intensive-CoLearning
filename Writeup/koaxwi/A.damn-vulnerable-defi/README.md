@@ -246,3 +246,23 @@ After correctly providing the parameters, it turns out the nonce is `13`.
 Finally, we can deploy the wallet, and sign a transfer transaction with user's private key.
 
 Note: In realworld, we should hardcode the nonce and signature rather than finding / signing them at runtime. Otherwise, gas cost / secret key leakage.
+
+## Puppet V3 (24/09/08)
+Puppet pool again.
+
+This time, the challenge specify a block (15450164) of main net ethereum to fork.
+Still, the uniswap pool is newly deployed, with 100 WETH and 100 DVT.
+The player holds 1 ETH and 110 DVT.
+
+Before trying to manipulate the price again, we should learn the method of price calculation this time (especially `arithmeticMeanTick` in `_getOracleQuote`).
+What's more, the tokens swapping interface of uniswap v3 also has something changed (`sqrtPriceLimitX96`).
+A nice toturial about uniswap v3 here: https://uniswapv3book.com/
+
+Since the uniswap pool's `swap` require the payment in callback (as what we were doing in Free Rider), we decided to leverage the router of main net (0xE592427A0AEce92De3Edee1F18E0157C05861564) to swap.
+The router really eases the pain a lot! (e.g. `sqrtPriceLimitX96` can be zero)
+
+Right after the swap, we have 101 ETH (-1 wei, to be exact), but the deposit required remains the same.
+Using `skip` to fast forward the time, we can see the price is decreasing every second.
+Skipping 70 seconds, we can afford the total deposit.
+
+This challenge is actually easy to solve but hard to explain, perhaps I will analyze it tomorrow...
