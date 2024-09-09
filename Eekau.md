@@ -200,15 +200,6 @@ Rubixi hack
 >> ###### 解題 (失敗)
 
 
-### 2024.09.04
->#### Ethernaut CTF (7/31)
->>##### Delegation
->>##### 目標：強迫收款
->>##### 先備知識
->> - [selfdestruct](https://solidity-by-example.org/hacks/self-destruct/) deprecate
->> 一個把當前合約毀滅並把剩餘ether轉換到指定地址
->> ###### 解題 (失敗)
-
 >#### Ethernaut CTF (8/31)
 >>##### Vault
 >>##### 目標：Unlock the vault
@@ -222,12 +213,21 @@ Rubixi hack
 >> 2.得到答案
 
 ### 2024.09.06
->#### Ethernaut CTF (8/31)
+>#### Ethernaut CTF (9/31)
 >>##### King
 >>##### 目標:破壞它
 >>##### 先備知識
 
 ### 2024.09.07
->> - receive
+>#### Ethernaut CTF (10/31)
+>>##### Re-entrancy
+>>##### 目標:偷光合約的錢
+>>##### 先備知識
+
+### 2024.09.09
+>#### Ethernaut CTF (11/31)
+>>##### Elevator
+>>##### 目標:到最高樓層
+>>##### 先備知識
 
 <!-- Content_END -->
