@@ -255,3 +255,6 @@ This code is implied that the contract sender does not have any code. Therefore,
 **DoubleEntryPoint**
 
 - Description:
+  - The malicious user can drain all the `underlying` token (DoubleEntryPoint) stuck in `CryptoVault` by calling `CryptoVault::sweepToken` function with an argument as `LegacyToken` token. The reason is that `LegacyToken` contract has a customizable weird `transfer` function which will call the `DoubleEntryPoint::transfer` if `LegacyToken::delegate` is set.
+  - To protect this vulnerability, we recommend the `DetectionBot` contract which will detect when `DoubleEntryPoint::delegateTransfer` is called.
+  - The `DetectionBot` contract will compare the `origSender` with `CryptoVault` contract address. If equation, will call `Forta::raiseAlert`.
