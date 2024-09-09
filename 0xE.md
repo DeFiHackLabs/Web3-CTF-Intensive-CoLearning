@@ -46,4 +46,8 @@ timezone: Pacific/Auckland
 ### 2024.09.07
 [[Damn Vulnerable DeFi V4] 11 | Backdoor](./Writeup/0xE/DamnVulnerableDeFiV4/backdoor.md)
 
+### 2024.09.09
+[[Damn Vulnerable DeFi V4] 12 | Climber](./Writeup/0xE/DamnVulnerableDeFiV4/climber.md)
+
+
 <!-- Content_END -->
