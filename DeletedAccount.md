@@ -668,5 +668,149 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
 - [Ethernaut27-GoodSamaritan.sh](/Writeup/DeletedAccount/Ethernaut27-GoodSamaritan.sh)
 - [Ethernaut27-GoodSamaritan.s.sol](/Writeup/DeletedAccount/Ethernaut27-GoodSamaritan.s.sol)
 
+### 2024.09.07
+
+- 今天上防衛課一整天，爆幹累
+- 但還是要要求自己至少解一題...
+
+#### [Ethernaut-28] Gatekeeper Three
+
+打開題目後快速掃了一下，感覺是最簡單的 Gatekeeper，應該是要複習前面學到的內容。
+
+- 破關條件：通過 `enter()` 的三道 modifier 考驗，使自己成為一個 entrant
+- 解法:
+  - `gateOne()`，沒什麼難的
+    - 需要寫一個合約，呼叫 `construct0r()` 使自已的合約(`msg.sender`)成為 `owner`
+  - `gateTwo()`，使 `allowEntrance` 為 True
+    - 需要呼叫 `trick.checkPassword(_password)` 並使它返回 True
+    - 但 `trick` 此時還沒被賦值，所以要先呼叫 `createTrick()` 使 `trick` 被 new 出來
+    - 然後，再呼叫 `SimpleTrick.checkPassword(_password)`
+      - `password` 是 private 的，所以我們不太能直接用 Solidity 呼叫得到
+      - 但我們可以用 `eth_getStorage` 先在鏈下拿到 password
+      - 意味著我們要先呼叫 `GatekeeperThree.createTrick()` 再執行一系列操作
+    - `gateThree()` 要求 `GatekeeperThree` 合約至少有 0.001 ETH 以上
+      - 並且轉回來給攻擊合約是失敗的
+      - 這意味著我們要寫一個 `receive()` 函數，裡面返回 False
+      - 我們可以直接用 `revert()` 來做到 `.send()` 會返回 False 這件事
+  - 解法整理:
+    - 寫一個攻擊合約
+    - 攻擊合約會先呼叫 `GatekeeperThree.createTrick()`
+    - 然後用 `eth_getStorage` 獲取到 `SimpleTrick.slot2` 的內容值，作為 `password`
+    - 呼叫 `GatekeeperThree.getAllowance(password)` 把 `password` 帶進去
+    - 呼叫 `GatekeeperThree.construct0r()` 使攻擊合約成為 `owner`
+    - 給 `GatekeeperThree` 0.001 以上的 ether
+    - 攻擊合約也需要寫一個 `receive()` 函數，裡面只有寫了一行 `revert()`
+    - 完成，呼叫 `enter()` 來過關！
+
+- [Ethernaut28-GatekeeperThree.sh](/Writeup/DeletedAccount/Ethernaut28-GatekeeperThree.sh)
+- [Ethernaut28-GatekeeperThree.s.sol](/Writeup/DeletedAccount/Ethernaut28-GatekeeperThree.s.sol)zz
+
+過程中好像 Submit Instance 按太快，導致關卡通過一直失敗，一頭霧水XD
+
+### 2024.09.09
+
+- 繼續進行每日解一題挑戰
+
+#### [Ethernaut-29] Switch
+
+主要是考 Calldata 的 Layout 的一題，不難，值得一看。
+
+- 破關條件：使 `switchOn` 為 True。
+- 解法:
+  - 為了使 `switchOn` 為 True，我們必須使 `Switch` 合約自己呼叫 `turnSwitchOn()` 函數
+  - 由於存在 `onlyThis` modifier 的關係，我們唯一的進入點是 `flipSwitch(bytes memory _data)` 函數
+  - 我們必須透過 `.call(_data)` 來調用 `turnSwitchOn()` 但同時通過 `onlyOff` 的檢查
+  - `onlyOff` 會檢查從 calldata 起開始算，第 68 bytes 到第 72 bytes 必須是 `turnSwitchOff()` 的 selector。(也就是 `0x20606e15`)
+
+- 我們可以試著把 `flipSwitch(bytes memory _data)` 拆解出來，看它的整段 calldata 預計會長什麼樣子：
+- 每一行都是一段 32bytes 資料
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+???????????????????????????????????????????????????????????????? # 暫時留空，待會填入
+???????????????????????????????????????????????????????????????? # 暫時留空，待會填入
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+```
+
+- 好的，我們找到 `turnSwitchOff()` 要塞在哪裡了，接下來要把 `bytes memory _data` 的偏移量(offset)和長度(length)填進去
+- 偏移量是什麼？偏移量代表從 calldata 的起點，要離多遠才會指到 `bytes memory _data` 的長度(length)
+- 記住: 動態資料結構的 Layout 是 `offset + length + data`
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+0000000000000000000000000000000000000000000000000000000000000020 # bytes memory _data 的偏移量。從 0 點加上 32 bytes 可以指向 length 所以是 0x20
+0000000000000000000000000000000000000000000000000000000000000004 # bytes memory _data 的長度，總長度只有 4 bytes
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+```
+
+- 好的，目前我們已經可以成功通過 `onlyOff` 的檢查了。可是我們要怎麼利用 `address(this).call(_data)` 來呼叫到 `turnSwitchOn()` 函數呢？
+- 我們可以回頭整理一下，目前 `_data` 會是什麼資料:
+
+```
+0000000000000000000000000000000000000000000000000000000000000020 # bytes memory _data 的偏移量。從 0 點加上 32 bytes 可以指向 length 所以是 0x20
+0000000000000000000000000000000000000000000000000000000000000004 # bytes memory _data 的長度，總長度只有 4 bytes
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+```
+
+- 誒...既然程式不會對**偏移量**和**資料長度**做任何檢查，是不是意味著我們可以直街操縱偏移量和長度，使它執行我們想要執行的任何函數呢？
+- 畢竟只要不動到 `turnSwitchOff()` calldata 的位置就好了，動到它就通過不了 `onlyOff` 的檢查了。
+- 試著自己構造看看:
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+???????????????????????????????????????????????????????????????? # 原先 bytes memory _data 的偏移量，暫時留空，待會填入
+???????????????????????????????????????????????????????????????? # 原先 bytes memory _data 的長度，暫時留空，待會填入
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+???????????????????????????????????????????????????????????????? # 暫時留空，待會填入
+76227e1200000000000000000000000000000000000000000000000000000000 # turnSwitchOn()
+```
+
+- 好的，現在把呼叫 `address(this).call(_data)` 裡面的 `_data` 的前 4 bytes 放進來了
+- 接下來一樣需要調整這一段 `_data` 的總長度:
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+???????????????????????????????????????????????????????????????? # 原先 bytes memory _data 的偏移量，暫時留空，待會填入
+???????????????????????????????????????????????????????????????? # 原先 bytes memory _data 的長度，暫時留空，待會填入
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+0000000000000000000000000000000000000000000000000000000000000004 # 這裡代表 turnSwitchOn() 的 4bytes 長度
+76227e1200000000000000000000000000000000000000000000000000000000 # turnSwitchOn()
+```
+
+- 有了 `address(this).call(_data)` 的 `_data` 的長度之後，需要再調整 offset
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+0000000000000000000000000000000000000000000000000000000000000060 # bytes memory _data 的偏移量，跳轉到加料過的 calldata 長度定位點
+???????????????????????????????????????????????????????????????? # 原先 bytes memory _data 的長度，暫時留空，待會填入
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+0000000000000000000000000000000000000000000000000000000000000004 # 這裡代表 turnSwitchOn() 的 4bytes 長度
+76227e1200000000000000000000000000000000000000000000000000000000 # turnSwitchOn()
+```
+
+- 原先 bytes memory _data 的長度，已經不重要了，因為我們已經用新的長度定位點來取代
+- 所以留空就好
+- 最後我們得到:
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+0000000000000000000000000000000000000000000000000000000000000060 # bytes memory _data 的偏移量，跳轉到加料過的 calldata 長度定位點
+0000000000000000000000000000000000000000000000000000000000000000 # 原先 bytes memory _data 的長度，已經不重要，亂填都可以
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+0000000000000000000000000000000000000000000000000000000000000004 # 這裡代表 turnSwitchOn() 的 4bytes 長度
+76227e1200000000000000000000000000000000000000000000000000000000 # turnSwitchOn()
+```
+
+- 最後我們用來發起呼叫 `flipSwitch(bytes memory _data)` 的 `_data` 就是:
+
+```solidity=
+bytes memory data = hex"30c13ade0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000020606e1500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000476227e1200000000000000000000000000000000000000000000000000000000"
+```
+
+- 完成！
+
+- [Ethernaut29-Switch.sh](/Writeup/DeletedAccount/Ethernaut29-Switch.sh)
+- [Ethernaut29-Switch.s.sol](/Writeup/DeletedAccount/Ethernaut29-Switch.s.sol)
+
 
 <!-- Content_END -->

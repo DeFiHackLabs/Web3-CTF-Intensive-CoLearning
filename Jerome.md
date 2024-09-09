@@ -61,4 +61,11 @@ timezone: Asia/Shanghai
 - [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Compromised/Compromised.md)
 - [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Compromised/Compromised.t.sol)
 
+### 2024.09.07
+学习内容
+#### [[Damn Vulnerable DeFi V4] 8 | Puppet ]
+1.完成Damn Vulnerable DeFi V4的第八关Puppet。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Puppet/Puppet.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Puppet/Puppet.t.sol)
+
 <!-- Content_END -->

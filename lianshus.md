@@ -37,6 +37,33 @@ timezone: Asia/Shanghai
 
 POC -- Fallback : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Fallback.md
 
+### 2024.08.30
+
+补充打卡：
+
+学习內容:
+
+这两天做了A系列2题
+
+1. Fallout: 感觉很简单的一道题，可以直接调用函数修改合约 owner，但是没看懂那个真实实例的讲解
+
+2. CoinFlip: 链上没有随机数的体验？区块信息一切都是透明的，函数调用就在同一个区块里，对作弊码有了更深的体验，在同一个函数调用中也能改变区块号，太牛了，所以作弊码是高于所有函数的？
+
+   ```solidity
+       function test_attack() public {
+           console.log("before",coin.consecutiveWins());
+   
+           for(uint256 i=0;i<10;i++){
+               attackContract.attack();
+               uint256 nextblock = block.number+1;
+               vm.roll(nextblock);
+           }
+           console.log("after",coin.consecutiveWins());
+       }
+   ```
+
+POC -- CoinFlip : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/CoinFlip.md
+
 ### 2024.08.31
 
 尖锐爆铭，昨天做了题，但没交pr，应该是忙着下班以为自己提了
@@ -84,8 +111,6 @@ POC -- Fallback : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/
               }
           }
       ```
-
-POC -- CoinFlip : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/CoinFlip.md
 
 POC -- Telephone: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Telephone.md
 
@@ -162,6 +187,112 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 
 1. 今天做的privacy也是关于存储的题，准备明天好好看一下soldiity 的存储部分，然后好好记录
 2. 学习了使用 foudry 和链上程序的交互，包括数据的查看，函数的调用
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
+
+
+
+### 2024.09.07
+
+学习內容:
+
+做了A系列1题
+
+今天主要是关于 合约中状态变量存储的学习，大概理解了 storage与插槽，具体内容，让我整理出一篇 blog吧
+
+先大概梳理一下重点：
+
+1. 合约状态变量转为16进制后相当于存储在一个 2 的256次方的数组中，每32字节空间相当于一个插槽，从0开始计数，每个插槽初始化为 0（最终存储只有不为0的插槽会存）
+2. 每个变量根据类型具有不同的内存大小，根据定义顺序紧凑存储，直到占满32字节
+3. 对于复杂数据类型，定义顺序的插槽可能只存储长度，或者对应的插槽号，值数据实际存储在经过运算的（例如keccack（插槽号））的插槽中，然后连续存储知道存储所有值
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
+
+
+
+### 2024.09.08
+
+学习內容:
+
+做了A系列1题 - gatekeeperOne
+
+今天主要是看了关于solidity类型转换的内容，具体内容，让我整理出一篇 blog吧
+
+先大概梳理一下重点，
+
+关于 gate2:
+
+这个比较复杂，涉及到剩余的 gas 问题，必须是 8191的整数呗，所以整个 gas 应该是 8191 * n + x ，这个x是总共的消耗的 gas，这里关于他的解法有点疑惑
+
+```solidity
+      for (uint256 i = 0; i < 8191; i++) {
+            (bool result, ) = address(gatekeeperOne).call{gas: i + 8191 * 3}(
+                abi.encodeWithSignature("enter(bytes8)", _gateKey)
+            );
+            if (result) {
+                break;
+            }
+        }
+```
+
+这个循环没有理清楚
+
+关于gate3：
+
+这里要做一个较为复杂的运算题，涉及到 显示转换以及隐式转换的位运算，截取哪里
+
+**前提：**
+
+byte8 = 8 字节，16字符，64 bit
+
+地址类型 20字节，40字符，160 bit
+
+假设 _gateKey = 0x0123456789abcdef
+
+假设 tx.origin = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
+
+- require1
+
+  ```solidity
+  (uint32(uint64(_gateKey)) == uint16(uint64(_gateKey))
+  ```
+
+  1. 条件1 ：uint32(uint64(_gateKey) = 0x89abcdef
+  2. 条件2 ：uint16(uint64(_gateKey)) = 0x cdef = 0x0000cdef （隐式转换，两个数要比较，无符号整型可以转换成跟它大小相等或更大的字节类型） ****
+
+  结论：_gateKey = 0x01234567**0000**cdef (5,6字节为0)
+
+- require2
+
+  ```solidity
+  uint32(uint64(_gateKey)) != uint64(_gateKey)
+  ```
+
+  1. 条件1 ：uint32(uint64(_gateKey) = 0x0000cdef = 0x000000000000cdef
+  2. 条件2 ：uint64(_gateKey) = 0x01234567**0000**cdef
+
+  结论: 最后8位一定相等，则 _gateKey 前8位有一个不为0即可
+
+- require3
+
+  ```solidity
+  (uint32(uint64(_gateKey)) == uint16(uint160(tx.origin))
+  ```
+
+  1. 条件1 ：uint32(uint64(_gateKey) = 0x0000cdef
+  2. 条件2 ：uint16(uint160(tx.origin)) = 0xddC4 = 0x0000ddC4
+
+  结论:  _gateKey 最后4位和 tx.origin 相等
+
+总结论：_gateKey 8字节数， 前4字节至少有1位不为0，5,6字节为0，最后2字节和 tx.origin 相等，最后可以构造出这样的数字：**0x111111110000????**
+
+(tx.origin 可以由攻击者获取，最后四位能拿到)
+
+
 
 POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
 

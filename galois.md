@@ -43,5 +43,13 @@ Plan:
 1. Solved Cosmic Radiation, found out it was all about SQL so no writeup
 2. Trying to solve next puzzle of paradigm ctf 2023
 
+
+### 2024.09.04
+
+1. Still trying to solve Paradigm CTF 2023 puzzles
+
 <!-- Content_END -->
 
+### 2024.09.07
+
+1. Writing Writeups

@@ -386,4 +386,224 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/preservation_ha
 
 ### 2024.09.08
 
+#### 17. Recovery
+
+这一题需要找出新创建的`SimpleToken`合约地址，可通过etherscan或自己算
+然后调用合约的`destroy`方法即可
+
+使用`keccack256(RLP_encode(address, nonce))`可计算出合约地址，是由'creator address'及其nonce经过RLP编码后，在经过keccack256算法取最右边160bits
+
+address：是合约创建者的地址，也就是`Recovery`的地址
+nonce：是合约发送的总交易数量，如果是EOA会从0开始计算，而合约是从1开始计算，假设`Recovery`是新创建的合约，那么nonce值就是1
+
+通过以下算法计算新合约地址
+
+``` bash
+address newAddress = address(uint160(uint256(keccak256(abi.encodePacked(
+    bytes1(0xd6),
+    bytes1(0x94),
+    challengeInstance,
+    bytes1(0x01)
+)))));
+```
+
+编写攻击合约[recovery_hack.sol](Writeup/awmpy/src/ethernaut/recovery_hack.sol)
+编写攻击脚本[recovery_hack.s.sol](Writeup/awmpy/script/ethernaut/recovery_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/recovery_hack.s.sol:RecoveryHackScript -vvvv --broadcast
+```
+
+#### 18. MagicNumber
+
+此次目标是部署一个小于10 opcode的合约
+如果按照往常写solidity合约后部署，即使只有1个函数，也会超过10opcode，因此我们要想办法写出一个最轻量的bytescode合约
+
+bytescode会分成creation code和runtime code，由于检查是否通关是通过EXTCODESIZE，所以我们的runtime code不能大于10个opcode。接下来分成creation code和runtime code两部分来分析
+
+##### Runtime Code
+
+solver需要42作为返回值，42对应的十六进制数字是0x2a
+return对应的opcode是RETURN，但RETURN(p, s)需要两个参数，p是返回值在内存中的位置，s是返回值的大小。这意味着0x2a需要先存到内存中才能被返回，因此还需要第二个opcode MSTORE(p, v)。MSTORE的参数中p是存储值在内存中的位置，v是存储值。而为了得到RETURN和MSTORE这两个opcode所需要的参数，还需要利用PUSH1这个opcode来把参数推入stack，所以Runtime Code会使用到的opcode共有3个
+
+| OPCODE | NAME   |
+|--------|--------|
+| 0x60   | PUSH1  |
+| 0x52   | MSTORE |
+| 0xf3   | RETURN |
+
+接着就按照顺序开始：
+1. 先用MSTORE将42（0x2a）存储到内存中
+
+EVM在执行opcode时，基本上参数都是从stack最上方pop出的值，由于stack的特性是后进先出，所以在执行MSTORE(p, v)时，需要先被PUSH1进入stack的参数是v，也就是0x2a
+然后要被PUSH1的参数才是p，因为没有要求要放在内存的哪个位置，所以可以随意挑选，但通常0x80之前的位置都有其他用途，比如0x40就是free memory pointer，所以default从0x80开始存储，就选择0x80用来存储p
+
+| OPCODE | DETAIL |
+|--------|--------|
+| 602a   | push 0x2a in stack. Value(v) param to MSTORE(0x60) |
+| 6080   | push 0x80 in stack. Position(p) param to MSTORE    |
+| 52     | store value,v=0x2a in position p=0x80 in memory    |
+
+2. 再用RETURN将42(0x2a)返回
+
+由于前面用MSTORE将42写入了memory，现在就可以使用RETURN将42返回
+RETURN(p, s)也需要两个参数，需要先被PUSH1进入stack的是s(返回值的大小)，因为返回值42是uint256，大小为32bytes，也就是0x20
+然后需要被PUSH1进入stack的值是p(返回值在memory中的位置)，也就是0x80
+
+| OPCOE | DETAIL |
+|-------|--------|
+| 6020  | push 0x20 in stack. Size(s) param to RETURN(0xf3) |
+| 6080  | push 0x80 in stack. Postion(p) param to RETURN    |
+| f3    | RETURN value=0x2a, size=0x20, position=0x80       |
+
+最后将上述两个步骤的opcode合并到一起就是：602a60805260206080f3，刚好组成了10个bytes大小的Runtime Code
+
+##### Creation Code
+
+接下来要组存Creation Code来讲Runtime Code部署到链上。Creation Code实际的操作是先把Runtime Code加载到memory中，再将其返回给EVM，随后EVM会把602a60805260206080f3这串bytescode存储到链上，而这部分不需要我们处理
+
+将Runtime Code代码加载到memory中的opcode是CODECOPY(d,p,s)，需要3个参数，d代表memory中复制代码的目标位置，p代表Runtime Code的当前位置，s则代表以byte为单位的代码大小。而返回给EVM同样是使用RETURN(p,s)，因为这两个opcode都有参数所以同样也需要用PUSH1把参数推入到stack中。
+
+因此Creation Code会用到3个opcode
+| OPCODE | NAME |
+|--------|------|
+| 0x60   | PUSH1 |
+| 0xf3   | RETURN |
+| 0x39   | CODECOPY |
+
+接着就按照顺序开始：
+1. 先用CODECOPY将Runtime Code复制到memory中
+
+同样基于EVM Stack的后进先出原则，所以在执行CODECOPY(d, p, s)时需要先PUSH1进入stack的值是s(代码大小，以bytes为单位)，也就是Runtime Code的大小10bytes，所以s值等于0x0a
+
+第二个要被PUSH1的参数是p，也就是Runtime Code的位置。由于Creation Code还未完成，无法确定Runtime Code的真正位置，先留空
+
+第三个要被PUSH1的参数是d，也就是memory中复制代码的目标位置，直接选用0x00这个位置即可，因为当EVM执行到COPYCODE代表已经到了程序执行尾端，所以这时编译器已不需要之前提到的0x40 free memory pointer了
+
+| OPCODE | DETAIL |
+|--------|--------|
+| 600a   | push 0x0a in stack. size of runtime code 10 bytes |
+| 60??   | push ??(un) unknown in stack. Position(p) param to COPYCODE |
+| 6000   | push 0x00 in stack. Destination(d) param to COPYCODE |
+| 39     | COPYCODE |
+
+2. 再用RETURN将Runtime Code返回给EVM
+
+由于前面通过COPYCODE把Runtime Code写入到了memory中，接下来使用RETURN把Runtime Code返回给EVM
+
+RETURN(p, s)需要两个参数，需要先被PUSH1进入stack的是s(返回值的大小)，因为返回值大小就是Runtime Code的大小10bytes，因此s的值是0x0a
+然后需要被PUSH1进入stack的值是p(返回值在memory中的位置)，也就是0x00
+
+| OPCOE | DETAIL |
+|-------|--------|
+| 600a  | push 0x0a in stack. Size(s) param to RETURN(0xf3) |
+| 6000  | push 0x00 in stack. Postion(p) param to RETURN    |
+| f3    | RETURN size=0x0a, position=0x00                   |
+
+再将上述两个步骤的opcode组合起来就是：600a60??600039600a6000f3，组成12个bytes大小的Creation Code，知道了Creation Code的大小就可以把??给填上，也就是0x0c，因此最终的opcode就是：600a600c600039600a6000f3
+
+再把Creation Code与Runtime Code拼接在一起就是
+
+600a600c600039600a6000f3(Creation Code) + 602a60805260206080f3(Runtime Code) = 600a600c600039600a6000f3602a60805260206080f3
+
+这就是我们要部署的合约
+
+
+编写攻击合约[magic_number_hack.sol](Writeup/awmpy/src/ethernaut/magic_number_hack.sol)
+编写攻击脚本[magic_number_hack.s.sol](Writeup/awmpy/script/ethernaut/magic_number_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/magic_number_hack.s.sol:MagicNumberHackScript -vvvv --broadcast
+```
+
+
+### 2024.09.09
+
+#### 19. AlienCodex
+
+合约中继承的Ownable[../helpers/Ownable-05.sol](https://github.com/OpenZeppelin/openzeppelin-test-helpers/blob/master/contracts/Ownable.sol)
+
+Ownable合约中第一个变量`address private _owner;`，想办法改掉这个值就可以获得合约控制权，被继承的合约中storage variable会存储在原合约之前，所以`_owner`是存储在slot 0这个位置
+
+合约是用了0.5.0版本，小于0.8.0，可能存在overflow/underflow漏洞，要想修改slot 0就需要利用这个漏洞(之前的挑战中有使用vm.load读取过slot 0的数值破解key，还有利用漏洞替换掉slot 0存储的合约)，本次需要利用合约中的array溢出来达到修改slot 0的目的
+
+合约中`record`、`retract`和`revise`都有contacted这个modifier，其中对contact值做了判断，因此需要先调用`makeContact`来将contact值改为true
+
+##### Dynamic Array存储方式
+
+假设有个未知长度的array`uint256[] c`，变量c所在的位置存储的值是`c.length`，而其中的元素会从`keccak256(slot)`开始，假设c存储在slot 2，也就是说其中元素c[0]是存储在`keccak256(2)`，c[1]存储在`keccak256(2) + 1`以此类推
+
+##### Array Underflow漏洞
+
+Solidity版本小于0.8.0意味着没有溢出检查，可以通过调用`retract()`使用当前长度为0的codex减去1，它的长度会因为0-1发生下溢而变成一个很大的值(2**256-1)
+有了这么长的codex之后，它的index能够覆盖所有的slot(2**256-1)，也就是说此时codex的长度与slot的总数相同都是`(2**256-1)`，我们就可以通过调用revise来修改codex中的任意值，也就可以修改任意slot的值
+但又因为codex的元素存储是从`keccak256(2)`开始，因此需要算出正确的slot 0在codex的中index
+
+| Slot | Data |
+|------|------|
+| 0    | owner address |
+| 1    | codex.length  |
+| ...  | ... |
+| p+0  | codex[p+0 - p] |
+| p+1  | codex[p+1 - p] |
+| ...  | ... |
+| 2^256-2 | codex[2^256-2 - p] |
+| 2^256-1 | codex[2^256-1 - p] |
+| 0    | codex[2^256-0 - p] |
+
+假设codex[0]位于slot p，那么slot 0就对应的index就是`2^256-p`，因为codex存储在slot 0，p值就是`keccak256(1)`，slot 0对应的index就是`2^256 - keccak256(1)`
+有了正确的index，再把msg.sender写入这个这个index就可以获取合约所有权
+
+攻击步骤：
+1. 调用makeContact把contact值改为true
+2. 调用retract把codex长度溢出
+3. 计算slot 0在codex中的index，调用revise写入msg.sender
+
+
+编写攻击合约[alien_codex_hack.sol](Writeup/awmpy/src/ethernaut/alien_codex_hack.sol)
+编写攻击脚本[alien_codex_hack.s.sol](Writeup/awmpy/script/ethernaut/alien_codex_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/alien_codex_hack.s.sol:AlienCodexHackScript -vvvv --broadcast
+```
+
+#### 20. Denial
+
+这一关比较简单，用到了之前用到过的DOS攻击和Re-entrancy攻击，最终目标是让owner在调用withdraw的时候无法正常提款
+
+先调用`setWithdrawPartner`成为partner，再通过在攻击合约实现receive的方式循环调用withdraw，让owner无法获得分成即可
+
+编写攻击合约[denial_hack.sol](Writeup/awmpy/src/ethernaut/denial_hack.sol)
+编写攻击脚本[denial_hack.s.sol](Writeup/awmpy/script/ethernaut/denial_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/denial_hack.s.sol:DenialHackScript -vvvv --broadcast
+```
+
+#### 21. Shop
+
+这一关类似于Elevator，只不过额外做了view限制，无法直接修改状态，但可以利用攻击合约中的函数根据isSold状态判断来返回不同的值
+
+当isSold为True，则返回1，isSold为False则返回100
+这样就可以用100通过第一个判断，用1实现购买
+
+编写攻击合约[shop_hack.sol](Writeup/awmpy/src/ethernaut/shop_hack.sol)
+编写攻击脚本[shop_hack.s.sol](Writeup/awmpy/script/ethernaut/shop_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/shop_hack.s.sol:ShopHackScript -vvvv --broadcast
+```
+
+### 2024.09.10
+
 <!-- Content_END -->
