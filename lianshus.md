@@ -214,6 +214,90 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 
 
 
+### 2024.09.08
+
+学习內容:
+
+做了A系列1题 - gatekeeperOne
+
+今天主要是看了关于solidity类型转换的内容，具体内容，让我整理出一篇 blog吧
+
+先大概梳理一下重点，
+
+关于 gate2:
+
+这个比较复杂，涉及到剩余的 gas 问题，必须是 8191的整数呗，所以整个 gas 应该是 8191 * n + x ，这个x是总共的消耗的 gas，这里关于他的解法有点疑惑
+
+```solidity
+      for (uint256 i = 0; i < 8191; i++) {
+            (bool result, ) = address(gatekeeperOne).call{gas: i + 8191 * 3}(
+                abi.encodeWithSignature("enter(bytes8)", _gateKey)
+            );
+            if (result) {
+                break;
+            }
+        }
+```
+
+这个循环没有理清楚
+
+关于gate3：
+
+这里要做一个较为复杂的运算题，涉及到 显示转换以及隐式转换的位运算，截取哪里
+
+**前提：**
+
+byte8 = 8 字节，16字符，64 bit
+
+地址类型 20字节，40字符，160 bit
+
+假设 _gateKey = 0x0123456789abcdef
+
+假设 tx.origin = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
+
+- require1
+
+  ```solidity
+  (uint32(uint64(_gateKey)) == uint16(uint64(_gateKey))
+  ```
+
+  1. 条件1 ：uint32(uint64(_gateKey) = 0x89abcdef
+  2. 条件2 ：uint16(uint64(_gateKey)) = 0x cdef = 0x0000cdef （隐式转换，两个数要比较，无符号整型可以转换成跟它大小相等或更大的字节类型） ****
+
+  结论：_gateKey = 0x01234567**0000**cdef (5,6字节为0)
+
+- require2
+
+  ```solidity
+  uint32(uint64(_gateKey)) != uint64(_gateKey)
+  ```
+
+  1. 条件1 ：uint32(uint64(_gateKey) = 0x0000cdef = 0x000000000000cdef
+  2. 条件2 ：uint64(_gateKey) = 0x01234567**0000**cdef
+
+  结论: 最后8位一定相等，则 _gateKey 前8位有一个不为0即可
+
+- require3
+
+  ```solidity
+  (uint32(uint64(_gateKey)) == uint16(uint160(tx.origin))
+  ```
+
+  1. 条件1 ：uint32(uint64(_gateKey) = 0x0000cdef
+  2. 条件2 ：uint16(uint160(tx.origin)) = 0xddC4 = 0x0000ddC4
+
+  结论:  _gateKey 最后4位和 tx.origin 相等
+
+总结论：_gateKey 8字节数， 前4字节至少有1位不为0，5,6字节为0，最后2字节和 tx.origin 相等，最后可以构造出这样的数字：**0x111111110000????**
+
+(tx.origin 可以由攻击者获取，最后四位能拿到)
+
+
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
+
 ### 2024.07.12
 
 <!-- Content_END -->
