@@ -54,4 +54,7 @@ vault 的密码 password 是以 bytes32 private 形式存储在 slot 中。通�
 
 ### 2024.09.08
 周日休息XD
+
+### 2024.09.09
+玩家打入更多的 ETH 到合约里，合约就会把这些 ETH 打给旧 King，然后玩家成为新的 King。假如这个玩家是一个合约而且无法接受 ETH 呢？那么这个游戏就玩不下去了。所以我们部署一个无法接收 ETH 的合约：[09_King](./Writeup/0xNezha/Ethernaut/09_King/src/King_exp.sol)
 <!-- Content_END -->
