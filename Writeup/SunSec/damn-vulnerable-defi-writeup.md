@@ -15,7 +15,7 @@
 
 
 解題:
-只要 transfer token 給這個合約就可以讓 totalSupply != balanceBefore 讓閃電貸款失效。
+- 只要 transfer token 給這個合約就可以讓 totalSupply != balanceBefore 讓閃電貸款失效。
 
 ```
  if (convertToShares(totalSupply) != balanceBefore) revert InvalidBalance(); 
