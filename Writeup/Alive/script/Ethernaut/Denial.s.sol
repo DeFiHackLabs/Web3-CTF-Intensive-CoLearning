@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import {Script} from "../../lib/forge-std/src/Script.sol";
-import {Telephone} from "../../src/Ethernaut/Telephone.sol";
 import {Denial} from "../../src/Ethernaut/Denial.sol";
 import {Helper} from "../../test/Ethernaut/Denial.t.sol";
 
