@@ -196,4 +196,41 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
     - [For `address(this)` is the role admin of `PROPOSER_ROLE`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L35). We can update `PROPOSER_ROLE` to malicious contract.
     - We can call the malicious contract and let it schedule the executions.
 
+### 2024.09.08
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Wallet Mining
+  - At first we should find the nonce that match the `USER_DEPOSIT_ADDRESS`. After brute-force method, we find that `nonce` equals to 13
+  - Then, we should bypass [`can(msg.sender, aim)`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/WalletDeployer.sol#L47)
+  - It's weired that we actually can [reinit](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/AuthorizerUpgradeable.sol#L15) the `AuthorizedUpgradeable` for the misuse of the slots under `TransparentProxy`
+    - When the proxy calls the init method of `AuthorizedUpgradeable`, `needsInit` is actually the first slot of `TransparentProxy` (e.g. [`upgrader`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/TransparentProxy.sol#L13)) instead of the first slot of `AuthorizedUpgradeable` (e.g. [`needsInit`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/AuthorizerUpgradeable.sol#L6C20-L6C29)).
+    - At first, `upgrader` is `msg.sender`. So, we can bypass the check [here](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/AuthorizerUpgradeable.sol#L16).
+    - Then, `AuthorizerFactory` will [set `upgrader` to zero address](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/AuthorizerUpgradeable.sol#L20)
+    - Finally, `upgrader` is [set to non-zero address again](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/AuthorizerFactory.sol#L20). So, we can reinit.
+
+### 2024.09.09
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- ABI Smuggling
+
+  - The key is to bypass [the selector check](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/abi-smuggling/AuthorizedExecutor.sol#L48-L56) when `exeucte`
+
+    ```
+        bytes4 selector;
+        uint256 calldataOffset = 4 + 32 * 3; // calldata position where `actionData` begins
+        assembly {
+            selector := calldataload(calldataOffset)
+        }
+
+        if (!permissions[getActionId(selector, msg.sender, target)]) {
+            revert NotAllowed();
+        }
+    ```
+
+  - The above implemtation to fetch `selector` is not correct. For, the data of `actionData` is not required to follow the `offset` of `actionData`. The right approach to fetch `selector` is according to the `offset`.
+  - So, we can add malicious data following the `offset` and let the above code fetch wrong selector which is approved to player.
+  - Then, we set `offset` to skip the malicious data and point to the real selector which will be executed [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/abi-smuggling/AuthorizedExecutor.sol#L60).
+
 <!-- Content_END -->

@@ -166,4 +166,26 @@ pass
 
 `transfer`失败会自动`revert`，`call`没有gas限制。推荐使用顺序：`call`, `transfer`, `send`
 
+### 2024.09.07
+
+pass
+
+### 2024.09.08
+
+#### 重入攻击
+
+> 总是假设资产的接受方可能是另一个合约, 而不是一个普通的地址. 因此, 他有可能执行了他的payable fallback 之后又“重新进入” 你的合约, 这可能会打乱你的状态或是逻辑.
+
+要避免重入攻击，可以使用[Check-Effects-Interaction](https://docs.soliditylang.org/en/develop/security-considerations.html#use-the-checks-effects-interactions-pattern)模式。
+即首先检查判断条件满不满足，然后更新当前合约的状态，最后再执行和其他地址的交互。
+
+### 2024.09.09
+
+
+#### prue和view
+
+- `view`：`view`修饰符用于表示函数仅读取合约状态，不会修改任何状态变量
+- `pure`：`pure`修饰符表示函数既不会读取合约状态，也不会修改任何状态变量
+
+有这两个关键字修饰的函数调用时，不会消耗gas
 <!-- Content_END -->

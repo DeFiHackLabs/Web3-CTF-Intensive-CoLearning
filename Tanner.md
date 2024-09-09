@@ -89,4 +89,26 @@ timezone: Asia/Taipei
 - [POC](./Writeup/Tanner/test/QuillCTF/WETH10.t.sol) 
 
 
+### 2024.09.08
+
+學習內容: 
+
+- 完成 VotingMachine
+
+#### [QuillAudit CTF - VotingMachine](./Writeup/Tanner/src/QuillCTF/VotingMachine.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/VotingMachine.t.sol) 
+
+
+### 2024.09.09
+
+學習內容: 
+
+- 完成 PseudoRandom
+
+#### [QuillAudit CTF - PseudoRandom](./Writeup/Tanner/src/QuillCTF/PseudoRandom.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/PseudoRandom.t.sol) 
+
+
 <!-- Content_END -->

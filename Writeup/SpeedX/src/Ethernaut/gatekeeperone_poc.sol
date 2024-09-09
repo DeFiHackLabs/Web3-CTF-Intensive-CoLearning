@@ -12,7 +12,7 @@ contract GatekeeperOnePoc {
     }
 
     function exploit(bytes8 _gateKey) public {
-        console.log("gasleft()", gasleft()); // gas 656
+        // console.log("gasleft()", gasleft()); // gas 656
         gatekeeperOne.enter(_gateKey);
     }
 }

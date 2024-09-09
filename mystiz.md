@@ -264,6 +264,42 @@ Eventually, I created a contract (took me so long to figure out) that enrolls th
 
 With the exploit contract promoted to an admin, we can upgrade `ClimberVault` and inject a function to drain the tokens in the vault.
 
+### 2024.09.08
+
+Progress
+
+* Damn Vulnerable DeFi (8/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+* OnlyPwner.xyz (7/16)
+
+#### 🏁 Damn Vulnerable DeFi: Shards
+
+**Time used: ~45m**
+
+A vulnerability here being, when one fills a offer, the price is rounded down. On the other hand, when an offer is cancelled, the price is rounded up.
+
+Additionally, it is possible to fill the first offer with 133 shards for free. Cancelling the offer, one could steal 9.975e-6 DVT. We can buy more shards and generate more benefits afterwards.
+
+#### 🏁 OnlyPwner.xyz
+
+> [!WARNING]
+> No public writeups allowed, but I finished _Freebie_ (~1h 40m), _Tutorial_ (~5m), _Reverse Rugpull_ (~15m), _Under the Flow_ (~35m) and _Please Sign Here_ (~15m), _All or Nothing_ (~1h 05m), _Multisig_ (~2h 15m).
+
+### 2024.09.09
+
+Progress
+
+* Damn Vulnerable DeFi (8/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+* OnlyPwner.xyz (9/16)
+
+#### 🏁 OnlyPwner.xyz
+
+> [!WARNING]
+> Finished _Proof of Work_ (~1h 10m), _Payday_ (~1h 10m).
+
 <!-- Content_END -->
 
 <!-- 
