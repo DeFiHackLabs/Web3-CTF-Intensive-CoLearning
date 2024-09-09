@@ -93,5 +93,9 @@ timezone: Asia/Taipei
 
 ### 2024.09.08
 - DamnVulnerableDeFi Recap
-  
+
+### 2024.09.09
+- Grey Cat #1 [GreyHats Dollar](./Writeup/SunSec/greyhats-milotruck.md#greyhats-dollar)
+- Grey Cat #2 [Escrow](./Writeup/SunSec/greyhats-milotruck.md#escrow)
+
 <!-- Content_END -->
