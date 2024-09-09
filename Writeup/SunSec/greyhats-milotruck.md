@@ -7,7 +7,7 @@
 -  挑戰者需拿到 50000 以上 GHD
 
 知識點:
-- transferFrom 邏輯漏洞, 沒有檢查實際轉賬金額. 
+- transferFrom 邏輯漏洞, double credit. 
 
 解題:
 - 挑戰者可以 cliam 1000 grey 代幣. 可以在 GHD合約 mint GHD 代幣, 關鍵漏洞在GHD合約的transferFrom函數轉賬時,只檢查了發送者餘額減少和接收者餘額增加,沒有檢查實際轉賬金額.
