@@ -523,4 +523,87 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/magic_number_ha
 
 ### 2024.09.09
 
+#### 19. AlienCodex
+
+合约中继承的Ownable[../helpers/Ownable-05.sol](https://github.com/OpenZeppelin/openzeppelin-test-helpers/blob/master/contracts/Ownable.sol)
+
+Ownable合约中第一个变量`address private _owner;`，想办法改掉这个值就可以获得合约控制权，被继承的合约中storage variable会存储在原合约之前，所以`_owner`是存储在slot 0这个位置
+
+合约是用了0.5.0版本，小于0.8.0，可能存在overflow/underflow漏洞，要想修改slot 0就需要利用这个漏洞(之前的挑战中有使用vm.load读取过slot 0的数值破解key，还有利用漏洞替换掉slot 0存储的合约)，本次需要利用合约中的array溢出来达到修改slot 0的目的
+
+合约中`record`、`retract`和`revise`都有contacted这个modifier，其中对contact值做了判断，因此需要先调用`makeContact`来将contact值改为true
+
+##### Dynamic Array存储方式
+
+假设有个未知长度的array`uint256[] c`，变量c所在的位置存储的值是`c.length`，而其中的元素会从`keccak256(slot)`开始，假设c存储在slot 2，也就是说其中元素c[0]是存储在`keccak256(2)`，c[1]存储在`keccak256(2) + 1`以此类推
+
+##### Array Underflow漏洞
+
+Solidity版本小于0.8.0意味着没有溢出检查，可以通过调用`retract()`使用当前长度为0的codex减去1，它的长度会因为0-1发生下溢而变成一个很大的值(2**256-1)
+有了这么长的codex之后，它的index能够覆盖所有的slot(2**256-1)，也就是说此时codex的长度与slot的总数相同都是`(2**256-1)`，我们就可以通过调用revise来修改codex中的任意值，也就可以修改任意slot的值
+但又因为codex的元素存储是从`keccak256(2)`开始，因此需要算出正确的slot 0在codex的中index
+
+| Slot | Data |
+|------|------|
+| 0    | owner address |
+| 1    | codex.length  |
+| ...  | ... |
+| p+0  | codex[p+0 - p] |
+| p+1  | codex[p+1 - p] |
+| ...  | ... |
+| 2^256-2 | codex[2^256-2 - p] |
+| 2^256-1 | codex[2^256-1 - p] |
+| 0    | codex[2^256-0 - p] |
+
+假设codex[0]位于slot p，那么slot 0就对应的index就是`2^256-p`，因为codex存储在slot 0，p值就是`keccak256(1)`，slot 0对应的index就是`2^256 - keccak256(1)`
+有了正确的index，再把msg.sender写入这个这个index就可以获取合约所有权
+
+攻击步骤：
+1. 调用makeContact把contact值改为true
+2. 调用retract把codex长度溢出
+3. 计算slot 0在codex中的index，调用revise写入msg.sender
+
+
+编写攻击合约[alien_codex_hack.sol](Writeup/awmpy/src/ethernaut/alien_codex_hack.sol)
+编写攻击脚本[alien_codex_hack.s.sol](Writeup/awmpy/script/ethernaut/alien_codex_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/alien_codex_hack.s.sol:AlienCodexHackScript -vvvv --broadcast
+```
+
+#### 20. Denial
+
+这一关比较简单，用到了之前用到过的DOS攻击和Re-entrancy攻击，最终目标是让owner在调用withdraw的时候无法正常提款
+
+先调用`setWithdrawPartner`成为partner，再通过在攻击合约实现receive的方式循环调用withdraw，让owner无法获得分成即可
+
+编写攻击合约[denial_hack.sol](Writeup/awmpy/src/ethernaut/denial_hack.sol)
+编写攻击脚本[denial_hack.s.sol](Writeup/awmpy/script/ethernaut/denial_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/denial_hack.s.sol:DenialHackScript -vvvv --broadcast
+```
+
+#### 21. Shop
+
+这一关类似于Elevator，只不过额外做了view限制，无法直接修改状态，但可以利用攻击合约中的函数根据isSold状态判断来返回不同的值
+
+当isSold为True，则返回1，isSold为False则返回100
+这样就可以用100通过第一个判断，用1实现购买
+
+编写攻击合约[shop_hack.sol](Writeup/awmpy/src/ethernaut/shop_hack.sol)
+编写攻击脚本[shop_hack.s.sol](Writeup/awmpy/script/ethernaut/shop_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/shop_hack.s.sol:ShopHackScript -vvvv --broadcast
+```
+
+### 2024.09.10
+
 <!-- Content_END -->

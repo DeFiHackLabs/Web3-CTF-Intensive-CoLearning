@@ -91,4 +91,10 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 ### 2024.09.07
 - King > [King](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/freepavel)
 
+### 2024.09.08
+- Re-entrancy > [Re-entrancy](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/10_Re-entrancy.md)
+
+### 2024.09.09
+- elavator > [elavator](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/11_elavator.md)
+
 <!-- Content_END -->

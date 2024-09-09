@@ -33,4 +33,7 @@ WTF Solidity 11~20
 ### 2024.09.05
 WTF Solidity 21~30
 
+### 2024.09.08
+WTF Solidity 31~40
+
 <!-- Content_END -->

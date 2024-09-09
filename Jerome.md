@@ -68,4 +68,15 @@ timezone: Asia/Shanghai
 - [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Puppet/Puppet.md)
 - [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Puppet/Puppet.t.sol)
 
+### 2024.09.09
+学习内容
+#### [[Damn Vulnerable DeFi V4] 9 | PuppetV2 ]
+1.完成Damn Vulnerable DeFi V4的第九关PuppetV2。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/PuppetV2/PuppetV2.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/PuppetV2/PuppetV2.t.sol)
+#### [[Damn Vulnerable DeFi V4] 10 | FreeRider ]
+2.完成Damn Vulnerable DeFi V4的第十关FreeRider。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/FreeRider/FreeRider.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/FreeRider/FreeRider.t.sol)
+
 <!-- Content_END -->
