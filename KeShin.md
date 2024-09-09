@@ -99,5 +99,8 @@ KeShin, 合约安全新人
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/13-GatekeeperOne/)
 
 ### 2024.9.9
+#### [Ethernaut CTF : 14 GatekeeperTwo](https://ethernaut.openzeppelin.com/level/14)
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/14-GatekeeperTwo/)
+
 
 <!-- Content_END -->
