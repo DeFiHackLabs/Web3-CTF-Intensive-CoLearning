@@ -57,4 +57,8 @@ Sign up
 - [Truster.t.sol](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/andylinee/DamnVulnerableDeFiV4/Truster.t.sol)
 - [TrusterExploiter.sol](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/andylinee/DamnVulnerableDeFiV4/TrusterExploiter.sol)
 
+### 2024.09.08
+
+練習 Damn Vulnerable DeFi v4 - Side Entrance。
+
 <!-- Content_END -->

@@ -134,4 +134,15 @@ for(uint256 i = 0; i < 8191; i++) {
 2. 测试的时候还发现，同样第二次没通过，gas也会有小幅度波动，相差几个gas，感觉挺奇怪的，暂时不管。
 3. 后来想了下，利用 forge script 可以在本地测试，可直接取新的owner来判断某次循环下是否可通过。
 
+### 2024.09.08
+请假
+
+### 2024.09.09
+#### Ethernaut
+##### 第14题 GateKeeperTwo
+1. 这一题 extcodesize 第一次见，完全没有思路， 找了资料，发现只要除了构造函数外没有其他函数，就可以通过。
+   
+##### 第15题 Naught coin
+1. 了解了transferFrom 跟 approve 的用法，这样就可以绕过transfer函数的限制。
+
 <!-- Content_END -->

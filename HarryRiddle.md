@@ -162,4 +162,18 @@ Plan:
 
 - [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#241)
 
+### 2024.09.08
+
+#### Ethernaut CTF - [DoubleEntryPoint](https://ethernaut.openzeppelin.com/level/0x34bD06F195756635a10A7018568E033bC15F3FB5) (Only analysis)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#255)
+
+### 2024.09.09
+
+#### Ethernaut CTF - [DoubleEntryPoint](https://ethernaut.openzeppelin.com/level/0x34bD06F195756635a10A7018568E033bC15F3FB5) (Adding POC)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#241)
+
+- [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/src/DoubleEntryPoint.sol)
+
 <!-- Content_END -->

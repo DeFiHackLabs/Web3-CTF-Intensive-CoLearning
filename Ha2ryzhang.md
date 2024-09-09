@@ -297,4 +297,85 @@ modifier fortaNotify() {
 
 这题`requestDonation`里catch到错误了,会判断是否是`NotEnoughBalance()`,是的话就转走剩余的coin,所以实现`notify`来判断`amount==10`(转走剩余的coin肯定不等于10),然后revert同样的错误就行
 
+### 2024.09.08
+
+#### A-Ethernaut-GatekeeperThree
+
+1. `gateOne()`:attack合约调用`construct0r()`即可,这里方法写错了,并不是构造器.
+2. `gateTwo()`:调用`getAllowance(uint256 _password)`来校验trick的密码,因为`password`是`private`的,可以通过`storage slot`获取,poc里是带创建关卡一起的,所以直接用了`block.timestamp`
+3. `gateThree()`:给合约转账大于0.001e,并且attack合约在接受e的时候`revert`就好 
+
+### 2024.09.09
+
+#### A-Ethernaut-Switch
+
+这题需要调用`turnSwitchOn()`让`switchOn`=`true`,因为`turnSwitchOn()`有`onlyThis`修饰,所以只能通过`flipSwitch(bytes memory _data)`来调用.
+
+`modifier onlyOff()`中判断了selector
+```solidity
+// we use a complex data type to put in memory
+bytes32[1] memory selector;
+// check that the calldata at position 68 (location of _data)
+assembly {
+    calldatacopy(selector, 68, 4) // grab function selector from calldata
+}
+```
+这里68是`calldata`中对应调用函数的`selector`的offset,然后4字节大小.
+modifier中判断了`selector[0] == offSelector`要求必须是调用的`turnSwitchOff()`,这就陷入了僵局.
+
+看一下正常调用
+```solidity
+
+switch.flipSwitch(abi.encodeWithSelector(Switch.turnSwitchOff.selector));
+
+//calldata
+
+// 0x 
+// 30c13ade flipSwitch函数签名
+// 0000000000000000000000000000000000000000000000000000000000000020 _data offset 0x20=32
+// 0000000000000000000000000000000000000000000000000000000000000004 _data length
+// 20606e1500000000000000000000000000000000000000000000000000000000 turnSwitchOff 
+
+```
+所以`calldatacopy(selector, 68, 4)`中68对应的`turnSwitchOff`通常情况下没问题,但是可以手动修改offset来绕过检查.
+这里具体的calldata的细节见[文档](https://docs.soliditylang.org/en/latest/abi-spec.html),
+动态类型的 calldata 编码，前 32 字节用于存储偏移量（offset）, 接下来的 32 字节用于存储长度（length），然后是用于存储值的区域.
+
+```solidity
+// 0x
+//4  bytes: 30c13ade 
+//32 bytes: 0000000000000000000000000000000000000000000000000000000000000060 offset 0x60=96
+//32 bytes: 0000000000000000000000000000000000000000000000000000000000000004 length
+//32 bytes: 20606e1500000000000000000000000000000000000000000000000000000000 turnSwitchOff
+
+// 0x60: 
+//32 bytes: 0000000000000000000000000000000000000000000000000000000000000004 length
+//32 bytes: 76227e1200000000000000000000000000000000000000000000000000000000 turnSwitchOn
+
+```
+在原有基础上增加 `turnSwitchOn`的calldata 修改offset来正确调用`turnSwitchOn`同时也满足`modifier`的检查.
+
+
+#### A-Ethernaut-HigherOrder
+
+这题用的`solc`还是`0.6.x`的,abicoder还没有类型检查.`0.8.0`以上不会有这个问题(默认`abicoder`V2).
+
+```solidity
+abi.encodeWithSignature("registerTreasury(uint8)", 256);
+```
+
+#### A-Ethernaut-Stake
+
+正常调用满足要求就行
+
+`0xdd62ed3e`对应 erc20的`allowance(address owner, address spender)`
+
+要过`bytesToUint(allowance) >= amount`的检查,先授权一遍就行.题目没有校验`call`的返回值,所以没有weth也是可以增加`totalStaked`的.
+
+需要另一个账户stakeETH一次来满足`totalStaked must be greater than the Stake contract's ETH balance.`
+
+到这里 `ethernaut`完结撒花,学到了很多.
+
+
+
 <!-- Content_END -->

