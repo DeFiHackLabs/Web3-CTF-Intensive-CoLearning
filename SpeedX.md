@@ -313,5 +313,9 @@ uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey)   == 
 [POC 代码](Writeup/SpeedX/src/Ethernaut/gatekeepertwo_poc.sol)
 
 ### 2024.09.09
+这两天有点忙，刚搞出来点时间写笔记 
+
+今天继续 **Level 15 Naught Coin**
+
 
 <!-- Content_END -->
