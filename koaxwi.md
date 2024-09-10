@@ -10,7 +10,7 @@ timezone: Europe/Helsinki
 ## Notes
 
 Progess:
-Group A: Damn Vulnerable DeFi: 15/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
+Group A: Damn Vulnerable DeFi: 16/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
 Group B: ...
 Group C: ...
 
@@ -72,5 +72,10 @@ Solved 14 - Puppet V3. ~(Analysis WIP)~
 
 ### 2024.09.09
 Solved 15 - ABI Smuggling.
+
+### 2024.09.10
+Solved 16 - Shards.
+
+WIP 17 - Curvy Puppet.
 
 <!-- Content_END -->

@@ -115,4 +115,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 Ethernaut 的 DoubleEntryPoint、Stake 题目，Ethernaut 的题目全部做完了。
 
+### 2024.09.10
+
+完成了 EthTaipei CTF 2023 的 Arcade、ETHTaipeiWarRoomNFT 题目。
+
 <!-- Content_END -->

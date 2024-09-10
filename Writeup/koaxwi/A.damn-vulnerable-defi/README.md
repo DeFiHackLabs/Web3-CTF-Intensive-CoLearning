@@ -294,3 +294,38 @@ The function signature is `execute(address target, bytes calldata actionData)`, 
 By changing the offset, we can manipulate the real position of malicious `actionData`, and leave a legitimate one for the check.
 If using `abi.encodeWithSelector`, things become easier as we only need to append the fake data.
 
+## Shards (24/09/10)
+Two major mistakes of the market:
+1. Inconsistency between the amount to charge and refund.
+```solidity
+// fill
+want.mulDivDown(_toDVT(price, rate), totalShards)           , or
+want.mulDivDown(price.mulDivDown(rate, 1e6), totalShards)
+// cancel
+want.mulDivUp(rate, 1e6)
+```
+2. Incorrect check for TIME_BEFORE_CANCEL, buyers can cancel the order immediately after placing the order.
+```solidity
+if (
+    purchase.timestamp + CANCEL_PERIOD_LENGTH < block.timestamp
+        || block.timestamp > purchase.timestamp + TIME_BEFORE_CANCEL
+) revert BadTime();
+```
+
+If we buy ~100 shards, the charge is 0 DVT.
+However we can get refund by canceling it (75e11).
+We can buy more shards with the refund, and canceling it will bankrupt the market.
+
+## Curvy Puppet (24/09/10 ~ WIP)
+Puppet lending pool once more.
+
+We need to liquidate three users, which requires borrowed value grows larger than the collateral’s value.
+Each user has 2500 DVT as collateral, valuing `25e23` according to the lending pool's rule (`getCollateralValue(collateralAmount) * 100`).
+Each user borrows 1 LP Token, valuing `~7.68e23` (`getBorrowValue(borrowAmount) * 175`).
+The oracle has fixed the price for DVT and ETH, while the value of an LP Token is `curvePool.get_virtual_price()` multiplied by the ETH price.
+Therefore, we have to somehow enlarge the virtual price of the curve pool.
+
+The `curvePool.get_virtual_price` is determined by the pool's balance of ETH and stETH, and the total supply of the LP Token.
+Adding or removing liquidity will only change the virtual price by a little bit.
+
+
