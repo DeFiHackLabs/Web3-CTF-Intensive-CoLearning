@@ -11,6 +11,11 @@ timezone: Europe/Helsinki
 ## Notes
 
 <!-- Content_START -->
+
+### 2024.09.10
+9. Puppet V2
+10	Free Rider
+
 ### 2024.09.05
 8. Puppet
 
