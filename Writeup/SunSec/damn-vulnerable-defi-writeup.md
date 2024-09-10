@@ -951,11 +951,13 @@ contract PawnedClimberVault is ClimberVault {
     - SafeProxy.creationCode: creation code used for the Proxy deployment. With this it is easily possible to calculate predicted address.
     - SafeProxyFactory:  - Allows to create a new proxy contract and execute a message call to the new proxy within one transaction.
     - Foundry computeCreate2Address & [computeCreateAddress](https://book.getfoundry.sh/reference/forge-std/compute-create-address#computecreateaddress) 預算地址
+- Proxy 合約 Storage collision
 
 [REF: OP hacked](https://mirror.xyz/0xbuidlerdao.eth/lOE5VN-BHI0olGOXe27F0auviIuoSlnou_9t3XRJseY)
 
 解題:
 - 透過 computeCreate2Address 預算 USER_DEPOSIT_ADDRESS 得到 nonce 為13, 再透過題目 walletDeployer.drop() 透過 createProxyWithNonce 建立 User's safe wallet
+- AuthorizerUpgradeable 佔用 slot0 needsInit, 存在 Storage collision. 我們可以初始化用戶錢包將守衛者 (ward) 改為自己, 收到1ETH.
 
 [POC](./damn-vulnerable-defi/test/wallet-mining/WalletMining.t.sol) :
  
@@ -982,7 +984,9 @@ contract PawnedClimberVault is ClimberVault {
                     creationCodeHash            // Keccak256 of creation code
                 )
             ))));
-``` 
+```
+ 
+ 
  
 ### Puppet V3
 
