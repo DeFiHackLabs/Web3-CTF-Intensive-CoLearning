@@ -95,12 +95,26 @@ KeShin, 合约安全新人
 ### 2024.9.8
 #### [Ethernaut CTF : 13 GatekeeperOne](https://ethernaut.openzeppelin.com/level/13)
 - 需要绕过三个修饰符的限制条件
-
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/13-GatekeeperOne/)
 
 ### 2024.9.9
 #### [Ethernaut CTF : 14 GatekeeperTwo](https://ethernaut.openzeppelin.com/level/14)
+- extcodesize 可以读取某一个账户下的代码大小，当一个合约还处在构造函数时，其代码量也为0
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/14-GatekeeperTwo/)
 
+### 2024.9.10
+#### [Ethernaut CTF : 15 NaughtCoin](https://ethernaut.openzeppelin.com/level/15)
+- 代码转移有 10 年的锁定期，需要破解将自己的余额变为 0
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/15-NaughtCoin/)
+
+### 2024.9.11
+
+### 2024.9.12
+
+### 2024.9.13
+
+### 2024.9.14
+
+### 2024.9.15
 
 <!-- Content_END -->

@@ -99,5 +99,13 @@ timezone: Asia/Shanghai
         - 第一个限制通过攻击合约代理即可绕过
         - 第二个限制是 gasleft() 达到条件，可以暴力循环尝试
         - 第三个限制是一定业务规则的 key，满足对应条件即可，对应条件主要是指出了不同位上的条件
-        
+
+### 2024.09.10
+
+今天打卡 A 系列 `ethernaut`，1 个关卡
+- [level14](https://ethernaut.openzeppelin.com/level/0x0C791D1923c738AC8c4ACFD0A60382eE5FF08a23)
+    - 这个关卡主要3个限制
+        - 第一个限制通过攻击合约代理即可绕过（和昨天 level13 一样）
+        - 第二个限制是调用者合约的代码大小必须为 0，这个可以将攻击代码放在 constructor 中完成
+        - 第三个限制还是业务规则的 key，反向计算 xor 值即可 
 <!-- Content_END -->

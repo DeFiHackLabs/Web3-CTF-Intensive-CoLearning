@@ -300,6 +300,13 @@ Progress
 > [!WARNING]
 > Finished _Proof of Work_ (~1h 10m), _Payday_ (~1h 10m).
 
+### 2024.09.10
+
+#### 🏳️ OnlyPwner.xyz: Liquid Staking
+
+**Time used: 2h 20m and ongoing...**
+
+
 <!-- Content_END -->
 
 <!-- 

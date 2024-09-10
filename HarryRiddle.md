@@ -176,4 +176,12 @@ Plan:
 
 - [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/src/DoubleEntryPoint.sol)
 
+### 2024.09.10
+
+#### Ethernaut CTF - [Motorbike](https://ethernaut.openzeppelin.com/level/0x3A78EE8462BD2e31133de2B8f1f9CBD973D6eDd6)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#262)
+
+- [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/src/Motorbike.sol)
+
 <!-- Content_END -->

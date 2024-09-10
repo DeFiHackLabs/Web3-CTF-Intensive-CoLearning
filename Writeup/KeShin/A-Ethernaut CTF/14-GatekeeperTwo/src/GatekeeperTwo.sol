@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+import {console} from "forge-std/Test.sol";
 
 contract GatekeeperTwo {
     address public entrant;
@@ -14,6 +15,7 @@ contract GatekeeperTwo {
         assembly {
             x := extcodesize(caller())
         }
+        // console.log(x);
         require(x == 0);
         _;
     }

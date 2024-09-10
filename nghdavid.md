@@ -310,5 +310,21 @@ abstract contract ReentrancyGuard {
 - 攻擊的原理是對當下被打包的區塊的number去做計算(blockValue/FACTOR) == 1
 - 這樣就能精準猜中flip side
 
+### 2024.09.09
+# Ethernut第四題
+- 這題的關鍵是要能成功呼叫changeOwner
+- 所以要使tx.origin跟msg.sender不一樣
+- 如果使用合約呼叫changeOwner，這樣tx.origin就會是自己(EOA)，而msg.sender會是合約本身
+- 如此一來就能達到tx.origin != msg.sender，而成功改變owner
+
+### 2024.09.10
+# Ethernut第五題
+- 這題的關鍵是使用overflow來使自己的balance變成很大
+- 因為Token的合約定義每個人有20個幣
+- 所以只要對Token呼叫transfer(otherAddress, 21)即可
+- 這樣require(balances[msg.sender] — _value >= 0)會因為overflow通過檢查
+- 而balances[msg.sender] -= _value會因為overflow變成超大的值(2²⁵⁶ - 1)
+
+
 
 <!-- Content_END -->

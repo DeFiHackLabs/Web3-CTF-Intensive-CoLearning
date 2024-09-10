@@ -152,4 +152,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.09
 
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Climber](https://www.damnvulnerabledefi.xyz/challenges/climber/)
+
+筆記連結： [DamnVulnerableDeFi: Climber](./Writeup/AlexLiao/DamnVulnerableDeFi/Climber.md)
+
+### 2024.09.10
+
 <!-- Content_END -->

@@ -52,4 +52,12 @@ writeup:[Token](./Writeup/geyu/writeup/07_Force.md)
 ### 2024.09.08
 完成了 ethernaut 第 9 个练习 Vault
 writeup:[Token](./Writeup/geyu/writeup/08_Vault.md)
+### 2024.09.09
+完成了 ethernaut 第 10 个练习 Vault
+writeup:[king ](./Writeup/geyu/writeup/09_King.md)
+### 2024.09.10
+完成了 ethernaut 第 11 个练习 Re-entrancy
+writeup:[king ](./Writeup/geyu/writeup/10_Re-entrancy.md)
+
+
 <!-- Content_END -->
