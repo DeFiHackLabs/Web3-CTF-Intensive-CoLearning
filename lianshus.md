@@ -141,7 +141,7 @@ delegatecall : 进度非常慢，非常疑惑的一天
 
 以及，修复一个昨天的误区：用户转账超过余额给别人，但下溢后，导致自己的余额反而增加
 
-POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+POC -- Delegation: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Delegation.md
 
 ### 2024.09.03
 
@@ -153,7 +153,7 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 2. 今天成功把wsl环境改好了，把token,force,delegation的poc写好了
 3. 关于 vault ，还是很神奇，深入体会到链上数据透明的性质，private的变量也能获取到
 
-POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+POC -- Valut : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Valut.md
 
 ### 2024.09.04
 
@@ -164,7 +164,7 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 1. 完成 king poc,这里用的是合约接收转账后可以触发fallback和receive的特性，在这个函数中抛出异常就可以禁止更新king,这样别人转账后，king永远不变
 2. 关于重入，逻辑是通了，复现有点问题
 
-POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+POC -- king : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/King.md
 
 ### 2024.09.05
 
@@ -177,7 +177,7 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 3. 关于电梯，虽然通过接口确保了外部合约一定有指定函数，但是函数逻辑可以由外部定义，在调用相同参数的情况下可以返回不同的值，还是很神奇
 4. 整理到了 9.1 号，后续的不能光测试了，还要写部署交互的了，继续学习foundry
 
-POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+POC -- Reentrance : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Reentrance.md
 
 ### 2024.09.06
 
@@ -293,6 +293,81 @@ byte8 = 8 字节，16字符，64 bit
 (tx.origin 可以由攻击者获取，最后四位能拿到)
 
 
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
+
+### 2024.09.09
+
+学习內容:
+
+做了A系列1题 - gatekeeperTwo
+
+今天主要是看了 solidity 内联汇编，代码长度检查
+
+思路：
+
+### gateOne
+
+很经典的 `msg.sender` 与 `tx.origin` 不相等，在 **Telephone** 和 **GatekeeperOne** 两关中都给出过解法，构建一个攻击合约调用即可
+
+### gateTwo
+
+caller()
+
+- caller() ：当前函数的直接调用者
+- extcodesize（a） ：地址 a 的代码大小 （eoa账户没有代码，大小为 0）
+
+这里一开始不知道怎么限制 既是合约调用函数，又是Eoa账户，后面搜索知道了还有一种情况，extcodesize（a）为0：
+
+合约在被创建的时候，runtime `bytecode` 还没有被存储到合约地址上， `bytecode` 长度为0。也就是说，将逻辑写在合约的构造函数 `constructor` 中，可以绕过 `extcodesize（a）` 检查。
+
+### gateThree
+
+这里要做一个运算题
+
+**前提：**
+
+type(uint64).max，8字节，16字符，64 bit，64位 1
+
+^: 异或，相同为0，不同为1
+
+keccak256(abi.encodePacked(msg.sender))：bytes32
+
+```solidity
+uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey) == type(uint64).max
+```
+
+本来以为又涉及到类型转换时的截断算法，后面想起来，对于 异或 算法 ，a 异或 b = c， b = a 异或 c
+
+结论：uint64(_gateKey) = type(uint64).max ^ uint64(bytes8(keccak256(abi.encodePacked(msg.sender))))
+
+POC -- GatekeeperTwo: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/GatekeeperTwo.md
+
+
+
+### 2024.09.10
+
+学习內容:
+
+今天仍然是在做题与写poc度过的，不过新学到了一些关于foundry的知识
+
+做了A系列1题 - Naught Coin
+
+思路：
+
+这个合约限制了转账方法，时间锁了10年，但是对于继承 erc20 标准合约的token 来说，他还有transferfrom也能转账，不过需要结合 approve函数
+
+foundry
+
+今天主要是写了两个部署脚本，然后发现部署的时候这个 console.log还很有问题 ，值得研究，同时新发现了两个命令,查看账户余额，因为 call 去调的话必须是内置的函数，而向地址类型的全局变量就不在cast 命令里
+
+```
+cast balance 0x111111... --rpc-url
+```
+
+复现等明天补吧，每天都在赶之前的复现
 
 POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
 

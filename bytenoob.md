@@ -105,6 +105,14 @@ Finish ethernaut gatekeeper one
 
 Finish ethernaut gatekeeper two
 
+### 2024.09.09
+
+Finish ethernaut naught coin
+
+### 2024.09.10
+
+Finish ethernaut preservation
+
 
 
 <!-- Content_END -->

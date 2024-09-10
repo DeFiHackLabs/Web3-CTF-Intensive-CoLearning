@@ -41,5 +41,15 @@ timezone: Asia/Taipei
 今天完成Ethernaut15-17題
 
 ### 2024.09.07
-今天完成Ethernaut 第18 題
+今天完成Ethernaut 第18題
+
+### 2024.09.09
+完成ETHTaipeiWarRoom NFT 一題
+
+### 2024.09.10
+完成題數：19
+
+今天解ETHTaipeiWarRoom WBC
+還沒解完
+有用到 assembly/gasleft/precompute contract address/ 等概念...
 <!-- Content_END -->

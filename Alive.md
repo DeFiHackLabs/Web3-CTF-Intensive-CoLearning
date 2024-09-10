@@ -160,4 +160,20 @@ coin会调用要转账地址的notify方法，利用这一点我们就可以在�
 
 比较简单，顺着条件一个个解开即可。记录一个点：同一笔交易里不管逻辑运行到哪block.timestamp都是一样的。
 
+### 2024.09.09
+
+#### 第29-32题
+
+今日没解出题
+
+### 2024.09.10
+
+#### 第31题Stake
+
+主要就是利用transferFrom和aprrove的特点，approve了很多并不意味着transferFrom就一定能成功。被攻击合约中的stakeWETH仅凭approve额度而不看后面的transferFrom有没有成功就直接增加质押者的额度肯定是不行。
+这样的话攻击者就可以利用这个特点虚构出质押的weth额度，然后再unstake达到掏空池子的目的。
+
+ethernaut有几题实在没搞懂，要么没找到答案，要么就是看了答案也没看懂，这里记录一下题号去做B系列不再浪费时间了，这两天这几道题有点消耗热情。
+题号：26题DoublerEntry、29题switch、30题HigerOrder
+
 <!-- Content_END -->

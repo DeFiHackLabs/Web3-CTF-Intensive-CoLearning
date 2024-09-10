@@ -49,5 +49,9 @@ timezone: Pacific/Auckland
 ### 2024.09.09
 [[Damn Vulnerable DeFi V4] 12 | Climber](./Writeup/0xE/DamnVulnerableDeFiV4/climber.md)
 
+### 2024.09.10
+[[Damn Vulnerable DeFi V4] 13 | Wallet Mining](./Writeup/0xE/DamnVulnerableDeFiV4/wallet-mining.md)
+[[Damn Vulnerable DeFi V4] 14 | Puppet V3](./Writeup/0xE/DamnVulnerableDeFiV4/puppet-v3.md)
+
 
 <!-- Content_END -->

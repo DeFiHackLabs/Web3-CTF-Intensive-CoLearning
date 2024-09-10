@@ -63,4 +63,18 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - King - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 收获：在传统领域的很多逻辑是不会出错的，但是在链上，收款地址本身也可以是程序逻辑的一部分，这种思维在 web3 里一定要转变过来，反是和第三方地址交互的地方都可以通过布置特定合约来实现恶意目的；
 
+### 2024.09.08
+
+- 周天放假；
+
+### 2024.09.09
+
+- 1.Ethernaut CTF (31) - Re-entrancy - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学习了智能合约经典漏洞：重入漏洞；
+
+### 2024.09.10
+
+- 1.Ethernaut CTF (31) - Elevator - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+
+
 <!-- Content_END -->
