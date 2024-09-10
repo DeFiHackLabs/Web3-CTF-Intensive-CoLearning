@@ -103,4 +103,16 @@ timezone: Asia/Taipei
   - 因為目標合約甚麼都沒有, 也無功能使用, 所以另建一個合約, 把原合約用 selfdestruct 後, 並給 1wei 讓合約大於 0
 解題:
   [Lev7-Force](./Writeup/Clad/script/Lev7Sol.s.sol)
+
+### 2024.09.09
+學習內容:  
+目標: 取得合約的密碼
+筆記:   
+  - 透過 etherscan 嘗試查詢合約的密碼
+  - 透過 cast storage 合約地址取得密碼
+  - 透過 hex to string 可以破解密碼
+此合約的問題和風險
+  1.因為區塊鏈上的資訊公開透明, 所以不能把密碼寫在合約裡, 有被破解的風險
+解題:
+  [Lev8-Vault](./Writeup/Clad/script/Lev8Sol.s.sol)
 <!-- Content_END -->

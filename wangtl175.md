@@ -178,4 +178,14 @@ pass
 
 要避免重入攻击，可以使用[Check-Effects-Interaction](https://docs.soliditylang.org/en/develop/security-considerations.html#use-the-checks-effects-interactions-pattern)模式。
 即首先检查判断条件满不满足，然后更新当前合约的状态，最后再执行和其他地址的交互。
+
+### 2024.09.09
+
+
+#### prue和view
+
+- `view`：`view`修饰符用于表示函数仅读取合约状态，不会修改任何状态变量
+- `pure`：`pure`修饰符表示函数既不会读取合约状态，也不会修改任何状态变量
+
+有这两个关键字修饰的函数调用时，不会消耗gas
 <!-- Content_END -->

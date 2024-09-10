@@ -1,0 +1,1 @@
+forge script Ethernaut29-Switch.s.sol:Solver -f $RPC_OP_SEPOLIA -vvvv --broadcast

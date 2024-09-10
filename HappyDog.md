@@ -338,4 +338,38 @@ contract testEnum{
 每天堅持來這邊撰寫，我就會進步的!
 
 ---------
+### 2024.09.09
+
+7.Mapping映射
+`mapping(**key** => **value**) public myMapping;`
+
+- 透過key來查詢對應的value(例如透過id來查詢帳戶address)
+- Mapping將key丟入hash function，然後對應到hash table
+- Array是直接存在區塊鏈上，查找較費時/費gas
+- Mapping在key還沒被hashing前數值不會被儲存，較省
+- struct只能當作value不能當key
+    
+    ```Solidity
+    Struct Cat{
+         string color;
+    ]
+    mapping(string => Cat) public cats;
+    ```
+    
+- Nested Mapping：在兩個帳號之間做approval，追蹤代幣
+`mapping (address => mapping (address => uint256)) approvals`
+
+8.for迴圈、if、else
+- for迴圈
+     `for(uint i=0; i<10; i++)`
+- if、else
+```Solidity
+	if(full filled ){  
+		do something"; 
+	}else{  
+  		"do something else"; 
+	}
+```
+
+
 <!-- Content_END -->

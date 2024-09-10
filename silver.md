@@ -804,7 +804,66 @@ await web3.eth.getStorageAt("0xd0173f719C91d8B53cb4e45758A18C0Bc007214a",5)
 知道key为0x8051fab8ce920ecc5ba128fd3edc66f0。
 
 
-### 2024.09.08
-
 ### 2024.09.09
+#### Gatekeeper One
+
+题目要求通过modifier中的判断条件，分析如下：
+
+```
+contract GatekeeperOne {
+    address public entrant;
+
+    modifier gateOne() {
+        require(msg.sender != tx.origin);//使用合约
+        _;
+    }
+
+    modifier gateTwo() {
+        require(gasleft() % 8191 == 0);//此处剩余gas是8191整数倍
+        _;
+    }
+
+    modifier gateThree(bytes8 _gateKey) {//XX1 XX2 XX3 XX4 XX5 XX6 XX7 XX8
+        //xx5 xx6 xx7 xx8 = 00 00 xx7 xx8  =>  xx5 xx6 = 00 00 
+        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        //00 00 00 00 00 00 xx7 xx8 !=  xx1 xx2 xx3 xx4 00 00 xx7 xx8 =>  xx1 xx2 xx3 xx4 != 0
+        require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        //00 00 xx7 xx8 == 00 00 3b 91  =>  xx7 xx8 == 3b 91
+        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+        //=> xx xx xx xx 00 00 3b 91
+        _;
+    }
+
+    function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
+        entrant = tx.origin;
+        return true;
+    }
+}
+```
+
+因此key为：xx xx xx xx 00 00 3b 91
+
+POC：
+
+```
+contract CallGateKeeper{
+    uint256 public gas;
+    function start(address keeper,bytes8 key)public{//0x1122334400003b91   0x112233440000ddC4
+        bytes memory callData=abi.encodeCall(GatekeeperOne.enter,key);
+         uint s=8191*3;
+        while(true){
+            (bool success,)=keeper.call{gas:s}(callData);
+            if (success==true){
+                gas=s;
+                break;
+            }
+            s++;
+        }
+       
+    }
+
+}
+```
+### 2024.09.10
+
 <!-- Content_END -->

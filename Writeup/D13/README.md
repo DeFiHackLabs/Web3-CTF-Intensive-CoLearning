@@ -17,6 +17,7 @@
 4. [level 13 - GatekeeperOne](./script/13_GatekeeperOne.s.sol)
 5. [level 14 - GatekeeperTwo](./script/14_GatekeeperTwo.s.sol)
 6. [level 15 - Naught Coin](./script/15_NaughtCoin.s.sol)
+7. [level 16 - Preservation](./script/16_Preservation.s.sol)
 
 ### Writeup
 1. [level 00 - Hello Ethernaut](./writeup/00_HelloEthernaut.md)
@@ -35,3 +36,4 @@
 4. [level 13 - GatekeeperOne](./writeup/13_GatekeeperOne.md)
 5. [level 14 - GatekeeperTwo](./writeup/14_GatekeeperTwo.md)
 6. [level 15 - Naught Coin](./writeup/15_NaughtCoin.md)
+7. [level 16 - Preservation](./writeup/16_Preservation.md)
