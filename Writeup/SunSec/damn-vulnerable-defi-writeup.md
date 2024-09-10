@@ -928,9 +928,10 @@ contract PawnedClimberVault is ClimberVault {
 }
 ```
 
-### Wallet Mining (還沒解完)
+### Wallet Mining
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/wallet-mining/): 激勵用戶部署 Safe 錢包，並獎勵他們 1 DVT。它集成了一個可升級的授權機制，只允許特定的部署者（也就是所謂的守衛者）為特定部署獲得報酬。這個部署者合約只能與在部署過程中設置的 Safe 工廠和 copy 一起工作。看起來 Safe 單例工廠已經部署了。團隊將 2000 萬個 DVT 代幣轉移到地址 0x8be6a88D3871f793aD5D5e24eF39e1bf5be31d2b 的用戶，她的簡單 1-of-1 Safe 原本應該在那裡部署。但他們遺失了應用於部署的 nonce。更糟的是，系統中有漏洞的傳聞正在流傳。團隊非常驚慌。沒有人知道該怎麼做，讓這位用戶更加不知所措。她已授權你訪問她的私鑰。你必須在為時已晚之前，拯救所有資金！從錢包部署者合約中回收所有代幣，並將它們發送到對應的守衛者地址。同時保護並返還用戶的所有資金。在一筆交易中完成。
+
 
 過關條件:
 - Factory 合約必須有程式碼
@@ -942,16 +943,50 @@ contract PawnedClimberVault is ClimberVault {
 - 用戶 (user) 錢包中持有的代幣數量為 DEPOSIT_TOKEN_AMOUNT
 - 確認守衛者 (ward) 帳戶中的代幣餘額為初始 walletDeployer 合約的代幣餘額，表示玩家已經將應支付的款項轉移給了守衛者
 
-解題:
+知識點:
+- Create vs Create2
+- Eip1155 vs replay
+- Safe wallet 知識 
+    - Safe.setup(): initial storage of the Safe contract
+    - SafeProxy.creationCode: creation code used for the Proxy deployment. With this it is easily possible to calculate predicted address.
+    - SafeProxyFactory:  - Allows to create a new proxy contract and execute a message call to the new proxy within one transaction.
+    - Foundry computeCreate2Address & [computeCreateAddress](https://book.getfoundry.sh/reference/forge-std/compute-create-address#computecreateaddress) 預算地址
+
 [REF: OP hacked](https://mirror.xyz/0xbuidlerdao.eth/lOE5VN-BHI0olGOXe27F0auviIuoSlnou_9t3XRJseY)
 
-```
-// CREATE
-address = keccak256(address(deployer), nonce);
+解題:
+- 透過 computeCreate2Address 預算 USER_DEPOSIT_ADDRESS 得到 nonce 為13, 再透過題目 walletDeployer.drop() 透過 createProxyWithNonce 建立 User's safe wallet
+
+[POC](./damn-vulnerable-defi/test/wallet-mining/WalletMining.t.sol) :
  
-// CREATE2
-address = keccak256(0xFF, sender, salt, bytecode);
 ```
+    // Find the correct nonce using computeCreate2Address                      
+                address target = vm.computeCreate2Address(
+                keccak256(abi.encodePacked(keccak256(initializer), nonce)),
+                keccak256(abi.encodePacked(type(SafeProxy).creationCode, uint256(uint160(address(singletonCopy))))), //initCodeHash
+                address(proxyFactory)
+            );
+    // 另一種寫法  Find the correct nonce using manual CREATE2 address   
+         // Calculate the salt (combining the initializer hash and nonce)
+            bytes32 salt = keccak256(abi.encodePacked(keccak256(initializer), nonce));
+
+            // Calculate the creation code hash (SafeProxy creation bytecode)
+            bytes32 creationCodeHash = keccak256(abi.encodePacked(type(SafeProxy).creationCode, uint256(uint160(address(singletonCopy)))));
+
+            // Manually compute the CREATE2 address
+            address target = address(uint160(uint256(keccak256(
+                abi.encodePacked(
+                    hex"ff",                    // Constant value
+                    address(proxyFactory),      // Deployer address (proxyFactory)
+                    salt,                       // Salt value
+                    creationCodeHash            // Keccak256 of creation code
+                )
+            ))));
+```
+- 
+ 
+ 
+ 
 ### Puppet V3
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/climber/): 無論是熊市還是牛市，真正的 DeFi 開發者都會持續建設。還記得你之前幫助過的那個借貸池嗎？他們現在推出了新版本。他們現在使用 Uniswap V3 作為預言機。沒錯，不再使用現貨價格！這次借貸池查詢的是資產的時間加權平均價格，並且使用了所有推薦的庫。Uniswap 市場中有 100 WETH 和 100 DVT 的流動性。借貸池裡有一百萬個 DVT 代幣。你從 1 ETH 和一些 DVT 開始，必須拯救所有人於這個存在漏洞的借貸池。別忘了將它們發送到指定的恢復帳戶。注意：此挑戰需要有效的 RPC URL，以便將主網狀態分叉到你的本地環境。
