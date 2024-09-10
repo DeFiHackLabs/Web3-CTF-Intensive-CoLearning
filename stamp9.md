@@ -43,5 +43,10 @@ timezone: Europe/Helsinki
 9. Puppet V2
 10. Free Rider
 
+### 2024.09.11
+11. damn-vulnerable-defi Backdoor
+12. damn-vulnerable-defi Climber checked the writeup
+
+
 
 <!-- Content_END -->
