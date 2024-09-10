@@ -177,7 +177,7 @@ POC -- king : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree
 3. 关于电梯，虽然通过接口确保了外部合约一定有指定函数，但是函数逻辑可以由外部定义，在调用相同参数的情况下可以返回不同的值，还是很神奇
 4. 整理到了 9.1 号，后续的不能光测试了，还要写部署交互的了，继续学习foundry
 
-POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+POC -- Reentrance : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Reentrance.md
 
 ### 2024.09.06
 
@@ -344,6 +344,34 @@ uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey) == ty
 结论：uint64(_gateKey) = type(uint64).max ^ uint64(bytes8(keccak256(abi.encodePacked(msg.sender))))
 
 POC -- GatekeeperTwo: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/GatekeeperTwo.md
+
+
+
+### 2024.09.10
+
+学习內容:
+
+今天仍然是在做题与写poc度过的，不过新学到了一些关于foundry的知识
+
+做了A系列1题 - Naught Coin
+
+思路：
+
+这个合约限制了转账方法，时间锁了10年，但是对于继承 erc20 标准合约的token 来说，他还有transferfrom也能转账，不过需要结合 approve函数
+
+foundry
+
+今天主要是写了两个部署脚本，然后发现部署的时候这个 console.log还很有问题 ，值得研究，同时新发现了两个命令,查看账户余额，因为 call 去调的话必须是内置的函数，而向地址类型的全局变量就不在cast 命令里
+
+```
+cast balance 0x111111... --rpc-url
+```
+
+复现等明天补吧，每天都在赶之前的复现
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
 
 ### 2024.07.12
 
