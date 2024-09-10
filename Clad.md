@@ -115,4 +115,14 @@ timezone: Asia/Taipei
   1.因為區塊鏈上的資訊公開透明, 所以不能把密碼寫在合約裡, 有被破解的風險
 解題:
   [Lev8-Vault](./Writeup/Clad/script/Lev8Sol.s.sol)
+
+### 2024.09.10
+學習內容:  
+目標: 1.成為合約的 King 2.讓其他人無法成為 King, 也就是 DOS 這個合約
+筆記:   
+  - DOS 在一定的時間內或永久讓合約無法運行原有功能
+卡關: 大概知道要另寫一個攻擊合約, call value 並給 >= prize, 但要給多少, 即便成功大於 prize 也是成為king, 要怎麼讓合約失效
+此合約的問題和風險
+解題:
+  [Lev9-King](./Writeup/Clad/script/Lev9Sol.s.sol)
 <!-- Content_END -->
