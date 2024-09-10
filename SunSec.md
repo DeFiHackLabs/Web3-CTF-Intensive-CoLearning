@@ -100,4 +100,9 @@ timezone: Asia/Taipei
 - Damn - Wallet Mining - 可以透過create2算出user deposit wallet的nonce為13
 - Damn - Curvy Puppet - 與作者確認後,題目沒有出錯. 需要使用multiple flashloan.
 
+### 2024.09.10
+- DamnVulnerableDeFi #13 solved [Wallet Mining](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#wallet-mining)
+- Foundry computeCreate2Address.
+- Create Safe wallet process. 
+
 <!-- Content_END -->
