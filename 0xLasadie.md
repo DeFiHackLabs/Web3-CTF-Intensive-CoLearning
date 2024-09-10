@@ -86,6 +86,9 @@ timezone: Asia/Singapore
 #### ETH Taipei CTF 2023 - Arcade:
 - [POC](./Writeup/0xLasadie/EthTaipei_CTF_2023/arcade.md)
 
+#### ETH Taipei CTF 2023 - ETHTaipeiWarRoomNFT:
+- [POC](./Writeup/0xLasadie/EthTaipei_CTF_2023/ethtaipeiwarroomnft.md)
+
 ### 2024.09.11
 ### 2024.09.12
 ### 2024.09.13
