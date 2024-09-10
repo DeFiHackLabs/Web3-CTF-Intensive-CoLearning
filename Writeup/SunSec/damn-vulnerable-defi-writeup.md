@@ -982,10 +982,7 @@ contract PawnedClimberVault is ClimberVault {
                     creationCodeHash            // Keccak256 of creation code
                 )
             ))));
-```
-- 
- 
- 
+``` 
  
 ### Puppet V3
 
