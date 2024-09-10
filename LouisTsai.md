@@ -166,10 +166,18 @@ Writeup: First create a contract to become the king, without `receive` or `fallb
 
 ### 2024.09.09
 
-(1) Link Reentrancy Challenge
+(1) Ethernaut Reentrancy Challenge
 
 Link: https://ethernaut.openzeppelin.com/level/0x2a24869323C0B13Dff24E196Ba072dC790D52479
 
 Writeup: The contract fails to follow the Check-Effect-Interaction (CEI) pattern and lacks a reentrancy lock in the `Reentrance::withdraw` function. Consequently, an attacker can recursively re-enter the function through a fallback or receive function, allowing them to drain the contract's balance.
+
+### 2024.09.10
+
+(1) ETH Taipei ETHTaipeiWarRoomNFT Challenge
+
+Link: https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/ETHTaipeiWarRoomNFT
+
+Writeup: The challenger can first deposit tokens into the pool and later withdraw the NFT. The `safeTransferFrom` function will trigger the corresponding `onERC721Received` function in the receiver contract, allowing the challenger to re-enter the `Pool::withdraw` function up to 1,000 times, accumulating enough balance to pass the challenge.
 
 <!-- Content_END -->
