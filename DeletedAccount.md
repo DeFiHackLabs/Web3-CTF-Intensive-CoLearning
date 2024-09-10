@@ -812,5 +812,27 @@ bytes memory data = hex"30c13ade000000000000000000000000000000000000000000000000
 - [Ethernaut29-Switch.sh](/Writeup/DeletedAccount/Ethernaut29-Switch.sh)
 - [Ethernaut29-Switch.s.sol](/Writeup/DeletedAccount/Ethernaut29-Switch.s.sol)
 
+### 2024.09.10
+
+- 繼續進行每日解一題挑戰
+
+#### [Ethernaut-30] HigherOrder
+
+- 過關條件: 使 `treasury` 的內容值變成大於 255
+- 解法:
+  - 這題的關鍵點在於 `pragma solidity 0.6.12;`
+  - 在 Solidity 0.8.0 以前，編譯器用的是 `ABIEncoderV1`
+  - 使用 `ABIEncoderV1` 意味著編譯出來的合約，並不會對 calldata 做邊界檢查
+  - https://docs.soliditylang.org/en/v0.8.1/080-breaking-changes.html?highlight=abicoder#silent-changes-of-the-semantics
+  - 所以我們手動建構 calldata 丟進去就可以了，不用管 calldata 有 `uint8` 的限制
+  - 要修復此問題，我們可以在合約指定 `pragma experimental ABIEncoderV2;` 即可
+  - 我做了兩個版本的 forge 腳本，一個是 for 通關用的
+    - `forge script Ethernaut30-Switch.s.sol:Solver -f $RPC_OP_SEPOLIA -vvvv --broadcast`
+  - 另一個是相同的通關腳本，但是使用了上 patch 的關卡，執行下去可以發現會 `revert()`
+    - `forge script Ethernaut30-Switch.s.sol:SolverV2 -f $RPC_OP_SEPOLIA -vvvv`
+
+- [Ethernaut30-HigherOrder.sh](/Writeup/DeletedAccount/Ethernaut30-HigherOrder.sh)
+- [Ethernaut30-HigherOrder.s.sol](/Writeup/DeletedAccount/Ethernaut30-HigherOrder.s.sol)
+- [Ethernaut30-HigherOrderV2.sol](/Writeup/DeletedAccount/Ethernaut30-HigherOrderV2.sol)
 
 <!-- Content_END -->
