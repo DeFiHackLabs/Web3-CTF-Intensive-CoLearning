@@ -160,4 +160,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.10
 
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [ABI Smuggling](https://www.damnvulnerabledefi.xyz/challenges/abi-smuggling/)
+
+筆記連結： [DamnVulnerableDeFi: ABI Smuggling](./Writeup/AlexLiao/DamnVulnerableDeFi/ABISmuggling.md)
+
+### 2024.09.11
+
 <!-- Content_END -->
