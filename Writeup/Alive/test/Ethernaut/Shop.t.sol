@@ -5,7 +5,7 @@ import {Test, console} from "../../lib/forge-std/src/Test.sol";
 import {Vm} from "../../lib/forge-std/src/Vm.sol";
 import {Shop} from "../../src/Ethernaut/Shop.sol";
 
-contract KingAttack is Test {
+contract ShopAttack is Test {
     function setUp() public {
         vm.createSelectFork(vm.rpcUrl("holesky"));
     }

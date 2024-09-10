@@ -93,6 +93,22 @@ Finish ethernaut king and re-entrancy
 
 Finish ethernaut elevator
 
+### 2024.09.06
+
+Finish ethernaut privacy
+
+### 2024.09.07
+
+Finish ethernaut gatekeeper one
+
+### 2024.09.08
+
+Finish ethernaut gatekeeper two
+
+### 2024.09.09
+
+Finish ethernaut naught coin
+
 
 
 <!-- Content_END -->

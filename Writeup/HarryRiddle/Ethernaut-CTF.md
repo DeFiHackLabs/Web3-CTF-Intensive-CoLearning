@@ -218,3 +218,43 @@ This code is implied that the contract sender does not have any code. Therefore,
 **Shop**
 
 - Description: The `Shop` contract is dependent on the `price` function of `msg.sender`. So we just make other contract having `price` function return the value based on `Shop::isSold` variable
+
+**DEX**
+
+- Description: The `Dex` contract has `swap` function with the price calculated by `amountOfSwap` and `balance` of token1 of contract and `balance` of token2 of contract. The ratio is 1:1. However, there is rounding issue in division, the ratio after swapping is not 1:1 as initially
+
+```javascript
+    function swap(address from, address to, uint256 amount) public {
+        require((from == token1 && to == token2) || (from == token2 && to == token1), "Invalid tokens");
+        require(IERC20(from).balanceOf(msg.sender) >= amount, "Not enough to swap");
+        uint256 swapAmount = getSwapPrice(from, to, amount);
+        IERC20(from).transferFrom(msg.sender, address(this), amount);
+        IERC20(to).approve(address(this), swapAmount);
+        IERC20(to).transferFrom(address(this), msg.sender, swapAmount);
+    }
+
+    function getSwapPrice(address from, address to, uint256 amount) public view returns (uint256) {
+        return ((amount * IERC20(to).balanceOf(address(this))) / IERC20(from).balanceOf(address(this)));
+    }
+```
+
+**DexTwo**
+
+- Description: The `swap` function does not have any check the `from` and `to` token address, the malicious user can pass their virus token address to `from` and `to` address to exploit the contract.
+
+```javascript
+    function swap(address from, address to, uint256 amount) public {
+        require(IERC20(from).balanceOf(msg.sender) >= amount, "Not enough to swap");
+        uint256 swapAmount = getSwapAmount(from, to, amount);
+        IERC20(from).transferFrom(msg.sender, address(this), amount);
+        IERC20(to).approve(address(this), swapAmount);
+        IERC20(to).transferFrom(address(this), msg.sender, swapAmount);
+    }
+```
+
+**DoubleEntryPoint**
+
+- Description:
+  - The malicious user can drain all the `underlying` token (DoubleEntryPoint) stuck in `CryptoVault` by calling `CryptoVault::sweepToken` function with an argument as `LegacyToken` token. The reason is that `LegacyToken` contract has a customizable weird `transfer` function which will call the `DoubleEntryPoint::transfer` if `LegacyToken::delegate` is set.
+  - To protect this vulnerability, we recommend the `DetectionBot` contract which will detect when `DoubleEntryPoint::delegateTransfer` is called.
+  - The `DetectionBot` contract will compare the `origSender` with `CryptoVault` contract address. If equation, will call `Forta::raiseAlert`.

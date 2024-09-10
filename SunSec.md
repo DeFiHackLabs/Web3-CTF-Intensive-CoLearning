@@ -78,10 +78,26 @@ timezone: Asia/Taipei
 - DamnVulnerableDeFi #12 [Climber](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#climber)
 
 ### 2024.09.04
-- DamnVulnerableDeFi #13 [Wallet Mining](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#wallet-mining-還沒解完)
+- DamnVulnerableDeFi #13 [Wallet Mining 還沒解完](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#wallet-mining-還沒解完)
 - DamnVulnerableDeFi #14 [Puppet V3](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#puppet-v3)
 
 ### 2024.09.05
 - DamnVulnerableDeFi #15 [ABI Smuggling](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#abi-smuggling)
+
+### 2024.09.06
+- DamnVulnerableDeFi #16 [Shards](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#shards)
+
+### 2024.09.07
+- DamnVulnerableDeFi #17 [Curvy Puppet 題目應該有問題](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#curvy-puppet-還沒解完)
+- DamnVulnerableDeFi #18 [Withdrawal](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#withdrawal)
+
+### 2024.09.08
+- DamnVulnerableDeFi Recap
+
+### 2024.09.09
+- Grey Cat #1 [GreyHats Dollar](./Writeup/SunSec/greyhats-milotruck.md#greyhats-dollar)
+- Grey Cat #2 [Escrow](./Writeup/SunSec/greyhats-milotruck.md#escrow)
+- Damn - Wallet Mining - 可以透過create2算出user deposit wallet的nonce為13
+- Damn - Curvy Puppet - 與作者確認後,題目沒有出錯. 需要使用multiple flashloan.
 
 <!-- Content_END -->

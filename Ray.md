@@ -90,5 +90,19 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 完成 ethernaut 的 Vault
 [Day7](Writeup/Ray/Day7.md)
 
+### 2024.09.07
+完成 ethernaut 的 King
+[Day8](Writeup/Ray/Day8.md)
 
+### 2024.09.08
+完成 ethernaut 的 Reentrace:
+[Day9](Writeup/Ray/Day9.md)
+
+### 2024.09.09
+完成 ethernaut 的 Reentrace:
+[Day10](Writeup/Ray/Day10.md)
+
+### 2024.09.10
+完成 ethernaut 的 Privacy:
+[Day11](Writeup/Ray/Day11.md)
 <!-- Content_END -->

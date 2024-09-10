@@ -302,4 +302,21 @@ abstract contract ReentrancyGuard {
 - 因此該合約的Constructor為空的
 - 可以直接呼叫Fal1out將owner改為自己
 
+### 2024.09.07
+# Ethernut第三題
+- 合約中使用的 flip()函式作為擲硬幣的動作，需要執行十次且每次都要 reture True 才算通關。
+- blockValue是決定硬幣正反面的關鍵變數，blockValue為blockhash(block.number—1)
+- block.number這個值是deterministic, 所以可以寫合約來做攻擊
+- 攻擊的原理是對當下被打包的區塊的number去做計算(blockValue/FACTOR) == 1
+- 這樣就能精準猜中flip side
+
+### 2024.09.09
+# Ethernut第四題
+- 這題的關鍵是要能成功呼叫changeOwner
+- 所以要使tx.origin跟msg.sender不一樣
+- 如果使用合約呼叫changeOwner，這樣tx.origin就會是自己(EOA)，而msg.sender會是合約本身
+- 如此一來就能達到tx.origin != msg.sender，而成功改變owner
+
+
+
 <!-- Content_END -->

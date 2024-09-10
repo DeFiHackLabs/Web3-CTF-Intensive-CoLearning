@@ -126,6 +126,38 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 筆記連結： [DamnVulnerableDeFi: Puppet](./Writeup/AlexLiao/DamnVulnerableDeFi/Puppet.md)
 
-### 2024.09.05
+### 2024.09.06
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Puppet V2](https://www.damnvulnerabledefi.xyz/challenges/puppet-v2/)
+
+筆記連結： [DamnVulnerableDeFi: Puppet V2](./Writeup/AlexLiao/DamnVulnerableDeFi/PuppetV2.md)
+
+### 2024.09.07
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Free Rider](https://www.damnvulnerabledefi.xyz/challenges/free-rider/)
+
+筆記連結： [DamnVulnerableDeFi: Free Rider](./Writeup/AlexLiao/DamnVulnerableDeFi/FreeRider.md)
+
+### 2024.09.08
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Backdoor](https://www.damnvulnerabledefi.xyz/challenges/backdoor/)
+
+筆記連結： [DamnVulnerableDeFi: Backdoor](./Writeup/AlexLiao/DamnVulnerableDeFi/Backdoor.md)
+
+### 2024.09.09
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Climber](https://www.damnvulnerabledefi.xyz/challenges/climber/)
+
+筆記連結： [DamnVulnerableDeFi: Climber](./Writeup/AlexLiao/DamnVulnerableDeFi/Climber.md)
+
+### 2024.09.10
 
 <!-- Content_END -->

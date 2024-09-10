@@ -152,7 +152,7 @@ forge script --chain anvil --rpc-url anvil script/Ethernaut/coinflip_poc.s.sol:C
 
 ### 2024.08.31
 
-今天完成 Ethernaut Level 04 Telephone
+今天完成 Ethernaut **Level 04 Telephone**
 
 tx.origin 为交易from 地址
 
@@ -283,6 +283,39 @@ await contract.unlock("0x8de7238b78942005fea750232d184d0c")
 
 ### 2024.09.07
 
+昨天卡在 gateTwo gasleft()， 看了文档说 调用函数的时候可以设置 gas， 但是现在不知道 gasleft 的时候具体花费了多少 gas ，所以不知道 调用 enter的时候设置多少 gas 合适
+
+test 测试没有问题 但是script 上链 上不去 不知道为什么，先跳过下一题了
+
+
+**Level 14 GatekeeperTwo**
+
+gateone tx.origin 为交易发起的地址 msg.sender 要不一样 可以用一个合约来调用 instance 合约 
+
+### 2024.09.08
+
+继续 gatekeeperTwo
+
+gatetwo modifier caller() 为 应该是跟 msg.sender 一样 extcodesize(caller()) 如果为 0，caller() 应该为 EOA 地址或者 在 caller 的构造函数中调用 enter 函数 
+
+gateThree ^ 为异或符号 如果 不同为 1 相同为 0， type(uint64).max 为 64位无符号整形，即 所有 64 位全部为 1， 16 进制为0xFFFFFFFF。 
+
+```solidity
+uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey)   == type(uint64).max 
+```
+
+这个结果要满足，就要 uint64(_gateKey) 与  uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) 结果完全相反
+
+我们知道 如果 a ^ b = c，那么 a ^ c = b 
+
+所以 uint64(_gateKey) 就是 uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ type(uint64).max
+
+[POC 代码](Writeup/SpeedX/src/Ethernaut/gatekeepertwo_poc.sol)
+
+### 2024.09.09
+这两天有点忙，刚搞出来点时间写笔记 
+
+今天继续 **Level 15 Naught Coin**
 
 
 <!-- Content_END -->

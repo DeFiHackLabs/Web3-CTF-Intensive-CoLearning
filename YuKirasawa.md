@@ -99,4 +99,20 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 Ethernaut 的 Privacy、GatekeeperOne、GatekeeperTwo、NaughtCoin、Preservation、Recovery 题目。
 
+### 2024.09.06
+
+完成了 Ethernaut 的 MagicNum、AlienCodex、Denial、Shop、Dex、DexTwo 题目。
+
+### 2024.09.07
+
+完成了 Ethernaut 的 PuzzleWallet、Motorbike、GoodSamaritan、GatekeeperThree、Switch 题目，DoubleEntryPoint 还没完全看懂。
+
+### 2024.09.08
+
+完成了 Ethernaut 的 HigherOrder 题目。
+
+### 2024.09.09
+
+完成了 Ethernaut 的 DoubleEntryPoint、Stake 题目，Ethernaut 的题目全部做完了。
+
 <!-- Content_END -->

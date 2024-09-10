@@ -63,4 +63,21 @@ Today:
 
 1. Investigated a super-duper complex reentrancy issue during work
 
+### 2024.09.06
+
+1. Wrapped up onlyPwner. Now I solved all challs.
+
+### 2024.09.07
+
+1. Built a Claude 3.5 prompt bot for web3 ctf.
+2. Half way into DamnVulnerableDefi Curvy Puppet.
+
+### 2024.09.08
+
+1. Solved a Milotruck chall: Gnosis Unsafe.
+
+### 2024.09.09
+
+1. Solved a Milotruck chall: Meta Staking.
+
 <!-- Content_END -->

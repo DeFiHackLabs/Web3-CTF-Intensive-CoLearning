@@ -37,4 +37,13 @@ timezone: Asia/Taipei
 ### 2024.09.05
 今天 只完成Ethernaut 第14題 gatekeeperone 好難喔..還用錯instance address 一直算不出來
 
+### 2024.09.06
+今天完成Ethernaut15-17題
+
+### 2024.09.07
+今天完成Ethernaut 第18題
+
+### 2024.09.09
+完成ETHTaipeiWarRoomNFT 一題
+
 <!-- Content_END -->

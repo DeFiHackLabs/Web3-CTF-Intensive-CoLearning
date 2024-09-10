@@ -445,5 +445,31 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
 
 ### 2024.09.06
 
+1. Secureum AMAZEX-DSS-PARIS - Challenge 3
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/03-lendingPool/03-lendingPool-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/03-lendingPool/Challenge3.t.sol)
+
+### 2024.09.07
+1. Secureum AMAZEX-DSS-PARIS - Challenge 5
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/05-balloon-vault/05-balloon-vault-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/05-balloon-vault/Challenge5.t.sol)
+
+### 2024.09.08
+1. Secureum AMAZEX-DSS-PARIS - Challenge 6
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/06-yieldPool/06-yieldPool-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/06-yieldPool/Challenge6.t.sol)
+
+### 2024.09.09
+1. Secureum AMAZEX-DSS-PARIS - Challenge 7
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/07-crystalDAO/07-crystalDAO-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/07-crystalDAO/Challenge7.t.sol)
+
+### 2024.09.10
+1. Secureum AMAZEX-DSS-PARIS - Challenge 8
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/08-oiler/08-oiler-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/08-oiler/Challenge8.t.sol)
+
+### 2024.09.11
+
 
 <!-- Content_END -->

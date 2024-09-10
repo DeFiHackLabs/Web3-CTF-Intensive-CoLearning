@@ -146,6 +146,30 @@ Writeup: The state variable with private visibility can still be queried on bloc
 
 Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/naive-receiver
 
-Writeup: Writeup: The vulnerability stems from how ERC-2771 and multicall are implemented in older OpenZeppelin versions, where msg.sender is extracted from the last 20 bytes of the call data. An attacker can exploit this by appending an address to the call data, thereby manipulating the msg.sender value.
+Writeup: The vulnerability stems from how ERC-2771 and multicall are implemented in older OpenZeppelin versions, where msg.sender is extracted from the last 20 bytes of the call data. An attacker can exploit this by appending an address to the call data, thereby manipulating the msg.sender value.
+
+### 2024.09.06
+
+(1) Ethernaut Preservation Challenge
+
+Link: https://ethernaut.openzeppelin.com/level/0x7ae0655F0Ee1e7752D7C62493CEa1E69A810e2ed
+
+Writeup: There is a delegatecall vulnerability in the contract. When the `setFirstTime` and `setSecondTime` functions are invoked, the `timeZone1Library` and `timeZone2Library` data are altered, respectively. An attacker can update the `timeZone1Library` address to a malicious address, causing a delegatecall to the malicious LibraryContract, which can then transfer ownership of the Preservation contract.
+
+### 2024.09.07
+
+(1) Ethernaut King Challenge
+
+Link: https://ethernaut.openzeppelin.com/level/0x3049C00639E6dfC269ED1451764a046f7aE500c6
+
+Writeup: First create a contract to become the king, without `receive` or `fallback` functions. If another user attempts to become the `king` by sending ether, the transaction will revert, causing a Denial of Service issue.
+
+### 2024.09.09
+
+(1) Link Reentrancy Challenge
+
+Link: https://ethernaut.openzeppelin.com/level/0x2a24869323C0B13Dff24E196Ba072dC790D52479
+
+Writeup: The contract fails to follow the Check-Effect-Interaction (CEI) pattern and lacks a reentrancy lock in the `Reentrance::withdraw` function. Consequently, an attacker can recursively re-enter the function through a fallback or receive function, allowing them to drain the contract's balance.
 
 <!-- Content_END -->

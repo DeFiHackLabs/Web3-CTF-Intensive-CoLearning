@@ -50,4 +50,20 @@ timezone: Asia/Shanghai
 完成A类Ethernaut CTF的第20-22题
 熟悉foundry使用
 
+### 2024.09.07
+
+完成A类Ethernaut CTF的第23题
+
+### 2024.09.08
+
+完成A类Ethernaut CTF的第24题
+
+### 2024.09.09
+
+完成A类Ethernaut CTF的第25题
+
+### 2024.09.10
+
+完成A类Ethernaut CTF的第26题
+
 <!-- Content_END -->

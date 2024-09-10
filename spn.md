@@ -39,4 +39,18 @@ metatrustctf byteVault（详见[wp](https://github.com/spn21/Web3-CTF-Intensive-
 
 ### 2024.09.05
 [Achilles](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/achilles.md)（经典看一半uniswapv2然后跑去看v3v4，时间消磨.jpg） 
+
+### 2024.09.06
+[ByteDance](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/ByteDance.md)复习了一天的OpCode
+
+### 2024.09.07
+今天晚上一直在看VMCTF的claim-guard，docker环境不知道为啥build不好（还重写了个dokcerfile）调试了一下，（不知道思路会不会出错了😭）
+
+### 2024.09.08
+claim-guard还是晕晕（悲）
+bytecodeVault(https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/bytecodeVault.md)  
+
+### 2024.09.09
+[greeterGate](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/greeterGate.md)
+
 <!-- Content_END -->
