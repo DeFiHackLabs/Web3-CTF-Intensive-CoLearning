@@ -16,6 +16,9 @@ timezone: Europe/Helsinki
 9. Puppet V2
 10	Free Rider
 
+### 2024.09.09
+8. Puppet
+
 ### 2024.09.05
 8. Puppet
 
