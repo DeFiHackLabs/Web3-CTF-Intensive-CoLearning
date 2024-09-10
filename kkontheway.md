@@ -75,4 +75,7 @@ A: Damn Vulnerable DeFi V4(3/18)
 
 ### 2024.09.09
 - 解决miloTruck-Escrow
+
+### 2024.09.10
+- 解决miloTruck-GreyHats-Dollar
 <!-- Content_END -->
