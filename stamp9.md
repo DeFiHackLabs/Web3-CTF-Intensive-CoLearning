@@ -33,6 +33,9 @@ timezone: Europe/Helsinki
 ### 2024.09.05
 8. damn-vulnerable-defi Puppet
 
+### 2024.09.06
+8. damn-vulnerable-defi Puppet
+
 ### 2024.09.09
 8. damn-vulnerable-defi Puppet
 
