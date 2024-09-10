@@ -233,4 +233,14 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
   - So, we can add malicious data following the `offset` and let the above code fetch wrong selector which is approved to player.
   - Then, we set `offset` to skip the malicious data and point to the real selector which will be executed [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/abi-smuggling/AuthorizedExecutor.sol#L60).
 
+### 2024.09.10
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Puppet V3
+  - The attack vector is the same as `Puppet` and `Puppet V2`
+  - The differences are
+    - Uniswap v3 oracle will prevent price manipulation in the same block. So, we should call `lendingPool.borrow` in the future block.
+    - use `ISwapRouter` of Uniswap V3
+
 <!-- Content_END -->

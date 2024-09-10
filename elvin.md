@@ -464,7 +464,12 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
    [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/07-crystalDAO/07-crystalDAO-solution.md)
    [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/07-crystalDAO/Challenge7.t.sol)
 
-### 2024.09.09
+### 2024.09.10
+1. Secureum AMAZEX-DSS-PARIS - Challenge 8
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/08-oiler/08-oiler-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/08-oiler/Challenge8.t.sol)
+
+### 2024.09.11
 
 
 <!-- Content_END -->

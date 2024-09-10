@@ -50,4 +50,7 @@ metatrustctf byteVault（详见[wp](https://github.com/spn21/Web3-CTF-Intensive-
 claim-guard还是晕晕（悲）
 bytecodeVault(https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/bytecodeVault.md)  
 
+### 2024.09.09
+[greeterGate](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/greeterGate.md)
+
 <!-- Content_END -->

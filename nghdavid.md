@@ -310,5 +310,13 @@ abstract contract ReentrancyGuard {
 - 攻擊的原理是對當下被打包的區塊的number去做計算(blockValue/FACTOR) == 1
 - 這樣就能精準猜中flip side
 
+### 2024.09.09
+# Ethernut第四題
+- 這題的關鍵是要能成功呼叫changeOwner
+- 所以要使tx.origin跟msg.sender不一樣
+- 如果使用合約呼叫changeOwner，這樣tx.origin就會是自己(EOA)，而msg.sender會是合約本身
+- 如此一來就能達到tx.origin != msg.sender，而成功改變owner
+
+
 
 <!-- Content_END -->
