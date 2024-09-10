@@ -31,10 +31,10 @@ timezone: Europe/Helsinki
 7. Comprimised
 
 ### 2024.09.05
-8. Puppet
+8. damn-vulnerable-defi Puppet
 
 ### 2024.09.09
-8. Puppet
+8. damn-vulnerable-defi Puppet
 
 ### 2024.09.10
 9. Puppet V2
