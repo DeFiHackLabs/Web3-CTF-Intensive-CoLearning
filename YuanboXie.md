@@ -76,5 +76,9 @@ timezone: Asia/Shanghai
 
 - 1.Ethernaut CTF (31) - Elevator - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
 
+### 2024.09.11
+
+- 1.Ethernaut CTF (31) - Privacy - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+
 
 <!-- Content_END -->
