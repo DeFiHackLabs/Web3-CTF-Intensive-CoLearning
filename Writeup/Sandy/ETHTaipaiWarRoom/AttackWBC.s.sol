@@ -52,3 +52,42 @@ contract AttackWBC{
         return address(ans);
     }
 }
+
+contract Ans {
+    WBC public wbc;
+
+    constructor(address wbc_) {
+        wbc = WBC(wbc_);
+        wbc.bodyCheck();
+    }
+
+    function win() external {
+        wbc.ready();
+    }
+
+    function judge() external view returns (address) {
+        return block.coinbase;
+    }
+
+    function steal() external pure returns (uint160) {
+        return 507778882907781185490817896798523593512684789769;
+    }
+
+    function execute() external pure returns (bytes32) {
+        //string memory ans = "HitAndRun";
+        return bytes32(uint256(uint80(bytes10(0x09486974416e6452756e))));
+        
+    }
+
+    function shout() external view returns (bytes memory) {
+        if (gasleft() >= 93393070) { // 這裡不確定是不是有更好的寫法
+            console.logString("I'm the best");
+            //return abi.encode(bytes(abi.encodePacked("I'm the best")));
+            return "I'm the best";
+        } else {
+            console.logString("We are the champion!");
+            //return abi.encode(bytes(abi.encodePacked("We are the champion!")));
+            return "We are the champion!";
+        }
+    }
+}
