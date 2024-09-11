@@ -145,4 +145,9 @@ for(uint256 i = 0; i < 8191; i++) {
 ##### 第15题 Naught coin
 1. 了解了transferFrom 跟 approve 的用法，这样就可以绕过transfer函数的限制。
 
+### 2024.09.11
+#### Ethernaut
+##### 第14题 Preservation
+1. 这一题跟之前有一题类似，考察delegatecall的问题， 调用两次setFirstTime， 第一次覆盖掉存储的合约地址， 第二次替换掉owner。
+
 <!-- Content_END -->
