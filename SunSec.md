@@ -107,5 +107,6 @@ timezone: Asia/Taipei
 
 ### 2024.09.10
 - DamnVulnerableDeFi #17 solved [Curvy Puppet](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#curvy-puppet) writeup 最後再更新出來, 讓大家體驗一下殘酷.
-
+- ✅ 完成 DamnVulnerableDeFi
+   
 <!-- Content_END -->
