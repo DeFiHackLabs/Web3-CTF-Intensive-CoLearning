@@ -82,5 +82,5 @@ A: Damn Vulnerable DeFi V4(3/18)
 
 ### 2024.09.11
 - 解决miloTruck-Voting-vault
-
+- 解决miloTruck-Gnosis-Safe
 <!-- Content_END -->

@@ -47,3 +47,18 @@ function transferFrom(address from, address to, uint256 amount) public update re
 | sharePrice        | 1:1(Grey:SV) |
 
 由于amm的价格依赖于vault，所以这时候我们不需要任何的amountIn就可以换出1000e18的grey，从而完成挑战
+
+## Gnosis-Safe
+
+Root Cause是https://soliditylang.org/blog/2022/08/08/calldata-tuple-reencoding-head-overflow-bug/，题目中Transaction的定义是:
+
+```solidity
+ struct Transaction {
+        address signer;
+        address to;
+        uint256 value;
+        bytes data;
+    }
+```
+
+最后一个元素是`bytes` 动态元素，所以在`aggressive cleanup`的时候就会被清理成0.从而导致了绕过。
