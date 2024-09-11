@@ -168,4 +168,16 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.11
 
+挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [HelloWorld](https://github.com/dinngo/ETHTaipei-war-room/blob/main/src/HelloWorld/HelloWorld.sol)
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [Arcade](https://github.com/dinngo/ETHTaipei-war-room/blob/main/src/Arcade/Arcade.sol)
+
+筆記連結： [ETH Taipei CTF 2023: HelloWorld](./Writeup/AlexLiao/ETHTaipeiCTF2023/HelloWorld.md)
+
+筆記連結： [ETH Taipei CTF 2023: Arcade](./Writeup/AlexLiao/ETHTaipeiCTF2023/Arcade.md)
+
+### 2024.09.12
+
 <!-- Content_END -->
