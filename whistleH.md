@@ -154,4 +154,16 @@ timezone: Asia/Shanghai
 2. delegateCall造成的逻辑漏洞
 3. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
 
+### 2024.09.11
+
+当前挑战：ethernaut
+
+今日完成：Level24
+
+学习内容
+
+1. 将之前的题目重新整合了一下，有些题目之前没有深入学习，在后面题目又出现的时候没能及时反应过来
+2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+3. 推荐[学习WP](https://dev.to/erhant/ethernaut-24-puzzle-wallet-49c0)，用于理解原理，需要自行再用Foundry实现
+
 <!-- Content_END -->
