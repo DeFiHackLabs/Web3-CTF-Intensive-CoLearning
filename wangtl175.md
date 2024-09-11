@@ -188,4 +188,21 @@ pass
 - `pure`：`pure`修饰符表示函数既不会读取合约状态，也不会修改任何状态变量
 
 有这两个关键字修饰的函数调用时，不会消耗gas
+
+### 2024.09.10
+
+#### 读取合约的存储
+
+solidity的内存布局类似于传统的计算机语言，具体可以参考[这里](https://medium.com/@dariusdev/how-to-read-ethereum-contract-storage-44252c8af925)
+
+#### assembly
+
+可以用接近Ethereum虚拟机的语言，将Solidity语句与内联汇编交错使用。Solidity的内联汇编语言是[Yul](https://docs.soliditylang.org/en/latest/yul.html)
+
+`extcodesize(addr)`用于`addr`的代码长度，如果`addr`是外部地址（非合约），或者实在合约`addr`的构造函数中调用，则返回0
+
+https://ethereum.stackexchange.com/questions/15641/how-does-a-contract-find-out-if-another-address-is-a-contract
+
+https://docs.soliditylang.org/en/latest/assembly.html
+
 <!-- Content_END -->

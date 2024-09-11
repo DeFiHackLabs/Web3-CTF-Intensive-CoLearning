@@ -72,4 +72,13 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Re-entrancy - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 学习了智能合约经典漏洞：重入漏洞；
 
+### 2024.09.10
+
+- 1.Ethernaut CTF (31) - Elevator - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+
+### 2024.09.11
+
+- 1.Ethernaut CTF (31) - Privacy - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+
+
 <!-- Content_END -->

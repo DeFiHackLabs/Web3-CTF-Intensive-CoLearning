@@ -83,6 +83,23 @@ timezone: Asia/Singapore
 
 
 ### 2024.09.10
+#### ETH Taipei CTF 2023 - Arcade:
+- [POC](./Writeup/0xLasadie/EthTaipei_CTF_2023/arcade.md)
+
+#### ETH Taipei CTF 2023 - ETHTaipeiWarRoomNFT:
+- [POC](./Writeup/0xLasadie/EthTaipei_CTF_2023/ethtaipeiwarroomnft.md)
+
+#### ETH Taipei CTF 2023 - Casino:
+- [POC](./Writeup/0xLasadie/EthTaipei_CTF_2023/casino.md)
+
+#### ETH Taipei CTF 2023 - WBC:
+
+
+### 2024.09.11
+### 2024.09.12
+### 2024.09.13
+### 2024.09.14
+### 2024.09.15
 #### Damn Vulnerable DeFi - ABI Smuggling:
 
 #### Damn Vulnerable DeFi - Shards:
@@ -90,10 +107,4 @@ timezone: Asia/Singapore
 #### Damn Vulnerable DeFi - Curvy Puppet:
 
 #### Damn Vulnerable DeFi - Withdrawal:
-
-### 2024.09.11
-### 2024.09.12
-### 2024.09.13
-### 2024.09.14
-### 2024.09.15
 <!-- Content_END -->

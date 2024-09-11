@@ -88,7 +88,7 @@ timezone: Asia/Taipei
 - DamnVulnerableDeFi #16 [Shards](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#shards)
 
 ### 2024.09.07
-- DamnVulnerableDeFi #17 [Curvy Puppet 題目應該有問題](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#curvy-puppet-還沒解完)
+- DamnVulnerableDeFi #17 [Curvy Puppet](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#curvy-puppet)
 - DamnVulnerableDeFi #18 [Withdrawal](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#withdrawal)
 
 ### 2024.09.08
@@ -103,6 +103,10 @@ timezone: Asia/Taipei
 ### 2024.09.10
 - DamnVulnerableDeFi #13 solved [Wallet Mining](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#wallet-mining)
 - Foundry computeCreate2Address.
-- Create Safe wallet process. 
+- Create Safe wallet process.
 
+### 2024.09.10
+- DamnVulnerableDeFi #17 solved [Curvy Puppet](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#curvy-puppet) writeup 最後再更新出來, 讓大家體驗一下殘酷.
+- ✅ 完成 DamnVulnerableDeFi
+   
 <!-- Content_END -->

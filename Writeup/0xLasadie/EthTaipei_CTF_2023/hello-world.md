@@ -6,11 +6,6 @@
 
 # Findings
 
-## Answer is explicitly provided in the contract constructor
-
-### Summary
-Answer (HelloWorld) is explicitly provided in the constructor, allowing attackers to easily answer with the correct answer.
-
 ### Vulnerability Details
 The answer is explicitly provided in the constructor.
 ```diff
@@ -29,9 +24,8 @@ function testCorrectAnswer() public {
         assertTrue(base.isSolved());
     }
 ```
-
-### Recommendations
-```
+Results
+```diff
 [PASS] testCorrectAnswer() (gas: 61543)
 Logs:
   success:  true

