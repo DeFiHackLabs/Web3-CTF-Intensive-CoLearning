@@ -47,6 +47,8 @@ timezone: Europe/Helsinki
 11. damn-vulnerable-defi Backdoor
 12. damn-vulnerable-defi Climber checked the writeup
 
-
+### 2024.09.12
+13. damn-vulnerable-defi Wallet Mining checked the writeup
+14	damn-vulnerable-defi Puppet V3
 
 <!-- Content_END -->
