@@ -378,4 +378,15 @@ abi.encodeWithSignature("registerTreasury(uint8)", 256);
 
 
 
+### 2024.09.11
+
+#### A-DamnVaulnerableDefi-UnStoppable
+
+还是选择了A系列的DamnVaulnerableDefi,想做一些defi相关.
+
+大概了解了什么是[ERC-4626](https://ethereum.org/zh/developers/docs/standards/tokens/erc-4626/)
+
+卡住了(搞了好久依赖,和之前的ethernaut的冲突)
+
+
 <!-- Content_END -->
