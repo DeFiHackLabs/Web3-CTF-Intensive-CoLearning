@@ -53,5 +53,8 @@ timezone: Pacific/Auckland
 [[Damn Vulnerable DeFi V4] 13 | Wallet Mining](./Writeup/0xE/DamnVulnerableDeFiV4/wallet-mining.md)
 [[Damn Vulnerable DeFi V4] 14 | Puppet V3](./Writeup/0xE/DamnVulnerableDeFiV4/puppet-v3.md)
 
+### 2024.09.11
+[[Damn Vulnerable DeFi V4] 15 | ABI Smuggling](./Writeup/0xE/DamnVulnerableDeFiV4/abi-smuggling.md)
+
 
 <!-- Content_END -->
