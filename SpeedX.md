@@ -332,5 +332,10 @@ delegatecall 代理的 storage 还是 Preservation 合约的存储，只是逻�
 
 ### 2024.09.11
 
+**Level 16 preservation**
+这一段也不简单啊，简单写了个测试，但是不知道为什么 timeZone1Library 赋值给 preservation合约后地址 与 timeZone1Library 合约地址不一样了
+
+
+
 
 <!-- Content_END -->

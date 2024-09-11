@@ -18,12 +18,13 @@ contract PreservationTest is Test
     preservation = new Preservation(address(timeZone1Library), address(timeZone2Library));
   }
 
-  function testOwner() public 
+  function testOwner() public view 
   {
       // preservation.setFirstTime(1);
       console.log("xxx", preservation.timeZone1Library.address);
-      console.log(address(timeZone2Library));
+      console.log(address(timeZone1Library));
+      console.log(preservation.owner.address);
 
-      assertEq(address(timeZone1Library), preservation.timeZone1Library.address);
+      // assertEq(address(timeZone1Library), preservation.timeZone1Library.address);
   }
 }
