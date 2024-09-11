@@ -747,4 +747,163 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/puzzle_wallet_h
 
 ### 2024.09.12
 
+#### 25. Motorbike
+
+本关的目标是在合约`Engine`上调用`selfdestruct`让代理合约无法再使用
+
+在Dencun升级之后，在[EIP-6780](https://eips.ethereum.org/EIPS/eip-6780)中更改了`SELFDESTRUCT`操作码的功能，新功能只是将账户中的所有以太币发送到目标，但在创建合约的同一交易中调用`SELFDESTRUCT`时，当前行为将被保留
+因此要将创建instance合约和实现`selfdestruct`在同一交易中实现才行
+
+[Dencun升级后解法](https://github.com/Ching367436/ethernaut-motorbike-solution-after-decun-upgrade)
+
+背景知识：
+这一关中使用了`UUPS(Universal Upgradeable Proxy Standard)`的代理模式，上一个关中使用的是`TPP(Transparent Proxy Pattern)`的代理模式
+UUPS与TPP相比主要有几个区别：
+1. UUPS的升级函数是实现在`Logic Contract`中，而不是`Proxy Contract`中
+2. UUPS不会在每次call的时候都去检查调用者身份，而只在升级时检查
+
+代理合约中最容易出问题的两个点就是：`Storage collision`和`initialization`
+上一关中就利用了两次`Storage collision`漏洞来获取admin权限，为了避免`Storage collision`漏洞发生，ERC-1967规定了重要变量的storage slot位置，例如Logic、Admin、Beacon等，通过对字符串`eip1967.proxy.xxx`使用`keccak256`加密后，把得到的结果当做slot index，将xxx变量的值放到这个很远很大的slot中，以此大幅度降低碰撞的风险
+
+初始化`initialization`是指代理合约的初始化，一般在部署合约时都会通过`constructor`设置一些初始化变量，但代理合约的情况下，如果在`Logic Contract`中使用`constructor`来初始化，变量会保存在`Logic Contract`中，就不符合变量都保存在`Proxy Contract`中的设计，因此会在`Logic Contract`中定义一个`initialize`函数来做一些初始化的工作，并且使用一个`initialized`来确保`initialize`只被调用一次
+
+在一关中`Proxy Contract`是Motorbike，`Logic Contract`是Engine，并且使用了ERC-1967来防止`Storage collision`
+
+目标是调用Engine的`selfdestruct`函数让其自毁，但在Engine中没有实现这个函数，就需要考虑升级`Logic Contract`让其变成攻击合约，在攻击合约中实现一个`selfdestruct`
+
+Engine实现了一个`upgradeToAndCall`函数来升级合约，但是限制了`msg.sender == upgrader`
+
+目标就变成了让自己成为`upgrader`，Engine中只有`initialize`函数可以设置`upgrader`，因为这一关使用了ERC-1967，`Proxy Contract`与`Logic Contract`没有相似的slot排布，无法像上一关中直接修改`upgrader`的值，只能通过`initialize`来更新`upgrader`
+
+`initialize`函数有一个`initializer`装饰器来进行对`initializer`的校验，确保合约只被初始化一次，但由于`Proxy Contract`调用`initialize`是通过`delegatecall`，会导致`initializer`是存储在`Proxy Contract`中，`Logic Contract`中的`initializer`仍是未初始化状态，就可以绕过`Proxy Contract`直接调用`initialize`，这样就可以让`msg.sender`成为`upgrader`
+
+综上所述，攻击思路如下：
+1. 创建一个实现了调用`selfdestruct`函数的攻击合约
+2. 读取`_IMPLEMENTATION_SLOT`，并计算出Engine合约的地址
+3. 调用Engine的`initialize`函数来成为`upgrade`
+4. 调用Engine的`upgradeToAndCall`来将`Logic Contract`升级为攻击合约，并调用升级后共计合约进行自杀
+
+编写攻击合约[motorbike_hack.sol](Writeup/awmpy/src/ethernaut/motorbike_hack.sol)
+编写攻击脚本[motorbike_hack.s.sol](Writeup/awmpy/script/ethernaut/motorbike_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/motorbike_hack.s.sol:MotorbikeHackScript -vvvv --broadcast
+```
+
+#### 26. Double Entry Point
+
+这一关提供了两个ERC20的合约`LegacyToken(LGT)`和`DoubleEntryPoint(DET)`以及一个金库合约`CryptoVault`，金库内存有LGT和DET各100个，但金库存在BUG可能会被人把金库中的代币转走，我们需要想办法保护合约内的代币
+
+LGT合约：
+在LGT合约中重写了ERC20默认的`transfer`函数，检查`delegate`地址为0的情况，就从ERC20中调用`transfer`函数，如果`delegate`地址不为0，就调用`delegate.delegateTransfer`函数
+
+LGT中还实现了`delegateToNewContract`函数，用来设置`delegate`的值，且这个函数有`onlyOwner`装饰器，只能由owner来设置`delegate`，且`newContract`需要是`DelegateERC20`
+
+DET合约：
+合约继承了`DelegateERC20`，满足作为LGT的`delegateToNewContract`参数的条件，因此LGT中的`delegate`就是DET合约
+
+构造函数中定义了`delegatedFrom`、`forta`、`player`、`cryptoVault`地址，并且给`CryptoVault`mint了100个DET
+
+装饰器`onlyDelegateFrom`限制了`msg.sender`只能是设置为`LegacyToken`地址的`delegatedFrom`合约，这意味着使用这个装饰器的函数只能被`LegacyToken`来调用
+
+装饰器`fortaNotify`是Forta机器人使用的，他会先把`forta.botRaisedAlerts(detectionBot)`执行的结果存储起来，调用一次`forta.notify(player, msg.data)`来给机器人发送通知，接着正常执行函数功能，之后再调用一次`forta.botRaisedAlerts(detectionBot)`，并将notify前后两次的结果进行比较，如果第二次数量大于第一次，就revert整个交易，这个装饰器只应用于`delegateTransfer`函数
+
+函数`delegateTransfer`设置了`fortaNotify`和`onlyDelegateFrom`两个装饰器，说明这个函数只允许`LegacyToken`来调用，并且可以由bot来检查交易是否合理，此函数会调用`_transfer`函数，将value数量的代表从`origSender`转到`to`
+
+CryptoVault合约：
+函数`setUnderlying`设置了`underlying`的代币地址，在这里是DET的地址，且只能调用一次，也就是说我们无法再修改
+
+函数`sweepToken`将ERC20的代币地址作为函数参数，并确保它不等于`underlying`也就是DET，然后调用了新传入的代币的`transfer`函数，将金库中所有的代币都转给`sweptTokensRecipient`
+`sweptTokensRecipient`地址是在构造函数中设置的，不受我们控制
+
+攻击思路：
+假设我们是攻击者，唯一能把`CryptoVault`合约中代币转走的函数是`sweepToken`，但由于限制了token不能是DET，只能考虑给这个函数传入LGT的地址这样就会调用LGT的`transfer(sweptTokensRecipient, CryptoVault's Total Balance)`函数(重写过的)
+
+最终会调用到`delegate.delegateTransfer(to, value, msg.sender)`，也就是`DoubleEntryPoint.delegateTransfer(sweptTokensRecipient, CryptoVault's Total Balance, CryptoVault's Address)`
+
+现在流程走到了DET的`delegateTransfer`函数中，`onlyDelegateFrom`的限制会被通过，因为`msg.sender`是LGT，这样就能够绕过`sweepToken`的限制，而把所有的DET给转走
+
+具体操作：
+
+``` bash
+// ethernaut提供的instance地址是DET的地址，可以通过`cryptoVault`变量查到`CryptoVault`的合约地址，通过`delegatedFrom`来获取LGT的地址
+
+vault = await contract.cryptoVault()
+
+// 检查DET余额 (100 DET)
+await contract.balanceOf(vault).then(v => v.toString()) // '100000000000000000000'
+
+// 查询LGT的Address
+legacyToken = await contract.delegatedFrom()
+
+// 组装通过sweepToken转走DET的Data
+sweepSig = web3.eth.abi.encodeFunctionCall({
+    name: 'sweepToken',
+    type: 'function',
+    inputs: [{name: 'token', type: 'address'}]
+}, [legacyToken])
+
+// 发送攻击请求
+await web3.eth.sendTransaction({ from: player, to: vault, data: sweepSig })
+
+// 再次检查DET余额 (0 DET)
+await contract.balanceOf(vault).then(v => v.toString()) // '0'
+```
+
+防御思路：
+Forta合约：
+函数`setDetectionBot`用来设置机器人的地址，需要利用这个函数把机器人设置为自己的机器人地址
+
+函数`notify`中调用了机器人的`handleTransaction`函数来检查calldata，因此我们需要在机器人中实现一个`handleTransaction`函数并设置一些条件来触发告警，此函数会在DET合约中的`fortaNotify`装饰器中被调用，也就是用来触发通知
+
+函数`raiseAlert`会将`msg.sender`的告警数加1
+
+还有个`IDetectionBot`的接口，其中有`handleTransaction`函数名标签
+
+``` bash
+攻击路径:
+CryptoVault.sweepToken(LGT) ==> LGT.transfer(sweptTokensRecipient, CryptoVault's Token Balance) ==> DET.delegateTransfer(sweptTokensRecipient, CryptoVault's Total Balance, CryptoVault's Address)
+```
+
+调用到`delegateTransfer`函数时，装饰器`fortaNotify`会把接受到的`msg.data`发送给机器人的`handleTransaction`来处理，因此需要实现一个带有`handleTransaction`函数的机器人，并检查`msg.data`中的`origSender`是不是`CryptoVault`的地址
+
+解析calldata：
+
+在`fortaNotify`中`msg.data`是`function delegateTransfer(address to, uint256 value, address origSender)`
+
+在`notify`中调用了`handleTransaction`函数，这里会改变`msg.data`
+
+到了`handleTransaction`函数中，`msg.data`就变成了`function handleTransaction(address user, bytes calldata msgData) external`，其中的第二个参数`bytes calldata msgData`才是我们想要的原本的`msg.data`，需要从中提取出`origSender`
+
+机器人看到的calldata数据排列：
+
+| Position | Bytes Length | Var Type | Value |
+|----------|--------------|----------|-------|
+| 0x00     | 4            | bytes4   | Function selector of `handleTransaction(address,bytes) == 0x220ab6aa` |
+| 0x04     | 32           | address  | user address |
+| 0x24     | 32           | uint256  | msgData 的偏移量 |
+| 0x44     | 32           | uint256  | msgData 的长度 |
+| 0x64     | 4            | bytes4   | Function selector of `delegateTransfer(address,uint256,address) == 0x9cd1a121` |
+| 0x68     | 32           | address  | to 参数地址 |
+| 0x88     | 32           | uint256  | value 参数 |
+| 0xA8     | 32           | address  | origSender 参数地址 |
+| 0xC8     | 28           | bytes    | 根据编码字节的 32 字节参数规则进行零填充 |
+
+可通过`cast sig "handleTransaction(address,bytes)"`获取函数签名
+
+从表中可以看出，前半部分是函数`handleTransaction`，后半部分是`delegateTransfer`，其中就有需要的`origSender`数据
+
+编写攻击合约[double_entry_point_hack.sol](Writeup/awmpy/src/ethernaut/double_entry_point_hack.sol)
+编写攻击脚本[double_entry_point_hack.s.sol](Writeup/awmpy/script/ethernaut/double_entry_point_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/double_entry_point_hack.s.sol:DoubleEntryPointHackScript -vvvv --broadcast
+```
+
+### 2024.09.13
+
 <!-- Content_END -->
