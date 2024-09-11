@@ -79,4 +79,8 @@ A: Damn Vulnerable DeFi V4(3/18)
 ### 2024.09.10
 - 解决miloTruck-GreyHats-Dollar
 - 解决miloTruck-SimpleAMM
+
+### 2024.09.11
+- 解决miloTruck-Voting-vault
+
 <!-- Content_END -->
