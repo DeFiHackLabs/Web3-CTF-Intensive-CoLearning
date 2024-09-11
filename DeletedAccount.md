@@ -836,6 +836,10 @@ bytes memory data = hex"30c13ade000000000000000000000000000000000000000000000000
 - [Ethernaut30-HigherOrderV2.sol](/Writeup/DeletedAccount/Ethernaut30-HigherOrderV2.sol)
 
 
+### 2024.09.11
+
+- 繼續進行每日解一題挑戰
+
 #### [Ethernaut-31] Stake
 
 - 過關條件:
