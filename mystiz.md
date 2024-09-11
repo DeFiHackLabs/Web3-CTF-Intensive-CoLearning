@@ -308,6 +308,8 @@ Progress
 
 ### 2024.09.11
 
+#### 📚 Reading: Ethereum's Yellow Paper
+
 #### 🏳️ OnlyPwner.xyz: Wrapped Ether
 
 **Time used: 55m and ongoing...**
