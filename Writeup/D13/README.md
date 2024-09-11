@@ -41,3 +41,5 @@
 5. [level 14 - GatekeeperTwo](./writeup/14_GatekeeperTwo.md)
 6. [level 15 - Naught Coin](./writeup/15_NaughtCoin.md)
 7. [level 16 - Preservation](./writeup/16_Preservation.md)
+8. [level 17 - Recovery](https://hackmd.io/@D13/ethernaut17)
+9. [level 21 - Shop](https://hackmd.io/@D13/ethernaut21)
