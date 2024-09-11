@@ -53,4 +53,7 @@ bytecodeVault(https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/
 ### 2024.09.09
 [greeterGate](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/greeterGate.md)
 
+### 2024.09.10
+看了metatrust的zkplus和openzeppelin的beef，只能说密码抽象题太搞了（x and 配置blazctf的时候docker环境出问题了还在修
+
 <!-- Content_END -->

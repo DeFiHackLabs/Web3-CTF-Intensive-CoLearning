@@ -142,4 +142,16 @@ timezone: Asia/Shanghai
 1. DEX以及价格操纵漏洞
 2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
 
+### 2024.09.10
+
+当前挑战：ethernaut
+
+今日完成：Level24
+
+学习内容
+
+1. Storage Collsion
+2. delegateCall造成的逻辑漏洞
+3. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
 <!-- Content_END -->

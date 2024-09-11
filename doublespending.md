@@ -243,4 +243,14 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
     - Uniswap v3 oracle will prevent price manipulation in the same block. So, we should call `lendingPool.borrow` in the future block.
     - use `ISwapRouter` of Uniswap V3
 
+### 2024.09.11
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Shards
+  - First, we can buy shards for free becase the required token can be zero in case `want * _toDVT(offer.price, _currentRate) < offer.totalShards`. We find the max number of free shards is 133.
+  - Then, we can cancel immediately because of [the incorrect timestamp check](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/shards/ShardsNFTMarketplace.sol#L152-L155)
+  - Again, there is also incorrect calculation of refund token [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/shards/ShardsNFTMarketplace.sol#L163).
+  - We can keep calling `fill` and `cancel` to fetch all the token of `ShardsNFTMarketplace`.
+
 <!-- Content_END -->
