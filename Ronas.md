@@ -79,4 +79,12 @@ timezone: Asia/Taipei
 
 - [A. Ethernaut CTF - level 10](/Writeup/Ronas/Ethernaut%20CTF/level10.md)
 
+### 2024.09.09
+
+- [A. Ethernaut CTF - level 11 Elevator](/Writeup/Ronas/Ethernaut%20CTF/level11.md)
+
+### 2024.09.10
+
+- [A. Ethernaut CTF - level 12 Privacy](/Writeup/Ronas/Ethernaut%20CTF/level12.md)
+
 <!-- Content_END -->

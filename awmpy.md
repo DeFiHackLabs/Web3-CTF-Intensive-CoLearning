@@ -655,4 +655,96 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/dextwo_hack.s.s
 
 ### 2024.09.11
 
+#### 24. PuzzleWallet
+
+这个挑战是一个代理合约，通过`PuzzleProxy`代理对`PuzzleWallet`的请求，通过`delegatecall`转发请求，通关目标是获取`PuzzleProxy`合约的owner权限
+
+通过`delegatecall`转发的请求，对被调用的合约所做的修改都会保存在Proxy合约中
+在实现可升级合约时，如果没能保证slot排列相同，就会发生更新一个合约存储变量时错误的更新了另一个合约对应slot的变量
+
+slot排列:
+| Slot | PuzzleProxy  | PuzzleWallet |
+|------|--------------|--------------|
+| 0    | pendingAdmin | owner        |
+| 1    | admin        | maxBalance   |
+
+因为我们需要变成`PuzzleProxy`的管理员，所以需要想办法把slot1改成我们的钱包地址，slot1上有`maxBalance`和`admin`两个存储变量，通过修改`maxBalance`就可以覆盖掉`admin`，这就是我们的最终目标了
+
+可以修改`maxBalance`变量值只有两个地方`init`函数和`setMaxBalance`函数，`init`函数中要求`maxBalance`为0才能执行，但`init`已被执行过，这个值不是0，只能看`setMaxBalance`函数能否利用
+
+`setMaxBalance`函数要求调用者在白名单中，且合约的balance为0
+
+目前的目标就变成了：
+1. 让自己加入白名单
+`addToWhitelist`函数要求是owner才能将地址加入白名单
+而我们通过错误的slot排列可以发现，更新`PuzzleProxy`的`pendingAdmin`值就可以把`PuzzleWallet`的`owner`改掉，这样就能顺利拿到`PuzzleWallet`的owner权限，并把自己的地址加入到白名单中
+2. 清空合约余额
+`execute`是唯一一个可以向其他地址进行`call()`并带有一些value的函数，我们可以利用这个函数把合约内所有的钱转走，但它要检查`msg.sender`是否有足够的余额来操作，必须要想办法把`balances[msg.sender]`加到大于或等于合约余额，才能把合约内所有钱转走
+`deposit`函数可以增加`msg.sender`的余额，调用`deposit`会发生两件事：`balances[msg.sender]`增加和合约的balance增加，合约内部署时已经有了0.001ether
+假设调用`deposit`存入0.001ether，会发生`balances[msg.sender]`变为0.001，合约的balance变为0.002，还是无法满足`balances[msg.sender]`大于等于合约balance，因此需要想办法让`balances[msg.sender]`增加两次0.001，而合约balance只增加一次0.001，这样就可以让`balances[msg.sender]`有合约balance都是0.002，这样才能调用`execute`把合约balance清空
+
+目前的目标就变成了：调用`deposit`让`balances[msg.sender]`增加两次0.001，而合约balance只增加0.001
+
+要实现这个目标需要借助`PuzzleWallet`中的`multicall`函数，它允许用户在单笔交易中多次调用一个函数，来实现节省gas的目的
+
+``` bash
+function multicall(bytes[] calldata data) external payable onlyWhitelisted {
+    bool depositCalled = false;
+    for (uint256 i = 0; i < data.length; i++) {
+        bytes memory _data = data[i];
+        bytes4 selector;
+        assembly {
+            selector := mload(add(  , 32))
+        }
+        if (selector == this.deposit.selector) {
+            require(!depositCalled, "Deposit can only be called once");
+            // Protect against reusing msg.value
+            depositCalled = true;
+        }
+        (bool success, ) = address(this).delegatecall(data[i]);
+        require(success, "Error while delegating call");
+    }
+}
+```
+
+如果能够在同一笔交易中使用0.001个以太币调用`deposit`两次，这意味着只提供了一次0.001个以太币，玩家的余额 `balances[msg.sender]`将从0变为0.002，但实际上，由于我们在同一笔交易中这样做了，我们的存款金额仍将为0.001
+但在`multicall`函数中利用`depositCalled`变量限制了`deposit`只能被调用一次
+
+`multicall`可以调用`PuzzleWallet`的任意函数，包括`multilcall`本身
+这样就给我们提供了机会，可以在一个`multicall`的调用中再嵌套`multicall`，而每个`multicall`的`depositCalled`都是单独计算的，这样就能实现在一个交易中调用两次`deposit`
+
+逻辑示意：
+
+``` bash
+multicall = [
+    multicall: [deposit],
+    multicall: [deposit]
+]
+
+OR
+
+multicall = [
+    multicall: [deposit],
+    deposit
+]
+```
+
+到目前为止，完整的攻击路径已经出现：
+1. 调用`PuzzleProxy`的`proposeNewAdmin`函数传入player地址，达到修改`PuzzleWallet`的owner的目的，获取`PuzzleWallet`的owner权限
+2. 调用`PuzzleWallet`的`addToWhitelist`，传入player地址，把自己加入到白名单中
+3. 调用`PuzzleWallet`的`multicall`将组装好的data和0.001ether发送过去，达到`balances[msg.sender]`等于合约balance的目的
+4. 调用`PuzzleWallet`的`execute`将合约内的0.002ether转到player地址
+5. 调用`PuzzleWallet`的`setMaxBalance`将`maxBalance`的值改为player地址，同时因为`maxBalance`和`PuzzleProxy`的`admin`变量都在slot1存储，此时也获取了`PuzzleProxy`合约的admin权限
+
+将合约代码复制到[puzzle_wallet.sol](Writeup/awmpy/src/ethernaut/puzzle_wallet.sol)
+编写攻击脚本[puzzle_wallet_hack.s.sol](Writeup/awmpy/script/ethernaut/puzzle_wallet_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/puzzle_wallet_hack.s.sol:PuzzleWalletHackScript -vvvv --broadcast
+```
+
+### 2024.09.12
+
 <!-- Content_END -->

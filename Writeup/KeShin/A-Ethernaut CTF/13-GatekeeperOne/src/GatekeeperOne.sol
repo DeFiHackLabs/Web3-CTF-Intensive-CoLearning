@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import {console} from "forge-std/Test.sol";
+
 contract GatekeeperOne {
     address public entrant;
 
@@ -21,7 +23,7 @@ contract GatekeeperOne {
         _;
     }
 
-    function enter(bytes8 _gateKey) public gateOne gateTwo returns (bool) {
+    function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
         entrant = tx.origin;
         return true;
     }
