@@ -180,4 +180,12 @@ Link: https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/ETHTaipeiWarRoo
 
 Writeup: The challenger can first deposit tokens into the pool and later withdraw the NFT. The `safeTransferFrom` function will trigger the corresponding `onERC721Received` function in the receiver contract, allowing the challenger to re-enter the `Pool::withdraw` function up to 1,000 times, accumulating enough balance to pass the challenge.
 
+### 2024.09.11
+
+(1) MetaTrust Guessgame Challenge
+
+Link: https://github.com/MetaTrustLabs/ctf/blob/master/guessgame/contracts/A.sol
+
+Writeup: Identify a set of (`_random01`, `_random02`, `_random03`, `_random04`) that satisfies the requirements, specifically finding a `_random02` such that the operation `(uint160(address(msg.sender)) + random01 + random02 + random03 + _random02) & 0xff` equals `random02`, along with meeting the other conditions in the guess game function.
+
 <!-- Content_END -->

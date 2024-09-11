@@ -80,4 +80,8 @@ Today:
 
 1. Solved a Milotruck chall: Meta Staking.
 
+### 2024.09.10
+
+1. Solved Tornado crash from blaz ctf 2023.
+
 <!-- Content_END -->

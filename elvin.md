@@ -470,6 +470,15 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
    [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/08-oiler/Challenge8.t.sol)
 
 ### 2024.09.11
+1. Blaz CTF 2023 - Rock Scissor Paper
+   [Solution Report](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/rock-paper-scissor/rock-paper-scissor-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/rock-paper-scissor/Exploit.sol)
+
+2. Blaz CTF 2023 - Eazy NFT
+   [Solution Report](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/eazy-nft/eazy-nft-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/eazy-nft/Exploit.t.sol)
+
+### 2024.09.12
 
 
 <!-- Content_END -->

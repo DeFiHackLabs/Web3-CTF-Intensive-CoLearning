@@ -108,6 +108,17 @@ KeShin, 合约安全新人
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/15-NaughtCoin/)
 
 ### 2024.9.11
+#### [Ethernaut CTF : 16 Preservation](https://ethernaut.openzeppelin.com/level/16)
+- 根据 delegatecall 的特性我们知道，是根据 LibraryContract 中函数的逻辑修改 Preservation 中的状态
+- 但是由于 Preservation 和 LibraryContract 的状态布局不一样，所以其实修改的是 timeZone1Library 值
+- 这样我们可以将值修改为一个我们自己部署的合约
+- 这个合约我们使用相同的布局，然后再 setTime 函数中修改 owner 的值
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/16-Preservation/)
+
+#### [Ethernaut CTF : 17 Recovery](https://ethernaut.openzeppelin.com/level/17)
+- 查看部署 instanace 的交易，可以找到 simpleToken 的地址
+- 调用自毁函数即可拿走 0.001 eth
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/17-Recovery/)
 
 ### 2024.9.12
 

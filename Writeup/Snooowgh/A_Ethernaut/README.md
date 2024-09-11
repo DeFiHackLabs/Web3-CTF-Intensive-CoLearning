@@ -538,3 +538,44 @@ contract Hack1 {
     }
 }
 ```
+
+## 27. DoubleEntryPoint
+LGT代币重写了transfer函数, DET代币可以通过LGT的transfer函数转移代币, 
+利用这一点CryptoVault的sweepToken函数可以通过LGT代币转移DET代币,
+通过DoubleEntryPoint合约获取cryptoVault, forta地址
+AlertBot需要阻止delegateTransfer函数调用, 此时handleTransaction函数可以获取到forta.notify()的msg.data
+从msg.data中解析出oriSender, 如果oriSender为cryptoVault, 则调用raiseAlert()函数
+
+参考: https://blog.dixitaditya.com/ethernaut-level-26-doubleentrypoint
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+
+interface IDetectionBot {
+    function handleTransaction(address user, bytes calldata msgData) external;
+}
+
+interface IForta {
+    function setDetectionBot(address detectionBotAddress) external;
+    function notify(address user, bytes calldata msgData) external;
+    function raiseAlert(address user) external;
+}
+
+contract AlertBot is IDetectionBot {
+    address cryptoVault = 0x67Ce4F0e71c82a278228DcAEb1830cdeE0DCFb95;
+
+    function handleTransaction(address user, bytes calldata msgData) external override {
+
+        address origSender;
+        assembly {
+            origSender := calldataload(0xa8)
+        }
+
+        if(origSender == cryptoVault) {
+            IForta(msg.sender).raiseAlert(user);
+        }
+    }
+}
+
+```

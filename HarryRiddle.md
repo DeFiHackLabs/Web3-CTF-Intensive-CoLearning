@@ -184,4 +184,12 @@ Plan:
 
 - [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/src/Motorbike.sol)
 
+### 2024.09.11
+
+#### Ethernaut CTF - [PuzzleWallet](https://ethernaut.openzeppelin.com/level/0x725595BA16E76ED1F6cC1e1b65A88365cC494824)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#267)
+
+- [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/src/PuzzleWallet.sol)
+
 <!-- Content_END -->

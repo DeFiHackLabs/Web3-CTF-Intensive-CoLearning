@@ -317,5 +317,25 @@ uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey)   == 
 
 今天继续 **Level 15 Naught Coin**
 
+看了半天没思路， google ，原来是用 approve 和 transferFrom 
+
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/naughtcoin.s.sol)
+
+### 2024.09.10
+**Level 16 preservation**
+今天下一关，说实话还是没看懂，感觉是代理的存储 slot 的利用，来修改 owner 的存储。
+写个 test 测试一下。
+
+delegatecall 代理的 storage 还是 Preservation 合约的存储，只是逻辑写在了 timezoneLibrary 里
+
+
+### 2024.09.11
+
+**Level 16 preservation**
+这一段也不简单啊，简单写了个测试，但是不知道为什么 timeZone1Library 赋值给 preservation合约后地址 与 timeZone1Library 合约地址不一样了
+
+
+
 
 <!-- Content_END -->
