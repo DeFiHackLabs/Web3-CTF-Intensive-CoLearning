@@ -52,4 +52,7 @@ timezone: Asia/Taipei
 今天解ETHTaipeiWarRoom WBC
 還沒解完
 有用到 assembly/gasleft/precompute contract address/ 等概念...
+
+### 2024.09.11
+今天解ETHTaipeiWarRoom WBC 不確定有沒有更好的方法
 <!-- Content_END -->
