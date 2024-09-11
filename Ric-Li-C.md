@@ -80,4 +80,12 @@ A.3 選 1 系列
 
         Completed 13-GatekeeperOne, 14-GatekeeperTwo
 
+### 2024.09.11
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 15-NaughtCoin
+
 <!-- Content_END -->

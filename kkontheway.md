@@ -75,4 +75,13 @@ A: Damn Vulnerable DeFi V4(3/18)
 
 ### 2024.09.09
 - 解决miloTruck-Escrow
+
+### 2024.09.10
+- 解决miloTruck-GreyHats-Dollar
+- 解决miloTruck-SimpleAMM
+
+### 2024.09.11
+- 解决miloTruck-Voting-vault
+- 解决miloTruck-Gnosis-Safe
+- 通过Gnosis-safe复习了Layout of Tuple
 <!-- Content_END -->

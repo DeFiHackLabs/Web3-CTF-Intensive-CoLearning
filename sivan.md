@@ -44,4 +44,7 @@ timezone: Asia/Shanghai
 ### 2024.09.10
 - Ethernaut CTF中DEXTWO题目，主要是缺少地址检查，可以传入自己的合约来返回恶意的数据。
 - [2024.9.10](./Writeup/Sivan/2024.9.10)
+### 2024.09.11
+- Ethernaut CTF中GatekeeperThree以及Switch两个题目，GatekeeperThree主要是要注意语法错误，导致构造函数变成了一个公共函数，任何人都可以调用，还有一点就是send函数如果发送失败会返回false，而不会直接回滚。Switch题目主要是要了解calldata的构成，通过接口调用外部函数，系统会自动生成calldata，并且不能控制里面包括偏移量、长度等数据，而通过call的方式调用合约，可以控制所有calldata数据，包括参数偏移位置、长度等。
+- [2024.9.11](./Writeup/Sivan/2024.9.11)
 <!-- Content_END -->

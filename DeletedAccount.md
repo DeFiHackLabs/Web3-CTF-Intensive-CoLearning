@@ -812,5 +812,70 @@ bytes memory data = hex"30c13ade000000000000000000000000000000000000000000000000
 - [Ethernaut29-Switch.sh](/Writeup/DeletedAccount/Ethernaut29-Switch.sh)
 - [Ethernaut29-Switch.s.sol](/Writeup/DeletedAccount/Ethernaut29-Switch.s.sol)
 
+### 2024.09.10
+
+- 繼續進行每日解一題挑戰
+
+#### [Ethernaut-30] HigherOrder
+
+- 過關條件: 使 `treasury` 的內容值變成大於 255
+- 解法:
+  - 這題的關鍵點在於 `pragma solidity 0.6.12;`
+  - 在 Solidity 0.8.0 以前，編譯器用的是 `ABIEncoderV1`
+  - 使用 `ABIEncoderV1` 意味著編譯出來的合約，並不會對 calldata 做邊界檢查
+  - https://docs.soliditylang.org/en/v0.8.1/080-breaking-changes.html?highlight=abicoder#silent-changes-of-the-semantics
+  - 所以我們手動建構 calldata 丟進去就可以了，不用管 calldata 有 `uint8` 的限制
+  - 要修復此問題，我們可以在合約指定 `pragma experimental ABIEncoderV2;` 即可
+  - 我做了兩個版本的 forge 腳本，一個是 for 通關用的
+    - `forge script Ethernaut30-Switch.s.sol:Solver -f $RPC_OP_SEPOLIA -vvvv --broadcast`
+  - 另一個是相同的通關腳本，但是使用了上 patch 的關卡，執行下去可以發現會 `revert()`
+    - `forge script Ethernaut30-Switch.s.sol:SolverV2 -f $RPC_OP_SEPOLIA -vvvv`
+
+- [Ethernaut30-HigherOrder.sh](/Writeup/DeletedAccount/Ethernaut30-HigherOrder.sh)
+- [Ethernaut30-HigherOrder.s.sol](/Writeup/DeletedAccount/Ethernaut30-HigherOrder.s.sol)
+- [Ethernaut30-HigherOrderV2.sol](/Writeup/DeletedAccount/Ethernaut30-HigherOrderV2.sol)
+
+
+### 2024.09.11
+
+- 繼續進行每日解一題挑戰
+
+#### [Ethernaut-31] Stake
+
+- 過關條件:
+  1. `Stake` 合約內的以太幣餘額大於 0
+  2. `totalStaked` 必須大於 `Stake` 合約的以太幣餘額
+  3. 我們必須成為一個 `Stakers`
+  4. 我們的 `UserStake` 必須為 0
+- 解法:
+  - 這個合約是 Solidity 0.8.0 編譯的，所以 overflow/underflow 看起來是不可行了
+    - 所以看起來 `StakeETH()` 沒什麼漏洞
+  - `Unstake()` 看起來有一個小問題: 沒有要求 `bool success` 必須為 True
+  - `0xdd62ed3e` 是 `allowance(address,address)`
+  - `0x23b872dd` 是 `transferFrom(address,address,uint256)`
+  - 由於沒有給出 `WETH` 的代碼，我們就先樂觀地假定它是一個正常的 ERC20 合約，漏洞不出在它身上
+  - `(,bytes memory allowance) = WETH.call(abi.encodeWithSelector(0xdd62ed3e, msg.sender,address(this)));` 這邊沒有檢查 call 是否成功，只有把 return value 當作 uint256 做後續處理
+  - 由於不清楚 `WETH.allowanapprovece(address,address)` 的具體實現方式，所以我們也不知道 `allowance` 究竟會是什麼值
+  - 但是題目說明提示我們要看 ERC20 的實現方式，我們可以樂觀的認為 WETH 應該也是個繼承了 ERC20 的合約
+  - `bytesToUint(bytes memory data)` 函數看起來也挺正常的，漏洞應該不在這裡。
+  - **`(bool transfered, ) = WETH.call(abi.encodeWithSelector(0x23b872dd, msg.sender,address(this),amount));` 沒有檢查 transfered 是否成功，即便 `transfered == false` 也給過！！!**
+  - 這意味著我們有沒有 WETH 都沒差
+    - 從這一個思路往下看，似乎也沒有任何地方聲明有發給我們一些 `WETH`
+  - 那我們就可以從這一點開始思考怎麼建構 exploit 了
+- 解法總結:
+  - 使用我們自己的 EOA 錢包
+    - 呼叫 `StakeETH{value: 0.001 ether + 1}()` 來滿足條件 1 和 3
+    - 呼叫 `Unstake(amount=0.001 ether + 1)` 來滿足條件 4，但同時取消滿足了 1
+    - 目前只有滿足 3 和 4，我們先來思考怎麼滿足條件 2
+  - 寫一個合約 (為了不要使用 EOA 錢包，保持滿足條件 4)
+    - 呼叫 `StakeWETH(amount=0.001 ether + 1)` 來滿足條件 2
+      - 在這之前會需要呼叫 `approve(address,uint256)`
+    - 呼叫 `StakeETH()` 然後在 `Unstake()` 來滿足條件 1
+      - 記得要保留 1 wei 在裡面才能滿足條件 1
+  - 把合約 `destruct()` 掉，把過程中用到的 0.001 ether 轉回來給 EOA
+
+- [Ethernaut31-Stake.sh](/Writeup/DeletedAccount/Ethernaut31-Stake.sh)
+- [Ethernaut31-Stake.s.sol](/Writeup/DeletedAccount/Ethernaut31-Stake.s.sol)
+
 
 <!-- Content_END -->

@@ -78,4 +78,7 @@ Solved 16 - Shards.
 
 WIP 17 - Curvy Puppet.
 
+### 2024.09.11
+WIP 17 - Curvy Puppet, a cheated solution (deal 570 eth to solve)
+
 <!-- Content_END -->
