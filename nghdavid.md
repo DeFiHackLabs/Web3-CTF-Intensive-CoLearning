@@ -325,6 +325,13 @@ abstract contract ReentrancyGuard {
 - 這樣require(balances[msg.sender] — _value >= 0)會因為overflow通過檢查
 - 而balances[msg.sender] -= _value會因為overflow變成超大的值(2²⁵⁶ - 1)
 
+### 2024.09.12
+# Ethernut第六題
+- 對Delegation呼叫且msg.data是帶abi.encodeWithSignature("pwn()")
+- 因為Delegation沒有對應的function selector，所以會掉到fallback function裏面
+- fallback function裡的address(delegate).delegatecall(msg.data)會成address(delegate).delegatecall(abi.encodeWithSignature("pwn()”)）
+- 因此Delegate合約的pwn()會被執行(delegate call)，造成Delegation的owner會變成你的address
+- 在delegate call下，msg.sender會是你，而不是Delegation的地址
 
 
 <!-- Content_END -->
