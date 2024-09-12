@@ -589,4 +589,18 @@ cast call 0x477C9b8Afa15DcF950fbAeEd391170C0eb0534C3 \
 - [Attacker](https://sepolia.etherscan.io/tx/0x160FeC247F3578DF771333FB5108352434AE3fAE)
 - [attack 交易](https://sepolia.etherscan.io/tx/0xd97d0d2933a94cc266086631dd13d9932a896f928d75616c86e5dbde9b25ce28)
 
+
+### 2024.09.11
+
+[The Ethernaut level 13](https://ethernaut.openzeppelin.com/level/0xb5858B8EDE0030e46C0Ac1aaAedea8Fb71EF423C)
+
+这一关的要求是通过三个守门员。
+- gateOne：msg.sender 和 tx.origin 不想等，这个很容易实现：通过部署一个中间合约去调用。
+- gateTwo：要求剩余 gas 为 8191 的整数倍，这个得暴力破解
+- gateThres：设计多个转换转换
+
+ps：脚本还在测试中
+
+
+
 <!-- Content_END -->

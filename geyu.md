@@ -58,6 +58,10 @@ writeup:[king ](./Writeup/geyu/writeup/09_King.md)
 ### 2024.09.10
 完成了 ethernaut 第 11 个练习 Re-entrancy
 writeup:[king ](./Writeup/geyu/writeup/10_Re-entrancy.md)
-
-
+### 2024.09.11
+完成了 ethernaut 第 12 个练习 Elevator
+writeup:[king ](./Writeup/geyu/writeup/11_Elevator.md)
+### 2024.09.12
+完成了 ethernaut 第 12 个练习 Elevator
+writeup:[Privacy](./Writeup/geyu/writeup/12_Privacy.md)
 <!-- Content_END -->

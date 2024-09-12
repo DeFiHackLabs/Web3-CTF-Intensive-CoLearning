@@ -60,4 +60,7 @@ vault 的密码 password 是以 bytes32 private 形式存储在 slot 中。通�
 
 ### 2024.09.10
 玩家可以通过 donate(address _to) 向目标合约充值 ETH ，通过 withdraw(uint256 _amount) 从目标合约中提取 ETH ，但提取的总量不能超过充值的总量。可以构造一个恶意合约利用重入（Re-entrancy）来多次调用目标合约，将其中的 ETH 提空。[10_ReEntrancy](./Writeup/0xNezha/Ethernaut/10_ReEntrancy/src/ReEntrancy_exp.sol)
+
+### 2024.09.11
+玩家需要编写一个合约：1.要实现目标合约接口里的函数 isLastFloor(uint256); 2.isLastFloor(uint256) 这个函数每被调用一次，返回值就要翻转一次，且首次调用返回的时是 false; 3.要调用目标合约的 goTo() 函数。[11_Elevator](./Writeup/0xNezha/Ethernaut/11_Elevator/src/Elevator_exp.sol)
 <!-- Content_END -->

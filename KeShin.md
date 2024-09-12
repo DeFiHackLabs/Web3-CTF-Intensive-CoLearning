@@ -108,8 +108,38 @@ KeShin, 合约安全新人
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/15-NaughtCoin/)
 
 ### 2024.9.11
+#### [Ethernaut CTF : 16 Preservation](https://ethernaut.openzeppelin.com/level/16)
+- 根据 delegatecall 的特性我们知道，是根据 LibraryContract 中函数的逻辑修改 Preservation 中的状态
+- 但是由于 Preservation 和 LibraryContract 的状态布局不一样，所以其实修改的是 timeZone1Library 值
+- 这样我们可以将值修改为一个我们自己部署的合约
+- 这个合约我们使用相同的布局，然后再 setTime 函数中修改 owner 的值
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/16-Preservation/)
+
+#### [Ethernaut CTF : 17 Recovery](https://ethernaut.openzeppelin.com/level/17)
+- 查看部署 instanace 的交易，可以找到 simpleToken 的地址
+- 调用自毁函数即可拿走 0.001 eth
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/17-Recovery/)
 
 ### 2024.9.12
+#### [Ethernaut CTF : 18 MagicNum](https://ethernaut.openzeppelin.com/level/18)
+- 需要实现一个 solver 合约，并实现 whatIsTheMeaningOfLife() 函数返回一个 bytes32 值
+- 由于合约大小有限制，用汇编来编写合约
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/18-MagicNum/)
+
+#### [Ethernaut CTF : 19 AlienCodex](https://ethernaut.openzeppelin.com/level/19)
+- 需要拿到合约的 owner 权限
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/19-AlienCodex/)
+
+#### [Ethernaut CTF : 20 Denial](https://ethernaut.openzeppelin.com/level/20)
+- 要求当其他人尝试 withdraw 时，在调用 gas 只有 1M 或更小时，同时合约仍然有钱时，让 owner 拿不到钱
+- 我们可以写一个合约让其成为 partner 
+- 在 withdraw 第一步给 partner 发送 ETH 时，我们重入 withdraw 函数，耗尽其 gas，这样 owner 就拿不到钱了
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/20-Denial/)
+
+#### [Ethernaut CTF : 21 Shop](https://ethernaut.openzeppelin.com/level/21)
+- 需要在购买商品的同时让购买价格低于售价
+- 则 price() 两次返回需要返回不同的数值，则我们可以查询 isSold 的状态来返回不同的值
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/21-Shop/)
 
 ### 2024.9.13
 
