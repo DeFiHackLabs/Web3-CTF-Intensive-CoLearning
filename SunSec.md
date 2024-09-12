@@ -108,5 +108,10 @@ timezone: Asia/Taipei
 ### 2024.09.10
 - DamnVulnerableDeFi #17 solved [Curvy Puppet](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#curvy-puppet) writeup 最後再更新出來, 讓大家體驗一下殘酷.
 - ✅ 完成 DamnVulnerableDeFi
-   
+
+### 2024.09.11
+- Grey Cat #3 [Simple AMM Vault](./Writeup/SunSec/greyhats-milotruck.md#simple-amm-vault)
+- Grey Cat #4 [Voting Vault](./Writeup/SunSec/greyhats-milotruck.md#voting-vault)
+- Grey Cat #5 [Meta Staking](./Writeup/SunSec/greyhats-milotruck.md#meta-staking)
+
 <!-- Content_END -->
