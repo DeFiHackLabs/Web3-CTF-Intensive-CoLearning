@@ -65,4 +65,16 @@ timezone: Asia/Shanghai
 
 完成 Ethernaut 第十一题
 
+### 2024.09.10
+
+完成 Ethernaut 第 12 题
+
+### 2024.09.11
+
+完成 Ethernaut 第 13 题
+
+### 2024.09.12
+
+完成 Ethernaut 第 14 题
+
 <!-- Content_END -->
