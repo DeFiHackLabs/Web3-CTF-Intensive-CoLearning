@@ -878,4 +878,52 @@ bytes memory data = hex"30c13ade000000000000000000000000000000000000000000000000
 - [Ethernaut31-Stake.s.sol](/Writeup/DeletedAccount/Ethernaut31-Stake.s.sol)
 
 
+### 2024.09.12
+
+- 繼續進行每日解一題挑戰
+
+#### [DamnVulner-31] Stake
+
+- 過關條件: 使 `_isSolved()` 通過執行
+- 合約代碼解讀筆記:
+  - 從 `_isSolved()` 的代碼注視我們可以觀察到，我們需要使 `Monitor.checkFlashLoan()` 的 [vault.flashLoan()](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableMonitor.sol#L41) 拋出 Error
+    - 這樣才能使 `Vault` 被 paused 並且 transferOwner 給 deployer
+  - 所以，我們基本上只需要重點關注 `Vault.flashLoan()` 裡面的漏洞即可，其他的程式碼大概都是煙霧彈
+  - 有四個地方可以讓 `Vault.flashLoan()` 執行過程中拋出錯誤
+    1. revert InvalidAmount(0);
+    2. revert UnsupportedCurrency();
+    3. revert InvalidBalance();
+    4. revert CallbackFailed();
+  - `revert InvalidAmount(0);` 這個不可能，因為 Monitor 已經在[這裡](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/unstoppable/Unstoppable.t.sol#L106)把 amount 寫死了
+  - `revert UnsupportedCurrency();` 也不可能，因為 Monitor 一樣在[這裡](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableMonitor.sol#L39)寫死了，這裡的 `.asset()` 是一個 `immutable`，完全沒有操縱的可能性
+  - `revert CallbackFailed();` 基本上也不太可能
+    - 因為看起來 `Monitor.UnexpectedFlashLoan()` error 也基本上沒辦法被 `Vault` 合約觸發到
+  - 唯一比較有機會的感覺是觸發 `revert InvalidBalance();`
+  - 這可能會需要我們操縱 `balanceBefore`
+  - 順帶一提，有 `balanceBefore` 但是沒有 `balanceAfter` 本身感覺就蠻奇怪的
+  - 已知 `balanceBefore` 可以視為 `asset.balanceOf(address(this))`
+  - 即: 在 `Vault` 提供呼叫者 flashLoan 之前，Vault 持有多少個 `asset`
+  - 現在思考的點: **如何使 Monitor 在呼叫 `Vault.flashLoan()` 的時候，使 [convertToShares(totalSupply) != balanceBefore](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableVault.sol#L85) 返回 True?**
+  - 我們從 `Vault` 的程式碼中可以觀察到一件事: **這個合約基本上不存在對 ERC4626 的 supply 和 shares 的額外操作**
+  - 那麼就意味著沒意外的話，我們可以認為 `convertToShares(totalSupply)` 是**樂觀地**假定返回值會始終等於 `Vault` 合約持有的 DVT 代幣數量
+  - 但萬一 Vault 持有的 DVT 代幣數量已經被操縱了呢？那麼 `convertToShares(totalSupply)` 的返回值就會和 `Vault` 合約實際持有的 DVT 代幣數量對不上
+  - 對不上的話，任何人來呼叫 `Vault.flashLoan()` 就都會拋出 `InvalidBalance()` Error
+- 解法整理:
+  - 利用關卡一開始發給我們的 10 顆 DVT 代幣
+  - 把這 10 顆 DVT 代幣轉帳給 `Vault` 合約
+  - 使它 `convertToShares(totalSupply) == balanceBefore == asset.balanceOf(address(this))` 對不上來
+  - 對不上來的時候，就會讓任何人(包含`Monitor`)呼叫 `Vault.flashLoan()` 時，拋出 `revert InvalidBalance();`
+  - 當 Monitor 遇到 `revert InvalidBalance();` error 的時候，就會把 `Vault` paused 掉、把 owner 轉回給 `deployer`
+- 解法代碼:
+
+```solidity
+function test_unstoppable() public checkSolvedByPlayer {
+    token.transfer(address(vault), 10e18);
+}
+```
+
+- 心得: 哎呀，解法其實超簡單，Damn Vulnerable DeFi 系列感覺是花更多時間在理解題目的代碼在寫什麼，蠻考驗 Code Review/Audit 的能力...
+
+
+
 <!-- Content_END -->
