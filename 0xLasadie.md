@@ -100,12 +100,12 @@ timezone: Asia/Singapore
 #### Damn Vulnerable DeFi - ABI Smuggling:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/abi-smuggling.md)
 
+#### Damn Vulnerable DeFi - Shards:
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/shards.md)
+
 ### 2024.09.13
 ### 2024.09.14
 ### 2024.09.15
-
-
-#### Damn Vulnerable DeFi - Shards:
 
 #### Damn Vulnerable DeFi - Curvy Puppet:
 
