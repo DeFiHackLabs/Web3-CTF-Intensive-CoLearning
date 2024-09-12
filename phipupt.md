@@ -602,5 +602,16 @@ cast call 0x477C9b8Afa15DcF950fbAeEd391170C0eb0534C3 \
 ps：脚本还在测试中
 
 
+### 2024.09.12
+(level 13 和 14 脚本还在进行中)
+[The Ethernaut level 15](https://ethernaut.openzeppelin.com/level/0x80934BE6B8B872B364b470Ca30EaAd8AEAC4f63F)
+
+这一关的要求是绕过时间限制提取所有代币
+
+仔细阅读合约发现，该合约实现了 Erc20 标准，并尝试防止初始代币持有者在给定的时间锁（timeLock）之前转移代币。合约在 transfer 函数商行添加了 lockTokens 修饰器，通过 msg.sender == player 限制了初始代币持有者提取时间。
+但是，erc20 合约不只一个转账函数。通过 arrprove 和 transferFrom，可以授权他人动用自己的币/
+因此，只要初始代币持有者委托给第三者进行转账即可提取所有代币。
+
+ps：脚本正在测试中
 
 <!-- Content_END -->
