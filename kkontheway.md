@@ -84,4 +84,8 @@ A: Damn Vulnerable DeFi V4(3/18)
 - 解决miloTruck-Voting-vault
 - 解决miloTruck-Gnosis-Safe
 - 通过Gnosis-safe复习了Layout of Tuple
+
+### 2024.09.12
+- Paradigm2023-Dai++
+- Paradigm2023-dodont
 <!-- Content_END -->

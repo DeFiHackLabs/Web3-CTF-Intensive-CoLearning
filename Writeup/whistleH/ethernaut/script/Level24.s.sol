@@ -7,8 +7,8 @@ import "forge-std/console.sol";
 
 
 contract Level24Solution is Script {
-    PuzzleWallet _puzzleWalletInstance = PuzzleWallet(payable(0x996F75cA440FC4bBA9106f933d516c0ec01F3949));
-    PuzzleProxy _proxyInstance = PuzzleProxy(payable(0x996F75cA440FC4bBA9106f933d516c0ec01F3949));
+    PuzzleWallet _puzzleWalletInstance = PuzzleWallet(payable(0x134A24C1eCbA3f77216Bd2b7B9DD5F7580Bd82af));
+    PuzzleProxy _proxyInstance = PuzzleProxy(payable(0x134A24C1eCbA3f77216Bd2b7B9DD5F7580Bd82af));
 
     function run() public{
         vm.startBroadcast();
