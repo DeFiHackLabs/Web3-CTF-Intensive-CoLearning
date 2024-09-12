@@ -79,6 +79,10 @@ timezone: Asia/Shanghai
 ### 2024.09.11
 
 - 1.Ethernaut CTF (31) - Privacy - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
-    - 结合昨天和今天学习内容，学到了 bytes 和 uint 变量内存布局的区别;
+
+### 2024.09.12
+
+- 1.Ethernaut CTF (31) - Gatekeeper One - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+   - 结合昨天和今天学习内容，学到了 bytes 和 uint 变量内存布局的区别;
 
 <!-- Content_END -->
