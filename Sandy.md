@@ -55,4 +55,8 @@ timezone: Asia/Taipei
 
 ### 2024.09.11
 今天解ETHTaipeiWarRoom WBC 不確定有沒有更好的方法
+
+### 2024.09.12
+完成題數：21
+今天解ETHTaipeiWarRoom Arcade 詳細poc明天補
 <!-- Content_END -->

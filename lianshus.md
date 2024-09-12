@@ -373,6 +373,22 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 
 
 
+### 2024.09.12
+
+学习內容:
+
+昨天清了一天假，今天仍然是在做题与写poc度过的，不过新学到了一些关于foundry的知识
+
+今天主要是在复现 naughtcoin
+
+学到了关于部署脚本里怎么切换用户
+
+可以从环境变量中读取私钥
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
+
 ### 2024.07.12
 
 <!-- Content_END -->

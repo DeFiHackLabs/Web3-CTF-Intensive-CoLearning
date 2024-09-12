@@ -84,4 +84,9 @@ Today:
 
 1. Solved Tornado crash from blaz ctf 2023.
 
+### 2024.09.11
+
+1. Investigated a solidity language bug <0.8.15 https://soliditylang.org/blog/2022/08/08/calldata-tuple-reencoding-head-overflow-bug/
+2. Tried decompile sui move bytecode into C/Python with claude 3.5.
+
 <!-- Content_END -->

