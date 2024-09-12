@@ -290,7 +290,7 @@ contract AttackDenial {
 2. 调用 weth 合约的 approve 方法增加授权
 3. 调用 StakeWETH 质押 weth，注意数额要比1大，实际并没有质押
 4. 调用 Unstake，将所有数量取出
-实例地址：
+实例地址：0x8F4BDfE756B27102E891B9fC1F623c1c1138279C
 
 
 <!-- Content_END -->
