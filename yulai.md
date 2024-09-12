@@ -283,5 +283,14 @@ contract AttackDenial {
 }
 ```
 
+### 2024.09.12
+#### Ethernaut - Stake
+合约的目的，是 总余额大于 eth 余额，只要往里面质押 weth 就好了。但是我们并没有 weth，这时观察合约，可以发现 StakeWETH 方法没有检查 transferFrom 方法的返回值，因此只要有授权，转账失败也没关系。
+1. 使用另一个账号质押 eth
+2. 调用 weth 合约的 approve 方法增加授权
+3. 调用 StakeWETH 质押 weth，注意数额要比1大，实际并没有质押
+4. 调用 Unstake，将所有数量取出
+实例地址：
+
 
 <!-- Content_END -->
