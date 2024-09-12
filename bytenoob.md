@@ -117,6 +117,10 @@ Finish ethernaut preservation
 
 Finish ethernaut recovery
 
+### 2024.09.12
+
+Finish ethernaut magicnumber
+
 
 
 <!-- Content_END -->
