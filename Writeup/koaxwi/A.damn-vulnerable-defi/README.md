@@ -349,5 +349,10 @@ Later we found that the curve fee is affordable if we add liquidity using stETH.
 (The curve will hold far more stETH than ETH, and we are also withdrawing lots of stETH with few ETH.)
 But it is actually not easy to withdraw stETH back to ETH in a single transaction.
 Seems we have to wait a few days before a normal withdraw? And there is nowhere to swap such a huge amount of funds.
-Stuck at here. Perhaps we should directly flash loan some stETH ...? (Leave it for tomorrow)
+
+Finally we thought of directly loaning stETH.
+By checking the [holder info](https://etherscan.io/token/0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84#balances) provided by etherscan, we know Aave v2 has stETH loan.
+What's more, its balance at the forked block is 173429 stETH, perfectly matching our requirement.
+The lost due to imbalance withdraw is only 11.2 ETH, while the loan fee is 0.09%, i.e. 153 eth fee for 170000 eth loan, also affordable.
+LP Token provided by treasure not used at all!
 

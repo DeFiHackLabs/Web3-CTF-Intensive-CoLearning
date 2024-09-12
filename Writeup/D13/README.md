@@ -18,7 +18,9 @@
 5. [level 14 - GatekeeperTwo](./script/14_GatekeeperTwo.s.sol)
 6. [level 15 - Naught Coin](./script/15_NaughtCoin.s.sol)
 7. [level 16 - Preservation](./script/16_Preservation.s.sol)
-7. [level 17 - Recovery](./script/17_Recovery.s.sol)
+8. [level 17 - Recovery](./script/17_Recovery.s.sol)
+9. [level 21 - Shop](./script/21_Shop.s.sol)
+
 
 
 ### Writeup
@@ -39,3 +41,5 @@
 5. [level 14 - GatekeeperTwo](./writeup/14_GatekeeperTwo.md)
 6. [level 15 - Naught Coin](./writeup/15_NaughtCoin.md)
 7. [level 16 - Preservation](./writeup/16_Preservation.md)
+8. [level 17 - Recovery](https://hackmd.io/@D13/ethernaut17)
+9. [level 21 - Shop](https://hackmd.io/@D13/ethernaut21)

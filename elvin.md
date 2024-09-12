@@ -479,6 +479,12 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
    [Solution Code](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/eazy-nft/Exploit.t.sol)
 
 ### 2024.09.12
+1. Blaz CTF 2023 - Lockless Swap
+   [Solution Report](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/lockless-swap/lockless-swap-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/lockless-swap/Exploit.sol)
+
+### 2024.09.13
+
 
 
 <!-- Content_END -->

