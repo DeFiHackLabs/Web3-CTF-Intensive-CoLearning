@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 interface IDoubleEntryPoint {
     function forta() external returns (Forta);
+    function cryptoVault() external returns (address);
 }
 
 interface IDetectionBot {
