@@ -205,4 +205,28 @@ https://ethereum.stackexchange.com/questions/15641/how-does-a-contract-find-out-
 
 https://docs.soliditylang.org/en/latest/assembly.html
 
+### 2024.09.11
+
+pass
+
+### 2024.09.12
+
+#### ERC20
+
+ERC20是以太坊的代币标准，包含了两个事件(`event`)和六个函数(`function`)。
+
+事件
+
+- Transfer: 转账时触发
+- Approve: 授权时触发
+
+函数
+
+- `totalSupply()`返回代币总供给
+- `balanceOf()`返回账户余额
+- `transfer()`转账
+- `allowance()`返回授权额度
+- `approve()`授权
+- `transferFrom()`授权转账
+
 <!-- Content_END -->
