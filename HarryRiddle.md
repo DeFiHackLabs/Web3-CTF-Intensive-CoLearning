@@ -192,4 +192,12 @@ Plan:
 
 - [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/src/PuzzleWallet.sol)
 
+### 2024.09.12
+
+#### Ethernaut CTF - [GoodSamaritan](https://ethernaut.openzeppelin.com/level/0x36E92B2751F260D6a4749d7CA58247E7f8198284)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#275)
+
+- [PoC](./Writeup/HarryRiddle/Ethernaut-CTF/src/GoodSamaritan.sol)
+
 <!-- Content_END -->
