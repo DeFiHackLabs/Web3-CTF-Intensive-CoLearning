@@ -906,4 +906,42 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/double_entry_po
 
 ### 2024.09.13
 
+#### 27. Good Samaritan
+
+这一关的目标是转走钱包中所有的代币
+
+攻击思路：
+1. 编写合约调用`GoodSamaritan`中的`requestDonation`函数，触发`wallet.donate10`
+2. `wallet.donate10`调用`coin.transfer`来给攻击合约转账10个代币
+3. `coin.transfer`中判断转账目标是合约后，会调用攻击合约的`notify`函数
+4. 我们需要再攻击合约中实现一个`notify`函数，revert`NotEnoughBalance`错误，用来触发`requestDonation`中的`wallet.transferRemainder(msg.sender)`逻辑
+5. `wallet.transferRemainder(msg.sender)`中会再次调用`coin.transfer`来将钱包内所有代币转给攻击合约
+6. 这次同样会触发攻击合约的`notify`，但这一次我们希望正常接收代币，不应该revert`NotEnoughBalance`错误，所以需要在`notify`中对`_amount`值判断等于10(因为第一次转账10个)时才去revert error
+
+编写攻击合约[good_samaritan_hack.sol](Writeup/awmpy/src/ethernaut/good_samaritan_hack.sol)
+编写攻击脚本[good_samaritan_hack.s.sol](Writeup/awmpy/script/ethernaut/good_samaritan_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/good_samaritan_hack.s.sol:GoodSamaritanHackScript -vvvv --broadcast
+```
+
+#### 28. Gatekeeper Three
+
+第一道门，`GatekeeperThree`的初始化函数写错了，直接调用`construct0r`函数就可以获得owner权限
+第二道门，在攻击合约中调用`createTrick`来创建`SimpleTrick`，再调用`getAllowance`时传入`block.timestamp`即可，因为在同一笔交易中`block.timestamp`相同，所以密码就是这个
+第三道门，在攻击合约中向目标发送0.0011 ether，并且攻击合约不实现`receive`函数
+
+编写攻击合约[gatekeeper_three_hack.sol](Writeup/awmpy/src/ethernaut/gatekeeper_three_hack.sol)
+编写攻击脚本[gatekeeper_three_hack.s.sol](Writeup/awmpy/script/ethernaut/gatekeeper_three_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/gatekeeper_three_hack.s.sol:GatekeeperThreeHackScript -vvvv --broadcast
+```
+
+### 2024.09.14
+
 <!-- Content_END -->
