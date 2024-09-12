@@ -87,4 +87,8 @@ timezone: Asia/Taipei
 
 - [A. Ethernaut CTF - level 12 Privacy](/Writeup/Ronas/Ethernaut%20CTF/level12.md)
 
+### 2024.09.11
+
+- [A. Ethernaut CTF - level 13 Gatekeeper One](/Writeup/Ronas/Ethernaut%20CTF/level13.md)
+
 <!-- Content_END -->

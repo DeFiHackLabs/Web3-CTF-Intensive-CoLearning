@@ -56,5 +56,7 @@ timezone: Pacific/Auckland
 ### 2024.09.11
 [[Damn Vulnerable DeFi V4] 15 | ABI Smuggling](./Writeup/0xE/DamnVulnerableDeFiV4/abi-smuggling.md)
 
+### 2024.09.12
+[[Damn Vulnerable DeFi V4] 16 | Shards](./Writeup/0xE/DamnVulnerableDeFiV4/shards.md)
 
 <!-- Content_END -->

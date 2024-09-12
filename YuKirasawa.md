@@ -119,4 +119,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 EthTaipei CTF 2023 的 Arcade、ETHTaipeiWarRoomNFT 题目。
 
+### 2024.09.11
+
+完成了 EthTaipei CTF 2023 的 Casino、WBC 题目。
+
 <!-- Content_END -->

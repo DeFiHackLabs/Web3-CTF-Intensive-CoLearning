@@ -110,5 +110,15 @@ timezone: Asia/Taipei
 
 - [POC](./Writeup/Tanner/test/QuillCTF/PseudoRandom.t.sol) 
 
+### 2024.09.11
+
+學習內容: 
+
+- 完成 SafeNFT
+
+#### [QuillAudit CTF - SafeNFT](./Writeup/Tanner/src/QuillCTF/SafeNFT.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/SafeNFT.t.sol) 
+
 
 <!-- Content_END -->

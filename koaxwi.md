@@ -81,4 +81,8 @@ WIP 17 - Curvy Puppet.
 ### 2024.09.11
 WIP 17 - Curvy Puppet, a cheated solution (deal 570 eth to solve)
 
+### 2024.09.12
+Finally solved 17 - Curvy Puppet.
+
+
 <!-- Content_END -->

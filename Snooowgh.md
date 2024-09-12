@@ -70,4 +70,8 @@ timezone: Asia/Shanghai
 
 完成A类Ethernaut CTF的第27题
 
+### 2024.09.12
+
+完成A类Ethernaut CTF的第28-30题
+
 <!-- Content_END -->
