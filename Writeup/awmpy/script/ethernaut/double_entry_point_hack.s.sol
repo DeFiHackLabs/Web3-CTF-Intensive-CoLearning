@@ -13,7 +13,7 @@ contract DoubleEntryPointHackScript is Script {
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
 
         address target = address(0x0F7d8096BE386Df26b0375e651dB0EE237085918);
-        address cryptoVault = address(target.cryptoVault());
+        address cryptoVault = IDoubleEntryPoint(target).cryptoVault();
         DoubleEntryPointHack doubleEntryPointHack = new DoubleEntryPointHack(cryptoVault);
         address forta = address(IDoubleEntryPoint(target).forta());
         IForta(forta).setDetectionBot(address(doubleEntryPointHack)); // Let setDetectionBot() to trigger delegateTransfer(), then we can call raiseAlert(user);
