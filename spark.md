@@ -913,5 +913,34 @@ contract D31eg4t3Exploit {
 }
 ```
 
+### 2024.09.12
+
+- Quill CTF: Collatz Puzzle
+https://github.com/devtooligan/collatzPuzzle/blob/main/test/CollatzPuzzle.sol
+
+```huff
+#define macro MAIN() = takes (0) returns (0) {
+  0x04 calldataload    // Load the input value 'n' from calldata at offset 0x04
+  0x02                 // Push the constant 2 onto the stack
+  dup2                 // Duplicate 'n' on the stack
+  mod                  // Calculate n % 2 to check if 'n' is even or odd
+  iszero               // Check if (n % 2) == 0
+  handleEvenCase jumpi // If 'n' is even, jump to the 'handleEvenCase' label
+  0x03                 // Push the constant 3 onto the stack
+  mul                  // Calculate 3 * n
+  0x1                  // Push the constant 1 onto the stack
+  add                  // Calculate (3 * n) + 1
+  returnResult jump    // Jump to the 'returnResult' label to return the result
+  
+  handleEvenCase:
+  0x01                 // Push the constant 1 onto the stack 
+  shr                  // Calculate n >> 1 (equivalent to n / 2)
+ 
+ returnResult:
+  returndatasize mstore // Store the result in memory
+  calldatasize returndatasize return // Return the result
+    
+}
+```
 
 <!-- Content_END -->
