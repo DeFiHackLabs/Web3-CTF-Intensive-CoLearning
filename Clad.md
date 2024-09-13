@@ -140,4 +140,14 @@ timezone: Asia/Taipei
   1.withdraw function 沒有先更新合約的餘額狀態, 就先與外部的合約互動進行轉帳, 會有 re-entrancy 風險
 解題:
   [Lev10-Reentrace](./Writeup/Clad/script/Lev10Sol.s.sol)
+
+### 2024.09.13
+學習內容:  
+目標: 讓合約的電梯能達到頂樓, bool top = true
+此合約的問題和風險: 合約的 external call 錯誤運用, 呼叫同一個 external call 兩次卻能得到不同回傳結果
+筆記:   
+    
+卡關:
+解題:
+  [Lev11](./Writeup/Clad/script/Lev11Sol.s.sol)
 <!-- Content_END -->
