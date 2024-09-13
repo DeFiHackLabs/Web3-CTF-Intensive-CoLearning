@@ -121,6 +121,10 @@ Finish ethernaut recovery
 
 Finish ethernaut magicnumber
 
+### 2024.09.13
+
+Finish ethernaut alien codex
+
 
 
 <!-- Content_END -->
