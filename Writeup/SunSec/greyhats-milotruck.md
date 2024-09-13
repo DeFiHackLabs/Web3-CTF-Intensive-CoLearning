@@ -143,8 +143,7 @@ ERC-4626 太複雜了，所以我做了一個 AMM，能在股份與資產之間�
 解題:
 - AMM 合約內預設題目上有 1000 SA shares 和 2000 grey 代幣, 在swap 功能中要滿足 computeK(reserveX, reserveY) >= k, AMM提供了 flashloan, 不用手續費.
 - Vault 合約預設有 2000 grey 代幣. 可以透過flashloan 借出 1000 SA, 可以把 vault 上的 2000 grey 領走, 在把 1000 grey 存入拿到 1000 SA, 在歸還給 flashloan.
-- 因為目前仍滿足 computeK(reserveX, reserveY) >= k, 1000+1000>= 2000, 所以可以透過 swap 使用 0 SA share 換出 1000 grey 代幣,
-  
+- 因為目前仍滿足 computeK(reserveX, reserveY) >= k, 1000+1000>= 2000, 所以可以透過 swap 使用 0 SA share 換出 1000 grey 代幣,  
 [POC:](./gratcat/test/simple-amm-vault.sol) 
 
 ```
@@ -239,6 +238,7 @@ function _subtractVotingPower(address delegatee, uint256 votes) internal {
 知識點:
 - 簡化版的多簽合約
 
+
 解題:
 - queueTransaction 需等VETO_DURATION 1分鐘後才能執行 executeTransaction 需繞過以下檢查
 
@@ -251,4 +251,5 @@ function _subtractVotingPower(address delegatee, uint256 votes) internal {
         );
         if (signer != transaction.signer) 
 ```
-- 看群裡討論是 solidity 0.8.15 的 [bug](https://blog.soliditylang.org/2022/08/08/calldata-tuple-reencoding-head-overflow-bug/) 
+- 搭配 solidity 0.8.16之前的 [Head Overflow Bug in Calldata Tuple ABI-Reencoding bug](https://blog.soliditylang.org/2022/08/08/calldata-tuple-reencoding-head-overflow-bug/) 當一個結構體（或元組）中包含一個變長的資料類型（如string 或bytes）時，在第二次進行ABI 編碼時，編譯器在處理calldata 數組到記憶體的轉換時會過度清理內存，導致第一個欄位的資料被清零.
+ 
