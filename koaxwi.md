@@ -84,7 +84,9 @@ WIP 17 - Curvy Puppet, a cheated solution (deal 570 eth to solve)
 ### 2024.09.12
 Finally solved 17 - Curvy Puppet.
 
-### 2024.09.12
-18 - Withdrawal
+### 2024.09.13
+Solved 18 - Withdrawal.
+
+Damn Vulnerable DeFi all set.
 
 <!-- Content_END -->
