@@ -90,6 +90,6 @@ A: Damn Vulnerable DeFi V4(3/18)
 - Paradigm2023-[dodont](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/Paradigm2023#blacksheep)
 
 ### 2024.09.13
-- Paradigm2023-GrainsOfSand
-- Paradigm2023-SkilledBasedGame
+- Paradigm2023-[GrainsOfSand](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/Paradigm2023#grainsofsand)
+- Paradigm2023-[SkilledBasedGame](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/Paradigm2023#skilledbasedgame)
 <!-- Content_END -->
