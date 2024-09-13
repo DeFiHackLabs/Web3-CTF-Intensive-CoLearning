@@ -94,4 +94,9 @@ Today:
 1. Review taichi audit group client PR.
 2. Tested claude 3.5 diagram drawing capabilities. Tomorrow I will let it try to manipulate raw calldata.
 
+### 2024.09.13
+
+1. Solved Greyhats Dollar from Milotruck challs.
+2. Solved Escrow from Milotruck challs.
+
 <!-- Content_END -->
