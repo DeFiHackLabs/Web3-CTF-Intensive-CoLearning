@@ -64,4 +64,7 @@ writeup:[king ](./Writeup/geyu/writeup/11_Elevator.md)
 ### 2024.09.12
 完成了 ethernaut 第 12 个练习 Elevator
 writeup:[Privacy](./Writeup/geyu/writeup/12_Privacy.md)
+### 2024.09.13
+完成了 ethernaut 第 13 个练习 GatekeeperOne
+writeup:[Privacy](./Writeup/geyu/writeup/13_Gatekeeper%20One.md)
 <!-- Content_END -->
