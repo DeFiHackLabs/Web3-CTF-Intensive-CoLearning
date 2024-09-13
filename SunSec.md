@@ -116,5 +116,6 @@ timezone: Asia/Taipei
 
 ### 2024.09.12
 - Grey Cat #6 [Gnosis Unsafe](./Writeup/SunSec/greyhats-milotruck.md#gnosis-unsafe)
+- 分了兩個簡單題目for bootcamp [加分題](https://hackmd.io/@SunWeb3Sec/SJIZhzbaC)
 
 <!-- Content_END -->
