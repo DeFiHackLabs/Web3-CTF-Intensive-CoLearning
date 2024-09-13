@@ -6,6 +6,7 @@ Writeup/Ric-Li-C/*.txt
 Writeup/*/*/.env
 Writeup/*/*/broadcast/
 Writeup/*/*/lib/
+Writeup/*/*/*/lib/
 Writeup/Ric-Li-C/ethernaut-foundry/script/solutions/*.bk.sol
 Writeup/Ric-Li-C/ethernaut-foundry/script/tannerang/
 Writeup/Ric-Li-C/ethernaut-foundry/src/

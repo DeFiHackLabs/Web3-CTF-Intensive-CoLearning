@@ -267,4 +267,15 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
     - No matter if the reciver can receive the token, the withdrawals will [finalized](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/withdrawal/L1Gateway.sol#L59-L69).
   - Finally, we should return the token back to the l1 bridge.
 
+### 2024.09.13
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18) **DONE**
+
+- CurvyPuppet
+  - [Curve LP Oracle Manipulation: Post Mortem](https://www.chainsecurity.com/blog/curve-lp-oracle-manipulation-post-mortem)
+    - [Resources]
+      - [Mai Finance’s Oracle Manipulation Vulnerability Explained](https://medium.com/amber-group/mai-finances-oracle-manipulation-vulnerability-explained-55e4b5cc2b82)
+      - [How to solve](https://github.com/code-423n4/2022-01-dev-test-repo-findings/issues/195)
+  - We can manipulate the curve pool using fund from [aave flashloan](https://docs.aave.com/developers/guides/flash-loans)
+
 <!-- Content_END -->

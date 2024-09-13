@@ -188,4 +188,12 @@ Link: https://github.com/MetaTrustLabs/ctf/blob/master/guessgame/contracts/A.sol
 
 Writeup: Identify a set of (`_random01`, `_random02`, `_random03`, `_random04`) that satisfies the requirements, specifically finding a `_random02` such that the operation `(uint160(address(msg.sender)) + random01 + random02 + random03 + _random02) & 0xff` equals `random02`, along with meeting the other conditions in the guess game function.
 
+### 2024.09.12
+
+(1) Paradigm DAI PLUS PLUS Challenge
+
+Link: https://github.com/paradigmxyz/paradigm-ctf-2023/tree/main/dai-plus-plus
+
+Writeup: The contract uses the clones-with-immutable-args library for integrating minimal proxies. However, there is a restriction that the data size must be less than 65,535 bytes, as the last 2 bytes are reserved for the data length. If this slot is overwritten, the created contract will contain unexpected bytecode, allowing the vulnerability to be exploited and bypass the health check.
+
 <!-- Content_END -->
