@@ -397,4 +397,11 @@ abi.encodeWithSignature("registerTreasury(uint8)", 256);
 if (convertToShares(totalSupply) != balanceBefore) revert InvalidBalance();
 ```
 把player的token转给vault就好
+
+### 2024.09.13
+
+#### A-DamnVaulnerableDefi-NaiveReceiver
+
+又卡住了... 
+
 <!-- Content_END -->
