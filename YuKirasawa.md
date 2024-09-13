@@ -123,4 +123,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 EthTaipei CTF 2023 的 Casino、WBC 题目。
 
+### 2024.09.12
+
+今天没做题，整理了一下这几天接触到的 solidity 和 EVM 的机制。
+
 <!-- Content_END -->

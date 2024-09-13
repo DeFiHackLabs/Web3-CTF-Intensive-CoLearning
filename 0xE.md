@@ -59,4 +59,8 @@ timezone: Pacific/Auckland
 ### 2024.09.12
 [[Damn Vulnerable DeFi V4] 16 | Shards](./Writeup/0xE/DamnVulnerableDeFiV4/shards.md)
 
+### 2024.09.13
+[[Damn Vulnerable DeFi V4] 17 | Curvy Puppet](./Writeup/0xE/DamnVulnerableDeFiV4/curvy-puppet.md)
+[[Damn Vulnerable DeFi V4] 18 | Withdrawal](./Writeup/0xE/DamnVulnerableDeFiV4/withdrawal.md)
+
 <!-- Content_END -->

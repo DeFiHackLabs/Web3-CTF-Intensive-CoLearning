@@ -102,4 +102,7 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.11
 - Gatekeeper one >
+
+### 2024.09.13
+- Gatekeeper two > [Gatekeeper two](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/14_Gatekeeper_Two.md)
 <!-- Content_END -->

@@ -89,4 +89,9 @@ Today:
 1. Investigated a solidity language bug <0.8.15 https://soliditylang.org/blog/2022/08/08/calldata-tuple-reencoding-head-overflow-bug/
 2. Tried decompile sui move bytecode into C/Python with claude 3.5.
 
+### 2024.09.12
+
+1. Review taichi audit group client PR.
+2. Tested claude 3.5 diagram drawing capabilities. Tomorrow I will let it try to manipulate raw calldata.
+
 <!-- Content_END -->

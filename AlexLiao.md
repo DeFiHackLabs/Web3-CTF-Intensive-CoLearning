@@ -180,4 +180,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.12
 
+挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [ETHTaipeiWarRoomNFT](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/ETHTaipeiWarRoomNFT)
+
+筆記連結： [ETH Taipei CTF 2023: ETHTaipeiWarRoomNFT](./Writeup/AlexLiao/ETHTaipeiCTF2023/ETHTaipeiWarRoomNFT.md)
+
+### 2024.09.13
+
 <!-- Content_END -->
