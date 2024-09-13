@@ -115,4 +115,29 @@ timezone: Asia/Taipei
   1.因為區塊鏈上的資訊公開透明, 所以不能把密碼寫在合約裡, 有被破解的風險
 解題:
   [Lev8-Vault](./Writeup/Clad/script/Lev8Sol.s.sol)
+
+### 2024.09.10
+學習內容:  
+目標: 1.成為合約的 King 2.讓其他人無法成為 King, 也就是 DOS 這個合約
+筆記:   
+  - DOS 在一定的時間內或永久讓合約無法運行原有功能
+卡關: 大概知道要另寫一個攻擊合約, call value 並給 >= prize, 但要給多少, 即便成功大於 prize 也是成為king, 要怎麼讓合約失效
+此合約的問題和風險
+解題:
+  [Lev9-King](./Writeup/Clad/script/Lev9Sol.s.sol)
+
+### 2024.09.12
+學習內容:  
+目標: 1.偷走合約所有的資產
+筆記:   
+  - re entrancy 步驟
+  - 呼叫 donate(), 往合約打入資金
+  - 呼叫 withdraw(), 提取資金, 順便透過 msg.sender.call 觸發你的攻擊合約
+  - 呼叫 receive(), 再次 withdraw() 提取資金
+  - 重複直到湖約的餘額小於 0
+    
+卡關: 流程有點複雜, 程式的執行順序還需要再釐清  
+  1.withdraw function 沒有先更新合約的餘額狀態, 就先與外部的合約互動進行轉帳, 會有 re-entrancy 風險
+解題:
+  [Lev10-Reentrace](./Writeup/Clad/script/Lev10Sol.s.sol)
 <!-- Content_END -->

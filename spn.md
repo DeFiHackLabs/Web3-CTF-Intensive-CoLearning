@@ -53,4 +53,13 @@ bytecodeVault(https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/
 ### 2024.09.09
 [greeterGate](https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/src/greeterGate.md)
 
+### 2024.09.10
+看了metatrust的zkplus和openzeppelin的beef，只能说密码抽象题太搞了（x and 配置blazctf的时候docker环境出问题了还在修
+
+### 2024.09.11
+blazctf docker风水fuuuuuuuuuuuuuuuuuuuuuuuck 只能本地写测试合约了，写了helloworld rock ezNFT三道简单题缓解一下（
+[wp](https://github.com/spn21/web3-ctf-learning/tree/main/blazctf/src)
+
+### 2024.09.12
+blazctf的HideonBush，mev题做的太少了，对bot的审计不是很敏感，今天身体也不舒服难受难受🥲
 <!-- Content_END -->

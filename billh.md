@@ -43,4 +43,12 @@ Solved PairAssetManager.
 
 Solved StakeFrens.
 
+### 2024.09.11
+
+Solved DAI++.
+
+### 2024.09.12
+
+Solved Hop.
+
 <!-- Content_END -->

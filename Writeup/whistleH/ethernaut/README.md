@@ -3,7 +3,7 @@
 ```shell
 # on chain
 forge script ./script/Level01.s.sol -vvvv --private-key $PRI_KEY --rpc-url https://rpc.ankr.com/eth_sepolia --broadcast
-````
+```
 
 ## Level 00 - Hello
 
@@ -380,4 +380,19 @@ forge script ./script/Level01.s.sol -vvvv --private-key $PRI_KEY --rpc-url https
 3. 在DexTWO的swap函数中不再要求只进行token1和token2之间的交换
 4. 因此，我们只需要部署一个token3，让token3参与交换，就可以将token1和token2中剩余的那个一网打尽
 5. 具体的PoC见[Level 23-PoC](./script/Level23.s.sol)
+
+## Level 24 - PuzzleWallet
+
+### Target
+
+1. storage与delegateCall的关系
+2. 逻辑漏洞
+
+### PoC
+
+1. 在之前的题目已经做过，delegateCall需要我们去注意Storage实际是构建了映射关系，真正的上下文是保留在委托发起的合约，因此我们可以通过proposeNewAdmin方法来修改owner
+2. 成为owner之后，我们可以将自己加为白名单
+3. 根据1，同理我们可以通过setMaxBalance来使得自己成为admin，但是这需要我们crack账户的balance
+4. 回头来看multicall，这里的风险在于我们可以通过重复调用multicall从而绕过了depositCalled这个限制
+5. 具体的PoC见[Level 24-PoC](./script/Level24.s.sol)
 

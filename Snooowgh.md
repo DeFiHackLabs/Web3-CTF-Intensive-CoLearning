@@ -66,4 +66,16 @@ timezone: Asia/Shanghai
 
 完成A类Ethernaut CTF的第26题
 
+### 2024.09.11
+
+完成A类Ethernaut CTF的第27题
+
+### 2024.09.12
+
+完成A类Ethernaut CTF的第28-30题
+
+### 2024.09.13
+
+完成A类Ethernaut CTF的第31-32题, 完结撒花 🎉🎉🎉
+
 <!-- Content_END -->

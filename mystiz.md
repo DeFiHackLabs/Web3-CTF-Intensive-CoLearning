@@ -306,6 +306,24 @@ Progress
 
 **Time used: 2h 20m and ongoing...**
 
+### 2024.09.11
+
+#### 📚 Reading: Ethereum's Yellow Paper
+
+#### 🏳️ OnlyPwner.xyz: Wrapped Ether
+
+**Time used: 55m and ongoing...**
+
+### 2024.09.12
+
+#### 📚 Reading: Hacks in Solidity by Example
+
+- https://solidity-by-example.org/hacks/re-entrancy/ (and the other pages)
+
+
+#### 🏳️ OnlyPwner.xyz: 13th Airdrop
+
+**Time used: 1h25m and ongoing...**
 
 <!-- Content_END -->
 

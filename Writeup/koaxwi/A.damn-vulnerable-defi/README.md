@@ -316,7 +316,7 @@ If we buy ~100 shards, the charge is 0 DVT.
 However we can get refund by canceling it (75e11).
 We can buy more shards with the refund, and canceling it will bankrupt the market.
 
-## Curvy Puppet (24/09/10 ~ WIP)
+## Curvy Puppet (24/09/10 ~ 24/09/12)
 Puppet lending pool once more.
 
 We need to liquidate three users, which requires borrowed value grows larger than the collateral’s value.
@@ -325,7 +325,60 @@ Each user borrows 1 LP Token, valuing `~7.68e23` (`getBorrowValue(borrowAmount) 
 The oracle has fixed the price for DVT and ETH, while the value of an LP Token is `curvePool.get_virtual_price()` multiplied by the ETH price.
 Therefore, we have to somehow enlarge the virtual price of the curve pool.
 
+The source code of the curve is [here](https://github.com/curvefi/curve-contract/blob/master/contracts/pools/steth/StableSwapSTETH.vy).
 The `curvePool.get_virtual_price` is determined by the pool's balance of ETH and stETH, and the total supply of the LP Token.
 Adding or removing liquidity will only change the virtual price by a little bit.
 
+A first thought is to transfer tokens to the curve without using `add_liquidity` method, so that its balances increase while the total supply remains.
+But it requires huge amount of funds, and we cannot take the token back.
 
+By reading [articles](https://www.chainsecurity.com/blog/curve-lp-oracle-manipulation-post-mortem), the read only reentrancy seems to be the solution.
+The curve has two assets: native ETH and stETH.
+During the removal the liquidity, the curve first burns the LP Token, then transfers the native ETH, and transfers stETH at last.
+The moment when we receive the native ETH, the virtual price is higher, because the balance of stETH has not decreased yet.
+With `remove_liquidity_imbalance`, we can even withdraw `1 wei` together with many stETH to further raise the virtual price.
+After the removal finished, the virtual price falls back to the normal level.
+
+First the trial starts with the cheat code `vm.deal`. We found that adding liquidity worthing ~170000 ether (in whatever division of assets, stETH has a `sumbit` method just similiar to `WETH.deposit`) and removing them is enough for the reentrancy attack to liquidate the users.
+Then we need to find some flash loan to fullfill the whole attack.
+We loaned 170000 WETH from multiple pools at first, and directly added the withdrawn ETH value to the curve's liquidity.
+However, there are ~650 ETH missing (as admin fee) after the attack, let alone the loan fee.
+A solution with cheat code [here](./Writeup/koaxwi/A.damn-vulnerable-defi/curvy-puppet/CurvyPuppetCheated.t.sol).
+
+Later we found that the curve fee is affordable if we add liquidity using stETH.
+(The curve will hold far more stETH than ETH, and we are also withdrawing lots of stETH with few ETH.)
+But it is actually not easy to withdraw stETH back to ETH in a single transaction.
+Seems we have to wait a few days before a normal withdraw? And there is nowhere to swap such a huge amount of funds.
+
+Finally we thought of directly loaning stETH.
+By checking the [holder info](https://etherscan.io/token/0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84#balances) provided by etherscan, we know Aave v2 has stETH loan.
+What's more, its balance at the forked block is 173429 stETH, perfectly matching our requirement.
+The lost due to imbalance withdraw is only 11.2 ETH, while the loan fee is 0.09%, i.e. 153 eth fee for 170000 eth loan, also affordable.
+LP Token provided by treasure not used at all!
+
+## Withdrawal (24/09/13)
+As the operator of `L1Gateway`, we are required to finalize four withdrawals of the gateway.
+The role provides the privilege to finalize any withdrawal without a valid merkle proof, but we are still confined with the delay period (7 days).
+
+Let alone the timestamp check, we do not know the parameters of those withdrawals yet.
+The information we have is the leaf hash and some logs json, so the first thing to do is decoding the logs.
+The logs share the same topic, matching `L2MessageStore: event MessageStored(bytes32 id, uint256 indexed nonce, address indexed caller, address indexed target, uint256 timestamp, bytes data)`.
+The `id` field is a keccak hash of other parameters, and it is also served as the leaf hash.
+
+Then for the delay check, the challenge sets the current timestamp to `1718786915`, while the timestamps of the withdrawals are `1718786915, 1718786965, 1718787050, 1718787127`.
+The challenge's `_isSolved` does not check the timestamp, therefore we can skip the delay period, and directly finalize those withdrawals.
+However, the token bridge will actually send the tokens, and the check for bridge's token balance will fail.
+So we should take a look at the details of the withdrawal.
+
+When we call `finalizeWithdrawal` with the data in the logs, the `l2Sender` and `target` is `l2Handler` and `l1Forwarder` respectively.
+`l1Gateway` will forward the message to the `l1Forwarder`, and the message is actually a call to `forwardMessage`.
+Then `l1Forwarder` will call `l1TokenBridge.executeTokenWithdrawal` as specified, and the bridge will transfer 10e18 tokens for the first, second and fourth withdrawals, and 999000e18 for the third (the suspicious one).
+
+Both `l1Gateway` and `l1Forwarder` do not revert on a failed forward call.
+Therefore we can withdraw most of tokens to our address first, so that the finalization of the suspicous withdrawal will fail internally (due to insufficient balance), while the other nomal ones will succeed.
+The gateway will mark all withdrawals as finalized, and we can return the tokens back finally.
+
+Note: By taking all tokens to our address, all the four withdrawals will fail. It can pass all tests, but doesn't seem to suite the description of this challenge.
+
+All tasks solved 🎉
+![](forge_test.png)

@@ -317,5 +317,38 @@ uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey)   == 
 
 今天继续 **Level 15 Naught Coin**
 
+看了半天没思路， google ，原来是用 approve 和 transferFrom 
+
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/naughtcoin.s.sol)
+
+### 2024.09.10
+**Level 16 preservation**
+今天下一关，说实话还是没看懂，感觉是代理的存储 slot 的利用，来修改 owner 的存储。
+写个 test 测试一下。
+
+delegatecall 代理的 storage 还是 Preservation 合约的存储，只是逻辑写在了 timezoneLibrary 里
+
+
+### 2024.09.11
+
+**Level 16 preservation**
+这一段也不简单啊，简单写了个测试，但是不知道为什么 timeZone1Library 赋值给 preservation合约后地址 与 timeZone1Library 合约地址不一样了
+
+今天 arb sepolia 又创建不了new instance合约 
+
+### 2024.09.12
+这几天rpc网络不好呢， 创建instance 合约都不行，我先看看下一关吧
+
+**Level 17 recovery**
+这个还行比较简单， 从区块浏览器中 internal transaction中找到 生成的合约的contract 地址， 然后通过remix IDE，调用 SimpleToken 的 destroy 函数，这样就把SimpleToken合约中的代币转移走了
+
+RPC突然好用了， 我测试了一下 调用 setFirstTime， setSecondTime 会把 timeZone1Library 变量替换掉，如果把 timeZone1Library 替换成另一个合约， 这个合约的第三个变量为 owner，那么再调用 setFirstTime，传入新的 owner地址 就可以修改 owner了
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/preservation_poc.s.sol)
+
+### 2024.09.13
+
+今天忘了太忙了 忘了带电脑回家家 手机github在线打卡 明天补上
 
 <!-- Content_END -->

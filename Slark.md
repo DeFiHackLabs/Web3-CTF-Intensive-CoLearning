@@ -108,4 +108,11 @@ timezone: Asia/Shanghai
         - 第一个限制通过攻击合约代理即可绕过（和昨天 level13 一样）
         - 第二个限制是调用者合约的代码大小必须为 0，这个可以将攻击代码放在 constructor 中完成
         - 第三个限制还是业务规则的 key，反向计算 xor 值即可 
+
+### 2024.09.11
+
+今天打卡 A 系列 `ethernaut`，1 个关卡
+- [level15](https://ethernaut.openzeppelin.com/level/0x80934BE6B8B872B364b470Ca30EaAd8AEAC4f63F)
+    - 这个关卡主要是提示 ERC20 的转账方式不止 transfer 方法一个，还可以利用 approve + transferFrom，除了 approve 也还有 permit 方式获得 “授权”
+    
 <!-- Content_END -->

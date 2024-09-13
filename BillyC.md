@@ -73,5 +73,19 @@ https://hackmd.io/@0xbc000/ByNgS2unR
 1. ethernaut level17
 2. ethernaut level18
 
+### 2024.09.11
+1. Damn Vulnerable Defi - Compromised
+https://hackmd.io/@0xbc000/BJD8HhqnA
+
+### 2024.09.12
+1. ethernaut level19
+2. ethernaut level20
+
+### 2024.09.12
+1. ethernaut level21
+2. DefiHackLabs加分題
+https://sepolia.etherscan.io/tx/0x1655a6cadb26e786be6a3fb7f8bb2e6552eec7f8ef9796767ce04cbabdda575c
+3. 開始學習 https://github.com/chaitin/Real-World-CTF-6th-Challenges/tree/main/SafeBridge
+
 
 <!-- Content_END -->

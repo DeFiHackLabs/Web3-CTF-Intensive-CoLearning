@@ -263,3 +263,82 @@ This code is implied that the contract sender does not have any code. Therefore,
 
 - Description:
   - The `Motorbike` contract is proxy contract to delegate `delegatecall` to `Engine` contract as an implementation contract. Using `selfdestruct` to break the `Engine` contract, we have to takeover the `Engine` contract to be able to call `upgradeToAndCall` function. We will deploy a `Hack` contract to be an new implementation contract with a `hack` function containing `selfdestruct`. To takeover the `Engine` contract, we have to call `initialize` function to set `upgrader` to our wallet and call `upgradeToAndCall` with arguments as `Hack` contract address and signature of `hack` function.
+
+**Puzzle Wallet**
+
+- Description: The proxy and implementation contract does not match with storage slot each other. To become `PuzzleProxy::admin`, we will do step-by-step:
+  - Become `owner`: `owner` and `pendingAdmin` variable is stored in same slot 0. So we can set `pendingAdmin` to be able to change `owner`
+  - Call `addToWhitelist` function to become `whitelisted`
+  - Drain all contract's balance, we can drain all the balance because `multicall` function accept re-entry it to call `deposit` 2 times with only `0.001 ether`.
+  - Call `setMaxBalance` function with `msg.sender` as an argument casted to `uint256`.
+
+**Good Samaritan**
+
+- Description: The `GoodSamaritan::requestDonation` function will be call by anyone if they need some tokens. However, this function is using `try catch` to check the succeed of `Wallet::donate10` function invoke and if this function is failed and the error return is equal `abi.encodeWithSignature("NotEnoughBalance()")` the wallet will send all tokens to caller. We should use `revert NotEnoughBalance()` in the `notify` function of our `Hack` contract.
+
+- POC:
+
+```javascript
+contract GoodSamaritan {
+    ...
+    function requestDonation() external returns (bool enoughBalance) {
+        // donate 10 coins to requester
+        try wallet.donate10(msg.sender) {
+            return true;
+        } catch (bytes memory err) {
+@>         if (keccak256(abi.encodeWithSignature("NotEnoughBalance()")) == keccak256(err)) {
+                // send the coins left
+@>              wallet.transferRemainder(msg.sender);
+                return false;
+            }
+        }
+    }
+}
+
+contract Coin {
+    ...
+    function transfer(address dest_, uint256 amount_) external {
+        uint256 currentBalance = balances[msg.sender];
+
+        // transfer only occurs if balance is enough
+        if (amount_ <= currentBalance) {
+            balances[msg.sender] -= amount_;
+            balances[dest_] += amount_;
+
+            if (dest_.isContract()) {
+                // notify contract
+@>              INotifyable(dest_).notify(amount_);
+            }
+        } else {
+            revert InsufficientBalance(currentBalance, amount_);
+        }
+    }
+}
+
+contract Wallet {
+    ...
+    function donate10(address dest_) external onlyOwner {
+        // check balance left
+        if (coin.balances(address(this)) < 10) {
+            revert NotEnoughBalance();
+        } else {
+            // donate 10 coins
+            coin.transfer(dest_, 10);
+        }
+    }
+
+    function transferRemainder(address dest_) external onlyOwner {
+        // transfer balance left
+        coin.transfer(dest_, coin.balances(address(this)));
+    }
+    ...
+}
+
+interface INotifyable {
+    function notify(uint256 amount) external;
+}
+```
+
+**GatekeeperThree**
+
+- Description: To deal with this `GatekeeperThree` contract, we will have knowledge in some terms such as `Low level function`, `How EVM storage works`. In `gateOne` check, we need to create an EOA account and use it to call `GatekeeperThree::construct0r` to be `GatekeeperThree::owner`, after that we just call the `GatekeeperThree::enter` function by this EOA. Next one, we have to call `GatekeeperThree::createTrick` to create `SimpleTrick` contract and `GatekeeperThree::getAllowance` function with a password which is read in `slot 2` of `SimpleTrick` contract's storage. Easily with `gateThree`, we send an amount ether larger than `0.001 ether` to `GatekeeperThree`.

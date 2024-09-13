@@ -105,4 +105,17 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 ### 2024.09.10
 完成 ethernaut 的 Privacy:
 [Day11](Writeup/Ray/Day11.md)
+
+### 2024.09.11
+完成 ethernaut 的 Gatekeeper One:
+[Day12](Writeup/Ray/Day12.md)
+
+### 2024.09.12
+完成 ethernaut 的 Gatekeeper Tne:
+[Day13](Writeup/Ray/Day13.md)
+
+### 2024.09.13
+完成 ethernaut 的 Gatekeeper Tne:
+[Day14](Writeup/Ray/Day14.md)
+
 <!-- Content_END -->

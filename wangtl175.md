@@ -188,4 +188,45 @@ pass
 - `pure`：`pure`修饰符表示函数既不会读取合约状态，也不会修改任何状态变量
 
 有这两个关键字修饰的函数调用时，不会消耗gas
+
+### 2024.09.10
+
+#### 读取合约的存储
+
+solidity的内存布局类似于传统的计算机语言，具体可以参考[这里](https://medium.com/@dariusdev/how-to-read-ethereum-contract-storage-44252c8af925)
+
+#### assembly
+
+可以用接近Ethereum虚拟机的语言，将Solidity语句与内联汇编交错使用。Solidity的内联汇编语言是[Yul](https://docs.soliditylang.org/en/latest/yul.html)
+
+`extcodesize(addr)`用于`addr`的代码长度，如果`addr`是外部地址（非合约），或者实在合约`addr`的构造函数中调用，则返回0
+
+https://ethereum.stackexchange.com/questions/15641/how-does-a-contract-find-out-if-another-address-is-a-contract
+
+https://docs.soliditylang.org/en/latest/assembly.html
+
+### 2024.09.11
+
+pass
+
+### 2024.09.12
+
+#### ERC20
+
+ERC20是以太坊的代币标准，包含了两个事件(`event`)和六个函数(`function`)。
+
+事件
+
+- Transfer: 转账时触发
+- Approve: 授权时触发
+
+函数
+
+- `totalSupply()`返回代币总供给
+- `balanceOf()`返回账户余额
+- `transfer()`转账
+- `allowance()`返回授权额度
+- `approve()`授权
+- `transferFrom()`授权转账
+
 <!-- Content_END -->

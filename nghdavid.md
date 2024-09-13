@@ -317,6 +317,21 @@ abstract contract ReentrancyGuard {
 - 如果使用合約呼叫changeOwner，這樣tx.origin就會是自己(EOA)，而msg.sender會是合約本身
 - 如此一來就能達到tx.origin != msg.sender，而成功改變owner
 
+### 2024.09.10
+# Ethernut第五題
+- 這題的關鍵是使用overflow來使自己的balance變成很大
+- 因為Token的合約定義每個人有20個幣
+- 所以只要對Token呼叫transfer(otherAddress, 21)即可
+- 這樣require(balances[msg.sender] — _value >= 0)會因為overflow通過檢查
+- 而balances[msg.sender] -= _value會因為overflow變成超大的值(2²⁵⁶ - 1)
+
+### 2024.09.12
+# Ethernut第六題
+- 對Delegation呼叫且msg.data是帶abi.encodeWithSignature("pwn()")
+- 因為Delegation沒有對應的function selector，所以會掉到fallback function裏面
+- fallback function裡的address(delegate).delegatecall(msg.data)會成address(delegate).delegatecall(abi.encodeWithSignature("pwn()”)）
+- 因此Delegate合約的pwn()會被執行(delegate call)，造成Delegation的owner會變成你的address
+- 在delegate call下，msg.sender會是你，而不是Delegation的地址
 
 
 <!-- Content_END -->
