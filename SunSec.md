@@ -114,4 +114,7 @@ timezone: Asia/Taipei
 - Grey Cat #4 [Voting Vault](./Writeup/SunSec/greyhats-milotruck.md#voting-vault)
 - Grey Cat #5 [Meta Staking](./Writeup/SunSec/greyhats-milotruck.md#meta-staking)
 
+### 2024.09.12
+- Grey Cat #6 [Gnosis Unsafe](./Writeup/SunSec/greyhats-milotruck.md#gnosis-unsafe)
+
 <!-- Content_END -->
