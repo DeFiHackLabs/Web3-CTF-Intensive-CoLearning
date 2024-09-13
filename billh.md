@@ -47,4 +47,8 @@ Solved StakeFrens.
 
 Solved DAI++.
 
+### 2024.09.12
+
+Solved Hop.
+
 <!-- Content_END -->

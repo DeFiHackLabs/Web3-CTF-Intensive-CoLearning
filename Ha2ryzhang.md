@@ -389,4 +389,12 @@ abi.encodeWithSignature("registerTreasury(uint8)", 256);
 卡住了(搞了好久依赖,和之前的ethernaut的冲突)
 
 
+### 2024.09.12
+
+#### A-DamnVaulnerableDefi-UnStoppable
+题目要求闪电贷失败.
+```solidity
+if (convertToShares(totalSupply) != balanceBefore) revert InvalidBalance();
+```
+把player的token转给vault就好
 <!-- Content_END -->

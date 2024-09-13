@@ -123,4 +123,17 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 EthTaipei CTF 2023 的 Casino、WBC 题目。
 
+### 2024.09.12
+
+今天没做题，整理了一下这几天接触到的 solidity 和 EVM 的机制。
+
+### 2024.09.13
+
+今天又没做题，整理了一下这几天使用到的工具。
+
+- https://tools.deth.net/tx-decoder 可以解析 16 进制交易数据
+- https://www.evm.codes/ EVM 操作码文档 (非官方)，playground 里可以解析字节码并单步模拟执行
+- https://app.dedaub.com/ethereum 合约安全分析工具
+- https://docs.metamask.io/wallet/reference/eth_sendtransaction/ 有一个可交互的工具，可以操作 metamask 发送交易
+
 <!-- Content_END -->

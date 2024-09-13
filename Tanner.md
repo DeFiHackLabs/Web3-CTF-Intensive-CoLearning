@@ -120,5 +120,25 @@ timezone: Asia/Taipei
 
 - [POC](./Writeup/Tanner/test/QuillCTF/SafeNFT.t.sol) 
 
+### 2024.09.12
+
+學習內容: 
+
+- 完成 TemporaryVariable
+
+#### [QuillAudit CTF - TemporaryVariable](./Writeup/Tanner/src/QuillCTF/TemporaryVariable.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/TemporaryVariable.t.sol) 
+
+### 2024.09.13
+
+學習內容: 
+
+- 完成 TrueXOR
+
+#### [QuillAudit CTF - TrueXOR](./Writeup/Tanner/src/QuillCTF/TrueXOR.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/TrueXOR.t.sol) 
+
 
 <!-- Content_END -->
