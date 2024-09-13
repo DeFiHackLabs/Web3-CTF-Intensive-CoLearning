@@ -325,6 +325,21 @@ Progress
 
 **Time used: 1h25m and ongoing...**
 
+### 2024.09.13
+
+#### Playing: Foundry's debugger
+
+```bash
+forge debug --debug src/bridge-takeover/Bridge.sol --sig "voteForNewRoot(bytes)" "0x"
+```
+
+#### 🏁 OnlyPwner.xyz
+
+> [!WARNING]
+> Finished _Bridge Takeover_ (~2h 15m)... Finally a solve after few days.
+
+...
+
 <!-- Content_END -->
 
 <!-- 
