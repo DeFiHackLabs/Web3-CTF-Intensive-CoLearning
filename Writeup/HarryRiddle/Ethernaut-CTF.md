@@ -338,3 +338,7 @@ interface INotifyable {
     function notify(uint256 amount) external;
 }
 ```
+
+**GatekeeperThree**
+
+- Description: To deal with this `GatekeeperThree` contract, we will have knowledge in some terms such as `Low level function`, `How EVM storage works`. In `gateOne` check, we need to create an EOA account and use it to call `GatekeeperThree::construct0r` to be `GatekeeperThree::owner`, after that we just call the `GatekeeperThree::enter` function by this EOA. Next one, we have to call `GatekeeperThree::createTrick` to create `SimpleTrick` contract and `GatekeeperThree::getAllowance` function with a password which is read in `slot 2` of `SimpleTrick` contract's storage. Easily with `gateThree`, we send an amount ether larger than `0.001 ether` to `GatekeeperThree`.
