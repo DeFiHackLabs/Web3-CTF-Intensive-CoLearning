@@ -125,6 +125,10 @@ Finish ethernaut magicnumber
 
 Finish ethernaut alien codex
 
+### 2024.09.14
+
+Finish ethernaut denial
+
 
 
 <!-- Content_END -->
