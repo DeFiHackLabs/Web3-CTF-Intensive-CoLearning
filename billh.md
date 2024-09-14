@@ -55,4 +55,8 @@ Solved Hop.
 
 Solved Grain of Salt.
 
+### 2024.09.14
+
+Solved Kentai.
+
 <!-- Content_END -->
