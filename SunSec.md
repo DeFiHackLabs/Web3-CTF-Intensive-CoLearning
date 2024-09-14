@@ -7,7 +7,7 @@ timezone: Asia/Taipei
 
 1. 自我介绍
    
-   [SunSec](https://x.com/1nf0s3cpt), Founder of DeFiHackLabs. 致力於安全教育和提升區塊鏈生態安全.
+   [SunSec](https://x.com/1nf0s3cpt) Founder of DeFiHackLabs. 致力於安全教育和提升區塊鏈生態安全.
 2. 你认为你会完成本次残酷学习吗？
    85%可以. 除非臨時任務太多XD 主要時間會花在協助大家完成共學.
 
