@@ -333,5 +333,13 @@ abstract contract ReentrancyGuard {
 - 因此Delegate合約的pwn()會被執行(delegate call)，造成Delegation的owner會變成你的address
 - 在delegate call下，msg.sender會是你，而不是Delegation的地址
 
+### 2024.09.13
+# Ethernut第七題
+- The goal is to make balance > 0
+- 因為該合約沒有任何receive與callback function
+- 所以無法打Eth給這個合約
+- 唯一的辦法是讓其他合約selfdestruct強制將其他合約的Eth轉給該合約
+- 所以就是創建一個合約，讓這個合約執行selfdestruct，指定該合約的地址為參數
+
 
 <!-- Content_END -->

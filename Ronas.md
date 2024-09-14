@@ -95,4 +95,8 @@ timezone: Asia/Taipei
 
 - [A. Ethernaut CTF - level 14 Gatekeeper Two](/Writeup/Ronas/Ethernaut%20CTF/level14.md)
 
+### 2024.09.13
+
+- [A. Ethernaut CTF - level 15 NaughtCoin](/Writeup/Ronas/Ethernaut%20CTF/level15.md)
+
 <!-- Content_END -->

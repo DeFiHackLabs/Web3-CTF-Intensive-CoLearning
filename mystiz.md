@@ -325,6 +325,41 @@ Progress
 
 **Time used: 1h25m and ongoing...**
 
+### 2024.09.13
+
+Progress
+
+* Damn Vulnerable DeFi (8/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+* OnlyPwner.xyz (10/16)
+
+
+#### 🎮 Playing: Foundry's debugger 🤩
+
+```bash
+forge debug --debug src/bridge-takeover/Bridge.sol --sig "voteForNewRoot(bytes)" "0x"
+```
+
+#### 🏁 OnlyPwner.xyz
+
+> [!WARNING]
+> Finished _Bridge Takeover_ (~2h 15m)... Finally a solve after few days.
+
+### 2024.09.14
+
+Progress
+
+* Damn Vulnerable DeFi (8/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+* OnlyPwner.xyz (11/16)
+
+#### 🏁 OnlyPwner.xyz
+
+> [!WARNING]
+> Finished _13th Airdrop_ (~2h 15m).
+
 <!-- Content_END -->
 
 <!-- 

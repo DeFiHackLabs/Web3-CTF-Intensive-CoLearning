@@ -378,7 +378,7 @@ Both `l1Gateway` and `l1Forwarder` do not revert on a failed forward call.
 Therefore we can withdraw most of tokens to our address first, so that the finalization of the suspicous withdrawal will fail internally (due to insufficient balance), while the other nomal ones will succeed.
 The gateway will mark all withdrawals as finalized, and we can return the tokens back finally.
 
-Note: By taking all tokens to our address, all the four withdrawals will fail. It can pass all tests, but doesn't seem to suite the description of this challenge.
+Note: By taking all tokens to our address, all the four withdrawals will fail. It can pass all tests, but doesn't seem to suit the description of this challenge.
 
 All tasks solved 🎉
 ![](forge_test.png)

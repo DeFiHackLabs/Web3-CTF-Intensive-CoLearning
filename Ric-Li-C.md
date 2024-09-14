@@ -104,4 +104,12 @@ A.3 選 1 系列
 
         Completed 20-Denial
 
+### 2024.09.14
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 21-Shop
+
 <!-- Content_END -->

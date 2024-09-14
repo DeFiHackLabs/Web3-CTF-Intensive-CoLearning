@@ -2,8 +2,8 @@
 
 pragma solidity <0.7.0;
 
-import "openzeppelin-contracts-06/utils/Address.sol";
-import "openzeppelin-contracts-06/proxy/Initializable.sol";
+import "./lib/openzeppelin-contracts-08/utils/Address.sol";
+import "./lib/openzeppelin-contracts-08/proxy/Initializable.sol";
 
 // NOTE our goal is to selfdestruct the motorbikes engine to make the bike unusable
 contract Motorbike {
