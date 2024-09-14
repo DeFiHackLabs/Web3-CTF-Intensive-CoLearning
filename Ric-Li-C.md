@@ -96,4 +96,20 @@ A.3 選 1 系列
 
         Trying to figure out 16, 17 and 18
 
+### 2024.09.13
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 20-Denial
+
+### 2024.09.14
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 21-Shop
+
 <!-- Content_END -->

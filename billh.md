@@ -47,4 +47,12 @@ Solved StakeFrens.
 
 Solved DAI++.
 
+### 2024.09.12
+
+Solved Hop.
+
+### 2024.09.13
+
+Solved Grain of Salt.
+
 <!-- Content_END -->

@@ -124,4 +124,12 @@ blazectf 后面题太难了，tony疯了我也疯了，要是都像amazex dss Pa
 [evm_puzzles6](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles6/)
 
 [evm_puzzles7](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles7/)
+
+### 2024.9.12
+[evm_puzzles8](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles8/)
+
+[evm_puzzles9](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles9/)
+
+### 2024.9.13
+[evm_puzzles10](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles10/)
 <!-- Content_END -->

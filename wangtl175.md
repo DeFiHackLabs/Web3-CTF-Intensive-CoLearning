@@ -205,4 +205,36 @@ https://ethereum.stackexchange.com/questions/15641/how-does-a-contract-find-out-
 
 https://docs.soliditylang.org/en/latest/assembly.html
 
+### 2024.09.11
+
+pass
+
+### 2024.09.12
+
+#### ERC20
+
+ERC20是以太坊的代币标准，包含了两个事件(`event`)和六个函数(`function`)。
+
+事件
+
+- Transfer: 转账时触发
+- Approve: 授权时触发
+
+函数
+
+- `totalSupply()`返回代币总供给
+- `balanceOf()`返回账户余额
+- `transfer()`转账
+- `allowance()`返回授权额度
+- `approve()`授权
+- `transferFrom()`授权转账
+
+### 2024.09.13
+
+#### delegatecall
+
+用户`A`通过合约`B`来`delegatecall`合约`C`时，合约`C`的上下文是`B`的，`msg.sender`是`A`的地址，只有逻辑是`C`的。如果函数改变了存储中的变量，真正改变的也是`B`中的存储。
+
+如果`B`和`C`的内存布局不一致，也会直接修改`B`的内存。
+
 <!-- Content_END -->

