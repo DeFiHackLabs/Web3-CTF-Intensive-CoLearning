@@ -15,3 +15,4 @@ ffi = true
 ast = true
 build_info = true
 extra_output = ["storageLayout"]
+auto_detect_solc = true

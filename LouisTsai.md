@@ -196,4 +196,12 @@ Link: https://github.com/paradigmxyz/paradigm-ctf-2023/tree/main/dai-plus-plus
 
 Writeup: The contract uses the clones-with-immutable-args library for integrating minimal proxies. However, there is a restriction that the data size must be less than 65,535 bytes, as the last 2 bytes are reserved for the data length. If this slot is overwritten, the created contract will contain unexpected bytecode, allowing the vulnerability to be exploited and bypass the health check.
 
+### 2024.09.13
+
+(1) Numen Wallet CTF Challenge
+
+Link: https://github.com/minaminao/ctf-blockchain/tree/main/src/NumenCTF/Wallet
+
+Writeup: The multisig wallet owner's private key is easily accessible online; however, when the private key is used to sign a message and then send it to the multisignature wallet, the transaction reverts because the holder address is a zero address instead of one of the signers. This occurs due to a compiler bug in Solidity 0.8.15, which allows us to bypass the check with an invalid signature, gaining access to all tokens in the wallet.
+
 <!-- Content_END -->
