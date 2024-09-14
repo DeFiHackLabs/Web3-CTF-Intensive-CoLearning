@@ -142,12 +142,23 @@ timezone: Asia/Taipei
   [Lev10-Reentrace](./Writeup/Clad/script/Lev10Sol.s.sol)
 
 ### 2024.09.13
-學習內容:  
-目標: 讓合約的電梯能達到頂樓, bool top = true
-此合約的問題和風險: 合約的 external call 錯誤運用, 呼叫同一個 external call 兩次卻能得到不同回傳結果
-筆記:   
-    
-卡關:
-解題:
-  [Lev11](./Writeup/Clad/script/Lev11Sol.s.sol)
+題目: Elvator  
+學習內容  
+目標: 讓合約的電梯能達到頂樓, bool top = true  
+此合約的問題和風險: 合約的 external call 錯誤運用, 呼叫同一個 external call 兩次卻能得到不同回傳結果  
+筆記:     
+解題:  
+  [Lev11-Elvator](./Writeup/Clad/script/Lev11Sol.s.sol)
+
+### 2024.09.14
+題目: Privacy    
+學習內容      
+目標: 解鎖合約, 把 locked 狀態改為 false  
+筆記:     
+    - 要會算每個變數的大小, 按規則寫入 slot
+    - 題目 unlock() 要與 key 判斷的 data[2] 在 slot 5
+    - cast storage 題目實例, 取得 key
+    - 照著題目把 key 轉換成 bytes32, 再轉成 bytes16 餵入 unlock()
+解題:  
+  [Lev12-Privacy](./Writeup/Clad/script/Lev12Sol.s.sol)  
 <!-- Content_END -->
