@@ -62,10 +62,146 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-Note
+(1) BlazCTF easy-nft challenge
 
-### 2024.07.12
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/eazy-nft
+
+Writeup: The `player` can call mint function and update the owner of a certain token through `ET:mint` function.
+
+(2) BlazCTF lockless-swap challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/lockless-swap
+
+Writeup: The reentrancy lock is not implemented in the PancakeSwap function, allowing an attacker to call the swap function and synchronize the reserve in the callback function, followed by minting liquidity tokens. Through a series of similar operations, the attacker can retrieve most of the liquidity in the pool.
+
+### 2024.08.30
+
+(1) BlazCTF Jambo challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/jambo
+
+Writeup: After decompilation, we observed that the value at storage slot 1 is initialized to the parameter: ```0x66757a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a7a6c616e64```. The setup function later calls ```revokeOwnership()```, but this call appears to have no impact. Upon analyzing the implementation of the answer function, we discovered that the input value must match the value at storage slot 0, and ```msg.value`` should exceed 1. Additionally, the function checks whether the caller is a contract. To bypass this check, we can initiate the attack within a constructor or by calling the contract from an EOA.
+
+(2) BlazCTF rock-paper-scissor challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/rock-paper-scissor
+
+Writeup: This is a straightforward pseudo-randomness vulnerability. By analyzing the `randomShape` function, we can determine the outcome and provide a specific input to exploit the contract.
+
+### 2024.08.31
+
+(1) DamnVulnerableDeFi V4 side-entrance challenge
+
+Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/side-entrance
+
+Writeup: there is reentrancy issue in the SideEntranceLenderPool, user can request flashloan and later deposit the borrowed asset into the pool when executing the callback function. Reentrancy lock is required to prevent such vulnerability.
+
+(2) DamnVulnerableDeFi V4 Truster challenge
+
+Link: https://www.damnvulnerabledefi.xyz/challenges/truster/
+
+Writeup: it is the arbitrary call vulnerability, attacker can forge a malicious calldata for the flash loan provider to approve allowance to the attacker, and after the flash loan is repaid, the attacker can withdraw the asset through `transferFrom`.
+
+### 2024.09.02
+
+(1) BlazCTF Maze challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/maze
+
+Writeup: The contract is written in pure Yul and utilizes Verbatim to generate bytecode for opcodes not defined by the Yul compiler. Our goal is to escape the Maze, but each attempt to move downward results in moving upward due to a bug in Verbatim mode, which restricts downward movement to twice only (see the restriction in not(iszero(sload(0xe)))). Consequently, we must find a path that requires moving downward fewer than two times.
+
+(2) DamnVulnerableDeFi V4 Free Rider Challenge
+
+Link: https://www.damnvulnerabledefi.xyz/challenges/free-rider/
+
+Writeup: The `buyMany` function calls the internal `_buyOne` function to check that the input ether is sufficient by examining `msg.value`. However, `msg.value` is used consistently throughout the transaction, allowing an attacker to submit less ether and acquire all the NFTs. Although the attacker might initially lack sufficient funds, they can borrow through Uniswap and repay later.
+
+### 2024.09.03
+
+(1) DamnVulnerableDeFi V4 Unstoppable Challenge
+
+Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/unstoppable
+
+Writeup: Our objective is to pause the vault and invoke the ownership transfer of the vault contract. This can only be achieved by failing to request a flash loan in `UnstoppableVault::flashLoan`. There is a requirement in the flash loan function, that `convertToShares(totalSupply)` should equal to `balanceBefore` value; if not, the transaction will revert. However, `balanceBefore` can be manipulated by directly depositing tokens into the vault contract, making the two values inequivalent.
+
+### 2024.09.04
+
+(1) Ethernaut Force Challenge
+
+Link: https://ethernaut.openzeppelin.com/level/0xb6c2Ec883DaAac76D8922519E63f875c2ec65575
+
+Writeup: Although a contract does not have `receive` and `fallback` to accept ether deposit, user can still force the contract to accept ether by `selfdesturct` low level call to transfer ether to the destination contract.
+
+(2) Ethernaut Vault Challenge
+
+Link: https://ethernaut.openzeppelin.com/level/0xB7257D8Ba61BD1b3Fb7249DCd9330a023a5F3670
+
+Writeup: The state variable with private visibility can still be queried on blockchain, in the vault contract, we can simply calculate the storage slot of the state variable and check the corresponding value using Alchemy Composer.
+
+### 2024.09.05
+
+(1) DamnVulnerableDeFi V4 Naive Receiver Challenge
+
+Link: https://github.com/theredguild/damn-vulnerable-defi/tree/v4.0.0/src/naive-receiver
+
+Writeup: The vulnerability stems from how ERC-2771 and multicall are implemented in older OpenZeppelin versions, where msg.sender is extracted from the last 20 bytes of the call data. An attacker can exploit this by appending an address to the call data, thereby manipulating the msg.sender value.
+
+### 2024.09.06
+
+(1) Ethernaut Preservation Challenge
+
+Link: https://ethernaut.openzeppelin.com/level/0x7ae0655F0Ee1e7752D7C62493CEa1E69A810e2ed
+
+Writeup: There is a delegatecall vulnerability in the contract. When the `setFirstTime` and `setSecondTime` functions are invoked, the `timeZone1Library` and `timeZone2Library` data are altered, respectively. An attacker can update the `timeZone1Library` address to a malicious address, causing a delegatecall to the malicious LibraryContract, which can then transfer ownership of the Preservation contract.
+
+### 2024.09.07
+
+(1) Ethernaut King Challenge
+
+Link: https://ethernaut.openzeppelin.com/level/0x3049C00639E6dfC269ED1451764a046f7aE500c6
+
+Writeup: First create a contract to become the king, without `receive` or `fallback` functions. If another user attempts to become the `king` by sending ether, the transaction will revert, causing a Denial of Service issue.
+
+### 2024.09.09
+
+(1) Ethernaut Reentrancy Challenge
+
+Link: https://ethernaut.openzeppelin.com/level/0x2a24869323C0B13Dff24E196Ba072dC790D52479
+
+Writeup: The contract fails to follow the Check-Effect-Interaction (CEI) pattern and lacks a reentrancy lock in the `Reentrance::withdraw` function. Consequently, an attacker can recursively re-enter the function through a fallback or receive function, allowing them to drain the contract's balance.
+
+### 2024.09.10
+
+(1) ETH Taipei ETHTaipeiWarRoomNFT Challenge
+
+Link: https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/ETHTaipeiWarRoomNFT
+
+Writeup: The challenger can first deposit tokens into the pool and later withdraw the NFT. The `safeTransferFrom` function will trigger the corresponding `onERC721Received` function in the receiver contract, allowing the challenger to re-enter the `Pool::withdraw` function up to 1,000 times, accumulating enough balance to pass the challenge.
+
+### 2024.09.11
+
+(1) MetaTrust Guessgame Challenge
+
+Link: https://github.com/MetaTrustLabs/ctf/blob/master/guessgame/contracts/A.sol
+
+Writeup: Identify a set of (`_random01`, `_random02`, `_random03`, `_random04`) that satisfies the requirements, specifically finding a `_random02` such that the operation `(uint160(address(msg.sender)) + random01 + random02 + random03 + _random02) & 0xff` equals `random02`, along with meeting the other conditions in the guess game function.
+
+### 2024.09.12
+
+(1) Paradigm DAI PLUS PLUS Challenge
+
+Link: https://github.com/paradigmxyz/paradigm-ctf-2023/tree/main/dai-plus-plus
+
+Writeup: The contract uses the clones-with-immutable-args library for integrating minimal proxies. However, there is a restriction that the data size must be less than 65,535 bytes, as the last 2 bytes are reserved for the data length. If this slot is overwritten, the created contract will contain unexpected bytecode, allowing the vulnerability to be exploited and bypass the health check.
+
+### 2024.09.13
+
+(1) Numen Wallet CTF Challenge
+
+Link: https://github.com/minaminao/ctf-blockchain/tree/main/src/NumenCTF/Wallet
+
+Writeup: The multisig wallet owner's private key is easily accessible online; however, when the private key is used to sign a message and then send it to the multisignature wallet, the transaction reverts because the holder address is a zero address instead of one of the signers. This occurs due to a compiler bug in Solidity 0.8.15, which allows us to bypass the check with an invalid signature, gaining access to all tokens in the wallet.
 
 <!-- Content_END -->

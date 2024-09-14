@@ -62,10 +62,138 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.29
 
-笔记内容
+挑戰題目：
 
-### 2024.07.12
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Unstoppable](https://www.damnvulnerabledefi.xyz/challenges/unstoppable/)
+
+筆記連結： [DamnVulnerableDeFi: Unstoppable](./Writeup/AlexLiao/DamnVulnerableDeFi/Unstoppable.md)
+
+### 2024.08.30
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Naive Receiver](https://www.damnvulnerabledefi.xyz/challenges/naive-receiver/)
+
+筆記連結： [DamnVulnerableDeFi: Naive Receiver](./Writeup/AlexLiao/DamnVulnerableDeFi/NaiveReceiver.md)
+
+### 2024.08.31
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Truster](https://www.damnvulnerabledefi.xyz/challenges/truster/)
+
+筆記連結： [DamnVulnerableDeFi: Truster](./Writeup/AlexLiao/DamnVulnerableDeFi/Truster.md)
+
+### 2024.09.01
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Side Entrance](https://www.damnvulnerabledefi.xyz/challenges/side-entrance/)
+
+筆記連結： [DamnVulnerableDeFi: Side Entrance](./Writeup/AlexLiao/DamnVulnerableDeFi/SideEntrance.md)
+
+### 2024.09.02
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [The Rewarder](https://www.damnvulnerabledefi.xyz/challenges/the-rewarder/)
+
+筆記連結： [DamnVulnerableDeFi: The Rewarder](./Writeup/AlexLiao/DamnVulnerableDeFi/TheRewarder.md)
+
+### 2024.09.03
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Selfie](https://www.damnvulnerabledefi.xyz/challenges/selfie/)
+
+筆記連結： [DamnVulnerableDeFi: Selfie](./Writeup/AlexLiao/DamnVulnerableDeFi/Selfie.md)
+
+### 2024.09.04
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Compromised](https://www.damnvulnerabledefi.xyz/challenges/compromised/)
+
+筆記連結： [DamnVulnerableDeFi: Compromised](./Writeup/AlexLiao/DamnVulnerableDeFi/Compromised.md)
+
+### 2024.09.05
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Puppet](https://www.damnvulnerabledefi.xyz/challenges/puppet/)
+
+筆記連結： [DamnVulnerableDeFi: Puppet](./Writeup/AlexLiao/DamnVulnerableDeFi/Puppet.md)
+
+### 2024.09.06
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Puppet V2](https://www.damnvulnerabledefi.xyz/challenges/puppet-v2/)
+
+筆記連結： [DamnVulnerableDeFi: Puppet V2](./Writeup/AlexLiao/DamnVulnerableDeFi/PuppetV2.md)
+
+### 2024.09.07
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Free Rider](https://www.damnvulnerabledefi.xyz/challenges/free-rider/)
+
+筆記連結： [DamnVulnerableDeFi: Free Rider](./Writeup/AlexLiao/DamnVulnerableDeFi/FreeRider.md)
+
+### 2024.09.08
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Backdoor](https://www.damnvulnerabledefi.xyz/challenges/backdoor/)
+
+筆記連結： [DamnVulnerableDeFi: Backdoor](./Writeup/AlexLiao/DamnVulnerableDeFi/Backdoor.md)
+
+### 2024.09.09
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Climber](https://www.damnvulnerabledefi.xyz/challenges/climber/)
+
+筆記連結： [DamnVulnerableDeFi: Climber](./Writeup/AlexLiao/DamnVulnerableDeFi/Climber.md)
+
+### 2024.09.10
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [ABI Smuggling](https://www.damnvulnerabledefi.xyz/challenges/abi-smuggling/)
+
+筆記連結： [DamnVulnerableDeFi: ABI Smuggling](./Writeup/AlexLiao/DamnVulnerableDeFi/ABISmuggling.md)
+
+### 2024.09.11
+
+挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [HelloWorld](https://github.com/dinngo/ETHTaipei-war-room/blob/main/src/HelloWorld/HelloWorld.sol)
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [Arcade](https://github.com/dinngo/ETHTaipei-war-room/blob/main/src/Arcade/Arcade.sol)
+
+筆記連結： [ETH Taipei CTF 2023: HelloWorld](./Writeup/AlexLiao/ETHTaipeiCTF2023/HelloWorld.md)
+
+筆記連結： [ETH Taipei CTF 2023: Arcade](./Writeup/AlexLiao/ETHTaipeiCTF2023/Arcade.md)
+
+### 2024.09.12
+
+挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [ETHTaipeiWarRoomNFT](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/ETHTaipeiWarRoomNFT)
+
+筆記連結： [ETH Taipei CTF 2023: ETHTaipeiWarRoomNFT](./Writeup/AlexLiao/ETHTaipeiCTF2023/ETHTaipeiWarRoomNFT.md)
+
+### 2024.09.13
+
+挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [Casino](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/Casino)
+
+筆記連結： [ETH Taipei CTF 2023: Casino](./Writeup/AlexLiao/ETHTaipeiCTF2023/Casino.md)
+
+### 2024.09.14
 
 <!-- Content_END -->

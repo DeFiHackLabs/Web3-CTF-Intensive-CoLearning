@@ -67,10 +67,73 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 <!-- Content_START -->
 
-### 2024.07.11
+### 2024.08.30
 
-笔记内容
+通过 Hello Ethernaut 学习了 Ethernaut 平台的交互方法。
 
-### 2024.07.12
+### 2024.08.31
+
+完成了 Ethernaut 的 Fallback 题目，了解了 wei、ether 等不同的 ether 单位，了解了使用 js api 发送 ether 和调用合约的方法。
+
+尝试搭建 Foundry 环境，还没有完全完成。
+
+### 2024.09.01
+
+完成了 Ethernaut 的 Fallout 题目。
+
+### 2024.09.02
+
+完成了 Foundry 环境搭建。
+
+完成了 Ethernaut 的 CoinFlip、Telephone 题目。
+
+### 2024.09.03
+
+完成了 Ethernaut 的 Token、Delegation、Force 题目。
+
+### 2024.09.04
+
+完成了 Ethernaut 的 Vault、King、Reentrance、Elevator 题目。
+
+### 2024.09.05
+
+完成了 Ethernaut 的 Privacy、GatekeeperOne、GatekeeperTwo、NaughtCoin、Preservation、Recovery 题目。
+
+### 2024.09.06
+
+完成了 Ethernaut 的 MagicNum、AlienCodex、Denial、Shop、Dex、DexTwo 题目。
+
+### 2024.09.07
+
+完成了 Ethernaut 的 PuzzleWallet、Motorbike、GoodSamaritan、GatekeeperThree、Switch 题目，DoubleEntryPoint 还没完全看懂。
+
+### 2024.09.08
+
+完成了 Ethernaut 的 HigherOrder 题目。
+
+### 2024.09.09
+
+完成了 Ethernaut 的 DoubleEntryPoint、Stake 题目，Ethernaut 的题目全部做完了。
+
+### 2024.09.10
+
+完成了 EthTaipei CTF 2023 的 Arcade、ETHTaipeiWarRoomNFT 题目。
+
+### 2024.09.11
+
+完成了 EthTaipei CTF 2023 的 Casino、WBC 题目。
+
+### 2024.09.12
+
+今天没做题，整理了一下这几天接触到的 solidity 和 EVM 的机制。
+
+### 2024.09.13
+
+今天又没做题，整理了一下这几天使用到的工具。
+
+- https://tools.deth.net/tx-decoder 可以解析 16 进制交易数据
+- https://www.evm.codes/ EVM 操作码文档 (非官方)，playground 里可以解析字节码并单步模拟执行
+- https://app.dedaub.com/ethereum 合约安全分析工具
+- https://docs.metamask.io/wallet/reference/eth_sendtransaction/ 有一个可交互的工具，可以操作 metamask 发送交易
 
 <!-- Content_END -->

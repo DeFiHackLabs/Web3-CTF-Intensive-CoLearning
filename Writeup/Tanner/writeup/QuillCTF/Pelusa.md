@@ -1,0 +1,6 @@
+
+- 目標：成功呼叫目標合約的 `shoot()`
+
+- 方法：這題考點有四個，一是要利用 constructor 避開 `msg.sender.code.length == 0` 的 code.length 檢查；二是要透過 CREATE2 opcode 計算出符合規則 `uint256(uint160(msg.sender)) % 100 == 10` 的地址，這裡可透過迴圈找出正確 CREATE2 的 `salt`，如此攻擊合約才可成為 `player`；三是要實作 `getBallPossesion()` 和利用 deployer 地址算出通過檢查所需的 `owner` 地址；四是攻擊合約要實作 `handOfGod()` 函式，delegatecall 才能呼叫到。
+
+- 步驟：``forge test --match-contract PelusaTest -vvvvv`` 這題使用 Factory 合約處理 CREATE2 地址的計算和檢查，首先 deployer 先部署 pelusa, factory 兩個合約，並直接透過 `owner = address(uint160(uint256(keccak256(abi.encodePacked(deployer, blockhash(block.number))))));` 計算出 owner 地址來通過考點三。接著執行 `findSaltForCondition()` 計算出符合考點二的攻擊合約地址，其中要注意地的是，因為攻擊合約建構子有帶入兩個參數，所以當計算 CREATE2 地址時的 `bytecode` 是需要一併將兩個傳入參數考慮進去，例如： `bytes memory bytecode = abi.encodePacked(type(Exploit).creationCode, abi.encode(pelusa, owner));` ，再來只要利用迴圈去執行 `factory.predictAddress()`，找出符合規則 `uint256(uint160(msg.sender)) % 100 == 10` 的 salt 即可往下走（這裡的 msg.sender 正是指攻擊合約）。在攻擊合約的 constructor 我們直接呼叫 `Pelusa(pelusa).passTheBall()`，原理是利用在 constructor 執行時的 runtime code 長度為 0 的特性避開 code.length 檢查。最後，要在攻擊合約內實作 `getBallPossesion()`, `handOfGod()` 這兩個 function，前者目的是返回 `owner` 地址來通過 `isGoal()` 的檢查，後者則是 delegatecall 執行 `handOfGod()` 時需要返回一個 bytes32 型態的 uint(22_06_1986)，

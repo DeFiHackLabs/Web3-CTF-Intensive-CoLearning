@@ -1,0 +1,22 @@
+[profile.default]
+src = 'src'
+out = 'out'
+libs = ['lib']
+
+fs_permissions = [
+    { access = "read", path = "./builds/uniswap/"},
+    { access = "read", path = "./test/the-rewarder/dvt-distribution.json"},
+    { access = "read", path = "./test/the-rewarder/weth-distribution.json"},
+    { access = "read", path = "./test/withdrawal/withdrawals.json"}
+]
+ignored_warnings_from = [
+    "src/wallet-mining/TransparentProxy.sol",
+    "lib/openzeppelin-contracts/contracts/proxy/Proxy.sol",
+    "src/curvy-puppet/ICryptoSwapPool.sol"
+]
+
+
+[rpc_endpoints]
+sepolia = "https://rpc.ankr.com/eth_sepolia"
+local = "http://127.0.0.1:8545"
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config
