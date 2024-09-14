@@ -58,9 +58,11 @@ timezone: Asia/Taipei
 
 ### 2024.09.12
 完成題數：21
+
 今天解ETHTaipeiWarRoom Arcade 詳細poc明天補
 
 ### 2024.09.14
 完成題數：23
+
 今天解Ethernaut MagicNumber&Alien Codex
 <!-- Content_END -->
