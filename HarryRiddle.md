@@ -208,7 +208,7 @@ Plan:
 
 - [Solution](./Writeup/HarryRiddle/Ethernaut-CTF/src/GatekeeperThree.sol)
 
-### 2024.09.13
+### 2024.09.14
 
 #### Ethernaut CTF - [Switch](https://ethernaut.openzeppelin.com/level/0xb2aBa0e156C905a9FAEc24805a009d99193E3E53)
 
