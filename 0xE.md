@@ -50,7 +50,7 @@ timezone: Pacific/Auckland
 [[Damn Vulnerable DeFi V4] 12 | Climber](./Writeup/0xE/DamnVulnerableDeFiV4/climber.md)
 
 ### 2024.09.10
-[[Damn Vulnerable DeFi V4] 13 | Wallet Mining](./Writeup/0xE/DamnVulnerableDeFiV4/wallet-mining.md)
+[[Damn Vulnerable DeFi V4] 13 | Wallet Mining](./Writeup/0xE/DamnVulnerableDeFiV4/wallet-mining.md)  
 [[Damn Vulnerable DeFi V4] 14 | Puppet V3](./Writeup/0xE/DamnVulnerableDeFiV4/puppet-v3.md)
 
 ### 2024.09.11
@@ -58,5 +58,13 @@ timezone: Pacific/Auckland
 
 ### 2024.09.12
 [[Damn Vulnerable DeFi V4] 16 | Shards](./Writeup/0xE/DamnVulnerableDeFiV4/shards.md)
+
+### 2024.09.13
+[[Damn Vulnerable DeFi V4] 17 | Curvy Puppet](./Writeup/0xE/DamnVulnerableDeFiV4/curvy-puppet.md)  
+[[Damn Vulnerable DeFi V4] 18 | Withdrawal](./Writeup/0xE/DamnVulnerableDeFiV4/withdrawal.md)
+
+### 2024.09.14
+[[EthTaipei CTF 2023] 1 | Arcade](./Writeup/0xE/EthTaipeiCTF2023/arcade.md)  
+[[EthTaipei CTF 2023] 2 | ETHTaipeiWarRoomNFT](./Writeup/0xE/EthTaipeiCTF2023/ethtaipeiwarroomnft.md)
 
 <!-- Content_END -->

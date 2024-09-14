@@ -316,7 +316,7 @@ If we buy ~100 shards, the charge is 0 DVT.
 However we can get refund by canceling it (75e11).
 We can buy more shards with the refund, and canceling it will bankrupt the market.
 
-## Curvy Puppet (24/09/10 ~ WIP)
+## Curvy Puppet (24/09/10 ~ 24/09/12)
 Puppet lending pool once more.
 
 We need to liquidate three users, which requires borrowed value grows larger than the collateral’s value.
@@ -356,3 +356,29 @@ What's more, its balance at the forked block is 173429 stETH, perfectly matching
 The lost due to imbalance withdraw is only 11.2 ETH, while the loan fee is 0.09%, i.e. 153 eth fee for 170000 eth loan, also affordable.
 LP Token provided by treasure not used at all!
 
+## Withdrawal (24/09/13)
+As the operator of `L1Gateway`, we are required to finalize four withdrawals of the gateway.
+The role provides the privilege to finalize any withdrawal without a valid merkle proof, but we are still confined with the delay period (7 days).
+
+Let alone the timestamp check, we do not know the parameters of those withdrawals yet.
+The information we have is the leaf hash and some logs json, so the first thing to do is decoding the logs.
+The logs share the same topic, matching `L2MessageStore: event MessageStored(bytes32 id, uint256 indexed nonce, address indexed caller, address indexed target, uint256 timestamp, bytes data)`.
+The `id` field is a keccak hash of other parameters, and it is also served as the leaf hash.
+
+Then for the delay check, the challenge sets the current timestamp to `1718786915`, while the timestamps of the withdrawals are `1718786915, 1718786965, 1718787050, 1718787127`.
+The challenge's `_isSolved` does not check the timestamp, therefore we can skip the delay period, and directly finalize those withdrawals.
+However, the token bridge will actually send the tokens, and the check for bridge's token balance will fail.
+So we should take a look at the details of the withdrawal.
+
+When we call `finalizeWithdrawal` with the data in the logs, the `l2Sender` and `target` is `l2Handler` and `l1Forwarder` respectively.
+`l1Gateway` will forward the message to the `l1Forwarder`, and the message is actually a call to `forwardMessage`.
+Then `l1Forwarder` will call `l1TokenBridge.executeTokenWithdrawal` as specified, and the bridge will transfer 10e18 tokens for the first, second and fourth withdrawals, and 999000e18 for the third (the suspicious one).
+
+Both `l1Gateway` and `l1Forwarder` do not revert on a failed forward call.
+Therefore we can withdraw most of tokens to our address first, so that the finalization of the suspicous withdrawal will fail internally (due to insufficient balance), while the other nomal ones will succeed.
+The gateway will mark all withdrawals as finalized, and we can return the tokens back finally.
+
+Note: By taking all tokens to our address, all the four withdrawals will fail. It can pass all tests, but doesn't seem to suit the description of this challenge.
+
+All tasks solved 🎉
+![](forge_test.png)

@@ -369,6 +369,36 @@ cast balance 0x111111... --rpc-url
 
 复现等明天补吧，每天都在赶之前的复现
 
+
+
+### 2024.09.12
+
+学习內容:
+
+昨天清了一天假，今天仍然是在做题与写poc度过的，不过新学到了一些关于foundry的知识
+
+今天主要是在复现 naughtcoin
+
+学到了关于部署脚本里怎么切换用户
+
+可以从环境变量中读取私钥
+
+POC -- NaughtCoin: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/NaughtCoin.md
+
+
+
+### 2024.09.14
+
+学习內容:
+
+昨天清了一天假，今天仍然是在做题与写poc度过的
+
+做了A 系列一题 Preservation，加油杀出新手村
+
+这道题结合了之前 delegatecall 的使用和插槽存储的特性
+
+对于 delegate 来说，A合约它改变的都是某一插槽的变量，而B合约最好存储插槽的类型是一致的，否则无法修改，这里通过修改插槽 0 为指定地址的攻击合约地址，再在攻击合约中实现对应数据的修改，具体，等我整理 POC
+
 POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
 
 

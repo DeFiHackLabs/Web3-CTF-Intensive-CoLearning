@@ -59,4 +59,10 @@ bytecodeVault(https://github.com/spn21/web3-ctf-learning/blob/main/metatrustctf/
 ### 2024.09.11
 blazctf docker风水fuuuuuuuuuuuuuuuuuuuuuuuck 只能本地写测试合约了，写了helloworld rock ezNFT三道简单题缓解一下（
 [wp](https://github.com/spn21/web3-ctf-learning/tree/main/blazctf/src)
+
+### 2024.09.12
+blazctf的HideonBush，mev题做的太少了，对bot的审计不是很敏感，今天身体也不舒服难受难受🥲
+
+### 2024.09.13
+lockless-swap(重入攻击太常见太能整活了)
 <!-- Content_END -->

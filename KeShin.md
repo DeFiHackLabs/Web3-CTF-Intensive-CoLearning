@@ -142,8 +142,16 @@ KeShin, 合约安全新人
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/21-Shop/)
 
 ### 2024.9.13
+#### [Ethernaut CTF : 22 Dex](https://ethernaut.openzeppelin.com/level/22)
+- 操纵 token 的价格
+- 一直在池子换，会导致价格不平衡，导致应该得到的 token 大于合约有的 token
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/22-Dex/)
 
 ### 2024.9.14
+#### [Ethernaut CTF : 23 DexTwo](https://ethernaut.openzeppelin.com/level/23)
+- 耗尽池子的所有 token
+- 一直调 swap ，尝试构造将池子中的所有 token 换出来
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/23-DexTwo/)
 
 ### 2024.9.15
 

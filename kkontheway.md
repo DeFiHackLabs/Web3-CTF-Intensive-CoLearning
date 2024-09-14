@@ -29,7 +29,7 @@ A: Damn Vulnerable DeFi V4(1/18)
 B: ETHTaipei2023
 
 C: Paradigm2023
-- 完成BlackSheep
+- 完成[BlackSheep](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/Paradigm2023#blacksheep)
 
 ### 2024.08.31
 
@@ -74,18 +74,25 @@ A: Damn Vulnerable DeFi V4(3/18)
 - 在旅游，今天只花了一个小时在OnlyPwner-ProofOfWork上，还没解出来。
 
 ### 2024.09.09
-- 解决miloTruck-Escrow
+- 解决miloTruck-[Escrow](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/MiloTruck)
 
 ### 2024.09.10
-- 解决miloTruck-GreyHats-Dollar
-- 解决miloTruck-SimpleAMM
+- 解决miloTruck-[GreyHats-Dollar](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/MiloTruck)
+- 解决miloTruck-[SimpleAMM](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/MiloTruck)
 
 ### 2024.09.11
-- 解决miloTruck-Voting-vault
-- 解决miloTruck-Gnosis-Safe
+- 解决miloTruck-[Voting-vault](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/MiloTruck)
+- 解决miloTruck-[Gnosis-Safe](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/MiloTruck)
 - 通过Gnosis-safe复习了Layout of Tuple
 
 ### 2024.09.12
-- Paradigm2023-Dai++
-- Paradigm2023-dodont
+- Paradigm2023-[Dai++](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/Paradigm2023#dai)
+- Paradigm2023-[dodont](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/Paradigm2023#blacksheep)
+
+### 2024.09.13
+- Paradigm2023-[GrainsOfSand](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/Paradigm2023#grainsofsand)
+- Paradigm2023-[SkilledBasedGame](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/kkontheway/src/Paradigm2023#skilledbasedgame)
+
+### 2024.09.14
+- Paradigm2023-100%
 <!-- Content_END -->

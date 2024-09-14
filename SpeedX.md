@@ -349,18 +349,9 @@ RPC突然好用了， 我测试了一下 调用 setFirstTime， setSecondTime �
 
 ### 2024.09.13
 
-**Level 17 recovery**
+今天忘了太忙了 忘了带电脑回家家 手机github在线打卡 明天补上
 
-昨天可能是合约搞错了， 今天重新创建了一个instance 合约，直接console里面调用， 我在remix里面不好使 不知道为什么。通过了这一关
-
-继续下一关 
-
-**Level 18 MagicNumber**
-### 2024.09.13
-
+### 2024.09.14
 今天继续有点晚了， 先打卡再肝。
-
-
-
 
 <!-- Content_END -->

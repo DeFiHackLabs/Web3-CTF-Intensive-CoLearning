@@ -47,4 +47,13 @@ timezone: Asia/Shanghai
 ### 2024.09.11
 - Ethernaut CTF中GatekeeperThree以及Switch两个题目，GatekeeperThree主要是要注意语法错误，导致构造函数变成了一个公共函数，任何人都可以调用，还有一点就是send函数如果发送失败会返回false，而不会直接回滚。Switch题目主要是要了解calldata的构成，通过接口调用外部函数，系统会自动生成calldata，并且不能控制里面包括偏移量、长度等数据，而通过call的方式调用合约，可以控制所有calldata数据，包括参数偏移位置、长度等。
 - [2024.9.11](./Writeup/Sivan/2024.9.11)
+### 2024.09.12
+- BlazCTF 2023中的NFT以及RockPaperScissors，比较简单，主要是nft合约中mint函数未检查代币是否存在。RockPaperScissors主要是要了解如何预测合约中的数据，可以通过相同的计算以及参数预测。
+- [2024.9.12](./Writeup/Sivan/2024.9.12)
+### 2024.09.13
+- Ethernaut 中的HigherOrder，主要是要了解calldataload的运作机制，读取的数据超过了uint8，导致能覆盖超过uint8的值给treasury。
+- [2024.9.13](./Writeup/Sivan/2024.9.13)
+### 2024.09.14
+- MetaTrust 2023 中的greeterGate，与Switch题目类似，不一样的是这题多了一层data需要包裹。
+- [2024.9.14](./Writeup/Sivan/2024.9.14)
 <!-- Content_END -->

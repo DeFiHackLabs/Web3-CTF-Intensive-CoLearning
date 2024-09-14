@@ -27,12 +27,7 @@ timezone: Asia/Taipei
 
 ### 2024.09.02
 
-- A. Ethernaut CTF - Level 4 Telephone
-    - `tx.origin` 及 `msg.sender` 的差異
-        - `tx.origin`: 發起交易的地址，通常為使用者的錢包地址
-        - `msg.sender`: function 的呼叫者，可以為使用者錢包，或是另一個合約
-    - 作法：寫一個合約代替直接發送，便可造成 `tx.origin` 及 `msg.sender` 出現不一致
-    - [PoC](./Writeup/Ronas/Ethernaut%20CTF/PoC/level4_telephone.sol)
+- [A. Ethernaut CTF - Level 4 Telephone](/Writeup/Ronas/Ethernaut%20CTF/level4.md)
 
 ### 2024.09.03
 
@@ -53,23 +48,11 @@ timezone: Asia/Taipei
 
 ### 2024.09.04
 
-- A. Ethernaut CTF - Level 7 Force
-    - 目標 `Force` 合約沒有 `fallback` 函數，因此無法透過 `fallback` 方式向目標發送 Ether
-    - `selfdestruct` 是一個自毀函數，可將合約身上的所有 Ether 直接轉往另一個合約
-    - [PoC](/Writeup/Ronas/Ethernaut%20CTF/PoC/level7_force.sol)
-- takeaways
-    - selfdestruct 函數
+- [A. Ethernaut CTF - level 7 Force](/Writeup/Ronas/Ethernaut%20CTF/level7.md)
 
 ### 2024.09.05
 
-- A. Ethernaut CTF - Level 8 Vault
-    - 由於區塊鏈的公開透明特性，可以直接從合約的 storage 取得這些私有變數值 `web3.eth.getStorageAt(contract.address, 1)`
-    - 解碼取得 password 值 `web3.utils.hexToAscii("0x412076657279207374726f6e67207365637265742070617373776f7264203a29")`
-    - Exploit `contract.unlock("0x412076657279207374726f6e67207365637265742070617373776f7264203a29")`
-
-- takeaways
-    - nothing is private in the blockchain
-    - any private data should either be stored off-chain, or carefully encrypted
+- [A. Ethernaut CTF - Level 8 Vault](/Writeup/Ronas/Ethernaut%20CTF/level8.md)
 
 ### 2024.09.06
 
@@ -90,5 +73,17 @@ timezone: Asia/Taipei
 ### 2024.09.11
 
 - [A. Ethernaut CTF - level 13 Gatekeeper One](/Writeup/Ronas/Ethernaut%20CTF/level13.md)
+
+### 2024.09.12
+
+- [A. Ethernaut CTF - level 14 Gatekeeper Two](/Writeup/Ronas/Ethernaut%20CTF/level14.md)
+
+### 2024.09.13
+
+- [A. Ethernaut CTF - level 15 NaughtCoin](/Writeup/Ronas/Ethernaut%20CTF/level15.md)
+
+### 2024.09.14
+
+- [A. Ethernaut CTF - level 16 Preservation](/Writeup/Ronas/Ethernaut%20CTF/level16.md)
 
 <!-- Content_END -->

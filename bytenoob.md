@@ -117,6 +117,18 @@ Finish ethernaut preservation
 
 Finish ethernaut recovery
 
+### 2024.09.12
+
+Finish ethernaut magicnumber
+
+### 2024.09.13
+
+Finish ethernaut alien codex
+
+### 2024.09.14
+
+Finish ethernaut denial
+
 
 
 <!-- Content_END -->

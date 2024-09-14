@@ -69,4 +69,12 @@ Sign up
 
 練習 Damn Vulnerable DeFi v4 - Side Entrance。
 
+### 2024.09.12
+
+練習 Damn Vulnerable DeFi v4 - Side Entrance。
+
+### 2024.09.13
+
+練習 Damn Vulnerable DeFi v4 - The Rewarder。
+
 <!-- Content_END -->

@@ -42,3 +42,25 @@ contract RecoverySolution is Script, EthernautHelper {
         console2.log(successMessage(17));
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////////
+// Start of Ric Li C's Solution (Extra Contract)
+// Additional contract codes to help solve this puzzle
+////////////////////////////////////////////////////////////////////////////////////
+contract Hacker {
+    address owner;
+    address contractAddress;
+
+    constructor(address ctrAddress) {
+        contractAddress = ctrAddress;
+    }
+
+    function changeOwner() external {}
+
+    function setTime(uint time) external {
+        owner = address(uint160(time));
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////
+// End of Ric Li C's Solution (Extra Contract)
+////////////////////////////////////////////////////////////////////////////////////

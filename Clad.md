@@ -125,4 +125,40 @@ timezone: Asia/Taipei
 此合約的問題和風險
 解題:
   [Lev9-King](./Writeup/Clad/script/Lev9Sol.s.sol)
+
+### 2024.09.12
+學習內容:  
+目標: 1.偷走合約所有的資產
+筆記:   
+  - re entrancy 步驟
+  - 呼叫 donate(), 往合約打入資金
+  - 呼叫 withdraw(), 提取資金, 順便透過 msg.sender.call 觸發你的攻擊合約
+  - 呼叫 receive(), 再次 withdraw() 提取資金
+  - 重複直到湖約的餘額小於 0
+    
+卡關: 流程有點複雜, 程式的執行順序還需要再釐清  
+  1.withdraw function 沒有先更新合約的餘額狀態, 就先與外部的合約互動進行轉帳, 會有 re-entrancy 風險
+解題:
+  [Lev10-Reentrace](./Writeup/Clad/script/Lev10Sol.s.sol)
+
+### 2024.09.13
+題目: Elvator  
+學習內容  
+目標: 讓合約的電梯能達到頂樓, bool top = true  
+此合約的問題和風險: 合約的 external call 錯誤運用, 呼叫同一個 external call 兩次卻能得到不同回傳結果  
+筆記:     
+解題:  
+  [Lev11-Elvator](./Writeup/Clad/script/Lev11Sol.s.sol)
+
+### 2024.09.14
+題目: Privacy    
+學習內容      
+目標: 解鎖合約, 把 locked 狀態改為 false  
+筆記:     
+    - 要會算每個變數的大小, 按規則寫入 slot
+    - 題目 unlock() 要與 key 判斷的 data[2] 在 slot 5
+    - cast storage 題目實例, 取得 key
+    - 照著題目把 key 轉換成 bytes32, 再轉成 bytes16 餵入 unlock()
+解題:  
+  [Lev12-Privacy](./Writeup/Clad/script/Lev12Sol.s.sol)  
 <!-- Content_END -->

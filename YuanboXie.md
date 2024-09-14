@@ -85,4 +85,17 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Gatekeeper One - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
    - 结合昨天和今天学习内容，学到了 bytes 和 uint 变量内存布局的区别;
 
+### 2024.09.13
+
+- 1.Ethernaut CTF (31) - Gatekeeper Two - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 对 solidity assembly 有了初步了解；
+- 1.Ethernaut CTF (31) - Naught Coin - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学习了 ERC20 标准，除了 transfer，还有 approve + transferFrom 的授权转账机制；
+
+### 2024.09.14
+
+- 1.Ethernaut CTF (31) - Preservation - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学习了 call 误用成了 delegateCall 导致的安全问题，以及通过 sstore 绕过变量定义直接对修改存储操的值；
+
+
 <!-- Content_END -->
