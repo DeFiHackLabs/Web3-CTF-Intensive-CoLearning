@@ -104,7 +104,12 @@ timezone: Asia/Singapore
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/shards.md)
 
 ### 2024.09.13
+- Rest Day
+  
 ### 2024.09.14
+#### Damn Vulnerable DeFi - #18 Withdrawal:
+- [POC](./Writeup/0xLasadie/damnvulnerabledefi/withdrawal.md)
+  
 ### 2024.09.15
 
 #### Damn Vulnerable DeFi - #17 Curvy Puppet:
