@@ -225,7 +225,7 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 挑戰題目：
 
--   [OnlyPwner](https://github.com/dinngo/ETHTaipei-war-room/) - [ALL OR NOTHING](https://onlypwner.xyz/challenges/10)
+-   [OnlyPwner](https://onlypwner.xyz/) - [ALL OR NOTHING](https://onlypwner.xyz/challenges/10)
 
 > [!WARNING]
 > OnlyPwner 不允許公開題目解法，僅提供完成截圖。
