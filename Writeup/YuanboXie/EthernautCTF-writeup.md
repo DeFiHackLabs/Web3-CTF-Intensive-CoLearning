@@ -917,3 +917,5 @@ await contract.timeZone1Library()
 await contract.setFirstTime("0x6b14047235Ae884f97bb15aba68d40D951A2a9F7") // 随便传参数反正不会用
 await contrcat.owner()
 ```
+- 除了上面的 sstore 之外，也可以在攻击合约里模仿 Preservation 的变量定义然后直接修改对应的 owner 变量；
+
