@@ -192,6 +192,6 @@ mint20次即可，但要注意一个点，mint20次后要手动调一下solve方
 
 #### 第3题hide-on-bush
 
-#### 第4题missing
+没解出来，这题好像不太好在本地测试，因为challenge中有些参数被用如address(0)、空数组之类的隐藏了，好像不用docker不行。
 
 <!-- Content_END -->
