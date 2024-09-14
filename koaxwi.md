@@ -89,4 +89,9 @@ Solved 18 - Withdrawal.
 
 Damn Vulnerable DeFi all set.
 
+### 2024.09.14
+Selected Milotruck challs for Group B.
+
+Solved GreyHats Dollar.
+
 <!-- Content_END -->

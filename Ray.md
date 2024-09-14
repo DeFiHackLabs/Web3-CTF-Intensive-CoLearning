@@ -111,11 +111,15 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 [Day12](Writeup/Ray/Day12.md)
 
 ### 2024.09.12
-完成 ethernaut 的 Gatekeeper Tne:
+完成 ethernaut 的 Gatekeeper Two:
 [Day13](Writeup/Ray/Day13.md)
 
 ### 2024.09.13
-完成 ethernaut 的 Gatekeeper Tne:
+完成 ethernaut 的 NaughtCoin:
 [Day14](Writeup/Ray/Day14.md)
+
+### 2024.09.14
+完成 ethernaut 的 Preservation:
+[Day15](Writeup/Ray/Day15.md)
 
 <!-- Content_END -->

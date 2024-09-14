@@ -176,4 +176,22 @@ coin会调用要转账地址的notify方法，利用这一点我们就可以在�
 ethernaut有几题实在没搞懂，要么没找到答案，要么就是看了答案也没看懂，这里记录一下题号去做B系列不再浪费时间了，这两天这几道题有点消耗热情。
 题号：26题DoublerEntry、29题switch、30题HigerOrder
 
+### 2024.09.13
+
+今天开始blaz ctf 2023系列的题目，主要是搭建并熟悉下blaze的答题模式，我不采用它的docker，而是直接在test中构造challenge合约，然后根据assertTrue(isSolved())来判断是否过关。做了前两道题练练手。
+
+#### 第1题rock-paper-scissor
+
+很简单，挑战合约的出拳是伪随机，根据逻辑构造出必赢的数即可。
+
+#### 第2题eazy-nft
+
+mint20次即可，但要注意一个点，mint20次后要手动调一下solve方法才能把solved置为true。被坑了一下。其实我觉得题目里solve()的逻辑放到isSolved()里一并处理会更好。
+
+### 2024.09.14
+
+#### 第3题hide-on-bush
+
+没解出来，这题好像不太好在本地测试，因为challenge中有些参数被用如address(0)、空数组之类的隐藏了，好像不用docker不行。
+
 <!-- Content_END -->

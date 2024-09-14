@@ -50,4 +50,10 @@ timezone: Asia/Shanghai
 ### 2024.09.12
 - BlazCTF 2023中的NFT以及RockPaperScissors，比较简单，主要是nft合约中mint函数未检查代币是否存在。RockPaperScissors主要是要了解如何预测合约中的数据，可以通过相同的计算以及参数预测。
 - [2024.9.12](./Writeup/Sivan/2024.9.12)
+### 2024.09.13
+- Ethernaut 中的HigherOrder，主要是要了解calldataload的运作机制，读取的数据超过了uint8，导致能覆盖超过uint8的值给treasury。
+- [2024.9.13](./Writeup/Sivan/2024.9.13)
+### 2024.09.14
+- MetaTrust 2023 中的greeterGate，与Switch题目类似，不一样的是这题多了一层data需要包裹。
+- [2024.9.14](./Writeup/Sivan/2024.9.14)
 <!-- Content_END -->

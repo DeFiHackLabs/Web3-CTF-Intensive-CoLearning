@@ -20,18 +20,19 @@
 7. [level 16 - Preservation](./script/16_Preservation.s.sol)
 8. [level 17 - Recovery](./script/17_Recovery.s.sol)
 8. [level 18 - MagicNumber](./script/18_MagicNumber.s.sol)
-9. [level 21 - Shop](./script/21_Shop.s.sol)
+9. [level 19 - Alien Codex](./script/19_AlienCodex.s.sol)
+0. [level 21 - Shop](./script/21_Shop.s.sol)
 
 
 
 ### Writeup
-1. [level 00 - Hello Ethernaut](https://hackmd.io/@D13/ethernaut0)
-2. [level 01 - Fallback](./writeup/01_Fallback.md)
-3. 02 Fallout 沒有筆記，主要就是函數名稱 "l" & "1" 太像
-4. 03 CoinFlip 還沒寫完，想找時間看熟區塊的概念跟`vm.roll()`再來寫
-5. [level 04 - Telephone](./writeup/04_Telephone.md)
-6. [level 05 - Token](./writeup/05_Token.md)
-7. [level 06 - Delegation](./writeup/06_Delegation.md)
+1. [[new] level 00 - Hello Ethernaut](https://hackmd.io/@D13/ethernaut0)
+2. [[new] level 01 - Fallback](https://hackmd.io/@D13/ethernaut1)
+3. [[new] level 02 - Fallout](https://hackmd.io/@D13/ethernaut2)
+4. [[new] level 03 - CoinFlip](https://hackmd.io/@D13/ethernaut3)
+5. [[new] level 04 - Telephone](https://hackmd.io/@D13/ethernaut4)
+6. [[new] level 05 - Token](https://hackmd.io/@D13/ethernaut5)
+7. [[new] level 06 - Delegation](https://hackmd.io/@D13/ethernaut6)
 8. [level 07 - Force](./writeup/07_Force.md)
 9. [level 08 - Vault](./writeup/08_Vault.md)
 0. [level 09 - King](./writeup/09_King.md)
@@ -42,5 +43,5 @@
 5. [level 14 - GatekeeperTwo](./writeup/14_GatekeeperTwo.md)
 6. [level 15 - Naught Coin](./writeup/15_NaughtCoin.md)
 7. [level 16 - Preservation](./writeup/16_Preservation.md)
-8. [level 17 - Recovery](https://hackmd.io/@D13/ethernaut17)
-9. [level 21 - Shop](https://hackmd.io/@D13/ethernaut21)
+8. [[new] level 17 - Recovery](https://hackmd.io/@D13/ethernaut17)
+9. [[new] level 21 - Shop](https://hackmd.io/@D13/ethernaut21)

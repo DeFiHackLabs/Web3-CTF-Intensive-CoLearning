@@ -188,4 +188,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.13
 
+挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [Casino](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/Casino)
+
+筆記連結： [ETH Taipei CTF 2023: Casino](./Writeup/AlexLiao/ETHTaipeiCTF2023/Casino.md)
+
+### 2024.09.14
+
 <!-- Content_END -->

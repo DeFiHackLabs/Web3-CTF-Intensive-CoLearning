@@ -51,4 +51,8 @@ Solved DAI++.
 
 Solved Hop.
 
+### 2024.09.13
+
+Solved Grain of Salt.
+
 <!-- Content_END -->
