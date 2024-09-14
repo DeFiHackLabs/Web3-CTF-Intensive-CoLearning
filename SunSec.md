@@ -116,7 +116,7 @@ timezone: Asia/Taipei
 
 ### 2024.09.13
 - Grey Cat #6 [Gnosis Unsafe](./Writeup/SunSec/greyhats-milotruck.md#gnosis-unsafe)
-- 分了兩個簡單題目for bootcamp [加分題](https://hackmd.io/@SunWeb3Sec/SJIZhzbaC)
+- 出了兩個簡單題目for bootcamp [加分題](https://hackmd.io/@SunWeb3Sec/SJIZhzbaC)
 
 ### 2024.09.14
 - warroom-ethcc-2023#1 [Proxy capture](./Writeup/SunSec/warroom-ethcc-2023.md#task-1---proxy-capture-15-points)
