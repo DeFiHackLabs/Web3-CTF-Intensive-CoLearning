@@ -64,7 +64,7 @@ timezone: Pacific/Auckland
 [[Damn Vulnerable DeFi V4] 18 | Withdrawal](./Writeup/0xE/DamnVulnerableDeFiV4/withdrawal.md)
 
 ### 2024.09.14
-[[EthTaipei CTF 2023] 1 | Arcade](./Writeup/0xE/EthTaipeiCTF2023/arcade.md)
+[[EthTaipei CTF 2023] 1 | Arcade](./Writeup/0xE/EthTaipeiCTF2023/arcade.md)  
 [[EthTaipei CTF 2023] 2 | ETHTaipeiWarRoomNFT](./Writeup/0xE/EthTaipeiCTF2023/ethtaipeiwarroomnft.md)
 
 <!-- Content_END -->
