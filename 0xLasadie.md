@@ -15,62 +15,62 @@ timezone: Asia/Singapore
 <!-- Content_START -->
 
 ### 2024.08.29
-#### Damn Vulnerable DeFi - Unstoppable:
+#### Damn Vulnerable DeFi - #1 Unstoppable:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/unstoppable.md)
 
 ### 2024.08.30
-#### Damn Vulnerable DeFi - Naive Receiver:
+#### Damn Vulnerable DeFi - #2 Naive Receiver:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/naive-receiver.md)
 
-#### Damn Vulnerable DeFi - Truster:
+#### Damn Vulnerable DeFi - #3 Truster:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/truster.md)
 
-#### Damn Vulnerable DeFi - Side Entrance:
+#### Damn Vulnerable DeFi - #4 Side Entrance:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/side-entrance.md)
 
 
 ### 2024.08.31
-#### Damn Vulnerable DeFi - The Rewarder:
+#### Damn Vulnerable DeFi - #5 The Rewarder:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/the-rewarder.md)
 
-#### Damn Vulnerable DeFi - Selfie:
+#### Damn Vulnerable DeFi - #6 Selfie:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/selfie.md)
 
 ### 2024.09.01
-#### Damn Vulnerable DeFi - Puppet:
+#### Damn Vulnerable DeFi - #7 Puppet:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/puppet.md)
 
 ### 2024.09.02
-#### Damn Vulnerable DeFi - Compromised:
+#### Damn Vulnerable DeFi - #8 Compromised:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/compromised.md)
 
 
 ### 2024.09.03
-#### Damn Vulnerable DeFi - Puppet V2:
+#### Damn Vulnerable DeFi - #9 Puppet V2:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/puppet-v2.md)
 
-#### Damn Vulnerable DeFi - Free Rider:
+#### Damn Vulnerable DeFi - #10 Free Rider:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/free-rider.md)
   
-#### Damn Vulnerable DeFi - Backdoor:
+#### Damn Vulnerable DeFi - #11 Backdoor:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/backdoor.md)
 
 ### 2024.09.04
-#### Damn Vulnerable DeFi - Climber:
+#### Damn Vulnerable DeFi - #12 Climber:
 - Attempted this challenge but could not finish within the day.
 
 
 ### 2024.09.05
-#### Damn Vulnerable DeFi - Climber:
+#### Damn Vulnerable DeFi - #12 Climber:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/climber.md)
 
 
 ### 2024.09.06
-#### Damn Vulnerable DeFi - Wallet Mining:
+#### Damn Vulnerable DeFi - #13 Wallet Mining:
 - Attempted this challenge but did not clear. Will put on hold and revisit later.
   
 ### 2024.09.07
-#### Damn Vulnerable DeFi - Puppet V3:
+#### Damn Vulnerable DeFi - #14 Puppet V3:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/puppet-v3.md)
 
 ### 2024.09.08
@@ -97,17 +97,17 @@ timezone: Asia/Singapore
 - [POC](./Writeup/0xLasadie/EthTaipei_CTF_2023/wbc.md)
   
 ### 2024.09.12
-#### Damn Vulnerable DeFi - ABI Smuggling:
+#### Damn Vulnerable DeFi - #15 ABI Smuggling:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/abi-smuggling.md)
 
-#### Damn Vulnerable DeFi - Shards:
+#### Damn Vulnerable DeFi - #16 Shards:
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/shards.md)
 
 ### 2024.09.13
 ### 2024.09.14
 ### 2024.09.15
 
-#### Damn Vulnerable DeFi - Curvy Puppet:
+#### Damn Vulnerable DeFi - #17 Curvy Puppet:
 
-#### Damn Vulnerable DeFi - Withdrawal:
+#### Damn Vulnerable DeFi - #18 Withdrawal:
 <!-- Content_END -->
