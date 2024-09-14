@@ -49,6 +49,13 @@ timezone: Europe/Helsinki
 
 ### 2024.09.12
 13. damn-vulnerable-defi Wallet Mining checked the writeup
-14	damn-vulnerable-defi Puppet V3
+14.	damn-vulnerable-defi Puppet V3
+
+### 2024.09.13
+15. damn-vulnerable-defi ABI Smuggling read write up
+
+### 2024.09.14
+16.	damn-vulnerable-defi Shards test file
+
 
 <!-- Content_END -->
