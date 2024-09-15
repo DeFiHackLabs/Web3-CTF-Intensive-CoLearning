@@ -92,5 +92,9 @@ https://sepolia.etherscan.io/tx/0x1655a6cadb26e786be6a3fb7f8bb2e6552eec7f8ef9796
 2. Damn Vulnerable Defi - Puppet
 https://hackmd.io/@0xbc000/SJ61x8j3R
 
+### 2024.09.15
+1. Continue learning SafeBridge
+2. BlazCTF 2023 - RockPaperScissors
+3. ethernaut level23
 
 <!-- Content_END -->
