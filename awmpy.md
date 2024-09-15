@@ -1049,6 +1049,46 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/higher_order_ha
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/stake_hack.s.sol:StakeHackScript --evm-version cancun -vvvv --broadcast
 ```
 
+Ethernaut系列完结撒花~~~
+
 ### 2024.09.15
+
+- ETHCC-2023
+
+今天开始ethcc-2023系列，先按照github中的文档来部署
+
+部署`War`合约时，遇到了继承的`Ownable`合约`constructor`缺少参数的问题，这是因为我安装了`openzeppelin-contracts`的5.0.2版本
+进入`lib/openzeppelin-contracts`目录执行命令`git checkout release-v4.9`将其切换到4.9版本就不需要这个参数
+
+#### 1. Proxy
+本关的目标是要让其他人都无法处理已部署的合约，与`ethernaut-25-Motorbike`类似
+
+执行脚本部署合约之后有`DasProxy`与`Impl`两个合约
+
+与`ethernaut-25-Motorbike`题目类似都使用了UUPS代理模式，也存在`Impl`合约未初始化的问题，可以直接调用`Impl`合约的`initialize`函数来获取owner
+但是调用`initialize`需要0.1个eth，得再去找点水，使用test可以自行分配一些eth
+
+获得owner权限后就可以调用`whitelistUser`函数把自己加入到白名单中
+`Impl`合约继承了`UUPSUpgradeable`合约[UUPSUpgradeable.sol](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.9/contracts/proxy/utils/UUPSUpgradeable.sol)，可通过调用`upgradeTo`函数来升级合约
+`upgradeTo`有一个`onlyProxy`装饰器，要求这个函数必须是通过proxy delegatecall来调用
+`upgradeTo`中又调用了`_authorizeUpgrade`函数，这个函数是在`Impl`中实现的，要求`withdrawals[_msgSender()] > 1`并且`msg.sender`在白名单中
+之前在`initialize`时已经传入了0.1 ehter，只需要调用一下`withdraw`就可以满足这个条件，到此搞定了合约升级的问题
+新合约不实现这些函数就可以[TakeOwnership.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/proxy/TakeOwnership.sol)
+
+攻击思路总结：
+1. 调用`initialize`函数获取owner权限
+2. 调用`whitelistUser`函数加入到白名单中
+3. 调用`withdraw`函数取回初始化合约时的ETH
+4. 调用`upgradeTo`函数升级合约
+
+test文件[Proxy.t.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/proxy/Proxy.t.sol)
+
+进入`warroom-ethcc-2023`目录中，执行以下命令测试：
+
+``` bash
+proxychains3 forge test test/proxy/Proxy.t.sol --rpc-url $SEPOLIA_RPC_URL  -vvvv
+```
+
+### 2024.09.16
 
 <!-- Content_END -->

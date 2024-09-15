@@ -188,4 +188,10 @@ ethernaut有几题实在没搞懂，要么没找到答案，要么就是看了�
 
 mint20次即可，但要注意一个点，mint20次后要手动调一下solve方法才能把solved置为true。被坑了一下。其实我觉得题目里solve()的逻辑放到isSolved()里一并处理会更好。
 
+### 2024.09.14
+
+#### 第3题hide-on-bush
+
+没解出来，这题好像不太好在本地测试，因为challenge中有些参数被用如address(0)、空数组之类的隐藏了，好像不用docker不行。
+
 <!-- Content_END -->

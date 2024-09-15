@@ -136,4 +136,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 - https://app.dedaub.com/ethereum 合约安全分析工具
 - https://docs.metamask.io/wallet/reference/eth_sendtransaction/ 有一个可交互的工具，可以操作 metamask 发送交易
 
+### 2024.09.14
+
+完成了 blazctf 2023 的 rock-paper-scissor、eazy-nft 题目。
+
 <!-- Content_END -->
