@@ -278,4 +278,17 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18) **DONE**
       - [How to solve](https://github.com/code-423n4/2022-01-dev-test-repo-findings/issues/195)
   - We can manipulate the curve pool using fund from [aave flashloan](https://docs.aave.com/developers/guides/flash-loans)
 
+### 2024.09.14
+
+skip
+
+### 2024.09.15
+
+A: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
+
+- Arcade
+  - According execution order of the code, [`_redeem` acutally is executed after `_setNewPlayer` inside `changePlayer`](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Arcade/Arcade.sol#L64)
+  - So, [`getCurrentPlayerPoints()`](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Arcade/Arcade.sol#L73C26-L73C50) will get the point of new player instead of the old palyer.
+  - Finally, old player can mint the token from the points of new player.
+
 <!-- Content_END -->
