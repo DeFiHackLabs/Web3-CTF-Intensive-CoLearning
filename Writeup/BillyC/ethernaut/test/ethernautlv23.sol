@@ -76,6 +76,6 @@ contract ContractTest is Test {
 
 contract FakeToken is ERC20 {
     constructor() public ERC20("FakeToken", "FAKE") {
-        _mint(0xd4332cb6371a53B77C5773435aFFFecb957c0939, 500);
+        _mint(0xd....9, 500);
     }
 }
