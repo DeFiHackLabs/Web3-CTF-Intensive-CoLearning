@@ -438,6 +438,16 @@ retract 函数减少 index , 0.5.0版本的solidity 肯定有益处了， 默认
 **Level 21 Shop**
 今天多肝几个 追赶一下进度，没有几天就结束了。A题还没做多少呢！
 
+这题 buyer price函数 在shop中调用了两次，我们可以在第一次调用的时候返回 >= shop price 的值， 第二次返回一个低于 shop price的价格， 以前我们做类似的题目的时候，会在buyer中添加一个变量来判断是否第一次调用，但是题目中 price函数是view 函数，不能使用storage 变量。   
+
+但是我们发现 shop中有一个字段 isSold 购买后 isSold先被设置为来 true， 我们可以根据这个来判断 
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/shop_poc.s.sol)
+
+**Level 22 Dex**
+
+
+
 
 ### 2024.09.16
 
