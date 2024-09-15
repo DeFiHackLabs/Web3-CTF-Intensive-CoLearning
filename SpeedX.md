@@ -355,6 +355,7 @@ RPC突然好用了， 我测试了一下 调用 setFirstTime， setSecondTime �
 今天继续有点晚了， 先打卡再肝。
 
 ### 2024.09.15
+**Level 18 MagicNum**
 昨天充值了 claude AI 真的很好用啊， 这道题不了解EVM bytecode 先用claude 学习一下如何写一个最小的合约。
 
 EVM OPCODE 参考
@@ -405,7 +406,7 @@ initialization opcode， 家在 runtimecode 然后返回runtimecode
 [POC 代码](Writeup/SpeedX/script/Ethernaut/magicnumber_poc.s.sol)
 
 
-**Level18 Alien Codex**
+**Level19 Alien Codex**
 这一关真的非常狗，一看合约 solidity 版本就知道有猫腻。
 
 要获得owner 合约方法里面没有一个跟 owner有关的，owner变量在 ownable类中。
@@ -434,6 +435,8 @@ retract 函数减少 index , 0.5.0版本的solidity 肯定有益处了， 默认
 [POC 代码](Writeup/SpeedX/script/Ethernaut/denial_poc.s.sol)
 
 
+**Level 21 Shop**
+今天多肝几个 追赶一下进度，没有几天就结束了。A题还没做多少呢！
 
 
 ### 2024.09.16
