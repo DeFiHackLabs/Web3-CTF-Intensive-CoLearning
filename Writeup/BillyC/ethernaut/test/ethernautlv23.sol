@@ -20,7 +20,7 @@ contract ContractTest is Test {
     }
 
     function testEthernaut23() public {
-        address mywallet = 0xd4332cb6371a53B77C5773435aFFFecb957c0939;
+        address mywallet = 0xd..9;
         vm.startPrank(mywallet);
 
         address addr_token1 = level23.token1();
