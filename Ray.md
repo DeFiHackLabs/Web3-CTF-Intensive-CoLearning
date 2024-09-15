@@ -122,4 +122,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 完成 ethernaut 的 Preservation:
 [Day15](Writeup/Ray/Day15.md)
 
+### 2024.09.15
+完成 ethernaut 的 Recevory:
+[Day16](Writeup/Ray/Day16.md)
+
 <!-- Content_END -->
