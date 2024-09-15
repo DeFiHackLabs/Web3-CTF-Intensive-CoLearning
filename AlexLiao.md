@@ -163,6 +163,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 -   [OnlyPwner](https://onlypwner.xyz/) - [WRAPPED ETHER](https://onlypwner.xyz/challenges/12)
 
+-   [OnlyPwner](https://onlypwner.xyz/) - [REVERSE RUGPULL](https://onlypwner.xyz/challenges/7)
+
 筆記連結： [DamnVulnerableDeFi: Backdoor](./Writeup/AlexLiao/DamnVulnerableDeFi/Backdoor.md)
 
 > [!WARNING]
