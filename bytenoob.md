@@ -129,6 +129,10 @@ Finish ethernaut alien codex
 
 Finish ethernaut denial
 
+### 2024.09.14
+
+Finish ethernaut shop
+
 
 
 <!-- Content_END -->

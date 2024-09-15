@@ -2,12 +2,12 @@
 pragma solidity ^0.8.13;
 
 import {Test, console} from "forge-std/Test.sol";
-import {DexTwo} from "../src/DexTwo.sol";
+import {DexTwo, SwappableTokenTwo} from "../src/DexTwo.sol";
 
 contract DexTwoTest is Test {
 
     function setUp() public {
-        vm.createSelectFork("https://ethereum-sepolia-rpc.publicnode.com", 6690658);
+        vm.createSelectFork("https://ethereum-sepolia-rpc.publicnode.com", 6690976);
     }
 
     function test_Swap() public {
@@ -20,25 +20,39 @@ contract DexTwoTest is Test {
         address user = 0xA6270E61a6485f649f7E18b6e9eBF4d1d184D69d;
         vm.startPrank(user);
 
-        dexTwo.approve(dexTwoAddress, 5000);
+        MyToken myToken = new MyToken();
 
-        for(uint256 i = 1;i <= 5;i++) {
-            console.log("swap times : ", i);
-            if(i%2 == 1) {
-                dexTwo.swap(token1, token2, dexTwo.balanceOf(token1, user));
-            } else {
-                dexTwo.swap(token2, token1, dexTwo.balanceOf(token2, user));
-            }
+        myToken.approve(user, dexTwoAddress, 5000);
 
-            console.log("user balance : ", dexTwo.balanceOf(token1, user), dexTwo.balanceOf(token2, user));
+        myToken.transfer(dexTwoAddress, 100);
 
-            console.log("contract balance : ", dexTwo.balanceOf(token1, dexTwoAddress), dexTwo.balanceOf(token2, dexTwoAddress));
-        }
+        // user : 1000 10
+        // ca: 100 100
+        // 100 = x * 100 / 100 -> x = 100
+        dexTwo.swap(address(myToken), token1, 100);
+        
+        console.log("swap times : ", uint256(1));
 
-        // user : 0 65
-        // contract : 110 45
-        // swapAmount = 65 * 110 / 45 -> 158
-        // 110 = x * 110 / 45 -> x = 45
+        console.log("contract balance : ", myToken.balanceOf(dexTwoAddress), dexTwo.balanceOf(token1, dexTwoAddress), dexTwo.balanceOf(token2, dexTwoAddress));
+
+        // user : 1000 10
+        // ca: 200 100
+        // 100 = x * 100 / 200 -> x = 200
+        dexTwo.swap(address(myToken), token2, 200);
+        
+        console.log("swap times : ", uint256(2));
+
+        console.log("contract balance : ", myToken.balanceOf(dexTwoAddress), dexTwo.balanceOf(token1, dexTwoAddress), dexTwo.balanceOf(token2, dexTwoAddress));
+    }
+}
+
+contract MyToken is SwappableTokenTwo {
+    constructor() SwappableTokenTwo(
+        0xa1Cae52D675ed1d738F87189BdEe3112B130F145,
+        "My Token",
+        "MT",
+        100000
+    ) {
 
     }
 }
