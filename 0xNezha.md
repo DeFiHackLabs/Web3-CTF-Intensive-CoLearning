@@ -70,4 +70,6 @@ vault 的密码 password 是以 bytes32 private 形式存储在 slot 中。通�
 ### 2024.09.13
 bytes32[3] private data 通过合约调用的方式当然无法读取 private 变量，但是我们可以直接读取 slot 里面的数据。另外， byte32 转换为 byte16 的时候，只会留存高16字节。[12_Privacy](./Writeup/0xNezha/Ethernaut/12_Privacy.md)
 
+### 2024.09.14
+本题主要考察 gasleft() 及 Debug 获取准确的 gas 用量，还有不同数据类型转换时数值的变化。[13_GatekeeperOne](./Writeup/0xNezha/Ethernaut/13_GatekeeperOne.md)
 <!-- Content_END -->

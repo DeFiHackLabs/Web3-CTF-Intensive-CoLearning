@@ -106,6 +106,9 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 ### 2024.09.13
 - Gatekeeper two > [Gatekeeper two](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/14_Gatekeeper_Two.md)
 
-### 2024.09.24
+### 2024.09.14
 - NaughtCoin > [NaughtCoin](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/15_NaughtCoin.md)
+
+### 2024.09.15
+- [Preservation](https://arc.net/l/quote/rzgjtdil)
 <!-- Content_END -->

@@ -11,7 +11,7 @@ timezone: Europe/Helsinki
 
 Progess:
 Group A: Damn Vulnerable DeFi: 18/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
-Group B: ...
+Group B: Milotruck challs: 2/6 ([writeup](./Writeup/koaxwi/B.Milotruck-challs))
 Group C: ...
 
 
@@ -93,5 +93,9 @@ Damn Vulnerable DeFi all set.
 Selected Milotruck challs for Group B.
 
 Solved GreyHats Dollar.
+
+### 2024.09.15
+
+Solved Escrow.
 
 <!-- Content_END -->

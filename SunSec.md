@@ -7,7 +7,7 @@ timezone: Asia/Taipei
 
 1. 自我介绍
    
-   [SunSec](https://x.com/1nf0s3cpt), Founder of DeFiHackLabs. 致力於安全教育和提升區塊鏈生態安全.
+   [SunSec](https://x.com/1nf0s3cpt) Founder of DeFiHackLabs. 致力於安全教育和提升區塊鏈生態安全.
 2. 你认为你会完成本次残酷学习吗？
    85%可以. 除非臨時任務太多XD 主要時間會花在協助大家完成共學.
 
@@ -114,8 +114,13 @@ timezone: Asia/Taipei
 - Grey Cat #4 [Voting Vault](./Writeup/SunSec/greyhats-milotruck.md#voting-vault)
 - Grey Cat #5 [Meta Staking](./Writeup/SunSec/greyhats-milotruck.md#meta-staking)
 
-### 2024.09.12
+### 2024.09.13
 - Grey Cat #6 [Gnosis Unsafe](./Writeup/SunSec/greyhats-milotruck.md#gnosis-unsafe)
-- 分了兩個簡單題目for bootcamp [加分題](https://hackmd.io/@SunWeb3Sec/SJIZhzbaC)
+- 出了兩個簡單題目for bootcamp [加分題](https://hackmd.io/@SunWeb3Sec/SJIZhzbaC)
+
+### 2024.09.14
+- warroom-ethcc-2023#1 [Proxy capture](./Writeup/SunSec/warroom-ethcc-2023.md#task-1---proxy-capture-15-points)
+- warroom-ethcc-2023#2 [Flash loan](./Writeup/SunSec/warroom-ethcc-2023.md#task-2---flash-loan-25-points)
+- warroom-ethcc-2023#3 [Signature malleability](./Writeup/SunSec/warroom-ethcc-2023.md#task-3---signature-malleability-30-points)
 
 <!-- Content_END -->

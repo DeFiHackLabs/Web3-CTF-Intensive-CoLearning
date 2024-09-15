@@ -6,7 +6,7 @@ import {Dex} from "../src/Dex.sol";
 
 contract DexScript is Script {
     function setUp() public {
-        vm.createSelectFork("https://ethereum-sepolia-rpc.publicnode.com", 6684541);
+        vm.createSelectFork("https://ethereum-sepolia-rpc.publicnode.com", 6690708);
     }
 
     function run() public {
@@ -38,6 +38,12 @@ contract DexScript is Script {
             console.log("\n");
         }
 
-        console.log("price : ", dex.getSwapPrice(token2, token1, 65)); // 158 
+        dex.swap(token2, token1, 45);
+
+        console.log("Swap times : ", uint256(6));
+
+        console.log("user balance : ", dex.balanceOf(token1, user), dex.balanceOf(token2, user));
+
+        console.log("contract balance : ", dex.balanceOf(token1, dexAddress), dex.balanceOf(token2, dexAddress));
     }
 }
