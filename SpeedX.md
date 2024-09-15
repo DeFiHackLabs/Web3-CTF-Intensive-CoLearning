@@ -425,6 +425,16 @@ retract 函数减少 index , 0.5.0版本的solidity 肯定有益处了， 默认
 
 但是需要计算好 codex的哪个索引的位置，会覆盖 slot 0
 
+**Level 19 Denial**
+
+这关是让 withdraw 调用失败， 突破口是 partner合约 receive函数， 我开始想的是这么简单 直接在 receive中revert 不久好了， 后来知道 call函数调用 即使 partner合约 revert 也不会导致交易终止， 而是call调用返回一个 bool 失败是否成功。
+
+那么就看 call 函数本身如何导致失败了， 看了网上的答案是 让gas耗尽产生gas exception, gas 耗尽 call函数也不会报错， 但是下面的转账就不能继续执行了。就会返回false。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/denial_poc.s.sol)
+
+
+
 
 ### 2024.09.16
 
