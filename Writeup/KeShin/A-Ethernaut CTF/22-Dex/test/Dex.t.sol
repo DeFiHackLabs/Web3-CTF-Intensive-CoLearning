@@ -56,7 +56,20 @@ contract DexTest is Test {
             console.log("\n");
         }
 
-        console.log("price : ", dex.getSwapPrice(token2, token1, 65)); // 158 
+        // user : 0 65
+        // contract : 110 45
+        // swapAmount = 65 * 110 / 45 -> 158
+        // 110 = x * 110 / 45 -> x = 45
+
+        dex.swap(token2, token1, 45);
+
+        console.log("Swap times : ", uint256(6));
+
+        console.log("user balance : ", dex.balanceOf(token1, user), dex.balanceOf(token2, user));
+
+        console.log("contract balance : ", dex.balanceOf(token1, dexAddress), dex.balanceOf(token2, dexAddress));
+
+
     }
 
 }

