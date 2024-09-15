@@ -234,4 +234,15 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.15
 
+挑戰題目：
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [LIQUID STAKING](https://onlypwner.xyz/challenges/15)
+
+> [!WARNING]
+> OnlyPwner 不允許公開題目解法，僅提供完成截圖。
+
+![ALL OR NOTHING](Writeup/AlexLiao/OnlyPwner/LIQUIDSTAKING.png)
+
+### 2024.09.16
+
 <!-- Content_END -->
