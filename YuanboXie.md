@@ -97,5 +97,9 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Preservation - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 学习了 call 误用成了 delegateCall 导致的安全问题，以及通过 sstore 绕过变量定义直接对修改存储操的值；
 
+### 2024.09.15
+
+- 1.Ethernaut CTF (31) - Recovery - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学习了合约创建合约的地址计算或者查找；
 
 <!-- Content_END -->

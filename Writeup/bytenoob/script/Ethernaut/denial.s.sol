@@ -16,7 +16,7 @@ contract DenialScript is Script {
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
 
         Denial denial = Denial(
-            payable(0x5B33429A91E74bD0Edd6F28eC6e2a20C437be917)
+            payable(0x9E45119Fc2092B399c72E745eF335F819e07c7af)
         ); // Replace with actual contract address
 
         // Deploy the malicious partner contract

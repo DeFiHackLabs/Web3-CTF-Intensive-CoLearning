@@ -360,6 +360,13 @@ Progress
 > [!WARNING]
 > Finished _13th Airdrop_ (~2h 15m).
 
+### 2024.09.15
+
+#### 🏳️ OnlyPwner.xyz: Liquid Staking
+
+**Time used: 4h 30m and ongoing...**
+
+
 <!-- Content_END -->
 
 <!-- 

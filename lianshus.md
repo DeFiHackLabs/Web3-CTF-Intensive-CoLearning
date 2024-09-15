@@ -403,6 +403,32 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 
 
 
+### 2024.09.15
+
+学习內容:
+
+今天仍然是在做题与写poc度过的
+
+做了A 系列一题 Recovery，加油杀出新手村
+
+这道题主要是对合约地址的计算，这里用的create
+
+create 计算合约地址:
+
+1. 使用 RLP 编码 msg.sender 与 创建者账户的 nonce
+2. 对编码结果进行 keccake256 哈希
+3. 将哈希结果转成地址类型
+
+具体，等我整理 POC
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
+
+
+
+
+
 ### 2024.07.12
 
 <!-- Content_END -->

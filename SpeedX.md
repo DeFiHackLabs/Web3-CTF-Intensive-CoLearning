@@ -354,4 +354,101 @@ RPC突然好用了， 我测试了一下 调用 setFirstTime， setSecondTime �
 ### 2024.09.14
 今天继续有点晚了， 先打卡再肝。
 
+### 2024.09.15
+**Level 18 MagicNum**
+昨天充值了 claude AI 真的很好用啊， 这道题不了解EVM bytecode 先用claude 学习一下如何写一个最小的合约。
+
+EVM OPCODE 参考
+https://www.evm.codes/
+
+EVM 底层执行 OPCODE， OPCODE 操作堆栈stack、内存memory和存储storage等。
+
+Stack存储临时变量和函数参数和返回地址
+
+内存是一个uint8的数组，用于保存合约执行过程中的临时数据。
+
+storage 是一个KV map， 存储到KV DB中
+
+EVM合约 bytecode 有两个部分，首先是initialization opcode，然后是runtimecode
+
+initialization opcode， 家在 runtimecode 然后返回runtimecode 
+
+最终的 bytecode 如下
+
+600a600c600039600a6000f3  + 602a60505260206050f3
+
+开始我runtimecode 是 
+
+|OPCODE|说明
+|-------------|-------------|
+|602a|PUSH1 2a 把 42 压入栈|
+|6050|PUSH1 50 把 50 压入栈，变量内存 offset｜
+|52|MSTORE 内存50位置,存储值 42|
+|6020|PUSH1 20 把 32 压入栈, 长度32 |
+|6050|PUSH1 50 把 50 压入栈，变量内存offset|
+|f3|RETURN 返回内存 50 位置的变量|
+
+开始的时候 OPCODE 第2、5行,  变量内存offset我使用的是 0x00, 我用cast call 调用
+返回 
+
+0x000000000000000000000000000000000000000000000000000000000000002a 
+
+使用 0x50 cast call 返回的是一样的， 不知道为什么不能过关呢。
+
+使用 foundry script staticcall 两个不同offset的合约都能返回正常的结果 42
+
+但是为什么 不能通过测试呢， 我去看看 ethernaut的源代码吧 。
+
+看了代码就是 验证结果是否是 0x000000000000000000000000000000000000000000000000000000000000002a， 并且 合约 codesize <= 10， 写了script验证也没有问题啊。
+
+不知道哪里的问题！不管了 下一个。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/magicnumber_poc.s.sol)
+
+
+**Level19 Alien Codex**
+这一关真的非常狗，一看合约 solidity 版本就知道有猫腻。
+
+要获得owner 合约方法里面没有一个跟 owner有关的，owner变量在 ownable类中。
+
+根据提示跟 Array Storage 有关系，去学习一下 storage的 slot相关知识。
+
+前面已经学习过 storage 每个变量使用一个 slot ， EVM一共有 2^256 个slot 
+
+AlienCodex 继承 Ownable， slot 从基类 Ownable开始分配 所以 owner 分配 slot0,
+bool contact 跟 owner 一起使用 slot0， codex使用 slot1 
+
+codex[]是一个动态的数组， 动态数组分配就不是按照顺序分配了，他使用 keccak256(codex_slot_index) + i 进行slot分配 
+
+retract 函数减少 index , 0.5.0版本的solidity 肯定有益处了， 默认codex length 为0 调用 retract length 变为 2^256， 这样 storage slot 就超过了 2^256 
+
+超过slot index ， slot index 就又从0开始了就会覆盖之前的数据， 这样就可以修改 owner的值了 
+
+但是需要计算好 codex的哪个索引的位置，会覆盖 slot 0
+
+**Level 19 Denial**
+
+这关是让 withdraw 调用失败， 突破口是 partner合约 receive函数， 我开始想的是这么简单 直接在 receive中revert 不久好了， 后来知道 call函数调用 即使 partner合约 revert 也不会导致交易终止， 而是call调用返回一个 bool 失败是否成功。
+
+那么就看 call 函数本身如何导致失败了， 看了网上的答案是 让gas耗尽产生gas exception, gas 耗尽 call函数也不会报错， 但是下面的转账就不能继续执行了。就会返回false。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/denial_poc.s.sol)
+
+
+**Level 21 Shop**
+今天多肝几个 追赶一下进度，没有几天就结束了。A题还没做多少呢！
+
+这题 buyer price函数 在shop中调用了两次，我们可以在第一次调用的时候返回 >= shop price 的值， 第二次返回一个低于 shop price的价格， 以前我们做类似的题目的时候，会在buyer中添加一个变量来判断是否第一次调用，但是题目中 price函数是view 函数，不能使用storage 变量。   
+
+但是我们发现 shop中有一个字段 isSold 购买后 isSold先被设置为来 true， 我们可以根据这个来判断 
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/shop_poc.s.sol)
+
+**Level 22 Dex**
+
+
+
+
+### 2024.09.16
+
 <!-- Content_END -->

@@ -70,4 +70,7 @@ writeup:[Privacy](./Writeup/geyu/writeup/13_GatekeeperOne.md)
 ### 2024.09.14
 完成了 ethernaut 第 14 个练习 GatekeeperTwo
 writeup:[Privacy](./Writeup/geyu/writeup/14_GatekeeperTwo.md)
+### 2024.09.15
+完成了 ethernaut 第 15 个练习 NaughtCoin
+writeup:[Privacy](./Writeup/geyu/writeup/15_NaughtCoin.md)
 <!-- Content_END -->

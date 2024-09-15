@@ -214,4 +214,16 @@ Plan:
 
 - [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#346)
 
+### 2024.09.15
+
+#### Ethernaut CTF - [HigherOrder](https://ethernaut.openzeppelin.com/level/0xd459773f02e53F6e91b0f766e42E495aEf26088F)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#355)
+
+#### Ethernaut CTF - [Stake](https://ethernaut.openzeppelin.com/level/0xB99f27b94fCc8b9b6fF88e29E1741422DFC06224)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#366)
+
+- [Solution](./Writeup/HarryRiddle/Ethernaut-CTF/src/Stake.sol)
+
 <!-- Content_END -->

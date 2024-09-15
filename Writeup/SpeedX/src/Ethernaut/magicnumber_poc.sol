@@ -5,23 +5,24 @@ import "Ethernaut/magicnumber.sol";
 
 contract MagicNumberPoc 
 {
-  MagicNumber magicNumber;
-  constructor(_magicNumber)
+  MagicNum magicNumber;
+  constructor(address _magicNumber)
   {
-    magicNumber = MagicNumber(_magicNumber);
+    magicNumber = MagicNum(_magicNumber);
   }
 
   function exploit() public 
   {
-    solver = new Solver();
+    address solver = deployMinimalMeaningOfLife();
     magicNumber.setSolver(solver);
   }
-}
 
-contract Solver 
-{
-  function whatIsTheMeaningOfLife() public returns(bytes32)
-  {
-
+  function deployMinimalMeaningOfLife() public returns (address) {
+    bytes memory bytecode = hex"600a600c600039600a6000f3602a60505260206050f3";
+    address addr;
+    assembly {
+        addr := create(0, add(bytecode, 0x20), mload(bytecode))
+    }
+    return addr;
   }
 }
