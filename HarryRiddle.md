@@ -214,4 +214,10 @@ Plan:
 
 - [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#346)
 
+### 2024.09.15
+
+#### Ethernaut CTF - [HigherOrder](https://ethernaut.openzeppelin.com/level/0xd459773f02e53F6e91b0f766e42E495aEf26088F)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#355)
+
 <!-- Content_END -->
