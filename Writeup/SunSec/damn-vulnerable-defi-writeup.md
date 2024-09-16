@@ -1267,14 +1267,18 @@ contract Exploit {
 
 過關條件:
 - 所有用戶的部位都被清算
-- Treasury 仍有剩餘資金
-- Player 餘額為0
+- Treasury 仍有 LP token
+- Treasury 仍有 7500 DVT
+- Player DVT, stETH, LP 餘額為0
 
 知識點:
--   read only reentrancy
+- read only reentrancy
 
 解題:
--
+- 看到 Curve 馬上想到經典 read only reentrancy. 但事實上沒這麼簡單, 因為題目只給了 200 ETH, 6.5 LP 很難造成操控 Mainnet 上的池子的價格.
+- 卡了2個晚上, 測試了好幾的方法都失敗. 一直無法控制到清算值. 清算時要滿足 if (collateralValue >= borrowValue) revert HealthyPosition(borrowValue, collateralValue);
+- 最後透過了兩個 flashloan 來過關. 
+- 主要是 Balancer 在借 weth 時不用費用. 這樣我們就可以計算出可以滿足清算而且還有足夠的錢可以還 flashloan.
     
 ### Withdrawal
 

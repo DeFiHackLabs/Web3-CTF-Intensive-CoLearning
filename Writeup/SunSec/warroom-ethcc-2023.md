@@ -153,3 +153,29 @@ function testReuseSignature() public {
         assertEq(token.balanceOf(user), whitelistedAmount);
     }
 ```
+
+### Task 4 - Access Control 35 points
+[題目](https://github.com/spalen0/warroom-ethcc-2023/tree/master/src/accesscontrol): 
+
+
+解題:
+- 這個任務包含兩個合約，RewardsBox和AccessControl。AccessControl是一個特殊的存取控制器，並且提供了添加所有者的方式。預設的所有者是vitalik.eth和一個隨機生成的地址。即使是部署者也無法添加新的所有者。RewardsBox非常簡單，並且有一個claim(address accessController, uint256 amount)函數，該函數會檢查所提供的accessController，以查看msg.sender是否被授權，如果是，則處理amount的獎勵代幣。
+- RewardsBox通過檢查您所提供控制器的代碼哈希與RewardsBox初始化時內置的代碼哈希是否相符，來強制要求您提供正確的AccessControl合約作為控制器。
+- 這裡的問題在於，在以太坊虛擬機(EVM)中部署合約時，可以在構造函數中執行任意程式碼，而該程式碼後來不會反映在已部署的合約程式碼中。因此，攻擊者可以部署一個新的合約，在構造函數中將自己添加到擁有者映射(mapping)中，然後將部署的程式碼設置為正確的 AccessControl 合約
+
+要透過accessController這個檢查, 因為沒有限制來源所以可以自己建立一個accessController.
+
+用一樣的code部署但是要把ownerr加上自己.
+
+[POC](https://github.com/spalen0/warroom-ethcc-2023/blob/master/test/accesscontrol/AccessControl.t.sol)
+
+### Bonus Task - Metamorphic 10 points
+[題目](https://github.com/spalen0/warroom-ethcc-2023/tree/master/src/metamorphic): 
+
+
+解題:
+- [Deploy Different Contracts at the Same Address ](https://solidity-by-example.org/hacks/deploy-different-contracts-same-address/)- Metamorphic 合約 可更新 用CREATE2 搭配CREATE 原地換Code
+- salt一樣但 bytecode 可以不一樣~  部屬出來的地址一樣.
+
+
+[POC](https://github.com/spalen0/warroom-ethcc-2023/blob/master/test/metamorphic/MultiplerRug.t.sol)
