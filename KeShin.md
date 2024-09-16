@@ -151,8 +151,40 @@ KeShin, 合约安全新人
 #### [Ethernaut CTF : 23 DexTwo](https://ethernaut.openzeppelin.com/level/23)
 - 耗尽池子的所有 token
 - 一直调 swap ，尝试构造将池子中的所有 token 换出来
+- 但是换到最后，会有一个 token 的数量为0，导致 price 计算失败
+- 跳出思维逻辑，我们可以部署一个新 token ，然后让剩余的 token 和这个 token 组成一个 pool，然后把剩余的换出来
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/23-DexTwo/)
 
 ### 2024.9.15
+#### [Ethernaut CTF : 24 PuzzleWallet](https://ethernaut.openzeppelin.com/level/24)
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/24-PuzzleWallet/)
+
+### 2024.9.16
+#### [Ethernaut CTF : 25 Motorbike](https://ethernaut.openzeppelin.com/level/25)
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/25-Motorbike/)
+
+#### [Ethernaut CTF : 26 DoubleEntryPoint](https://ethernaut.openzeppelin.com/level/26)
+- CryptoVault 中存在漏洞，需要部署一个 detection bot 合约探测漏洞并及时发出警告，并在 Forta 中注册
+- 在 bot 实现 handleTransaction, 当 transfer 发送时调用 raiseAlert
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/26-DoubleEntryPoint/)
+
+#### [Ethernaut CTF : 27 GoodSamaritan](https://ethernaut.openzeppelin.com/level/27)
+- 拿走玛雅人钱包的所有钱
+- 我们可以调用 10^{5} 次 requestDonation 来拿走所有的钱，但是这样 gas 会花很多
+- 我们注意到有一个 transferRemainder 函数可以直接转走剩下所有的钱，但是其调用条件为 donate10 的 err 为 NotEnoughBalance()
+- 在 donate10 中，调用了 coin.transfer，其中还调用了 notify ，那么我们可以在其中直接报错 NotEnoughBalance()，这样剩下的 coin 就直接转给我们了
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/27-GoodSamaritan/)
+
+### 2024.9.17
+
+### 2024.9.18
+
+### 2024.9.19
+
+### 2024.9.20
+
+### 2024.9.21
+
+### 2024.9.22
 
 <!-- Content_END -->

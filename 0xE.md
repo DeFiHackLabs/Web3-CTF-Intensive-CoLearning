@@ -67,4 +67,10 @@ timezone: Pacific/Auckland
 [[EthTaipei CTF 2023] 1 | Arcade](./Writeup/0xE/EthTaipeiCTF2023/arcade.md)  
 [[EthTaipei CTF 2023] 2 | ETHTaipeiWarRoomNFT](./Writeup/0xE/EthTaipeiCTF2023/ethtaipeiwarroomnft.md)
 
+### 2024.09.15
+[[EthTaipei CTF 2023] 3 | Casino](./Writeup/0xE/EthTaipeiCTF2023/casino.md)
+
+### 2024.09.16
+[[EthTaipei CTF 2023] 4 | WBC](./Writeup/0xE/EthTaipeiCTF2023/wbc.md)
+
 <!-- Content_END -->

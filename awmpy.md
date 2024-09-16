@@ -1049,6 +1049,80 @@ forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/higher_order_ha
 forge script  --rpc-url https://1rpc.io/holesky script/ethernaut/stake_hack.s.sol:StakeHackScript --evm-version cancun -vvvv --broadcast
 ```
 
+Ethernaut系列完结撒花~~~
+
 ### 2024.09.15
+
+- ETHCC-2023
+
+今天开始ethcc-2023系列，先按照github中的文档来部署
+
+部署`War`合约时，遇到了继承的`Ownable`合约`constructor`缺少参数的问题，这是因为我安装了`openzeppelin-contracts`的5.0.2版本
+进入`lib/openzeppelin-contracts`目录执行命令`git checkout release-v4.9`将其切换到4.9版本就不需要这个参数
+
+#### 1. Proxy
+本关的目标是要让其他人都无法处理已部署的合约，与`ethernaut-25-Motorbike`类似
+
+执行脚本部署合约之后有`DasProxy`与`Impl`两个合约
+
+与`ethernaut-25-Motorbike`题目类似都使用了UUPS代理模式，也存在`Impl`合约未初始化的问题，可以直接调用`Impl`合约的`initialize`函数来获取owner
+但是调用`initialize`需要0.1个eth，得再去找点水，使用test可以自行分配一些eth
+`initialize`要求传入的address参数要是0，并且没有限制只能调用一次，选手们可随意抢夺owner权限
+
+获得owner权限后就可以调用`whitelistUser`函数把自己加入到白名单中
+`Impl`合约继承了`UUPSUpgradeable`合约[UUPSUpgradeable.sol](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.9/contracts/proxy/utils/UUPSUpgradeable.sol)，可通过调用`upgradeTo`函数来升级合约
+`upgradeTo`有一个`onlyProxy`装饰器，要求这个函数必须是通过proxy delegatecall来调用
+`upgradeTo`中又调用了`_authorizeUpgrade`函数，这个函数是在`Impl`中实现的，要求`withdrawals[_msgSender()] > 1`并且`msg.sender`在白名单中
+之前在`initialize`时已经传入了0.1 ehter，只需要调用一下`withdraw`就可以满足这个条件，到此搞定了合约升级的问题
+新合约不实现这些函数就可以[TakeOwnership.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/proxy/TakeOwnership.sol)
+
+攻击思路总结：
+1. 调用`initialize`函数获取owner权限
+2. 调用`whitelistUser`函数加入到白名单中
+3. 调用`withdraw`函数取回初始化合约时的ETH
+4. 调用`upgradeTo`函数升级合约
+
+test文件[Proxy.t.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/proxy/Proxy.t.sol)
+
+进入`warroom-ethcc-2023`目录中，执行以下命令测试：
+
+``` bash
+proxychains3 forge test test/proxy/Proxy.t.sol --rpc-url $SEPOLIA_RPC_URL  -vvvv
+```
+
+### 2024.09.16
+
+#### 2. Flash loan
+
+本关的挑战与闪电贷有关
+闪电贷是一种无抵押贷款，只要借入的资产在同一笔区块链交易中偿还，用户就可以在没有前期抵押物的情况下借入资产，以此达到套利或操纵价格的目的
+个人理解闪电贷有点类似于传统的性能测试，有些程序在并发较低的情况下运行良好，但在并发高的情况下就会有问题，闪电贷通过提供大量流动性可能发现的潜在攻击媒介
+
+闪电贷攻击示例：
+1. 攻击者从支持闪电贷的协议中借用了大量代币 A
+2. 攻击者在 DEX 上将代币 A 换成代币 B（降低代币 A 的现货价格并提高代币 B 在 DEX 上的现货价格）
+3. 攻击者将购买的代币 B 作为抵押品存入 DeFi 协议，该协议使用上述 DEX 的现货价格作为其唯一的价格馈送，并使用操纵的现货价格借入比正常情况下更大的代币 A
+4. 攻击者使用借入的代币 A 的一部分全额偿还原始闪电贷并保留剩余的代币，利用协议操纵的价格馈送产生利润
+5. 由于 DEX 上代币 A 和 B 的现货价格被套利回真实的全市场价格，因此 DeFi 协议处于抵押不足的情况
+
+也就是说最终攻击的对象是Defi
+
+攻击思路：
+1. 设置`minFlashLoan`变量为`1e23 + 1`确保闪电贷金额高于Aave的10000代币上限
+2. 通过 Aave 的闪电贷功能借入大量 DAI
+3. 编写攻击合约实现一个`executeOperation`函数，这个函数是Aave闪电贷的回调函数。当`flashLoanSimple`被调用并且贷款资金到达后，`executeOperation`就会被执行
+4. 在`executeOperation`中将贷款金额和利息转移到`loan`合约，随后触发`loan`合约进行另一笔闪电贷操作，这样就实现了循环调用
+5. 从`loan`合约中提取所有奖励代币
+6. 偿还闪电贷借款，同时保留从`loan`合约中提取的奖励
+
+test文件[Loan.t.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/flashloan/Loan.t.sol)
+
+进入`warroom-ethcc-2023`目录中，执行以下命令测试：
+
+``` bash
+proxychains3 forge test test/flashloan/Loan.t.sol --rpc-url $SEPOLIA_RPC_URL  -vvvv
+```
+
+### 2024.09.17
 
 <!-- Content_END -->
