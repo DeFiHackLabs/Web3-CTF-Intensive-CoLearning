@@ -175,7 +175,7 @@ function testReuseSignature() public {
 
 解題:
 - [Deploy Different Contracts at the Same Address ](https://solidity-by-example.org/hacks/deploy-different-contracts-same-address/)- Metamorphic 合約 可更新 用CREATE2 搭配CREATE 原地換Code
-- salt一樣, 但是bytecode 可以不一樣~  部屬出來的地址一樣.
+- salt一樣但 bytecode 可以不一樣~  部屬出來的地址一樣.
 
 
 [POC](https://github.com/spalen0/warroom-ethcc-2023/blob/master/test/metamorphic/MultiplerRug.t.sol)
