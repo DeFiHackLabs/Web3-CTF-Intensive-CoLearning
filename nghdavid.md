@@ -341,5 +341,15 @@ abstract contract ReentrancyGuard {
 - 唯一的辦法是讓其他合約selfdestruct強制將其他合約的Eth轉給該合約
 - 所以就是創建一個合約，讓這個合約執行selfdestruct，指定該合約的地址為參數
 
+### 2024.09.16
+# Ethernut第八題
+- 這題的關鍵是找到被設為private的password
+- 然後使用unlock()把鎖打開
+- 因爲private的關係，要透過storage slot找到password，使用foundry裡的vm.load去讀取
+- locked為bool，大小為一個byte，佔據slot 0
+- password為bytes32，大小為32byte，因為放不下slot 0，所以放在slot 1
+- 故使用vm.load(address, bytes32(uint256(1)))去讀取slot 1的password
+- 最後再輸入正確的密碼去用unlock去解鎖
+
 
 <!-- Content_END -->
