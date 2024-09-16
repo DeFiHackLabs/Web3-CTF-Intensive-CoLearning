@@ -98,7 +98,7 @@ Solved GreyHats Dollar.
 
 Solved Escrow.
 
-### 2024.09.15
+### 2024.09.16
 
 Solved Simple AMM Vault.
 
