@@ -366,6 +366,21 @@ Progress
 
 **Time used: 4h 30m and ongoing...**
 
+### 2024.09.16
+
+Progress
+
+* Damn Vulnerable DeFi (8/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+* OnlyPwner.xyz (12/16)
+
+#### 🏁 OnlyPwner.xyz
+
+> [!WARNING]
+> Finished _Wrapped Ether_ (~2h 20m).
+
+I was stuck for 2 hours because of a weird Solidity behaviour on `public` vs `external`. I still couldn't figure out why...
 
 <!-- Content_END -->
 
