@@ -1019,3 +1019,90 @@ contract Attack {
 [0xD6, 0x94, <challengeInstance>, 0x01]
 ```
 
+# MagicNumber
+- 这道题有点难，看 wp 学习的，不会手写 Opcode。
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract MagicNum {
+    address public solver;
+
+    constructor() {}
+
+    function setSolver(address _solver) public {
+        solver = _solver;
+    }
+
+    /*
+    ____________/\\\_______/\\\\\\\\\_____        
+     __________/\\\\\_____/\\\///////\\\___       
+      ________/\\\/\\\____\///______\//\\\__      
+       ______/\\\/\/\\\______________/\\\/___     
+        ____/\\\/__\/\\\___________/\\\//_____    
+         __/\\\\\\\\\\\\\\\\_____/\\\//________   
+          _\///////////\\\//____/\\\/___________  
+           ___________\/\\\_____/\\\\\\\\\\\\\\\_ 
+            ___________\///_____\///////////////__
+    */
+}
+```
+题目要求我们实现一个可以在 whatIsTheMeaningOfLife() 调用时返回正确的 32 字节数的合约【注释里提示了是42】，同时限制代码长度。这个题需要写一个 solver 合约，最多10字节（如果通过solidity写一个function也会超过10个字节）。题目提示我们需要离开 solidity 直接写 EVM Opcode 来满足功能。
+
+部署合约的字节码进一步可以分为：Creation Code（不包含进合约内，仅部署时执行）、Runtime Code。Constructor 中的逻辑就在 Creation Code。
+
+对于 Creation Code：
+- OPCODE: 0x60  NAME: PUSH1
+- OPCODE: 0x52  NAME: MSTORE
+- OPCODE: 0xf3  NAME: RETURN
+- OPCODE: 0x39  NAME: CODECOPY
+
+
+先构造 runtime code：目标是返回42即(0x2a),需要用到 return(p,s) 操作码，p是回传值在memory中的位置，s是回传值的大小，所以0x2a需要先存到memory中然后再return，于是用到 MSTORE(p,v)。
+```
+PUSH1 0x2a
+PUSH1 0x80 // 这里可以是任意值，通常 solidity 编译出的 opcode 这里是 0x80，因为之前的位置有别的用途，但手写 opcode 无所谓了
+MSTORE
+
+PUSH1 0x20 // 32 bytes - RETURN(p,s) - s - size
+PUSH1 0x80 // p - 上面 mstore 的地址
+RETURN
+```
+翻译成opcode：`602a60805260206080f3` 20 chars 刚好 10 bytes 
+
+然后写 creation code。需要完成的操作有：将 runtime code 加载到内存中，然后返回给 EVM。CODECOPY 操作码可以实现这个功能，CODECOPY(d,p,s) 需要三个参数：runtime code position in memory，current position of runtime opcode in the bytecode 和 size of the code in bytes。 回传给 EVM 需要用到： return(p,s);
+
+故构造如下：
+```
+PUSH1 s // 0x0a - 10 bytes - size of runtime opcode 和前面的 code 长度一致
+PUSH1 p // 
+PUSH1 d // dst position: 0x00 可以随便设
+CODECOPY
+// CODECOPY(d,p,s)
+PUSH1 s // 和上面一致 0x0a
+PUSH1 p // 和上面一致 0x00
+RETURN
+// return(p,s)
+```
+
+翻译成 bytecode:
+```
+602a60805260206080f3
+```
+组合一下：
+```
+602a60805260206080f3 + 602a60805260206080f3
+602a60805260206080f3602a60805260206080f3
+```
+
+部署：
+```solidity
+bytecode = "602a60805260206080f3602a60805260206080f3"
+txn = await web3.eth.sendTransaction({from: player, data: bytecode})
+await contract.setSolver(txn.contractAddress)
+```
+这里不止一种构造方式。
+
+参考资料：
+- [Learn EVM in depth #2. Executing the bytecode step by step in the deployment of a contract.](https://medium.com/coinmonks/learn-evm-in-depth-2-executing-the-bytecode-step-by-step-in-the-deployment-of-a-contract-270a6335df75)
+- [https://www.evm.codes/playground](https://www.evm.codes/playground)
