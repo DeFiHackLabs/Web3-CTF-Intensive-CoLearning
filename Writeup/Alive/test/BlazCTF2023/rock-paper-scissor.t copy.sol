@@ -5,7 +5,6 @@ import {Test, console} from "../../lib/forge-std/src/Test.sol";
 import {Vm} from "../../lib/forge-std/src/Vm.sol";
 import {Challenge, RockPaperScissors} from "../../src/BlazCTF2023/rock-paper-scissor.sol";
 
-// 安装的foundry最低也支持不到0.5.0的版本，所以这题不实际在这跑了，但思路是这里的思路，直接到remix部署过关了。
 contract ChallengeTest is Test {
     function setUp() public {
         vm.createSelectFork(vm.rpcUrl("holesky"));

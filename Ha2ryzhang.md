@@ -404,4 +404,30 @@ if (convertToShares(totalSupply) != balanceBefore) revert InvalidBalance();
 
 又卡住了... 
 
+### 2024.09.14
+
+#### A-DamnVaulnerableDefi-NaiveReceiver
+
+pool合约中的msgSender
+
+```solidity
+
+function _msgSender() internal view override returns (address) {
+    if (msg.sender == trustedForwarder && msg.data.length >= 20) {
+        return address(bytes20(msg.data[msg.data.length - 20:]));
+    } else {
+        return super._msgSender();
+    }
+}
+
+```
+如果来源是 `trustedForwarder`合约的话并且data.length>=20,返回的地址是获取`msg.data`最后20个字节来作为地址.
+
+而这个msgSender又是`withdraw`方法需要的
+
+这里需要去了解EIP712,看看具体怎么个调用法
+
+这道题,参考的sun哥的.实在是卡在这了,今天累了,明天再整理下,不会组织语言了.
+
+
 <!-- Content_END -->
