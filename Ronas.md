@@ -86,4 +86,8 @@ timezone: Asia/Taipei
 
 - [A. Ethernaut CTF - level 16 Preservation](/Writeup/Ronas/Ethernaut%20CTF/level16.md)
 
+### 2024.09.16
+
+- [A. Ethernaut CTF - level 17 Recovery](/Writeup/Ronas/Ethernaut%20CTF/level17.md)
+
 <!-- Content_END -->
