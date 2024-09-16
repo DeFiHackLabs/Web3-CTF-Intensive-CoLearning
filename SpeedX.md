@@ -355,6 +355,7 @@ RPC突然好用了， 我测试了一下 调用 setFirstTime， setSecondTime �
 今天继续有点晚了， 先打卡再肝。
 
 ### 2024.09.15
+**Level 18 MagicNum**
 昨天充值了 claude AI 真的很好用啊， 这道题不了解EVM bytecode 先用claude 学习一下如何写一个最小的合约。
 
 EVM OPCODE 参考
@@ -405,7 +406,7 @@ initialization opcode， 家在 runtimecode 然后返回runtimecode
 [POC 代码](Writeup/SpeedX/script/Ethernaut/magicnumber_poc.s.sol)
 
 
-**Level18 Alien Codex**
+**Level19 Alien Codex**
 这一关真的非常狗，一看合约 solidity 版本就知道有猫腻。
 
 要获得owner 合约方法里面没有一个跟 owner有关的，owner变量在 ownable类中。
@@ -424,6 +425,28 @@ retract 函数减少 index , 0.5.0版本的solidity 肯定有益处了， 默认
 超过slot index ， slot index 就又从0开始了就会覆盖之前的数据， 这样就可以修改 owner的值了 
 
 但是需要计算好 codex的哪个索引的位置，会覆盖 slot 0
+
+**Level 19 Denial**
+
+这关是让 withdraw 调用失败， 突破口是 partner合约 receive函数， 我开始想的是这么简单 直接在 receive中revert 不久好了， 后来知道 call函数调用 即使 partner合约 revert 也不会导致交易终止， 而是call调用返回一个 bool 失败是否成功。
+
+那么就看 call 函数本身如何导致失败了， 看了网上的答案是 让gas耗尽产生gas exception, gas 耗尽 call函数也不会报错， 但是下面的转账就不能继续执行了。就会返回false。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/denial_poc.s.sol)
+
+
+**Level 21 Shop**
+今天多肝几个 追赶一下进度，没有几天就结束了。A题还没做多少呢！
+
+这题 buyer price函数 在shop中调用了两次，我们可以在第一次调用的时候返回 >= shop price 的值， 第二次返回一个低于 shop price的价格， 以前我们做类似的题目的时候，会在buyer中添加一个变量来判断是否第一次调用，但是题目中 price函数是view 函数，不能使用storage 变量。   
+
+但是我们发现 shop中有一个字段 isSold 购买后 isSold先被设置为来 true， 我们可以根据这个来判断 
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/shop_poc.s.sol)
+
+**Level 22 Dex**
+
+
 
 
 ### 2024.09.16

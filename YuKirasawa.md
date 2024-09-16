@@ -140,4 +140,12 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 blazctf 2023 的 rock-paper-scissor、eazy-nft 题目。
 
+### 2024.09.15
+
+完成了 blazctf 2023 的 ghost 题目。
+
+### 2024.09.16
+
+完成了 blazctf 2023 的 jambo 题目。
+
 <!-- Content_END -->
