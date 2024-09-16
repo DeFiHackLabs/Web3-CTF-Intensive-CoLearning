@@ -745,4 +745,15 @@ forge script script/level17.s.sol:CallContractScript --rpc-url sepolia --broadca
 仔细阅读合约，定义了一个 `Buyer` 接口，但没有具体的实现。在 `buy` 函数中依赖了一个 `Buyer` 实例，因此可以从这里做文章。
 
 脚本明天再写
+
+
+### 2024.09.16
+
+[The Ethernaut level 18](https://ethernaut.openzeppelin.com/level/18)
+
+
+这个挑战要求提供一个 solver 合约，合约有一个方法 whatIsTheMeaningOfLife()，返回正确的数字。另外，要求 solver 的代码需要非常小，最多不超过 10 字节。
+
+按正常逻辑编写一个一个 solver 合约很简单，但是字节码会超过 10 字节。可以借用 fallback 函数，不管调用哪个方法都返回一个数字，
+
 <!-- Content_END -->
