@@ -65,4 +65,9 @@ timezone: Asia/Taipei
 完成題數：23
 
 今天解Ethernaut MagicNumber&Alien Codex
+
+### 2024.09.16
+完成題數：25
+
+今天解Ethernaut Denial & shop
 <!-- Content_END -->

@@ -397,9 +397,9 @@ POC -- NaughtCoin: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning
 
 这道题结合了之前 delegatecall 的使用和插槽存储的特性
 
-对于 delegate 来说，A合约它改变的都是某一插槽的变量，而B合约最好存储插槽的类型是一致的，否则无法修改，这里通过修改插槽 0 为指定地址的攻击合约地址，再在攻击合约中实现对应数据的修改，具体，等我整理 POC
+对于 delegate 来说，A合约它改变的都是某一插槽的变量，而B合约最好存储插槽的类型是一致的，否则无法修改，这里通过修改插槽 0 为指定地址的攻击合约地址，再在攻击合约中实现对应数据的修改，具体，等我整理 POC (POC已整理)
 
-POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+POC -- Preservation: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Preservation.md
 
 
 
@@ -419,11 +419,23 @@ create 计算合约地址:
 2. 对编码结果进行 keccake256 哈希
 3. 将哈希结果转成地址类型
 
-具体，等我整理 POC
+具体，等我整理 POC(已整理在下面)
+
+POC -- Recovery: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Recovery.md
+
+
+
+### 2024.09.16
+
+学习內容:
+
+今天仍然是在做题与写poc度过的
+
+整理之前的 poc 以及研究操作码
+
+
 
 POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
-
-
 
 
 
