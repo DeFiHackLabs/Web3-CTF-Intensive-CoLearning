@@ -445,10 +445,22 @@ retract 函数减少 index , 0.5.0版本的solidity 肯定有益处了， 默认
 [POC 代码](Writeup/SpeedX/script/Ethernaut/shop_poc.s.sol)
 
 **Level 22 Dex**
-
-
-
-
 ### 2024.09.16
 今天出去玩儿没带电脑 手机打卡 明天补上
+
+### 2024.09.17
+dex 这个题目就是 价格计算有问题啊， 价格应该是把from_amount 算进来再计算价格。
+
+price = amount * to / (from + amount) 这样计算才可以，要把amount自身对价格的影响计算进来
+
+我想到的方法就是 一直 swap 知道某个token的 balance为0， 这时候肯定是 bad price的 ， 因为bad就没正确过.... , 但是如果某一个balance 为0， 那么计算价格会报错， 被除数不能为0
+
+
+
+### 2024.09.18
+
+### 2024.09.19
+
+### 2024.09.20
+
 <!-- Content_END -->
