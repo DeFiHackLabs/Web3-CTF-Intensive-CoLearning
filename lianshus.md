@@ -369,8 +369,6 @@ cast balance 0x111111... --rpc-url
 
 复现等明天补吧，每天都在赶之前的复现
 
-POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
-
 
 
 ### 2024.09.12
@@ -385,7 +383,61 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 
 可以从环境变量中读取私钥
 
+POC -- NaughtCoin: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/NaughtCoin.md
+
+
+
+### 2024.09.14
+
+学习內容:
+
+昨天清了一天假，今天仍然是在做题与写poc度过的
+
+做了A 系列一题 Preservation，加油杀出新手村
+
+这道题结合了之前 delegatecall 的使用和插槽存储的特性
+
+对于 delegate 来说，A合约它改变的都是某一插槽的变量，而B合约最好存储插槽的类型是一致的，否则无法修改，这里通过修改插槽 0 为指定地址的攻击合约地址，再在攻击合约中实现对应数据的修改，具体，等我整理 POC (POC已整理)
+
+POC -- Preservation: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Preservation.md
+
+
+
+### 2024.09.15
+
+学习內容:
+
+今天仍然是在做题与写poc度过的
+
+做了A 系列一题 Recovery，加油杀出新手村
+
+这道题主要是对合约地址的计算，这里用的create
+
+create 计算合约地址:
+
+1. 使用 RLP 编码 msg.sender 与 创建者账户的 nonce
+2. 对编码结果进行 keccake256 哈希
+3. 将哈希结果转成地址类型
+
+具体，等我整理 POC(已整理在下面)
+
+POC -- Recovery: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Recovery.md
+
+
+
+### 2024.09.16
+
+学习內容:
+
+今天仍然是在做题与写poc度过的
+
+整理之前的 poc 以及研究操作码
+
+
+
 POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
 
 
 

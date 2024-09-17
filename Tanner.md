@@ -141,4 +141,15 @@ timezone: Asia/Taipei
 - [POC](./Writeup/Tanner/test/QuillCTF/TrueXOR.t.sol) 
 
 
+### 2024.09.15
+
+學習內容: 
+
+- KeyCraft 解題中
+
+#### [QuillAudit CTF - KeyCraft](./Writeup/Tanner/src/QuillCTF/KeyCraft.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/KeyCraft.t.sol) 
+
+
 <!-- Content_END -->

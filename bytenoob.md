@@ -125,6 +125,21 @@ Finish ethernaut magicnumber
 
 Finish ethernaut alien codex
 
+### 2024.09.14
+
+Finish ethernaut denial
+
+### 2024.09.15
+
+Finish ethernaut shop
+
+### 2024.09.16
+
+Finish ethernaut dex
+
+### 2024.09.17
+
+Finish ethernaut dex2
 
 
 <!-- Content_END -->

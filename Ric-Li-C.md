@@ -112,4 +112,20 @@ A.3 選 1 系列
 
         Completed 21-Shop
 
+### 2024.09.16
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 22-Dex
+
+### 2024.09.17
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 23-DexTwo
+
 <!-- Content_END -->

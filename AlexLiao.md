@@ -140,7 +140,20 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 -   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Free Rider](https://www.damnvulnerabledefi.xyz/challenges/free-rider/)
 
+-   [OnlyPwner](https://onlypwner.xyz/) - [FREEBIE](https://onlypwner.xyz/challenges/5)
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [TUTORIAL](https://onlypwner.xyz/challenges/1)
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [UNDER THE FLOW](https://onlypwner.xyz/challenges/9)
+
 筆記連結： [DamnVulnerableDeFi: Free Rider](./Writeup/AlexLiao/DamnVulnerableDeFi/FreeRider.md)
+
+> [!WARNING]
+> OnlyPwner 不允許公開題目解法，僅提供完成截圖。
+
+![FREEBIE](Writeup/AlexLiao/OnlyPwner/FREEBIE.png)
+![TUTORIAL](Writeup/AlexLiao/OnlyPwner/TUTORIAL.png)
+![UNDER THE FLOW](Writeup/AlexLiao/OnlyPwner/UNDERTHEFLOW.png)
 
 ### 2024.09.08
 
@@ -148,7 +161,16 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 -   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Backdoor](https://www.damnvulnerabledefi.xyz/challenges/backdoor/)
 
+-   [OnlyPwner](https://onlypwner.xyz/) - [WRAPPED ETHER](https://onlypwner.xyz/challenges/12)
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [REVERSE RUGPULL](https://onlypwner.xyz/challenges/7)
+
 筆記連結： [DamnVulnerableDeFi: Backdoor](./Writeup/AlexLiao/DamnVulnerableDeFi/Backdoor.md)
+
+> [!WARNING]
+> OnlyPwner 不允許公開題目解法，僅提供完成截圖。
+
+![FREEBIE](Writeup/AlexLiao/OnlyPwner/WRAPPEDETHER.png)
 
 ### 2024.09.09
 
@@ -164,7 +186,14 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 -   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [ABI Smuggling](https://www.damnvulnerabledefi.xyz/challenges/abi-smuggling/)
 
+-   [OnlyPwner](https://onlypwner.xyz/) - [PLEASE SIGN HERE](https://onlypwner.xyz/challenges/6)
+
 筆記連結： [DamnVulnerableDeFi: ABI Smuggling](./Writeup/AlexLiao/DamnVulnerableDeFi/ABISmuggling.md)
+
+> [!WARNING]
+> OnlyPwner 不允許公開題目解法，僅提供完成截圖。
+
+![FREEBIE](Writeup/AlexLiao/OnlyPwner/PLEASESIGNHERE.png)
 
 ### 2024.09.11
 
@@ -182,7 +211,13 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 挑戰題目：
 
--   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [ETHTaipeiWarRoomNFT](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/ETHTaipeiWarRoomNFT)
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [ETHTaipeiWarRoomNFT](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/E挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [Casino](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/Casino)
+
+筆記連結： [ETH Taipei CTF 2023: Casino](./Writeup/AlexLiao/ETHTaipeiCTF2023/Casino.md)
+
+### 2024.09.14THTaipeiWarRoomNFT)
 
 筆記連結： [ETH Taipei CTF 2023: ETHTaipeiWarRoomNFT](./Writeup/AlexLiao/ETHTaipeiCTF2023/ETHTaipeiWarRoomNFT.md)
 
@@ -190,10 +225,62 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 挑戰題目：
 
--   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [Casino](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/Casino)
+-   [OnlyPwner](https://onlypwner.xyz/) - [ALL OR NOTHING](https://onlypwner.xyz/challenges/10)
 
-筆記連結： [ETH Taipei CTF 2023: Casino](./Writeup/AlexLiao/ETHTaipeiCTF2023/Casino.md)
+> [!WARNING]
+> OnlyPwner 不允許公開題目解法，僅提供完成截圖。
 
-### 2024.09.14
+![ALL OR NOTHING](Writeup/AlexLiao/OnlyPwner/ALLORNOTHING.png)
+
+### 2024.09.15
+
+挑戰題目：
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [LIQUID STAKING](https://onlypwner.xyz/challenges/15)
+
+> [!WARNING]
+> OnlyPwner 不允許公開題目解法，僅提供完成截圖。
+
+![ALL OR NOTHING](Writeup/AlexLiao/OnlyPwner/LIQUIDSTAKING.png)
+
+### 2024.09.16
+
+挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [WBC](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/WBC)
+
+筆記連結： [ETH Taipei CTF 2023: WBC](./Writeup/AlexLiao/ETHTaipeiCTF2023/WBC.md)
+
+### 2024.09.17
+
+今天中秋假期不解題！
+
+複習 `CREATE2` 的用法，熟悉用 Foundry 工具來生成符合特定條件的地址。
+
+Foundry 的 `cast create2` 指令能夠找出 `salt` 來生成特定地址，但有一個坑就是需要在 `foundry.toml` 中將 `always_use_create_2_factory` 設為 `true`，不然生成的地址會與實際執行時不同。
+
+相關連結：https://github.com/foundry-rs/foundry/issues/6402
+
+以下為生成後綴為 `00` 的地址範例：
+
+```
+cast create2 --ends-with 00 --init-code-hash 0x2a9d6cd43768b2057ae65250d46bf90c88c7cb8d102fb57e5fee5e2797abbd52
+```
+
+其中 `--init-code-hash` 為合約的 creation code 做 hash，如果合約有 construct 參數，則需要將合約 creation code 與 construct 參數做 `abi.encodePacked`。
+
+如何取得合約 creation code：
+
+```solidity
+type(Contract).creationCode
+```
+
+如果合約有 construct 參數：
+
+```solidity
+abi.encodePacked(type(Contract).creationCode, uint256(uint160(address(owner))))
+```
+
+### 2024.09.18
 
 <!-- Content_END -->

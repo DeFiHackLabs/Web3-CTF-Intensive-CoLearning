@@ -204,4 +204,18 @@ Link: https://github.com/minaminao/ctf-blockchain/tree/main/src/NumenCTF/Wallet
 
 Writeup: The multisig wallet owner's private key is easily accessible online; however, when the private key is used to sign a message and then send it to the multisignature wallet, the transaction reverts because the holder address is a zero address instead of one of the signers. This occurs due to a compiler bug in Solidity 0.8.15, which allows us to bypass the check with an invalid signature, gaining access to all tokens in the wallet.
 
+### 2024.09.14
+
+(1) BlazCTF Be biLlionAireS Today CTF Challenge
+
+Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/be-billionaire-today
+
+Writeup: The only clue we have is a multi-signature wallet contract address and three other addresses. I was quite confused, so I decided to search these addresses on GitHub and discovered that their private keys were publicly available, as they are commonly used for testing. I then used these private keys to send transactions and withdraw all the funds.
+
+### 2024.09.16
+
+(1) OnlyPwner FREEBIE CTF Challenge
+
+Link: https://onlypwner.xyz/challenges/5
+
 <!-- Content_END -->

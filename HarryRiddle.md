@@ -208,4 +208,38 @@ Plan:
 
 - [Solution](./Writeup/HarryRiddle/Ethernaut-CTF/src/GatekeeperThree.sol)
 
+### 2024.09.14
+
+#### Ethernaut CTF - [Switch](https://ethernaut.openzeppelin.com/level/0xb2aBa0e156C905a9FAEc24805a009d99193E3E53)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#346)
+
+### 2024.09.15
+
+#### Ethernaut CTF - [HigherOrder](https://ethernaut.openzeppelin.com/level/0xd459773f02e53F6e91b0f766e42E495aEf26088F)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#355)
+
+#### Ethernaut CTF - [Stake](https://ethernaut.openzeppelin.com/level/0xB99f27b94fCc8b9b6fF88e29E1741422DFC06224)
+
+- [Write-up](./Writeup/HarryRiddle/Ethernaut-CTF.md#366)
+
+- [Solution](./Writeup/HarryRiddle/Ethernaut-CTF/src/Stake.sol)
+
+### 2024.09.15
+
+#### Real World CTF 2024 SafeBridge
+
+- [Write-up](./Writeup/HarryRiddle/Real-World-CTF-6th-Challenge-SafeBridge.md)
+
+- [Solution](Comming soon)
+
+### 2024.09.16
+
+#### Real World CTF 2024 SafeBridge (Finished)
+
+- [Write-up](./Writeup/HarryRiddle/Real-World-CTF-6th-Challenge-SafeBridge.md)
+
+- [Solution](./Writeup/HarryRiddle/Real-World-CTF-6th-Challenge-SafeBridge.md#L59)
+
 <!-- Content_END -->

@@ -346,6 +346,48 @@ forge debug --debug src/bridge-takeover/Bridge.sol --sig "voteForNewRoot(bytes)"
 > [!WARNING]
 > Finished _Bridge Takeover_ (~2h 15m)... Finally a solve after few days.
 
+### 2024.09.14
+
+Progress
+
+* Damn Vulnerable DeFi (8/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+* OnlyPwner.xyz (11/16)
+
+#### 🏁 OnlyPwner.xyz
+
+> [!WARNING]
+> Finished _13th Airdrop_ (~2h 15m).
+
+### 2024.09.15
+
+#### 🏳️ OnlyPwner.xyz: Liquid Staking
+
+**Time used: 4h 30m and ongoing...**
+
+### 2024.09.16
+
+Progress
+
+* Damn Vulnerable DeFi (8/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+* OnlyPwner.xyz (12/16)
+
+#### 🏁 OnlyPwner.xyz
+
+> [!WARNING]
+> Finished _Wrapped Ether_ (~2h 20m).
+
+I was stuck for 2 hours because of a weird Solidity behaviour on `public` vs `external`. I still couldn't figure out why...
+
+### 2024.09.17
+
+#### 🏳️ OnlyPwner.xyz: Diversion
+
+**Time used: 6h 30m and ongoing...**
+
 <!-- Content_END -->
 
 <!-- 

