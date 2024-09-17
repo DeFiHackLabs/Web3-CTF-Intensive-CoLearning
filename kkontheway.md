@@ -100,4 +100,7 @@ A: Damn Vulnerable DeFi V4(3/18)
 - 深入研究久了一下Memory
 ### 2024.09.16
 - 解决OnlyPwner-ProofOfWork
+
+### 2024.09.17
+- Stuck on Paradigm2023-Dragon
 <!-- Content_END -->

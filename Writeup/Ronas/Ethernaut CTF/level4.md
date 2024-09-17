@@ -26,7 +26,7 @@ contract Telephone {
 
 過關條件: 
 
-- TODO
+- 獲得合約的所有權
 
 解法：
 
