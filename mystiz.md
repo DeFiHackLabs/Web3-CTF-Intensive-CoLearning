@@ -382,6 +382,12 @@ Progress
 
 I was stuck for 2 hours because of a weird Solidity behaviour on `public` vs `external`. I still couldn't figure out why...
 
+### 2024.09.17
+
+#### 🏳️ OnlyPwner.xyz: Diversion
+
+**Time used: 6h 30m and ongoing...**
+
 <!-- Content_END -->
 
 <!-- 
