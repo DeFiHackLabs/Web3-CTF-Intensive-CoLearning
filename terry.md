@@ -45,4 +45,20 @@ timezone: Asia/Taipei
 - Ethernaut CTF - Telephone
 - POC: https://lalaterry.github.io/posts/Ethernaut-Token/
 
+### 2024.09.05
+
+學習內容:
+- Ethernaut CTF - Delegation
+- POC: https://lalaterry.github.io/posts/Ethernaut-Delegation/
+
+
+### 2024.09.06
+
+學習內容:
+- Ethernaut CTF - Force
+- POC: https://lalaterry.github.io/posts/Ethernaut-Force/
+
+
+
+
 <!-- Content_END -->

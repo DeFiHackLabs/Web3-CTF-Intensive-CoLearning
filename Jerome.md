@@ -47,4 +47,36 @@ timezone: Asia/Shanghai
 - [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/TheRewarder/TheRewarder.md)
 - [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/TheRewarder/TheRewarder.t.sol)
 
+### 2024.09.05
+学习内容
+#### [[Damn Vulnerable DeFi V4] 6 | Selfie ]
+1.完成Damn Vulnerable DeFi V4的第六关Selfie。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Selfie/Selfie.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Selfie/Selfie.t.sol)
+
+### 2024.09.06
+学习内容
+#### [[Damn Vulnerable DeFi V4] 7 | Compromised ]
+1.完成Damn Vulnerable DeFi V4的第七关Compromised。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Compromised/Compromised.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Compromised/Compromised.t.sol)
+
+### 2024.09.07
+学习内容
+#### [[Damn Vulnerable DeFi V4] 8 | Puppet ]
+1.完成Damn Vulnerable DeFi V4的第八关Puppet。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/Puppet/Puppet.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/Puppet/Puppet.t.sol)
+
+### 2024.09.09
+学习内容
+#### [[Damn Vulnerable DeFi V4] 9 | PuppetV2 ]
+1.完成Damn Vulnerable DeFi V4的第九关PuppetV2。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/PuppetV2/PuppetV2.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/PuppetV2/PuppetV2.t.sol)
+#### [[Damn Vulnerable DeFi V4] 10 | FreeRider ]
+2.完成Damn Vulnerable DeFi V4的第十关FreeRider。
+- [笔记](./Writeup/Jerome/A-DamnVulnerableDeFi/FreeRider/FreeRider.md)
+- [POC](./Writeup/Jerome/A-DamnVulnerableDeFi/FreeRider/FreeRider.t.sol)
+
 <!-- Content_END -->

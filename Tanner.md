@@ -78,5 +78,78 @@ timezone: Asia/Taipei
 - [Writeup](./Writeup/Tanner/writeup/QuillCTF/Pelusa.md) 
 - [POC](./Writeup/Tanner/test/QuillCTF/Pelusa.t.sol) 
 
+### 2024.09.06
+
+學習內容: 
+
+- 完成 WETH10
+
+#### [QuillAudit CTF - WETH10](./Writeup/Tanner/src/QuillCTF/WETH10.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/WETH10.t.sol) 
+
+
+### 2024.09.08
+
+學習內容: 
+
+- 完成 VotingMachine
+
+#### [QuillAudit CTF - VotingMachine](./Writeup/Tanner/src/QuillCTF/VotingMachine.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/VotingMachine.t.sol) 
+
+
+### 2024.09.09
+
+學習內容: 
+
+- 完成 PseudoRandom
+
+#### [QuillAudit CTF - PseudoRandom](./Writeup/Tanner/src/QuillCTF/PseudoRandom.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/PseudoRandom.t.sol) 
+
+### 2024.09.11
+
+學習內容: 
+
+- 完成 SafeNFT
+
+#### [QuillAudit CTF - SafeNFT](./Writeup/Tanner/src/QuillCTF/SafeNFT.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/SafeNFT.t.sol) 
+
+### 2024.09.12
+
+學習內容: 
+
+- 完成 TemporaryVariable
+
+#### [QuillAudit CTF - TemporaryVariable](./Writeup/Tanner/src/QuillCTF/TemporaryVariable.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/TemporaryVariable.t.sol) 
+
+### 2024.09.13
+
+學習內容: 
+
+- 完成 TrueXOR
+
+#### [QuillAudit CTF - TrueXOR](./Writeup/Tanner/src/QuillCTF/TrueXOR.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/TrueXOR.t.sol) 
+
+
+### 2024.09.15
+
+學習內容: 
+
+- KeyCraft 解題中
+
+#### [QuillAudit CTF - KeyCraft](./Writeup/Tanner/src/QuillCTF/KeyCraft.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/KeyCraft.t.sol) 
+
 
 <!-- Content_END -->

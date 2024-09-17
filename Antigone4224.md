@@ -45,4 +45,9 @@ damnvulnerable defi：完成了Selfie，Compromised。
 damnvulnerable defi：完成了puppetv1-v2（writeup对应day5...）
 
 
+### 2024.09.05
+
+damnvulnerable defi：完成了free-rider，backdoor。
+
+
 <!-- Content_END -->

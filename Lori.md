@@ -147,4 +147,30 @@ Logs:
   Lending pool WETH balance 143239918968367545
   Lending pool WETH required 0
 ```
+### 2024.09.05
+[WalletMining](https://github.com/Chocolatieee0929/damn-vulnerable-defi/blob/master/test/wallet-mining/WalletMining.t.sol)
+读了AuthorizerUpgradeable.needsInit发现是一个很大的数，原因后面再补充，紧接着开启了我漫长的凑地址之路
+### 2024.09.06
+接前一天，继续算地址，最后采用的是暴力解法
+```
+while (!flag) {
+    address target = vm.computeCreate2Address(
+        keccak256(abi.encodePacked(keccak256(initializer), nonce)),
+        keccak256(abi.encodePacked(type(SafeProxy).creationCode, uint256(uint160(address(singletonCopy))))),
+        address(proxyFactory)
+    );
+    if (target == USER_DEPOSIT_ADDRESS) {
+        flag = true;
+        break;
+    }
+    nonce ++;
+}
+```
+最后通过了
+```
+Ran 1 test for test/wallet-mining/WalletMining.t.sol:WalletMiningChallenge
+[PASS] test_walletMining() (gas: 463716)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.03ms (1.18ms CPU time)
+```
+
 <!-- Content_END -->

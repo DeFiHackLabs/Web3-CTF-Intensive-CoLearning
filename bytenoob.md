@@ -89,6 +89,54 @@ Finish ethernaut token and vault
 
 Finish ethernaut king and re-entrancy
 
+### 2024.09.05
+
+Finish ethernaut elevator
+
+### 2024.09.06
+
+Finish ethernaut privacy
+
+### 2024.09.07
+
+Finish ethernaut gatekeeper one
+
+### 2024.09.08
+
+Finish ethernaut gatekeeper two
+
+### 2024.09.09
+
+Finish ethernaut naught coin
+
+### 2024.09.10
+
+Finish ethernaut preservation
+
+### 2024.09.11
+
+Finish ethernaut recovery
+
+### 2024.09.12
+
+Finish ethernaut magicnumber
+
+### 2024.09.13
+
+Finish ethernaut alien codex
+
+### 2024.09.14
+
+Finish ethernaut denial
+
+### 2024.09.15
+
+Finish ethernaut shop
+
+### 2024.09.16
+
+Finish ethernaut dex
+
 
 
 <!-- Content_END -->

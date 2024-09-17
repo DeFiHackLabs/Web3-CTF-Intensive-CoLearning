@@ -229,3 +229,237 @@
 [submodule "writeup/harryriddle/Real-World-CTF-6th-Challenge-SafeBridge/rwctf-6th-safebridge-main/project/src/RandomToken/lib/forge-std"]
 	path = writeup/harryriddle/Real-World-CTF-6th-Challenge-SafeBridge/rwctf-6th-safebridge-main/project/src/RandomToken/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+  
+[submodule "Writeup/kkontheway/lib/forge-std"]
+	path = Writeup/kkontheway/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Alive/lib/forge-std"]
+	path = Writeup/Alive/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/SpeedX/lib/forge-std"]
+	path = Writeup/SpeedX/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/mystiz/metatrust-ctf-2023/lib/forge-std"]
+	path = Writeup/mystiz/metatrust-ctf-2023/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts-07"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts-07
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts-08"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts-08
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/geyu/lib/forge-std"]
+	path = Writeup/geyu/lib/forge-std
+[submodule "Writeup/LouisTsai/challenge/lib/forge-std"]
+	path = Writeup/LouisTsai/challenge/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/LouisTsai/challenge/lib/openzeppelin-contracts"]
+	path = Writeup/LouisTsai/challenge/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/spn/CTF/lib/forge-std"]
+	path = Writeup/spn/CTF/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/bytenoob/lib/forge-std"]
+	path = Writeup/bytenoob/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Syen/lib/forge-std"]
+	path = Writeup/Syen/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Tanner/lib/forge-std"]
+	path = Writeup/Tanner/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Tanner/lib/openzeppelin-contracts"]
+	path = Writeup/Tanner/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/billh/Curta/CurtaLending/lib/forge-std"]
+	path = Writeup/billh/Curta/CurtaLending/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts"]
+	path = Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts
+	url = https://github.com/openzeppelin/openzeppelin-contracts
+[submodule "Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts-upgradeable"]
+	path = Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts-upgradeable
+	url = https://github.com/openzeppelin/openzeppelin-contracts-upgradeable
+[submodule "Writeup/Joy/A-Ethernaut-CTF/lib/forge-std"]
+	path = Writeup/Joy/A-Ethernaut-CTF/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/bytenoob/lib/openzeppelin-foundry-upgrades"]
+	path = Writeup/bytenoob/lib/openzeppelin-foundry-upgrades
+	url = https://github.com/OpenZeppelin/openzeppelin-foundry-upgrades
+[submodule "Writeup/bytenoob/lib/openzeppelin-contracts-upgradeable"]
+	path = Writeup/bytenoob/lib/openzeppelin-contracts-upgradeable
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
+[submodule "Writeup/bytenoob/lib/openzeppelin-contracts"]
+	path = Writeup/bytenoob/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/phipupt/ethernaut/lib/forge-std"]
+	path = Writeup/phipupt/ethernaut/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Syen/lib/openzeppelin-contracts"]
+	path = Writeup/Syen/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/kkontheway/lib/forge-std"]
+	path = Writeup/kkontheway/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Alive/lib/forge-std"]
+	path = Writeup/Alive/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/SpeedX/lib/forge-std"]
+	path = Writeup/SpeedX/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/HarryRiddle/Ethernaut-CTF/lib/openzeppelin-foundry-upgrades"]
+	path = Writeup/HarryRiddle/Ethernaut-CTF/lib/openzeppelin-foundry-upgrades
+	url = https://github.com/OpenZeppelin/openzeppelin-foundry-upgrades
+[submodule "Writeup/HarryRiddle/Ethernaut-CTF/lib/openzeppelin-contracts-upgradeable"]
+	path = Writeup/HarryRiddle/Ethernaut-CTF/lib/openzeppelin-contracts-upgradeable
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
+[submodule "Writeup/D13/lib/forge-std"]
+	path = Writeup/D13/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/kkontheway/lib/forge-std"]
+	path = Writeup/kkontheway/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Alive/lib/forge-std"]
+	path = Writeup/Alive/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/YangRui/lib/forge-std"]
+	path = Writeup/YangRui/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/SpeedX/lib/forge-std"]
+	path = Writeup/SpeedX/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/mystiz/metatrust-ctf-2023/lib/forge-std"]
+	path = Writeup/mystiz/metatrust-ctf-2023/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts-07"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts-07
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts-08"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts-08
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/geyu/lib/forge-std"]
+	path = Writeup/geyu/lib/forge-std
+[submodule "Writeup/LouisTsai/challenge/lib/forge-std"]
+	path = Writeup/LouisTsai/challenge/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/LouisTsai/challenge/lib/openzeppelin-contracts"]
+	path = Writeup/LouisTsai/challenge/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/spn/CTF/lib/forge-std"]
+	path = Writeup/spn/CTF/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/bytenoob/lib/forge-std"]
+	path = Writeup/bytenoob/lib/forge-std
+[submodule "Writeup/Syen/lib/forge-std"]
+	path = Writeup/Syen/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Tanner/lib/forge-std"]
+	path = Writeup/Tanner/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Tanner/lib/openzeppelin-contracts"]
+	path = Writeup/Tanner/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/billh/Curta/CurtaLending/lib/forge-std"]
+	path = Writeup/billh/Curta/CurtaLending/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts"]
+	path = Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts
+	url = https://github.com/openzeppelin/openzeppelin-contracts
+[submodule "Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts-upgradeable"]
+	path = Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts-upgradeable
+	url = https://github.com/openzeppelin/openzeppelin-contracts-upgradeable
+[submodule "Writeup/Joy/A-Ethernaut-CTF/lib/forge-std"]
+	path = Writeup/Joy/A-Ethernaut-CTF/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/0xRory/A-Ethernaut-CTF/POC/lib/forge-std"]
+	path = Writeup/0xRory/A-Ethernaut-CTF/POC/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/D13/lib/forge-std"]
+	path = Writeup/D13/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/kkontheway/lib/forge-std"]
+	path = Writeup/kkontheway/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Alive/lib/forge-std"]
+	path = Writeup/Alive/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/SpeedX/lib/forge-std"]
+	path = Writeup/SpeedX/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/mystiz/metatrust-ctf-2023/lib/forge-std"]
+	path = Writeup/mystiz/metatrust-ctf-2023/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts-07"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts-07
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/kkontheway/lib/openzeppelin-contracts-08"]
+	path = Writeup/kkontheway/lib/openzeppelin-contracts-08
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/geyu/lib/forge-std"]
+	path = Writeup/geyu/lib/forge-std
+[submodule "Writeup/LouisTsai/challenge/lib/forge-std"]
+	path = Writeup/LouisTsai/challenge/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/LouisTsai/challenge/lib/openzeppelin-contracts"]
+	path = Writeup/LouisTsai/challenge/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/spn/CTF/lib/forge-std"]
+	path = Writeup/spn/CTF/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/bytenoob/lib/forge-std"]
+	path = Writeup/bytenoob/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Syen/lib/forge-std"]
+	path = Writeup/Syen/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Tanner/lib/forge-std"]
+	path = Writeup/Tanner/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Tanner/lib/openzeppelin-contracts"]
+	path = Writeup/Tanner/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/billh/Curta/CurtaLending/lib/forge-std"]
+	path = Writeup/billh/Curta/CurtaLending/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts"]
+	path = Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts
+	url = https://github.com/openzeppelin/openzeppelin-contracts
+[submodule "Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts-upgradeable"]
+	path = Writeup/billh/Curta/CurtaLending/lib/openzeppelin-contracts-upgradeable
+	url = https://github.com/openzeppelin/openzeppelin-contracts-upgradeable
+[submodule "Writeup/Joy/A-Ethernaut-CTF/lib/forge-std"]
+	path = Writeup/Joy/A-Ethernaut-CTF/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/bytenoob/lib/openzeppelin-foundry-upgrades"]
+	path = Writeup/bytenoob/lib/openzeppelin-foundry-upgrades
+	url = https://github.com/OpenZeppelin/openzeppelin-foundry-upgrades
+[submodule "Writeup/bytenoob/lib/openzeppelin-contracts-upgradeable"]
+	path = Writeup/bytenoob/lib/openzeppelin-contracts-upgradeable
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
+[submodule "Writeup/bytenoob/lib/openzeppelin-contracts"]
+	path = Writeup/bytenoob/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "Writeup/phipupt/ethernaut/lib/forge-std"]
+	path = Writeup/phipupt/ethernaut/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/phipupt/ethernaut/lib/forge-std"]
+	path = Writeup/0xRory/A-Ethernaut-CTF/POC/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/billh/Curta/USurper/lib/forge-std"]
+	path = Writeup/billh/Curta/USurper/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/billh/Curta/ZSafe/lib/forge-std"]
+	path = Writeup/billh/Curta/ZSafe/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "Writeup/Snooowgh/A_Ethernaut/foundry_writeup/lib/forge-std"]
+	path = Writeup/Snooowgh/A_Ethernaut/foundry_writeup/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std

@@ -212,8 +212,229 @@ contract C {
 
 
 
+### 2024.09.04
+
+#### A-Ethernaut-PuzzleWallet
+
+今天这道题卡了几个小时,最开始发现proxy的`storage slot`对不上,就开始研究.
+实际上`delegatecall`proxy合约的`proposeNewAdmin`其实就是对应 Wallet合约的`owner`(同slot 0),
+获取了`owner`权限,就可以添加whiteliste,就可以调用wallet合约的方法,观察 如果想改变proxy合约的owner 就得改变wallet合约的`maxBalance`(同样对应slot 1),可是maxBalance如果想要修改的话,又必须得保证`address(wallet).balance == 0`,所以得想办法让合约的余额等于0.
+
+分析了调用`execute`方法,发现只能发送自己的余额,而wallet的初始余额是`factory`合约的,
+所以有陷入了死胡同,`multicall`是唯一可以利用的地方,但是这个方法又有一个很巧妙设计的地方,为了`mag.value`不被重复利用,做了`selector`的判断,换个角度calldata的第二个交易如果还是`multicall`就能完美绕过.
+
+就可以存双份钱,绕过`require(balances[msg.sender] >= value, "Insufficient balance");`,
+然后就可以修改`maxBalance`为`player`地址,就结束.
+
+
+### 2024.09.05
+
+#### A-Ethernaut-Motorbike
+
+是个uups的合约,实际上逻辑合约是没有init的,因为proxy合约`delegatecall`了`initialize`.
+验证发现逻辑合约的`upgrader`和`horsePower`确实都是0,没有初始化的.
+既然没有初始化,意味着可以调用`initialize`让自己变成`upgrader`,然后升级合约.
+
+这题是要让合约`selfdestruct`,写个攻击合约,带个`selfdestruct`方法,然后调用`upgradeToAndCall`
+即可. 
+
+貌似 foundry test中 `selfdestruct` 无效,所以 poc 中后面手动处理了
+
+### 2024.09.06
+
+#### A-Ethernaut-DoubleEntryPoint
+
+这题分析业务看了有点久,不太明白想要干啥.
+
+`CryptoVault`中的`underlying`是不应该被transfer的,
+`require(token != underlying, "Can't transfer underlying token");`做了判断,可是`sweptTokensRecipient`的`token`是`LegacyToken`(LGT), `LegacyToken`的transfer又是代理的`DoubleEntryPoint`(DET)
+
+```solidity
+function transfer(address to, uint256 value) public override returns (bool) {
+    if (address(delegate) == address(0)) {
+        return super.transfer(to, value);
+    } else {
+        return delegate.delegateTransfer(to, value, msg.sender);
+    }
+}
+```
+`delegate`调用的其实就是DET,
+这里的`delegateTransfer`的`origSender`是`CryptoVault`,
+
+所以 `CryptoVault`中的`DET`最后会被转移为0
+
+
+`DET`中有个 `modifier fortaNotify()`
+
+```solidity
+
+modifier fortaNotify() {
+    address detectionBot = address(forta.usersDetectionBots(player));
+
+    // Cache old number of bot alerts
+    uint256 previousValue = forta.botRaisedAlerts(detectionBot);
+
+    // Notify Forta
+    forta.notify(player, msg.data);
+
+    // Continue execution
+    _;
+
+    // Check if alarms have been raised
+    if (forta.botRaisedAlerts(detectionBot) > previousValue) revert("Alert has been triggered, reverting");
+}
+
+```
+
+`Foeta`允许用户设置机器人来提醒交易,需要自己定义个合约,如果交易有问题调用`raiseAlert`这个modifier
+就会`revert`.
+最后实现Bot的`handleTransaction`方法判断`originSender == cryptoVault`来触发`raiseAlert`.
+
+
+### 2024.09.07
+
+#### A-Ethernaut-GoodSamaritan
+
+这题`requestDonation`里catch到错误了,会判断是否是`NotEnoughBalance()`,是的话就转走剩余的coin,所以实现`notify`来判断`amount==10`(转走剩余的coin肯定不等于10),然后revert同样的错误就行
+
+### 2024.09.08
+
+#### A-Ethernaut-GatekeeperThree
+
+1. `gateOne()`:attack合约调用`construct0r()`即可,这里方法写错了,并不是构造器.
+2. `gateTwo()`:调用`getAllowance(uint256 _password)`来校验trick的密码,因为`password`是`private`的,可以通过`storage slot`获取,poc里是带创建关卡一起的,所以直接用了`block.timestamp`
+3. `gateThree()`:给合约转账大于0.001e,并且attack合约在接受e的时候`revert`就好 
+
+### 2024.09.09
+
+#### A-Ethernaut-Switch
+
+这题需要调用`turnSwitchOn()`让`switchOn`=`true`,因为`turnSwitchOn()`有`onlyThis`修饰,所以只能通过`flipSwitch(bytes memory _data)`来调用.
+
+`modifier onlyOff()`中判断了selector
+```solidity
+// we use a complex data type to put in memory
+bytes32[1] memory selector;
+// check that the calldata at position 68 (location of _data)
+assembly {
+    calldatacopy(selector, 68, 4) // grab function selector from calldata
+}
+```
+这里68是`calldata`中对应调用函数的`selector`的offset,然后4字节大小.
+modifier中判断了`selector[0] == offSelector`要求必须是调用的`turnSwitchOff()`,这就陷入了僵局.
+
+看一下正常调用
+```solidity
+
+switch.flipSwitch(abi.encodeWithSelector(Switch.turnSwitchOff.selector));
+
+//calldata
+
+// 0x 
+// 30c13ade flipSwitch函数签名
+// 0000000000000000000000000000000000000000000000000000000000000020 _data offset 0x20=32
+// 0000000000000000000000000000000000000000000000000000000000000004 _data length
+// 20606e1500000000000000000000000000000000000000000000000000000000 turnSwitchOff 
+
+```
+所以`calldatacopy(selector, 68, 4)`中68对应的`turnSwitchOff`通常情况下没问题,但是可以手动修改offset来绕过检查.
+这里具体的calldata的细节见[文档](https://docs.soliditylang.org/en/latest/abi-spec.html),
+动态类型的 calldata 编码，前 32 字节用于存储偏移量（offset）, 接下来的 32 字节用于存储长度（length），然后是用于存储值的区域.
+
+```solidity
+// 0x
+//4  bytes: 30c13ade 
+//32 bytes: 0000000000000000000000000000000000000000000000000000000000000060 offset 0x60=96
+//32 bytes: 0000000000000000000000000000000000000000000000000000000000000004 length
+//32 bytes: 20606e1500000000000000000000000000000000000000000000000000000000 turnSwitchOff
+
+// 0x60: 
+//32 bytes: 0000000000000000000000000000000000000000000000000000000000000004 length
+//32 bytes: 76227e1200000000000000000000000000000000000000000000000000000000 turnSwitchOn
+
+```
+在原有基础上增加 `turnSwitchOn`的calldata 修改offset来正确调用`turnSwitchOn`同时也满足`modifier`的检查.
+
+
+#### A-Ethernaut-HigherOrder
+
+这题用的`solc`还是`0.6.x`的,abicoder还没有类型检查.`0.8.0`以上不会有这个问题(默认`abicoder`V2).
+
+```solidity
+abi.encodeWithSignature("registerTreasury(uint8)", 256);
+```
+
+#### A-Ethernaut-Stake
+
+正常调用满足要求就行
+
+`0xdd62ed3e`对应 erc20的`allowance(address owner, address spender)`
+
+要过`bytesToUint(allowance) >= amount`的检查,先授权一遍就行.题目没有校验`call`的返回值,所以没有weth也是可以增加`totalStaked`的.
+
+需要另一个账户stakeETH一次来满足`totalStaked must be greater than the Stake contract's ETH balance.`
+
+到这里 `ethernaut`完结撒花,学到了很多.
 
 
 
+### 2024.09.11
+
+#### A-DamnVaulnerableDefi-UnStoppable
+
+还是选择了A系列的DamnVaulnerableDefi,想做一些defi相关.
+
+大概了解了什么是[ERC-4626](https://ethereum.org/zh/developers/docs/standards/tokens/erc-4626/)
+
+卡住了(搞了好久依赖,和之前的ethernaut的冲突)
+
+
+### 2024.09.12
+
+#### A-DamnVaulnerableDefi-UnStoppable
+题目要求闪电贷失败.
+```solidity
+if (convertToShares(totalSupply) != balanceBefore) revert InvalidBalance();
+```
+把player的token转给vault就好
+
+### 2024.09.13
+
+#### A-DamnVaulnerableDefi-NaiveReceiver
+
+又卡住了... 
+
+### 2024.09.14
+
+#### A-DamnVaulnerableDefi-NaiveReceiver
+
+pool合约中的msgSender
+
+```solidity
+
+function _msgSender() internal view override returns (address) {
+    if (msg.sender == trustedForwarder && msg.data.length >= 20) {
+        return address(bytes20(msg.data[msg.data.length - 20:]));
+    } else {
+        return super._msgSender();
+    }
+}
+
+```
+如果来源是 `trustedForwarder`合约的话并且data.length>=20,返回的地址是获取`msg.data`最后20个字节来作为地址.
+
+而这个msgSender又是`withdraw`方法需要的
+
+这里需要去了解EIP712,看看具体怎么个调用法
+
+这道题,参考的sun哥的.实在是卡在这了,今天累了,明天再整理下,不会组织语言了.
+
+### 2024.09.16
+
+#### A-DamnVaulnerableDefi-Truster
+
+问题出在`target.functionCall(data);`
+可以调用token的approve来授权,再调用`transferFrom`来转走资金.
+题目有一笔tx的限制,写个attack合约在`constructor`里调用
 
 <!-- Content_END -->

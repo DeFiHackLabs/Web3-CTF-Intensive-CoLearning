@@ -152,7 +152,7 @@ forge script --chain anvil --rpc-url anvil script/Ethernaut/coinflip_poc.s.sol:C
 
 ### 2024.08.31
 
-今天完成 Ethernaut Level 04 Telephone
+今天完成 Ethernaut **Level 04 Telephone**
 
 tx.origin 为交易from 地址
 
@@ -241,8 +241,214 @@ web3.eth.getStorageAt(instance.address, 1, (err,res) => {
 继续下一关
 
 **Level 11 Elevator**
+电梯的 POC 合约我显示了 Building接口
+
+
+### 2024.09.05
+**Level 12 Privacy**
+今天继续下一关 
+
+### 2024.09.06
+零点了 6 号了， 在这里写了， 这一关还是使用 web3.eth.getStorageAt(address, index) 函数来解决， 但是这一次稍微复杂一点就是，不足 32 字节并且合并后不会超过32 字节的变量会使用同一个槽 slot
+
+经过分析， bool locked 使用一个 32 字节 slot index 0 (因为后面 ID 是 32 字节）， uint256 ID 32 字节 使用 slot 1， uint8 flatting 1字节, uint8 denomination 1字节 , uint16 awkwardness 两个字节， 他们三个一共 4 个字节 后面的 data[0] 32字节， 所以他们三个 flatting， denomination， awkwardness 可以使用 一个 slot , slot 2
+
+| Slot index | Fields|
+|-------------|-------------|
+|slot-0 | locked|
+|slot-1 | ID|
+|slot-2 | awkwardness|denomination|flattening|
+|slot-3 | data[0]|
+|slot-4 | data[1]|
+|slot-5 | data[2]|
+
+unlock 函数判断的是 传入的 key 是否等于 bytes16(data[2]) 
+
+通过 data[2]就是 slot 5,   web3.eth.getStorageAt(address, 5) 0x8de7238b78942005fea750232d184d0ce84a53d569bd7c825b99b79d02c50d1c
+
+bytes16(data[2]) 从左边截取 16 个字节 0x8de7238b78942005fea750232d184d0c， 我开始从右边截取的，不对，我又从左边截取 16 个字节
+
+然后直接在 console 中 发起交易 
+
+```
+await contract.unlock("0x8de7238b78942005fea750232d184d0c")
+```
+
+[POC 代码](Writeup/SpeedX/src/Ethernaut/privacy_poc.sol)
+
+
+下一题
+
+**Level 13 GatekeeperOne**
+
+### 2024.09.07
+
+昨天卡在 gateTwo gasleft()， 看了文档说 调用函数的时候可以设置 gas， 但是现在不知道 gasleft 的时候具体花费了多少 gas ，所以不知道 调用 enter的时候设置多少 gas 合适
+
+test 测试没有问题 但是script 上链 上不去 不知道为什么，先跳过下一题了
+
+
+**Level 14 GatekeeperTwo**
+
+gateone tx.origin 为交易发起的地址 msg.sender 要不一样 可以用一个合约来调用 instance 合约 
+
+### 2024.09.08
+
+继续 gatekeeperTwo
+
+gatetwo modifier caller() 为 应该是跟 msg.sender 一样 extcodesize(caller()) 如果为 0，caller() 应该为 EOA 地址或者 在 caller 的构造函数中调用 enter 函数 
+
+gateThree ^ 为异或符号 如果 不同为 1 相同为 0， type(uint64).max 为 64位无符号整形，即 所有 64 位全部为 1， 16 进制为0xFFFFFFFF。 
+
+```solidity
+uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey)   == type(uint64).max 
+```
+
+这个结果要满足，就要 uint64(_gateKey) 与  uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) 结果完全相反
+
+我们知道 如果 a ^ b = c，那么 a ^ c = b 
+
+所以 uint64(_gateKey) 就是 uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ type(uint64).max
+
+[POC 代码](Writeup/SpeedX/src/Ethernaut/gatekeepertwo_poc.sol)
+
+### 2024.09.09
+这两天有点忙，刚搞出来点时间写笔记 
+
+今天继续 **Level 15 Naught Coin**
+
+看了半天没思路， google ，原来是用 approve 和 transferFrom 
+
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/naughtcoin.s.sol)
+
+### 2024.09.10
+**Level 16 preservation**
+今天下一关，说实话还是没看懂，感觉是代理的存储 slot 的利用，来修改 owner 的存储。
+写个 test 测试一下。
+
+delegatecall 代理的 storage 还是 Preservation 合约的存储，只是逻辑写在了 timezoneLibrary 里
+
+
+### 2024.09.11
+
+**Level 16 preservation**
+这一段也不简单啊，简单写了个测试，但是不知道为什么 timeZone1Library 赋值给 preservation合约后地址 与 timeZone1Library 合约地址不一样了
+
+今天 arb sepolia 又创建不了new instance合约 
+
+### 2024.09.12
+这几天rpc网络不好呢， 创建instance 合约都不行，我先看看下一关吧
+
+**Level 17 recovery**
+这个还行比较简单， 从区块浏览器中 internal transaction中找到 生成的合约的contract 地址， 然后通过remix IDE，调用 SimpleToken 的 destroy 函数，这样就把SimpleToken合约中的代币转移走了
+
+RPC突然好用了， 我测试了一下 调用 setFirstTime， setSecondTime 会把 timeZone1Library 变量替换掉，如果把 timeZone1Library 替换成另一个合约， 这个合约的第三个变量为 owner，那么再调用 setFirstTime，传入新的 owner地址 就可以修改 owner了
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/preservation_poc.s.sol)
+
+### 2024.09.13
+
+今天忘了太忙了 忘了带电脑回家家 手机github在线打卡 明天补上
+
+### 2024.09.14
+今天继续有点晚了， 先打卡再肝。
+
+### 2024.09.15
+**Level 18 MagicNum**
+昨天充值了 claude AI 真的很好用啊， 这道题不了解EVM bytecode 先用claude 学习一下如何写一个最小的合约。
+
+EVM OPCODE 参考
+https://www.evm.codes/
+
+EVM 底层执行 OPCODE， OPCODE 操作堆栈stack、内存memory和存储storage等。
+
+Stack存储临时变量和函数参数和返回地址
+
+内存是一个uint8的数组，用于保存合约执行过程中的临时数据。
+
+storage 是一个KV map， 存储到KV DB中
+
+EVM合约 bytecode 有两个部分，首先是initialization opcode，然后是runtimecode
+
+initialization opcode， 家在 runtimecode 然后返回runtimecode 
+
+最终的 bytecode 如下
+
+600a600c600039600a6000f3  + 602a60505260206050f3
+
+开始我runtimecode 是 
+
+|OPCODE|说明
+|-------------|-------------|
+|602a|PUSH1 2a 把 42 压入栈|
+|6050|PUSH1 50 把 50 压入栈，变量内存 offset｜
+|52|MSTORE 内存50位置,存储值 42|
+|6020|PUSH1 20 把 32 压入栈, 长度32 |
+|6050|PUSH1 50 把 50 压入栈，变量内存offset|
+|f3|RETURN 返回内存 50 位置的变量|
+
+开始的时候 OPCODE 第2、5行,  变量内存offset我使用的是 0x00, 我用cast call 调用
+返回 
+
+0x000000000000000000000000000000000000000000000000000000000000002a 
+
+使用 0x50 cast call 返回的是一样的， 不知道为什么不能过关呢。
+
+使用 foundry script staticcall 两个不同offset的合约都能返回正常的结果 42
+
+但是为什么 不能通过测试呢， 我去看看 ethernaut的源代码吧 。
+
+看了代码就是 验证结果是否是 0x000000000000000000000000000000000000000000000000000000000000002a， 并且 合约 codesize <= 10， 写了script验证也没有问题啊。
+
+不知道哪里的问题！不管了 下一个。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/magicnumber_poc.s.sol)
+
+
+**Level19 Alien Codex**
+这一关真的非常狗，一看合约 solidity 版本就知道有猫腻。
+
+要获得owner 合约方法里面没有一个跟 owner有关的，owner变量在 ownable类中。
+
+根据提示跟 Array Storage 有关系，去学习一下 storage的 slot相关知识。
+
+前面已经学习过 storage 每个变量使用一个 slot ， EVM一共有 2^256 个slot 
+
+AlienCodex 继承 Ownable， slot 从基类 Ownable开始分配 所以 owner 分配 slot0,
+bool contact 跟 owner 一起使用 slot0， codex使用 slot1 
+
+codex[]是一个动态的数组， 动态数组分配就不是按照顺序分配了，他使用 keccak256(codex_slot_index) + i 进行slot分配 
+
+retract 函数减少 index , 0.5.0版本的solidity 肯定有益处了， 默认codex length 为0 调用 retract length 变为 2^256， 这样 storage slot 就超过了 2^256 
+
+超过slot index ， slot index 就又从0开始了就会覆盖之前的数据， 这样就可以修改 owner的值了 
+
+但是需要计算好 codex的哪个索引的位置，会覆盖 slot 0
+
+**Level 19 Denial**
+
+这关是让 withdraw 调用失败， 突破口是 partner合约 receive函数， 我开始想的是这么简单 直接在 receive中revert 不久好了， 后来知道 call函数调用 即使 partner合约 revert 也不会导致交易终止， 而是call调用返回一个 bool 失败是否成功。
+
+那么就看 call 函数本身如何导致失败了， 看了网上的答案是 让gas耗尽产生gas exception, gas 耗尽 call函数也不会报错， 但是下面的转账就不能继续执行了。就会返回false。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/denial_poc.s.sol)
+
+
+**Level 21 Shop**
+今天多肝几个 追赶一下进度，没有几天就结束了。A题还没做多少呢！
+
+这题 buyer price函数 在shop中调用了两次，我们可以在第一次调用的时候返回 >= shop price 的值， 第二次返回一个低于 shop price的价格， 以前我们做类似的题目的时候，会在buyer中添加一个变量来判断是否第一次调用，但是题目中 price函数是view 函数，不能使用storage 变量。   
+
+但是我们发现 shop中有一个字段 isSold 购买后 isSold先被设置为来 true， 我们可以根据这个来判断 
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/shop_poc.s.sol)
+
+**Level 22 Dex**
 
 
 
 
+### 2024.09.16
+今天出去玩儿没带电脑 手机打卡 明天补上
 <!-- Content_END -->

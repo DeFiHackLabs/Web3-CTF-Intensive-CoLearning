@@ -10,7 +10,7 @@
 
 # Findings
 
-## `UniswapV2Exchange` single price oracle dependency allows for token price manipulation
+## `PuppetPoolV2` single price oracle dependency allows for token price manipulation
 
 ### Summary
 The PuppetPoolV2 rely on a single price oracle UniswapV2Exchange which has low liquidity, allowing manipulation of the value of DVT token and allow draining the token from PuppetPool.
