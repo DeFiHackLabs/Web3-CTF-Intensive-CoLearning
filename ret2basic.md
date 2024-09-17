@@ -107,4 +107,8 @@ Today:
 
 1. Building knowledge base for the bot
 
+### 2024.09.16
+
+1. Learning cairo
+
 <!-- Content_END -->
