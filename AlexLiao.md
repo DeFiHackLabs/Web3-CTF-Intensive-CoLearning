@@ -211,19 +211,17 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 挑戰題目：
 
--   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [ETHTaipeiWarRoomNFT](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/ETHTaipeiWarRoomNFT)
-
-筆記連結： [ETH Taipei CTF 2023: ETHTaipeiWarRoomNFT](./Writeup/AlexLiao/ETHTaipeiCTF2023/ETHTaipeiWarRoomNFT.md)
-
-### 2024.09.13
-
-挑戰題目：
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [ETHTaipeiWarRoomNFT](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/E挑戰題目：
 
 -   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [Casino](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/Casino)
 
 筆記連結： [ETH Taipei CTF 2023: Casino](./Writeup/AlexLiao/ETHTaipeiCTF2023/Casino.md)
 
-### 2024.09.14
+### 2024.09.14THTaipeiWarRoomNFT)
+
+筆記連結： [ETH Taipei CTF 2023: ETHTaipeiWarRoomNFT](./Writeup/AlexLiao/ETHTaipeiCTF2023/ETHTaipeiWarRoomNFT.md)
+
+### 2024.09.13
 
 挑戰題目：
 
@@ -246,5 +244,13 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 ![ALL OR NOTHING](Writeup/AlexLiao/OnlyPwner/LIQUIDSTAKING.png)
 
 ### 2024.09.16
+
+挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [WBC](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/WBC)
+
+筆記連結： [ETH Taipei CTF 2023: WBC](./Writeup/AlexLiao/ETHTaipeiCTF2023/WBC.md)
+
+### 2024.09.17
 
 <!-- Content_END -->

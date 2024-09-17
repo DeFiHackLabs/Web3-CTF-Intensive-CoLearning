@@ -212,4 +212,10 @@ Link: https://github.com/fuzzland/blazctf-2023/tree/main/challenges/be-billionai
 
 Writeup: The only clue we have is a multi-signature wallet contract address and three other addresses. I was quite confused, so I decided to search these addresses on GitHub and discovered that their private keys were publicly available, as they are commonly used for testing. I then used these private keys to send transactions and withdraw all the funds.
 
+### 2024.09.16
+
+(1) OnlyPwner FREEBIE CTF Challenge
+
+Link: https://onlypwner.xyz/challenges/5
+
 <!-- Content_END -->

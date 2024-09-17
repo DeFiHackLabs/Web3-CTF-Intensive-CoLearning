@@ -97,4 +97,11 @@ https://hackmd.io/@0xbc000/SJ61x8j3R
 2. BlazCTF 2023 - RockPaperScissors
 3. ethernaut level23
 
+### 2024.09.16
+1. SafeBridge - https://hackmd.io/@0xbc000/BJXggzNaR (Simply analysis, still can't setup the env to test)
+2. BlazCTF 2023 - EasyNFT
+3. ethernaut level24 - https://hackmd.io/@0xbc000/r1UNfTy6C
+
+
+
 <!-- Content_END -->

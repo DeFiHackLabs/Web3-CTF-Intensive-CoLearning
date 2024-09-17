@@ -19,12 +19,15 @@ contract GatekeeperOne {
         _;
     }
     // 这里牵涉到一系列数据类型转换，我们要知道 EVM 是栈虚拟机，采用的是大端模式，所以：
-    // 传入长度为 8字节 的字节数组，假设是 0x1122334455667788
+    // 传入长度为 8字节 的字节数组，假设是 【0x1122334455667788】
     modifier gateThree(bytes8 _gateKey) {
-        //uint64转uint32, 只保留低32位部分, 即 0x55667788
-        //uint64转uint16, 只保留低16位部分, 即 0x7788
+        // uint64转uint32, 只保留低32位部分, 即 0x55667788
+        // uint64转uint16, 只保留低16位部分, 即 0x7788
+        // 要求1：key 的低 32位（最后4个字节） == key 的低 16位，也就是说 key 的 77 的位置应该是 “00”
         require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        // 要求2：key 的低 32位（最后4个字节） != key 的低 64位, 也就是说 key 的 5566 的位置不能是 “0000”
         require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        // 要求3：key 的低 32位（最后4个字节） == 交易发起者地址的最后4个字节
         require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
         _;
     }

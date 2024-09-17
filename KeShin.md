@@ -160,6 +160,20 @@ KeShin, 合约安全新人
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/24-PuzzleWallet/)
 
 ### 2024.9.16
+#### [Ethernaut CTF : 25 Motorbike](https://ethernaut.openzeppelin.com/level/25)
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/25-Motorbike/)
+
+#### [Ethernaut CTF : 26 DoubleEntryPoint](https://ethernaut.openzeppelin.com/level/26)
+- CryptoVault 中存在漏洞，需要部署一个 detection bot 合约探测漏洞并及时发出警告，并在 Forta 中注册
+- 在 bot 实现 handleTransaction, 当 transfer 发送时调用 raiseAlert
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/26-DoubleEntryPoint/)
+
+#### [Ethernaut CTF : 27 GoodSamaritan](https://ethernaut.openzeppelin.com/level/27)
+- 拿走玛雅人钱包的所有钱
+- 我们可以调用 10^{5} 次 requestDonation 来拿走所有的钱，但是这样 gas 会花很多
+- 我们注意到有一个 transferRemainder 函数可以直接转走剩下所有的钱，但是其调用条件为 donate10 的 err 为 NotEnoughBalance()
+- 在 donate10 中，调用了 coin.transfer，其中还调用了 notify ，那么我们可以在其中直接报错 NotEnoughBalance()，这样剩下的 coin 就直接转给我们了
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/27-GoodSamaritan/)
 
 ### 2024.9.17
 

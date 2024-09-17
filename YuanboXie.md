@@ -102,4 +102,9 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Recovery - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 学习了合约创建合约的地址计算或者查找；
 
+### 2024.09.16
+
+- 1.Ethernaut CTF (31) - MagicNumber - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 这道题好难。学会了手写 opcode，以及 create opcode & runtime opcode 的流程；
+
 <!-- Content_END -->

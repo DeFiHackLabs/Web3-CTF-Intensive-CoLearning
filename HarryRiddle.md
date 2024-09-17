@@ -226,4 +226,12 @@ Plan:
 
 - [Solution](./Writeup/HarryRiddle/Ethernaut-CTF/src/Stake.sol)
 
+### 2024.09.15
+
+#### Real World CTF 2024 SafeBridge
+
+- [Write-up](./Writeup/HarryRiddle/Real-World-CTF-6th-Challenge-SafeBridge.md)
+
+- [Solution](Comming soon)
+
 <!-- Content_END -->
