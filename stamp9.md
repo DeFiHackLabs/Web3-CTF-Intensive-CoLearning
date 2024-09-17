@@ -57,5 +57,10 @@ timezone: Europe/Helsinki
 ### 2024.09.14
 16.	damn-vulnerable-defi Shards test file
 
+### 2024.09.17
+damn-vulnerable-defi
+17.	Curvy Puppet test
+18	Withdrawal test + writeup
+
 
 <!-- Content_END -->
