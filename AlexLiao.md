@@ -253,4 +253,34 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.17
 
+今天中秋假期不解題！
+
+複習 `CREATE2` 的用法，熟悉用 Foundry 工具來生成符合特定條件的地址。
+
+Foundry 的 `cast create2` 指令能夠找出 `salt` 來生成特定地址，但有一個坑就是需要在 `foundry.toml` 中將 `always_use_create_2_factory` 設為 `true`，不然生成的地址會與實際執行時不同。
+
+相關連結：https://github.com/foundry-rs/foundry/issues/6402
+
+以下為生成後綴為 `00` 的地址範例：
+
+```
+cast create2 --ends-with 00 --init-code-hash 0x2a9d6cd43768b2057ae65250d46bf90c88c7cb8d102fb57e5fee5e2797abbd52
+```
+
+其中 `--init-code-hash` 為合約的 creation code 做 hash，如果合約有 construct 參數，則需要將合約 creation code 與 construct 參數做 `abi.encodePacked`。
+
+如何取得合約 creation code：
+
+```solidity
+type(Contract).creationCode
+```
+
+如果合約有 construct 參數：
+
+```solidity
+abi.encodePacked(type(Contract).creationCode, uint256(uint160(address(owner))))
+```
+
+### 2024.09.18
+
 <!-- Content_END -->
