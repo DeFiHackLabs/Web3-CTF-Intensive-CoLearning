@@ -111,8 +111,20 @@ timezone: Asia/Singapore
 - [POC](./Writeup/0xLasadie/damnvulnerabledefi/withdrawal.md)
   
 ### 2024.09.15
+#### Paradigm CTF 2023 - HelloWorld:
+- [POC](./Writeup/0xLasadie/paradigm_ctf_2023/hello-world.md)
 
+### 2024.09.16
+
+### 2024.09.17
 #### Damn Vulnerable DeFi - #17 Curvy Puppet:
 
 #### Damn Vulnerable DeFi - #18 Withdrawal:
+### 2024.09.18
+### 2024.09.19
+### 2024.09.20
+### 2024.09.21
+### 2024.09.22
+### 2024.09.23
+
 <!-- Content_END -->
