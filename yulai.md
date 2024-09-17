@@ -411,5 +411,25 @@ contract AttackGatekeeperTwo {
     }
 }
 ```
+### 2024.09.17
+#### blazctf2023 - rock scissor paper
+今天开始了解 blazctf 活动如何参加，尝试部署题目的环境
+1. 启动 基础服务器。需要注意网络问题
+```
+cd infrastucture/paradigmctf.py
+docker-compose up -d
+```
+2. 启动题目相关的容器
+```
+cd challenges/rock-paper-scissor/challenge
+docker-compose up -d
+nc localhost 1337 
+# 输入1创建题目实例
+# 提示找不到 ghcr.io/foundry-rs/foundry:latest
+docker pull --platform linux/amd64  ghcr.io/foundry-rs/foundry:latest
+docker tag ghcr.io/foundry-rs/foundry:latest foundry:latest
+nc localhost 1337 # 再次创建，成功。得到相关的 rpc 地址
+```
+3. 部署 blockscout。目前部署还有些问题，明天来解决
 
 <!-- Content_END -->
