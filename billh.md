@@ -35,4 +35,28 @@ Solved USurper.
 
 Solved ZSafe.
 
+### 2024.09.06
+
+Solved PairAssetManager.
+
+### 2024.09.07
+
+Solved StakeFrens.
+
+### 2024.09.11
+
+Solved DAI++.
+
+### 2024.09.12
+
+Solved Hop.
+
+### 2024.09.13
+
+Solved Grain of Salt.
+
+### 2024.09.14
+
+Solved Kentai.
+
 <!-- Content_END -->

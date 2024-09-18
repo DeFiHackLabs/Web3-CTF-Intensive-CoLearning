@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
-import "openzeppelin-contracts-08/utils/Address.sol";
+import "./lib/openzeppelin-contracts-08/utils/Address.sol";
 
 // NOTE our goal is to drain the GoodSamaritans Coin balance
 contract GoodSamaritan {

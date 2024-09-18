@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "openzeppelin-contracts-08/token/ERC20/ERC20.sol";
+import "./lib/openzeppelin-contracts-08/token/ERC20/ERC20.sol";
 
 // NOTE our goal is to bypass the timelock on our tokens and transfer them out of our address
 contract NaughtCoin is ERC20 {

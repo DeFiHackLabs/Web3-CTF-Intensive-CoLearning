@@ -108,4 +108,62 @@ timezone: Asia/Shanghai
 
 1. 题目的难度增加，开学的事情也在增加，Solidity基础不足的问题还在暴露，希望能完成40题的计划
 
+### 2024.09.06
+
+当前挑战：ethernaut
+
+今日完成：Level18、Level20
+
+学习内容
+
+1. EVM OPCODE
+2. 利用gas限制实现DoS攻击
+3. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
+### 2024.09.07
+
+当前挑战：ethernaut
+
+今日完成：Level21
+
+学习内容
+
+1. 逻辑漏洞
+2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
+### 2024.09.08
+
+当前挑战：ethernaut
+
+今日完成：Level22、Level23
+
+学习内容
+
+1. DEX以及价格操纵漏洞
+2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
+### 2024.09.10
+
+当前挑战：ethernaut
+
+今日完成：Level24
+
+学习内容
+
+1. Storage Collsion
+2. delegateCall造成的逻辑漏洞
+3. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+
+### 2024.09.11
+
+当前挑战：ethernaut
+
+今日完成：Level24
+
+学习内容
+
+1. 将之前的题目重新整合了一下，有些题目之前没有深入学习，在后面题目又出现的时候没能及时反应过来
+2. [ethernaut WP](./Writeup/whistleH/ethernaut/README.md)
+3. 推荐[学习WP](https://dev.to/erhant/ethernaut-24-puzzle-wallet-49c0)，用于理解原理，需要自行再用Foundry实现
+
 <!-- Content_END -->

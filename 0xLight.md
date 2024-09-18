@@ -92,4 +92,42 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.9.4
 [rock-paper-scissor](https://github.com/JadeLight7/blazctf2023/blob/main/rock-paper-scissor.md)
+
+### 2024.9.5
+请假
+
+### 2024.9.6
+blazectf eazy-ctf  验证我们要有20个ntf，只需要mint20个，这个ctf前面还是比较简单，但是这两天事太多了，等过段时间做点难的
+
+### 2024.9.7
+我服了，昨天写了忘提交了
+
+[LocklessPancakePair](https://github.com/JadeLight7/blazctf2023/blob/main/LocklessPancakePair.md)
+
+### 2024.9.8
+
+[evm puzzles1](http://www.kaipaansinua.top/index.php/2024/09/08/evm-puzzles1/)//自己尝试做字节码的题
+
+blazectf 后面题太难了，tony疯了我也疯了，要是都像amazex dss Paris全都有测试环境就好了，c里面的靶场都看了看，太难了不适合我，A靶场前两个都做了，所以打算做点其他本次残酷共学没有的，见谅。
+
+### 2024.9.9
+[evm_puzzles2](http://www.kaipaansinua.top/index.php/2024/09/09/evm-puzzles2/)
+
+[evm_puzzles3](http://www.kaipaansinua.top/index.php/2024/09/09/evm-puzzles3/)
+
+### 2024.9.10
+[evm_puzzles4](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles4/)
+
+### 2024.9.11
+[evm_puzzles5](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles5/)
+### 2024.9.12
+[evm_puzzles6](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles6/)
+### 2024.9.13
+[evm_puzzles7](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles7/)
+### 2024.9.14
+[evm_puzzles8](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles8/)
+### 2024.9.15
+[evm_puzzles9](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles9/)
+### 2024.9.16
+[evm_puzzles10](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles10/)
 <!-- Content_END -->

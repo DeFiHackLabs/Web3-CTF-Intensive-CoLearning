@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import {Script} from "../../lib/forge-std/src/Script.sol";
-import {Telephone} from "../../src/Ethernaut/Telephone.sol";
 import {Vault} from "../../src/Ethernaut/Vault.sol";
 
 contract ExploitScript is Script {

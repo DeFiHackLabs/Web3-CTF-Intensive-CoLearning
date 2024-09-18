@@ -37,5 +37,40 @@ timezone: Pacific/Auckland
 [[Damn Vulnerable DeFi V4] 7 | Compromised](./Writeup/0xE/DamnVulnerableDeFiV4/compromised.md)  
 [[Damn Vulnerable DeFi V4] 8 | Puppet](./Writeup/0xE/DamnVulnerableDeFiV4/puppet.md)
 
+### 2024.09.05
+[[Damn Vulnerable DeFi V4] 9 | Puppet V2](./Writeup/0xE/DamnVulnerableDeFiV4/puppet-v2.md)
+
+### 2024.09.06
+[[Damn Vulnerable DeFi V4] 10 | Free Rider](./Writeup/0xE/DamnVulnerableDeFiV4/free-rider.md)
+
+### 2024.09.07
+[[Damn Vulnerable DeFi V4] 11 | Backdoor](./Writeup/0xE/DamnVulnerableDeFiV4/backdoor.md)
+
+### 2024.09.09
+[[Damn Vulnerable DeFi V4] 12 | Climber](./Writeup/0xE/DamnVulnerableDeFiV4/climber.md)
+
+### 2024.09.10
+[[Damn Vulnerable DeFi V4] 13 | Wallet Mining](./Writeup/0xE/DamnVulnerableDeFiV4/wallet-mining.md)  
+[[Damn Vulnerable DeFi V4] 14 | Puppet V3](./Writeup/0xE/DamnVulnerableDeFiV4/puppet-v3.md)
+
+### 2024.09.11
+[[Damn Vulnerable DeFi V4] 15 | ABI Smuggling](./Writeup/0xE/DamnVulnerableDeFiV4/abi-smuggling.md)
+
+### 2024.09.12
+[[Damn Vulnerable DeFi V4] 16 | Shards](./Writeup/0xE/DamnVulnerableDeFiV4/shards.md)
+
+### 2024.09.13
+[[Damn Vulnerable DeFi V4] 17 | Curvy Puppet](./Writeup/0xE/DamnVulnerableDeFiV4/curvy-puppet.md)  
+[[Damn Vulnerable DeFi V4] 18 | Withdrawal](./Writeup/0xE/DamnVulnerableDeFiV4/withdrawal.md)
+
+### 2024.09.14
+[[EthTaipei CTF 2023] 1 | Arcade](./Writeup/0xE/EthTaipeiCTF2023/arcade.md)  
+[[EthTaipei CTF 2023] 2 | ETHTaipeiWarRoomNFT](./Writeup/0xE/EthTaipeiCTF2023/ethtaipeiwarroomnft.md)
+
+### 2024.09.15
+[[EthTaipei CTF 2023] 3 | Casino](./Writeup/0xE/EthTaipeiCTF2023/casino.md)
+
+### 2024.09.16
+[[EthTaipei CTF 2023] 4 | WBC](./Writeup/0xE/EthTaipeiCTF2023/wbc.md)
 
 <!-- Content_END -->

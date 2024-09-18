@@ -30,6 +30,51 @@ Sign up
 
 ### 2024.09.02
 
-今天繼續練習 Damn Vulnerable 題目
+今天練習 Damn Vulnerable DeFi v4 的 Unstoppable
+- [Writeup](https://hackmd.io/@andylinee/HJNbJXN3A)
+- [POC](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/andylinee/DamnVulnerableDeFiV4/Unstoppable.t.sol)
+
+### 2024.09.03
+
+今天練習 Damn Vulnerable DeFi v4 的 Naive Receiver
+- [Writeup](https://hackmd.io/@andylinee/ry-E2HVnA)
+- [POC](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/andylinee/DamnVulnerableDeFiV4/NaiveReceiver.t.sol)
+
+### 2024.09.04
+今天練習 Damn Vulnerable DeFi v4 的 Truster
+
+### 2024.09.05
+
+今天把 Damn Vulnerable DeFi v4 的 Naive Receiver 的 Writeup 和 POC 補齊。
+
+### 2024.09.06
+
+今天預計練習 Damn Vulnerable DeFi v4 的 Side Entrance。
+
+### 2024.09.07
+
+新增 Damn Vulnerable DeFi v4 - Truster 的 POC: 
+- [Truster.t.sol](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/andylinee/DamnVulnerableDeFiV4/Truster.t.sol)
+- [TrusterExploiter.sol](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/andylinee/DamnVulnerableDeFiV4/TrusterExploiter.sol)
+
+### 2024.09.08
+
+練習 Damn Vulnerable DeFi v4 - Side Entrance。
+
+### 2024.09.10
+ 
+練習 Damn Vulnerable DeFi v4 - Side Entrance。
+
+### 2024.09.11
+
+練習 Damn Vulnerable DeFi v4 - Side Entrance。
+
+### 2024.09.12
+
+練習 Damn Vulnerable DeFi v4 - Side Entrance。
+
+### 2024.09.13
+
+練習 Damn Vulnerable DeFi v4 - The Rewarder。
 
 <!-- Content_END -->

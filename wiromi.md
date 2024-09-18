@@ -38,5 +38,32 @@ timezone: Asia/Shanghai
 
 ### 2024.09.04
 
+add telephone and token 
+
+### 2024.09.05
+
+請假
+
+### 2024.09.06
+
+add delegatioin  and force
+
+### 2024.09.07
+
+add vault and king
+
+### 2024.09.08
+
+break
+
+### 2024.09.09
+
+break
+
+### 2024.09.10
+
+add reetrancy and elevator
+
+
 
 <!-- Content_END -->

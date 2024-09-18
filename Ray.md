@@ -75,14 +75,63 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 
 ### 2024.09.01
- 完成 etheranut 的 Telephone
+ 完成 ethernaut 的 Telephone
 [Day4](Writeup/Ray/Day4.md)
 
 ### 2024.09.03
- 完成 etheranut 的 Token
+ 完成 ethernaut 的 Token
 [Day5](Writeup/Ray/Day5.md)
 
 ### 2024.09.04
- 完成 etheranut 的 Force
+ 完成 ethernaut 的 Force
 [Day6](Writeup/Ray/Day6.md)
+
+### 2024.09.06
+完成 ethernaut 的 Vault
+[Day7](Writeup/Ray/Day7.md)
+
+### 2024.09.07
+完成 ethernaut 的 King
+[Day8](Writeup/Ray/Day8.md)
+
+### 2024.09.08
+完成 ethernaut 的 Reentrace:
+[Day9](Writeup/Ray/Day9.md)
+
+### 2024.09.09
+完成 ethernaut 的 Reentrace:
+[Day10](Writeup/Ray/Day10.md)
+
+### 2024.09.10
+完成 ethernaut 的 Privacy:
+[Day11](Writeup/Ray/Day11.md)
+
+### 2024.09.11
+完成 ethernaut 的 Gatekeeper One:
+[Day12](Writeup/Ray/Day12.md)
+
+### 2024.09.12
+完成 ethernaut 的 Gatekeeper Two:
+[Day13](Writeup/Ray/Day13.md)
+
+### 2024.09.13
+完成 ethernaut 的 NaughtCoin:
+[Day14](Writeup/Ray/Day14.md)
+
+### 2024.09.14
+完成 ethernaut 的 Preservation:
+[Day15](Writeup/Ray/Day15.md)
+
+### 2024.09.15
+完成 ethernaut 的 Recevory:
+[Day16](Writeup/Ray/Day16.md)
+
+### 2024.09.16
+完成 ethernaut 的 MagicNum:
+[Day17](Writeup/Ray/Day17.md)
+
+### 2024.09.17
+完成 ethernaut 的 AlienCodex:
+[Day18](Writeup/Ray/Day18.md)
+
 <!-- Content_END -->

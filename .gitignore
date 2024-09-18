@@ -3,10 +3,13 @@ Writeup/*/*/cache/
 Writeup/*/*/out/
 
 Writeup/Ric-Li-C/*.txt
-Writeup/Ric-Li-C/ethernaut-foundry/script/solutions/*.bk.sol
+Writeup/*/*/.env
 Writeup/*/*/broadcast/
 Writeup/*/*/lib/
-Writeup/*/*/.env
+Writeup/*/*/*/lib/
+Writeup/Ric-Li-C/ethernaut-foundry/script/solutions/*.bk.sol
+Writeup/Ric-Li-C/ethernaut-foundry/script/tannerang/
+Writeup/Ric-Li-C/ethernaut-foundry/src/
 
 .history
 .vscode

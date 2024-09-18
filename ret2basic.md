@@ -54,4 +54,61 @@ Today:
 
 1. Solved onlyPwner SEAL911
 
+### 2024.09.04
+
+1. Investigated an issue with calling external function within the same contract with `this` keyword, such as `this.functionCall()`. I found that the msg.sender during this call with be `address(this)`, not the EOA address who initiated the tx.
+2. Investigated an issue with using `offset` to access a portion of calldata in solidity assembly block.
+
+### 2024.09.05
+
+1. Investigated a super-duper complex reentrancy issue during work
+
+### 2024.09.06
+
+1. Wrapped up onlyPwner. Now I solved all challs.
+
+### 2024.09.07
+
+1. Built a Claude 3.5 prompt bot for web3 ctf.
+2. Half way into DamnVulnerableDefi Curvy Puppet.
+
+### 2024.09.08
+
+1. Solved a Milotruck chall: Gnosis Unsafe.
+
+### 2024.09.09
+
+1. Solved a Milotruck chall: Meta Staking.
+
+### 2024.09.10
+
+1. Solved Tornado crash from blaz ctf 2023.
+
+### 2024.09.11
+
+1. Investigated a solidity language bug <0.8.15 https://soliditylang.org/blog/2022/08/08/calldata-tuple-reencoding-head-overflow-bug/
+2. Tried decompile sui move bytecode into C/Python with claude 3.5.
+
+### 2024.09.12
+
+1. Review taichi audit group client PR.
+2. Tested claude 3.5 diagram drawing capabilities. Tomorrow I will let it try to manipulate raw calldata.
+
+### 2024.09.13
+
+1. Solved Greyhats Dollar from Milotruck challs.
+2. Solved Escrow from Milotruck challs.
+
+### 2024.09.14
+
+1. Building knowledge base for the bot
+
+### 2024.09.15
+
+1. Building knowledge base for the bot
+
+### 2024.09.16
+
+1. Learning cairo
+
 <!-- Content_END -->

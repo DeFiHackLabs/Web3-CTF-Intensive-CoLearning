@@ -10,8 +10,8 @@ timezone: Europe/Helsinki
 ## Notes
 
 Progess:
-Group A: Damn Vulnerable DeFi: 10/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
-Group B: ...
+Group A: Damn Vulnerable DeFi: 18/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
+Group B: Milotruck challs: 3/6 ([writeup](./Writeup/koaxwi/B.Milotruck-challs))
 Group C: ...
 
 
@@ -49,12 +49,57 @@ Solved 7 - Compromised.
 WIP 8 - Puppet.
 
 ### 2024.09.03
-Solvd 8 - Puppet.
+Solved 8 - Puppet.
 
-Solvd 9 - Puppet v2.
+Solved 9 - Puppet v2.
 
 ### 2024.09.04
-Solvd 10 - Free Rider.
+Solved 10 - Free Rider.
 
+### 2024.09.05
+WIP 11 - Backdoor.
+
+### 2024.09.06
+Solved 11 - Backdoor.
+
+Solved 12 - Climber.
+
+### 2024.09.07
+Solved 13 - Wallet Mining.
+
+### 2024.09.08
+Solved 14 - Puppet V3. ~(Analysis WIP)~
+
+### 2024.09.09
+Solved 15 - ABI Smuggling.
+
+### 2024.09.10
+Solved 16 - Shards.
+
+WIP 17 - Curvy Puppet.
+
+### 2024.09.11
+WIP 17 - Curvy Puppet, a cheated solution (deal 570 eth to solve)
+
+### 2024.09.12
+Finally solved 17 - Curvy Puppet.
+
+### 2024.09.13
+Solved 18 - Withdrawal.
+
+Damn Vulnerable DeFi all set.
+
+### 2024.09.14
+Selected Milotruck challs for Group B.
+
+Solved GreyHats Dollar.
+
+### 2024.09.15
+
+Solved Escrow.
+
+### 2024.09.16
+
+Solved Simple AMM Vault.
 
 <!-- Content_END -->

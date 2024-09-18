@@ -151,4 +151,155 @@ A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
     - use WETH instead of ETH
     - use `IUniswapV2Router02`
 
-<!-- Content_END -->
+### 2024.09.05
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Backdoor
+  - We find that [`proxyCreated`](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/backdoor/WalletRegistry.sol#L67) will ensure the [`setup`](https://github.com/safe-global/safe-smart-account/blob/bf943f80fec5ac647159d26161446ac5d716a294/contracts/Safe.sol#L95-L104) process is fine
+  - So, we can check if there is something missed
+  - We can see that <`to`, `data`> and <`paymentToken`, `payment`, `paymentReceiver`> are not checked.
+  - However, `proxyCreated` is called after `setup`, so we do not have any token to transfer
+  - Then, we can check the logic of `setupModules(to, data)`
+  - Finally, we find that `delegate` call is allowed [here](https://github.com/safe-global/safe-smart-account/blob/bf943f80fec5ac647159d26161446ac5d716a294/contracts/base/ModuleManager.sol#L35-L39).
+  - So, we can let the wallet approve the token to anyone by manipulate the <`to`, `data`> input.
+  - Finally, we can use `transferFrom` to rug the token of the wallet.
+
+### 2024.09.06
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Free Rider
+
+  - ## From [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/free-rider/FreeRiderNFTMarketplace.sol#L108), we can buy nft for free
+    - `payable(_token.ownerOf(tokenId)).sendValue(priceToPay)` actually pay to the new owner (i.e. msg.sender) instead of the previous owner
+  - However, we need to have enough ETH to bypass the check [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/free-rider/FreeRiderNFTMarketplace.sol#L97) when buying the first NFT.
+  - We find that we can use [the flashswap of uniswap v2](https://docs.uniswap.org/contracts/v2/guides/smart-contract-integration/using-flash-swaps)
+    - Put the above logic inside `uniswapV2Call`
+
+### 2024.09.07
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Climber
+  - If we want to transfer all token of `ClimberVault`, we have three potential choices:
+    - `withdraw`: `onlyOwner`
+    - `sweepFunds`: `onlySweeper`
+    - `upgradeToAndCall`: `onlyOwner`
+  - `sweeper` can only be set while [initialize](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberVault.sol#L42). It is unlikely compromised.
+  - `owner` is the `ClimberTimelock`. It is more likely compromised. Then, `upgradeToAndCall` is more dangerous than `withdraw`
+  - So, we need `ClimberTimelock` to call `upgradeToAndCall`. We must call [`execute`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L72) in this case.
+- It seem that we actor as `ClimberTimelock` itself to do arbitrary call including `upgradeToAndCall` until the check [here](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L94)
+- To bypass the check
+  - We should make scheduled operation can be executed immediatedly. So, we can update dely to zero [here](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L101).
+  - We should call `schedule`.
+    - [For `address(this)` is the role admin of `PROPOSER_ROLE`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/climber/ClimberTimelock.sol#L35). We can update `PROPOSER_ROLE` to malicious contract.
+    - We can call the malicious contract and let it schedule the executions.
+
+### 2024.09.08
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Wallet Mining
+  - At first we should find the nonce that match the `USER_DEPOSIT_ADDRESS`. After brute-force method, we find that `nonce` equals to 13
+  - Then, we should bypass [`can(msg.sender, aim)`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/WalletDeployer.sol#L47)
+  - It's weired that we actually can [reinit](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/AuthorizerUpgradeable.sol#L15) the `AuthorizedUpgradeable` for the misuse of the slots under `TransparentProxy`
+    - When the proxy calls the init method of `AuthorizedUpgradeable`, `needsInit` is actually the first slot of `TransparentProxy` (e.g. [`upgrader`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/TransparentProxy.sol#L13)) instead of the first slot of `AuthorizedUpgradeable` (e.g. [`needsInit`](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/AuthorizerUpgradeable.sol#L6C20-L6C29)).
+    - At first, `upgrader` is `msg.sender`. So, we can bypass the check [here](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/AuthorizerUpgradeable.sol#L16).
+    - Then, `AuthorizerFactory` will [set `upgrader` to zero address](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/AuthorizerUpgradeable.sol#L20)
+    - Finally, `upgrader` is [set to non-zero address again](https://github.com/doublespending/damn-vulnerable-defi-v4-solutions/blob/77e3e6b700fd00f4c06e951cfac67e305c427a35/src/wallet-mining/AuthorizerFactory.sol#L20). So, we can reinit.
+
+### 2024.09.09
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- ABI Smuggling
+
+  - The key is to bypass [the selector check](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/abi-smuggling/AuthorizedExecutor.sol#L48-L56) when `exeucte`
+
+    ```
+        bytes4 selector;
+        uint256 calldataOffset = 4 + 32 * 3; // calldata position where `actionData` begins
+        assembly {
+            selector := calldataload(calldataOffset)
+        }
+
+        if (!permissions[getActionId(selector, msg.sender, target)]) {
+            revert NotAllowed();
+        }
+    ```
+
+  - The above implemtation to fetch `selector` is not correct. For, the data of `actionData` is not required to follow the `offset` of `actionData`. The right approach to fetch `selector` is according to the `offset`.
+  - So, we can add malicious data following the `offset` and let the above code fetch wrong selector which is approved to player.
+  - Then, we set `offset` to skip the malicious data and point to the real selector which will be executed [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/abi-smuggling/AuthorizedExecutor.sol#L60).
+
+### 2024.09.10
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Puppet V3
+  - The attack vector is the same as `Puppet` and `Puppet V2`
+  - The differences are
+    - Uniswap v3 oracle will prevent price manipulation in the same block. So, we should call `lendingPool.borrow` in the future block.
+    - use `ISwapRouter` of Uniswap V3
+
+### 2024.09.11
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Shards
+
+  - First, we can buy shards for free becase the required token can be zero in case `want * _toDVT(offer.price, _currentRate) < offer.totalShards`. We find the max number of free shards is 133.
+  - Then, we can cancel immediately because of [the incorrect timestamp check](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/shards/ShardsNFTMarketplace.sol#L152-L155)
+  - Again, there is also incorrect calculation of refund token [here](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/shards/ShardsNFTMarketplace.sol#L163).
+  - We can keep calling `fill` and `cancel` to fetch all the token of `ShardsNFTMarketplace`.
+
+### 2024.09.12
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18)
+
+- Withdrawal
+  - As a operator, we can invoke [arbitrary withdrawal](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/withdrawal/L1Gateway.sol#L47-L54) to secure all the token inside l1 bridge.
+  - Then, we should leave enough token to l1 bride for 3 noraml withdrawals and not enough token for 1 suspicious withdrawal with pretty large amount.
+  - [Then, after the `DELAY`, we can finalize the 4 withdrawals.](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/withdrawal/L1Gateway.sol#L42)
+    - The 3 normal withdrawals can receive the token
+    - The 1 suspicous withdrawals cannot recevie the token for the l1 bridge does not have enough token.
+    - No matter if the reciver can receive the token, the withdrawals will [finalized](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/withdrawal/L1Gateway.sol#L59-L69).
+  - Finally, we should return the token back to the l1 bridge.
+
+### 2024.09.13
+
+A: [Damn Vulnerable DeFi](https://www.damnvulnerabledefi.xyz/)(18) **DONE**
+
+- CurvyPuppet
+  - [Curve LP Oracle Manipulation: Post Mortem](https://www.chainsecurity.com/blog/curve-lp-oracle-manipulation-post-mortem)
+    - [Resources]
+      - [Mai Finance’s Oracle Manipulation Vulnerability Explained](https://medium.com/amber-group/mai-finances-oracle-manipulation-vulnerability-explained-55e4b5cc2b82)
+      - [How to solve](https://github.com/code-423n4/2022-01-dev-test-repo-findings/issues/195)
+  - We can manipulate the curve pool using fund from [aave flashloan](https://docs.aave.com/developers/guides/flash-loans)
+
+### 2024.09.14
+
+skip
+
+### 2024.09.15
+
+A: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
+
+- Arcade
+  - According execution order of the code, [`_redeem` acutally is executed after `_setNewPlayer` inside `changePlayer`](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Arcade/Arcade.sol#L64)
+  - So, [`getCurrentPlayerPoints()`](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Arcade/Arcade.sol#L73C26-L73C50) will get the point of new player instead of the old palyer.
+  - Finally, old player can mint the token from the points of new player.
+
+### 2024.09.16
+
+A: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
+
+- Casino
+  - [The `_bet` inside `play` is used to charge token from user](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Casino/Casino.sol#L148)
+    - `_bet` will first consider the input token is a CToken and try to call [`cToken.bet(msg.sender, amount)`](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Casino/Casino.sol#L176). If faild, `_bet` will consider the input token as an token.
+    - However, if the token has [a fallback function](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Casino/WNative.sol#L11-L13), the `cToken.bet(msg.sender, amount)` can be executed and charge nothing.
+  - [The `CToken.get` inside `play` is send `amount * slot()` ctoken to user](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Casino/Casino.sol#L152)
+    - So, we should find a slot where more than `amount` ctoken is sent.
+  - Finally, we can call [`withdraw`](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Casino/Casino.sol#L112C14-L112C22) to convert cToken to token.
+  <!-- Content_END -->

@@ -426,5 +426,73 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
 
 ### 2024.09.04
 
+1. Damn Vulnerable DeFi - Backdoor
+   [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/11-backdoor/11-backdoor-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/11-backdoor/Backdoor.t.sol)
+
+2. Damn Vulnerable DeFi - Climber
+   [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/12-climber/12-climber-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/12-climber/Climber.t.sol)
+
+### 2024.09.05
+1. Secureum AMAZEX-DSS-PARIS - Challenge 1
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/01-magicETH/01-magicETH-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/01-magicETH/Challenge1.t.sol)
+
+2. Secureum AMAZEX-DSS-PARIS - Challenge 2
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/02-modernWETH/02-modernWETH-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/02-modernWETH/Challenge2.t.sol)
+
+### 2024.09.06
+
+1. Secureum AMAZEX-DSS-PARIS - Challenge 3
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/03-lendingPool/03-lendingPool-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/03-lendingPool/Challenge3.t.sol)
+
+### 2024.09.07
+1. Secureum AMAZEX-DSS-PARIS - Challenge 5
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/05-balloon-vault/05-balloon-vault-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/05-balloon-vault/Challenge5.t.sol)
+
+### 2024.09.08
+1. Secureum AMAZEX-DSS-PARIS - Challenge 6
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/06-yieldPool/06-yieldPool-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/06-yieldPool/Challenge6.t.sol)
+
+### 2024.09.09
+1. Secureum AMAZEX-DSS-PARIS - Challenge 7
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/07-crystalDAO/07-crystalDAO-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/07-crystalDAO/Challenge7.t.sol)
+
+### 2024.09.10
+1. Secureum AMAZEX-DSS-PARIS - Challenge 8
+   [Solution Report](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/08-oiler/08-oiler-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/Secureum-AMAZEX-DSS-PARIS-solution/blob/main/08-oiler/Challenge8.t.sol)
+
+### 2024.09.11
+1. Blaz CTF 2023 - Rock Scissor Paper
+   [Solution Report](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/rock-paper-scissor/rock-paper-scissor-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/rock-paper-scissor/Exploit.sol)
+
+2. Blaz CTF 2023 - Eazy NFT
+   [Solution Report](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/eazy-nft/eazy-nft-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/eazy-nft/Exploit.t.sol)
+
+### 2024.09.12
+1. Blaz CTF 2023 - Lockless Swap
+   [Solution Report](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/lockless-swap/lockless-swap-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/lockless-swap/Exploit.sol)
+
+### 2024.09.13
+1. Blaz CTF 2023 - Ketai
+   [Solution Report](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/ketai/ketai-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/blazctf-2023-solution/blob/main/ketai/Exploit.sol)
+
+### 2024.09.16
+1. Damn Vulnerable DeFi - Wallet Mining
+   [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/13-wallet-mining/13-wallet-mining-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/13-wallet-mining/WalletMining.t.sol)
+
+
 
 <!-- Content_END -->

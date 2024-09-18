@@ -42,4 +42,39 @@ writeup:[Telephone](./Writeup/geyu/writeup/04_Telephone.md)
 完成了 ethernaut 第 6 个练习 Token
 
 writeup:[Token](./Writeup/geyu/writeup/05_Token.md)
+
+### 2024.09.05
+完成了 ethernaut 第 7 个练习 Token
+writeup:[Token](./Writeup/geyu/writeup/06_Delegation.md)
+### 2024.09.07
+完成了 ethernaut 第 8 个练习 Force
+writeup:[Token](./Writeup/geyu/writeup/07_Force.md)
+### 2024.09.08
+完成了 ethernaut 第 9 个练习 Vault
+writeup:[Token](./Writeup/geyu/writeup/08_Vault.md)
+### 2024.09.09
+完成了 ethernaut 第 10 个练习 Vault
+writeup:[king ](./Writeup/geyu/writeup/09_King.md)
+### 2024.09.10
+完成了 ethernaut 第 11 个练习 Re-entrancy
+writeup:[king ](./Writeup/geyu/writeup/10_Re-entrancy.md)
+### 2024.09.11
+完成了 ethernaut 第 12 个练习 Elevator
+writeup:[king ](./Writeup/geyu/writeup/11_Elevator.md)
+### 2024.09.12
+完成了 ethernaut 第 12 个练习 Elevator
+writeup:[Privacy](./Writeup/geyu/writeup/12_Privacy.md)
+### 2024.09.13
+完成了 ethernaut 第 13 个练习 GatekeeperOne
+writeup:[Privacy](./Writeup/geyu/writeup/13_GatekeeperOne.md)
+### 2024.09.14
+完成了 ethernaut 第 14 个练习 GatekeeperTwo
+writeup:[Privacy](./Writeup/geyu/writeup/14_GatekeeperTwo.md)
+### 2024.09.15
+完成了 ethernaut 第 15 个练习 NaughtCoin
+writeup:[Privacy](./Writeup/geyu/writeup/15_NaughtCoin.md)
+### 2024.09.17
+完成了 ethernaut 第 16 个练习 NaughtCoin
+writeup:[Privacy](./Writeup/geyu/writeup/16_Preservation.md)
+
 <!-- Content_END -->

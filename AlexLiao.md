@@ -120,4 +120,137 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 ### 2024.09.05
 
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Puppet](https://www.damnvulnerabledefi.xyz/challenges/puppet/)
+
+筆記連結： [DamnVulnerableDeFi: Puppet](./Writeup/AlexLiao/DamnVulnerableDeFi/Puppet.md)
+
+### 2024.09.06
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Puppet V2](https://www.damnvulnerabledefi.xyz/challenges/puppet-v2/)
+
+筆記連結： [DamnVulnerableDeFi: Puppet V2](./Writeup/AlexLiao/DamnVulnerableDeFi/PuppetV2.md)
+
+### 2024.09.07
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Free Rider](https://www.damnvulnerabledefi.xyz/challenges/free-rider/)
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [FREEBIE](https://onlypwner.xyz/challenges/5)
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [TUTORIAL](https://onlypwner.xyz/challenges/1)
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [UNDER THE FLOW](https://onlypwner.xyz/challenges/9)
+
+筆記連結： [DamnVulnerableDeFi: Free Rider](./Writeup/AlexLiao/DamnVulnerableDeFi/FreeRider.md)
+
+> [!WARNING]
+> OnlyPwner 不允許公開題目解法，僅提供完成截圖。
+
+![FREEBIE](Writeup/AlexLiao/OnlyPwner/FREEBIE.png)
+![TUTORIAL](Writeup/AlexLiao/OnlyPwner/TUTORIAL.png)
+![UNDER THE FLOW](Writeup/AlexLiao/OnlyPwner/UNDERTHEFLOW.png)
+
+### 2024.09.08
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Backdoor](https://www.damnvulnerabledefi.xyz/challenges/backdoor/)
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [WRAPPED ETHER](https://onlypwner.xyz/challenges/12)
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [REVERSE RUGPULL](https://onlypwner.xyz/challenges/7)
+
+筆記連結： [DamnVulnerableDeFi: Backdoor](./Writeup/AlexLiao/DamnVulnerableDeFi/Backdoor.md)
+
+> [!WARNING]
+> OnlyPwner 不允許公開題目解法，僅提供完成截圖。
+
+![FREEBIE](Writeup/AlexLiao/OnlyPwner/WRAPPEDETHER.png)
+
+### 2024.09.09
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Climber](https://www.damnvulnerabledefi.xyz/challenges/climber/)
+
+筆記連結： [DamnVulnerableDeFi: Climber](./Writeup/AlexLiao/DamnVulnerableDeFi/Climber.md)
+
+### 2024.09.10
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [ABI Smuggling](https://www.damnvulnerabledefi.xyz/challenges/abi-smuggling/)
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [PLEASE SIGN HERE](https://onlypwner.xyz/challenges/6)
+
+筆記連結： [DamnVulnerableDeFi: ABI Smuggling](./Writeup/AlexLiao/DamnVulnerableDeFi/ABISmuggling.md)
+
+> [!WARNING]
+> OnlyPwner 不允許公開題目解法，僅提供完成截圖。
+
+![FREEBIE](Writeup/AlexLiao/OnlyPwner/PLEASESIGNHERE.png)
+
+### 2024.09.11
+
+挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [HelloWorld](https://github.com/dinngo/ETHTaipei-war-room/blob/main/src/HelloWorld/HelloWorld.sol)
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [Arcade](https://github.com/dinngo/ETHTaipei-war-room/blob/main/src/Arcade/Arcade.sol)
+
+筆記連結： [ETH Taipei CTF 2023: HelloWorld](./Writeup/AlexLiao/ETHTaipeiCTF2023/HelloWorld.md)
+
+筆記連結： [ETH Taipei CTF 2023: Arcade](./Writeup/AlexLiao/ETHTaipeiCTF2023/Arcade.md)
+
+### 2024.09.12
+
+挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [ETHTaipeiWarRoomNFT](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/E挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [Casino](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/Casino)
+
+筆記連結： [ETH Taipei CTF 2023: Casino](./Writeup/AlexLiao/ETHTaipeiCTF2023/Casino.md)
+
+### 2024.09.14THTaipeiWarRoomNFT)
+
+筆記連結： [ETH Taipei CTF 2023: ETHTaipeiWarRoomNFT](./Writeup/AlexLiao/ETHTaipeiCTF2023/ETHTaipeiWarRoomNFT.md)
+
+### 2024.09.13
+
+挑戰題目：
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [ALL OR NOTHING](https://onlypwner.xyz/challenges/10)
+
+> [!WARNING]
+> OnlyPwner 不允許公開題目解法，僅提供完成截圖。
+
+![ALL OR NOTHING](Writeup/AlexLiao/OnlyPwner/ALLORNOTHING.png)
+
+### 2024.09.15
+
+挑戰題目：
+
+-   [OnlyPwner](https://onlypwner.xyz/) - [LIQUID STAKING](https://onlypwner.xyz/challenges/15)
+
+> [!WARNING]
+> OnlyPwner 不允許公開題目解法，僅提供完成截圖。
+
+![ALL OR NOTHING](Writeup/AlexLiao/OnlyPwner/LIQUIDSTAKING.png)
+
+### 2024.09.16
+
+挑戰題目：
+
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [WBC](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/WBC)
+
+筆記連結： [ETH Taipei CTF 2023: WBC](./Writeup/AlexLiao/ETHTaipeiCTF2023/WBC.md)
+
+### 2024.09.17
+
 <!-- Content_END -->
