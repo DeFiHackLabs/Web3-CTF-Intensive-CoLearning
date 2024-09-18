@@ -242,4 +242,10 @@ Plan:
 
 - [Solution](./Writeup/HarryRiddle/Real-World-CTF-6th-Challenge-SafeBridge.md#L59)
 
+### 2024.09.17
+
+#### Paradigm CTF 2023 - [HelloWorld](./Writeup/HarryRiddle/Paradigm-CTF-2023/paradigm-ctf-2023/hello-world/challenge/project/src/Challenge.sol)
+
+- [Write-up](./Writeup/HarryRiddle/Paradigm-CTF-2023.md#L3)
+
 <!-- Content_END -->
