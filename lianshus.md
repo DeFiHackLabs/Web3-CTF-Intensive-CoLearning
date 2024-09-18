@@ -439,6 +439,14 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 
 
 
+### 2024.09.17
+
+学习內容:
+
+中秋快乐，昨天晚上以及今天写了一个demo项目，花费了一点时间，ethernaut 跳过了3题（有点难度），做shop这道题
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
 
 
 ### 2024.07.12

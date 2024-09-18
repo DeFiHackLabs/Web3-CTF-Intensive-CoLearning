@@ -148,4 +148,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 blazctf 2023 的 jambo 题目。
 
+### 2024.09.17
+
+完成了 blazctf 2023 的 maze 题目。
+
 <!-- Content_END -->

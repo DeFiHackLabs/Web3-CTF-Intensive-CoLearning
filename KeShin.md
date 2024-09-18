@@ -176,6 +176,12 @@ KeShin, 合约安全新人
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/27-GoodSamaritan/)
 
 ### 2024.9.17
+#### [Ethernaut CTF : 28 GatekeeperThree](https://ethernaut.openzeppelin.com/level/28)
+- 满足三个限制条件即可
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/28-GatekeeperThree/)
+
+#### [Ethernaut CTF : 29 Switch](https://ethernaut.openzeppelin.com/level/29)
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/29-Switch/)
 
 ### 2024.9.18
 

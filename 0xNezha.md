@@ -78,4 +78,10 @@ bytes32[3] private data 通过合约调用的方式当然无法读取 private �
 
 ### 2024.09.16
 完善 13_GatekeeperOne 的 EXP (通过位运算生成 key)。[13_GatekeeperOne](./Writeup/0xNezha/Ethernaut/13_GatekeeperOne/src/GatekeeperOne_exp.sol)
+
+### 2024.09.17
+本题主要考察：
+1、 extcodesize() 的功能：返回合约部署后的字节码大小。有人用它来判断调用者是否为智能合约，但这是有漏洞的，将操作放到构造函数 constructor() 中可破此法。
+2、 abi.encodePacked() 的功能：进行压缩编码。比如把填充的很多0省略，只用1字节来编码uint8类型。这能够让编码数据长度减小很多。压缩编码不能与 EVM 交互，适合进行哈希运算或者存储。
+3、 “按位异或” 运算符 ^ 及其运算规则，如“自反性”，也就是 a ^ b ^ a = b 。
 <!-- Content_END -->

