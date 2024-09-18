@@ -59,7 +59,20 @@ However, since the swap not updating `K`, we can withdraw some tokens (by swappi
 
 Alternatively, we can add liquidity with no token input, and the swap will still attribute the raise to us and mint LP tokens.
 
-## Voting Vault (TODO)
+## Voting Vault (2024/09/17)
+
+We need to withdraw from a treasury, which use the propose-vote-execute model.
+It requires proposal and voting in different blocks, and reads the voting power at the time of the proposal.
+We cannot change the past state, so everything in the treasury seems fine.
+
+We need 1000000 votes to execute a proposal, but we only have 1300 votes (1000 Grey airdrop * 1.3 ratio).
+There must be something suspicious in the voting vault.
+Indeed, there are two `unchecked` actions.
+If we can make the voting power underflow, we will hold almost infinite voting power.
+
+The problem occurrs with the voting ratio. The vault calculates the votes as `amount * 1.3e18 / 1e18`.
+If we lock 4 token separately, we only get 4 votes as each time the vaule is floored to 1.
+Then we delegate the votes to someone else (cannot unlock due to the lock duration), our votes will be reduced by 5 - underflow!
 
 ## Meta Staking (TODO)
 
