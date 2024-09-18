@@ -302,4 +302,18 @@ A: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
   - [The `CToken.get` inside `play` is send `amount * slot()` ctoken to user](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Casino/Casino.sol#L152)
     - So, we should find a slot where more than `amount` ctoken is sent.
   - Finally, we can call [`withdraw`](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Casino/Casino.sol#L112C14-L112C22) to convert cToken to token.
-  <!-- Content_END -->
+
+### 2024.09.17
+
+skip
+
+### 2024.09.18
+
+A: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
+
+- CasinoAdvanced
+  - Almost the same as `Casino`
+  - Besides, we should swap the free `WETH` to `USDC` to play the game which will have 2x returns in some slots. Then, we can withdraw all the `USDC` inside CasinoAdvanced.
+  - Next, we should swap the `USDC` to `WBTC` to play the game which will have 2x returns in some slots. Then, we can withdraw all the `WBTC` inside CasinoAdvanced.
+
+<!-- Content_END -->
