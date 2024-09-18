@@ -126,5 +126,9 @@ timezone: Asia/Taipei
 ### 2024.09.16
 - warroom-ethcc-2023#4 [Proxy capture](./Writeup/SunSec/warroom-ethcc-2023.md#task-4---access-control-35-points)
 - warroom-ethcc-2023#5 [Metamorphic](./Writeup/SunSec/warroom-ethcc-2023.md#bonus-task---metamorphic-10-points)
+
+### 2024.09.18
+- Review 3 challenges from fuzzland.
+ 
   
 <!-- Content_END -->
