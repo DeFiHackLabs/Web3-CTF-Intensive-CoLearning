@@ -1165,4 +1165,46 @@ proxychains3 forge test test/flashloan/WhitelistedRewards.t.sol --rpc-url $SEPOL
 
 ### 2024.09.18
 
+#### 4. Access Control
+
+这一关提供了两个合约`RewardsBox`和`AccessControl`
+`AccessControl`是一个存取控制器，指定了vitalk.eth和一个备用管理者，即使是`AccessControl`的owner也无法添加新的admin
+`RewardsBox`合约实现了一个`claim`方法，在此方法需要两个参数`accessController`和`amount`，判断了传入的`accessController`代码是否与之前提供的相同，并且判断了`msg.sender`是否被授权可以提币
+
+也就是说只要求`AccesssControl`合约代码相同，不要求是同一个地址，所以我们可以部署一个新的
+
+这里的问题在于，EVM中部署合约时，可以在构造函数中实现任意代码，也就是`creation code`，而不会影响到`runtime code`，`RewardsBox`中检查的是`runtime code`而不是`creation code`
+
+攻击思路:
+1. 编写一个新的`AccesssControl`在构造函数中把自己设为`owner`其他保持不变
+2. 使用新的`AccessControl`地址传入`RewardsBox`的`claim`函数
+
+test文件[AccessControl.t.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/accesscontrol/AccessControl.t.sol)
+
+进入`warroom-ethcc-2023`目录中，执行以下命令测试：
+
+``` bash
+proxychains3 forge test test/flashloan/AccessControl.t.sol --rpc-url $SEPOLIA_RPC_URL  -vvvv
+```
+
+#### 5. Metamorphic
+
+这一关的目标是看用户能否识别到`Multiply`合约是使用`Factory`部署的，这个合约允许用户花费一些代币换取合约中的代币，在用户授权`Multiply`合约后，直接销毁掉`Multiply`合约并部署一个新的`Multiply2`恶意合约，以此盗取用户钱包内的代币
+
+为了不让用户发现使用了不同的合约，需要利用到在同一个地址部署不同合约的技巧
+
+通过`create`部署的合约地址计算是通过`contract address = last 20 bytes of sha3(rlp_encode(sender, nonce))`
+
+`sender`是部署者的地址，`nonce`是sender发送交易的数量，通过reset nonce值，就可以给不同的合约部署成一样的地址
+
+test文件[MultiplerRug.t.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/metamorphic/MultiplerRug.t.sol)
+
+进入`warroom-ethcc-2023`目录中，执行以下命令测试：
+
+``` bash
+proxychains3 forge test test/flashloan/MultiplerRug.t.sol --rpc-url $SEPOLIA_RPC_URL  -vvvv
+```
+
+### 2024.09.19
+
 <!-- Content_END -->
