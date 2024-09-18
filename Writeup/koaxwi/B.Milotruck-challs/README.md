@@ -59,7 +59,7 @@ However, since the swap not updating `K`, we can withdraw some tokens (by swappi
 
 Alternatively, we can add liquidity with no token input, and the swap will still attribute the raise to us and mint LP tokens.
 
-## Voting Vault (2024/09/17)
+## Voting Vault (2024/09/18)
 
 We need to withdraw from a treasury, which use the propose-vote-execute model.
 It requires proposal and voting in different blocks, and reads the voting power at the time of the proposal.
