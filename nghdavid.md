@@ -351,5 +351,14 @@ abstract contract ReentrancyGuard {
 - 故使用vm.load(address, bytes32(uint256(1)))去讀取slot 1的password
 - 最後再輸入正確的密碼去用unlock去解鎖
 
+### 2024.09.18
+# Ethernut第九題
+- 這題的關鍵是要讓挑戰合約的receive()裡的payable(king).transfer(msg.value)出現revert
+- 以至於讓整個receive()不能執行
+- 首先要設立一個合約，有一個function要轉0.001Eth到挑戰合約，以成為King
+- 接著這個合約的receive()要針對挑戰合約的地址去revert
+- 如此一來別人無法再成功呼叫挑戰合約的receive()，別人也就無法成為king了
+
+
 
 <!-- Content_END -->
