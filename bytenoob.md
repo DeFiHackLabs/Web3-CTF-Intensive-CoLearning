@@ -137,6 +137,13 @@ Finish ethernaut shop
 
 Finish ethernaut dex
 
+### 2024.09.17
+
+Finish ethernaut dex2
+
+### 2024.09.18
+
+Finish ethernaut dex2 update
 
 
 <!-- Content_END -->

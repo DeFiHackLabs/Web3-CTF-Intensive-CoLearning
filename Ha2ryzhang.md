@@ -437,4 +437,10 @@ function _msgSender() internal view override returns (address) {
 可以调用token的approve来授权,再调用`transferFrom`来转走资金.
 题目有一笔tx的限制,写个attack合约在`constructor`里调用
 
+### 2024.09.18
+
+#### A-DamnVaulnerableDefi-SideEntrance
+
+将`flashLoan`出来的eth再`deposit`进去就等于还款了,最后`withdraw`之后发给`recovery`
+
 <!-- Content_END -->

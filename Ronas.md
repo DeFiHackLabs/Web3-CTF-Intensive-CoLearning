@@ -90,4 +90,16 @@ timezone: Asia/Taipei
 
 - [A. Ethernaut CTF - level 17 Recovery](/Writeup/Ronas/Ethernaut%20CTF/level17.md)
 
+### 2024.09.17
+
+- [A. Ethernaut CTF - level 18 MagicNum](/Writeup/Ronas/Ethernaut%20CTF/level18.md)
+- [A. Ethernaut CTF - level 19 AlienCodex](/Writeup/Ronas/Ethernaut%20CTF/level19.md)
+- [A. Ethernaut CTF - level 20 Denial](/Writeup/Ronas/Ethernaut%20CTF/level20.md)
+- [A. Ethernaut CTF - level 21 Shop](/Writeup/Ronas/Ethernaut%20CTF/level21.md)
+
+### 2024.09.18
+
+- [A. Ethernaut CTF - level 22 Dex](/Writeup/Ronas/Ethernaut%20CTF/level22.md)
+
+
 <!-- Content_END -->
