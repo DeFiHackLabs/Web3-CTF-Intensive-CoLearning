@@ -174,6 +174,7 @@ timezone: Asia/Taipei
     - 用 .call{gas: amount} 控制 external call 使用的 gas 量, 每一個 external call 最低 gas 是 21000, 所以用迴圈 .call{gas: i + 8191 * 3} 去跑看能否被 8191 整除  
     - 第三關複雜了, 到目前還是看不太懂, 可能要先把 type casting 觀念釐清  
 問題:  
+    - 還要再熟悉 function run() 裡面呼叫自己額外寫合約的寫法
     - 為什麼 .call{gas: 8191*3} 就好, 還要跑迴圈  
 解題:      
   [Lev13-GatekeeperOne](./Writeup/Clad/script/Lev13Sol.s.sol)  
