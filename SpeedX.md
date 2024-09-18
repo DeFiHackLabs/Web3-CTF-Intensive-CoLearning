@@ -456,8 +456,52 @@ price = amount * to / (from + amount) 这样计算才可以，要把amount自身
 我想到的方法就是 一直 swap 知道某个token的 balance为0， 这时候肯定是 bad price的 ， 因为bad就没正确过.... , 但是如果某一个balance 为0， 那么计算价格会报错， 被除数不能为0
 
 
+这道题直接使用 浏览器 console解题
+
+首先进行 approve 授权 from token 我们使用 token1
+
+```
+await contract.approve(contract.address, 1000);
+```
+
+然后进行 swap , 把token1的全部 balance 都swap为 token2， swap后 token1 blance： 0， token2 balance ：20.
+
+```
+await contract.swap(token1, token2, 10);
+```
+然后再把20个 token2 swap为 token1， swap后 token1 ： 24， token2: 0
+因为swap的时候已经approve了 to token 所以不需要单独approve了
+
+|swap|token1 player|token2 player|token1 dex|token2 dex|
+|-------------|-------------|-------------|-------------|-------------|
+|1|0|20|110|90|
+|2|24|0|86|110|
+|3|0|30|110|80|
+|4|41|0|69|110|
+|5|0|65|110|45|
+|6|110|20|0|90|
+
+OK， 下一关 **Level 23 Dex two**
+
+这一关对 dex swap进行了 修改 ，最主要的区别就是删除了 
+
+```
+require((from == token1 && to == token2) || (from == token2 && to == token1), "Invalid tokens");
+```
+
+这一关是把token1 token2的balance 全部搞走，上面我们把其中一个token1 变为了0， 这之后 获取价格会报错了。不能swap 怎么办？？跟删掉的 require 有什么关系？？
+
+删掉了这个require 就没有限制 from 和to就可以swap 其他的 token， 上一题dex，交换token1， token2 将 token1 耗尽， 这一提利用另一个token3 把token1 耗尽， 再用token3 把 token2 耗尽，就可以了
+
+但是dex 没有token3 怎么办，我们初始化一个token3， 然后转给dex 1000个token3，再swap
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/dextwo_poc.s.sol)
 
 ### 2024.09.18
+
+**Level 24 puzzle wallet**
+
+ARB sepolia metamask 老不好呢， 通过foundry script 就好使了呢
 
 ### 2024.09.19
 
