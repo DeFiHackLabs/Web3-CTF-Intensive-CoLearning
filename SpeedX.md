@@ -548,6 +548,22 @@ await ethereum.request({
 
 await contract.claimLeadership();
 ```
+我倒着做 下一题 **Level 29 switch**
+
+这题代码也很短，需要了解calldata 结构 
+
+calldata 前四个字节是function selector， 后面是data， flipSwitch(bytes memory _data)  bytes类型 calldata 需要 offset， length 和data组成
+offset是从callata其实位置偏移多少开始读区数据， length是数据长度。如果是静态类型数据如果是 uint，不需要offset和length 都使用32字节编码。
+
+本题calldata如下：
+
+|  |30c13ade| |
+|-------------|-------------|-------------|
+|00: |0000000000000000000000000000000000000000000000000000000000000060|offset 从0x60 开始|
+|20: |0000000000000000000000000000000000000000000000000000000000000000|为了填充|
+|40: |20606e1500000000000000000000000000000000000000000000000000000000|turnSwitchOff selector|
+|60: |0000000000000000000000000000000000000000000000000000000000000004|_data参数长度|
+|80: |76227e1200000000000000000000000000000000000000000000000000000000|turnSwitchOn selector|
 
 
 ### 2024.09.20
