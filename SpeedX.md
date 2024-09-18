@@ -503,7 +503,26 @@ require((from == token1 && to == token2) || (from == token2 && to == token1), "I
 
 ARB sepolia metamask 老不好呢， 通过foundry script 就好使了呢
 
+知道了， 是RPC的问题，把metamask的rpc换成了 infra 就好了
+
+刚才看了**Level 31 Stake**
+
+先做这个看看 这一题要求 合约的ETH数量大于0， totalStake 大于 合约的ETH，
+正常他两个是一致的， 如果totalStake大于合约ETH， 那么就是totalStake保存了 但是合约ETH没有存入，或者unstake的时候 totalStake 没有减少。 
+
+看了一共三个函数 stakeETH， stakeWETH， unstake, stakeETH 没有什么可以利用的 
+stakeWETH， 有一个WETH.call 把msg.sender 的WETH转到合约中。那么如果这个call调用失败，就会导致 totalStaked增加而 合约ETH数量没有增加， 又仔细看了一下，无论call成功失败 合约ETH数量都不会多 stakeWETH 增加了的是WETH数量不是合约的balance 所以 合约balance不会增加。
+
+但是 WETH没有余额啊， 需要allowance > amount, 所以先要调用approve 把 allowance 设置为大于amount的数量
+
+还有一个要求就是，UserStake数量是0，这个简单就是村里面又unstake就好了，可以使用两个账户，这样保证 totalStaked 大于 0。
+
+
+[POC代码](Writeup/SpeedX/script/Ethernaut/stake_poc.s.sol)
+
 ### 2024.09.19
+
+
 
 ### 2024.09.20
 
