@@ -76,5 +76,7 @@ writeup:[Privacy](./Writeup/geyu/writeup/15_NaughtCoin.md)
 ### 2024.09.17
 完成了 ethernaut 第 16 个练习 NaughtCoin
 writeup:[Privacy](./Writeup/geyu/writeup/16_Preservation.md)
-
+### 2024.09.18
+完成了 ethernaut 第 17 个练习 NaughtCoin
+writeup:[Privacy](./Writeup/geyu/writeup/17_Recovery.md)
 <!-- Content_END -->
