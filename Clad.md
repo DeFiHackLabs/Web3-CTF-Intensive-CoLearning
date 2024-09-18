@@ -175,6 +175,7 @@ timezone: Asia/Taipei
     - 第三關複雜了, 到目前還是看不太懂, 可能要先把 type casting 觀念釐清  
 問題:  
     - 為什麼 .call{gas: 8191*3} 就好, 還要跑迴圈  
-解題:    
-  [Lev13-GatekeeperOne](./Writeup/Clad/script/Lev13Sol.s.sol) 
+解題:      
+  [Lev13-GatekeeperOne](./Writeup/Clad/script/Lev13Sol.s.sol)  
+  
 <!-- Content_END -->
