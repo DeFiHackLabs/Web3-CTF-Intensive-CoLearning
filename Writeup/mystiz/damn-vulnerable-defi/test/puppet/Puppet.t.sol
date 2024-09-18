@@ -7,6 +7,7 @@ import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
 import {PuppetPool} from "../../src/puppet/PuppetPool.sol";
 import {IUniswapV1Exchange} from "../../src/puppet/IUniswapV1Exchange.sol";
 import {IUniswapV1Factory} from "../../src/puppet/IUniswapV1Factory.sol";
+import {ExploitContract} from "./ExploitContract.sol";
 
 contract PuppetChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -92,7 +93,10 @@ contract PuppetChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_puppet() public checkSolvedByPlayer {
-        
+        ExploitContract exploit = new ExploitContract{value: 25 ether}(lendingPool, uniswapV1Exchange, token, recovery);
+        token.transfer(address(exploit), 1000 ether);
+
+        exploit.run();
     }
 
     // Utility function to calculate Uniswap prices
