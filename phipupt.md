@@ -721,10 +721,10 @@ contract Attacker {
 
 执行脚本：
 ```
-forge script script/level17.s.sol:CallContractScript --rpc-url sepolia --broadcast
+forge script script/Level17.s.sol:CallContractScript --rpc-url sepolia --broadcast
 ```
 
-完整代码见：[这里](Writeup/phipupt/ethernaut/src/Level17.sol)
+完整代码见：[这里](Writeup/phipupt/ethernaut/script/Level17.s.sol)
 
 
 
