@@ -103,4 +103,11 @@ A: Damn Vulnerable DeFi V4(3/18)
 
 ### 2024.09.17
 - Stuck on Paradigm2023-Dragon
+
+### 2024.09.18
+- 解决Paradigm2023-Hopping into place
+
+
+
+
 <!-- Content_END -->

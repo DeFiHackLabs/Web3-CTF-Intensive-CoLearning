@@ -102,7 +102,7 @@ Solved Escrow.
 
 Solved Simple AMM Vault.
 
-### 2024.09.17
+### 2024.09.18
 
 Solved Voting Vault.
 
