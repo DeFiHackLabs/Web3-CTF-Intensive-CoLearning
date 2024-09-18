@@ -74,4 +74,7 @@ jambo wp见上方合集
 
 ### 2024.09.16
 ghost 汇编题，他们re壬的专长（
+
+### 2024.09.18
+做了下metatrustctf的ZKP和顺路看了一下numenCTF的zk题，对于metatrustctf的ZK来说，出的很好，下次别再出了（x （正在用自己12代i5代轮椅拄着爬）
 <!-- Content_END -->
