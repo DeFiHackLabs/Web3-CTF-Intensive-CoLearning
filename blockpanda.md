@@ -62,5 +62,8 @@ timezone: Asia/Shanghai
 - [Ethernaut 第22题](/Writeup/blockpanda/readme.md/Ethernaut第22题.md)
 
 ### 2024.09.14
-- [Ethernaut 第22题](/Writeup/blockpanda/readme.md/Ethernaut第23题.md)
+- [Ethernaut 第23题](/Writeup/blockpanda/readme.md/Ethernaut第23题.md)
+
+### 2024.09.18
+- [Ethernaut 第24题](/Writeup/blockpanda/readme.md/Ethernaut第24题.md)
 <!-- Content_END -->
