@@ -226,7 +226,7 @@ Plan:
 
 - [Solution](./Writeup/HarryRiddle/Ethernaut-CTF/src/Stake.sol)
 
-### 2024.09.15
+### 2024.09.16
 
 #### Real World CTF 2024 SafeBridge
 
@@ -234,7 +234,7 @@ Plan:
 
 - [Solution](Comming soon)
 
-### 2024.09.16
+### 2024.09.17
 
 #### Real World CTF 2024 SafeBridge (Finished)
 
@@ -242,7 +242,7 @@ Plan:
 
 - [Solution](./Writeup/HarryRiddle/Real-World-CTF-6th-Challenge-SafeBridge.md#L59)
 
-### 2024.09.17
+### 2024.09.18
 
 #### Paradigm CTF 2023 - [HelloWorld](./Writeup/HarryRiddle/Paradigm-CTF-2023/paradigm-ctf-2023/hello-world/challenge/project/src/Challenge.sol)
 
