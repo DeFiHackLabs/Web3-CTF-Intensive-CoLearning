@@ -30,7 +30,7 @@
 
 ## 共學內容
 - 題目需完成 A,B,C 系列或 1B2C. 可自行選擇要做哪一組題. 卡關可以換下一題 (統一使用 Foundry 寫POC), 21天至少~~完成40題~~(視情況). 在下一屆需避免做到重覆系列.
-- **A.3選1系列**
+- **A.4選1系列**
     - 1.Ethernaut CTF (31)
 https://ethernaut.openzeppelin.com/
 
@@ -39,6 +39,9 @@ https://www.damnvulnerabledefi.xyz/
 
     - 3.QuillCTF Challenges (23)
 https://github.com/Quillhash/Quill-CTFs?tab=readme-ov-file#quillctf-challenges
+
+    - 4.Mr Steal Yo Crypto (20)
+https://mrstealyocrypto.xyz/
 
 - **B.2選1系列**
 
