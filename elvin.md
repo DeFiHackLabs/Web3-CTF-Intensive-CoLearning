@@ -493,6 +493,10 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
    [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/13-wallet-mining/13-wallet-mining-solution.md)
    [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/13-wallet-mining/WalletMining.t.sol)
 
+### 2024.09.18
+1. Damn Vulnerable DeFi - Puppet V3
+   [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/14-puppet-v3/14-puppet-v3-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/14-puppet-v3/PuppetV3.t.sol)
 
 
 <!-- Content_END -->

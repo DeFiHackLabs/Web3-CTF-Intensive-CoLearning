@@ -134,4 +134,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 完成 ethernaut 的 AlienCodex:
 [Day18](Writeup/Ray/Day18.md)
 
+### 2024.09.18
+完成 ethernaut 的 AlienCodex:
+[Day19](Writeup/Ray/Day19.md)
+
 <!-- Content_END -->

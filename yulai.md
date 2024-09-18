@@ -432,4 +432,10 @@ nc localhost 1337 # 再次创建，成功。得到相关的 rpc 地址
 ```
 3. 部署 blockscout。目前部署还有些问题，明天来解决
 
+### 2024.09.18
+#### ethernaut - MagicNumber
+这道题考查对字节码的使用，不是很懂，去查询了相关文档
+实例地址：0x08557A8d841ad88Eff166c08E1388dCbB1681bc1
+发现字节码还是很厉害的
+
 <!-- Content_END -->

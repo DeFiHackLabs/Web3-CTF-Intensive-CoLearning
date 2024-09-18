@@ -294,7 +294,9 @@ byte8 = 8 字节，16字符，64 bit
 
 
 
-POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+POC -- Gatekeeper One: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/GatekeeperOne.md
+
+
 
 
 
@@ -444,6 +446,18 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 学习內容:
 
 中秋快乐，昨天晚上以及今天写了一个demo项目，花费了一点时间，ethernaut 跳过了3题（有点难度），做shop这道题
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+### 2024.09.18
+
+学习內容:
+
+工作又开始忙起来了，感觉这一期学不完ethernaut了
+
+今天仍然是在做题与写poc度过的
+
+今天做的 Daniel 这道题，这道题思路和之前的revert 很想，但是我按照类似的思路去做能成功组织owner调用，但是却没有成功解题，是 gas 的问题，对比两个调用的gas消耗，是差不多的，但是为什么直接revert 不成功呢？POC 待整理
 
 POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
 

@@ -102,6 +102,8 @@ https://hackmd.io/@0xbc000/SJ61x8j3R
 2. BlazCTF 2023 - EasyNFT
 3. ethernaut level24 - https://hackmd.io/@0xbc000/r1UNfTy6C
 
-
+### 2024.09.18
+1. ethernaut level25 - https://hackmd.io/@0xbc000/BJ1G17ZpC
+2. Damn Vulnerable DeFi - Puppet V2 https://hackmd.io/@0xbc000/rywCYGla0
 
 <!-- Content_END -->
