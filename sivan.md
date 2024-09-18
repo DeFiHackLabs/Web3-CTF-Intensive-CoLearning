@@ -56,4 +56,7 @@ timezone: Asia/Shanghai
 ### 2024.09.14
 - MetaTrust 2023 中的greeterGate，与Switch题目类似，不一样的是这题多了一层data需要包裹。
 - [2024.9.14](./Writeup/Sivan/2024.9.14)
+### 2024.09.18
+- Openzeppelin CTF 2023中的AlienSpaceship一题，主要是要理解整个合约的逻辑，精心构造调用顺序来完成挑战。
+- [2024.9.18](./Writeup/Sivan/2024.9.18)
 <!-- Content_END -->
