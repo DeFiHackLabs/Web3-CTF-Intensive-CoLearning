@@ -218,4 +218,10 @@ Writeup: The only clue we have is a multi-signature wallet contract address and 
 
 Link: https://onlypwner.xyz/challenges/5
 
+### 2024.09.17
+
+(1) OnlyPwner REVERSE RUGPULL Challenge
+
+Link: https://onlypwner.xyz/challenges/7
+
 <!-- Content_END -->

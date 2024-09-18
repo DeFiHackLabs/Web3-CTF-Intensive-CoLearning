@@ -234,4 +234,12 @@ Plan:
 
 - [Solution](Comming soon)
 
+### 2024.09.16
+
+#### Real World CTF 2024 SafeBridge (Finished)
+
+- [Write-up](./Writeup/HarryRiddle/Real-World-CTF-6th-Challenge-SafeBridge.md)
+
+- [Solution](./Writeup/HarryRiddle/Real-World-CTF-6th-Challenge-SafeBridge.md#L59)
+
 <!-- Content_END -->
