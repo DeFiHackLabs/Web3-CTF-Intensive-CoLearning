@@ -289,4 +289,14 @@ abi.encodePacked(type(Contract).creationCode, uint256(uint160(address(owner))))
 
 筆記連結： 解到一半，還在找 salt，等後續解完再來補充！目前思路是先把利用 `init` 把 player 設成 `wards` ，然後再呼叫 WalletDeployer 的 `drop` 來創建出題目說的那個丟失 slat 的地址，最後用 user 的私鑰去控制 safe 錢包把錢轉到 recovery 地址。思路應該是正確的了，只是 WalletDeployer 合約變數命名真的很糟糕，看很久才知道在幹嘛...
 
+### 2024.09.19
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Wallet Mining](https://www.damnvulnerabledefi.xyz/challenges/wallet-mining/)
+
+筆記連結： [DamnVulnerableDeFi: Wallet Mining](./Writeup/AlexLiao/DamnVulnerableDeFi/WalletMining.md)
+
+### 2024.09.20
+
 <!-- Content_END -->
