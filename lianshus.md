@@ -294,7 +294,9 @@ byte8 = 8 字节，16字符，64 bit
 
 
 
-POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+POC -- Gatekeeper One: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/GatekeeperOne.md
+
+
 
 
 
@@ -397,9 +399,9 @@ POC -- NaughtCoin: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning
 
 这道题结合了之前 delegatecall 的使用和插槽存储的特性
 
-对于 delegate 来说，A合约它改变的都是某一插槽的变量，而B合约最好存储插槽的类型是一致的，否则无法修改，这里通过修改插槽 0 为指定地址的攻击合约地址，再在攻击合约中实现对应数据的修改，具体，等我整理 POC
+对于 delegate 来说，A合约它改变的都是某一插槽的变量，而B合约最好存储插槽的类型是一致的，否则无法修改，这里通过修改插槽 0 为指定地址的攻击合约地址，再在攻击合约中实现对应数据的修改，具体，等我整理 POC (POC已整理)
 
-POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+POC -- Preservation: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Preservation.md
 
 
 
@@ -419,13 +421,45 @@ create 计算合约地址:
 2. 对编码结果进行 keccake256 哈希
 3. 将哈希结果转成地址类型
 
-具体，等我整理 POC
+具体，等我整理 POC(已整理在下面)
+
+POC -- Recovery: https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/Recovery.md
+
+
+
+### 2024.09.16
+
+学习內容:
+
+今天仍然是在做题与写poc度过的
+
+整理之前的 poc 以及研究操作码
+
+
 
 POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
 
 
 
+### 2024.09.17
 
+学习內容:
+
+中秋快乐，昨天晚上以及今天写了一个demo项目，花费了一点时间，ethernaut 跳过了3题（有点难度），做shop这道题
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+### 2024.09.18
+
+学习內容:
+
+工作又开始忙起来了，感觉这一期学不完ethernaut了
+
+今天仍然是在做题与写poc度过的
+
+今天做的 Daniel 这道题，这道题思路和之前的revert 很想，但是我按照类似的思路去做能成功组织owner调用，但是却没有成功解题，是 gas 的问题，对比两个调用的gas消耗，是差不多的，但是为什么直接revert 不成功呢？POC 待整理
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
 
 
 

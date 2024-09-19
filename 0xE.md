@@ -70,4 +70,15 @@ timezone: Pacific/Auckland
 ### 2024.09.15
 [[EthTaipei CTF 2023] 3 | Casino](./Writeup/0xE/EthTaipeiCTF2023/casino.md)
 
+### 2024.09.16
+[[EthTaipei CTF 2023] 4 | WBC](./Writeup/0xE/EthTaipeiCTF2023/wbc.md)
+
+### 2024.09.18
+[[EthTaipei CTF 2023] 5 | Hello World](./Writeup/0xE/EthTaipeiCTF2023/hello-world.md)  
+[[Blaz CTF 2023] 1 | Hello World](./Writeup/0xE/blazctf-2023/hello-world.md)  
+[[Blaz CTF 2023] 2 | Rock Paper Scissors](./Writeup/0xE/blazctf-2023/rock-paper-scissor.md)  
+
+### 2024.09.19
+[[Blaz CTF 2023] 3 | Eazy NFT](./Writeup/0xE/blazctf-2023/eazy-nft.md)  
+
 <!-- Content_END -->

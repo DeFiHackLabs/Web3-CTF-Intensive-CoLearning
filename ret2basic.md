@@ -99,4 +99,28 @@ Today:
 1. Solved Greyhats Dollar from Milotruck challs.
 2. Solved Escrow from Milotruck challs.
 
+### 2024.09.14
+
+1. Building knowledge base for the bot
+
+### 2024.09.15
+
+1. Building knowledge base for the bot
+
+### 2024.09.16
+
+1. Learning cairo
+
+### 2024.09.17
+
+1. Building cursor rules for blaz ctf
+
+### 2024.09.18
+
+1. Researching prompt engineering
+
+### 2024.09.19
+
+1. Researching prompt engineering
+
 <!-- Content_END -->

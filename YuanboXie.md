@@ -102,4 +102,24 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Recovery - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 学习了合约创建合约的地址计算或者查找；
 
+### 2024.09.16
+
+- 1.Ethernaut CTF (31) - MagicNumber - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 这道题好难。学会了手写 opcode，以及 create opcode & runtime opcode 的流程；
+
+### 2024.09.17
+
+- 1.Ethernaut CTF (31) - Alien Codex - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学会了 solidity 动态数组的存储布局，以及利用动态数组的下溢出修改slot；
+
+### 2024.09.18
+
+- 1.Ethernaut CTF (31) - Denial - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学会了 DoS 攻击；
+
+### 2024.09.19
+
+- 1.Ethernaut CTF (31) - Shop - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 
+
 <!-- Content_END -->

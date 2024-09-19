@@ -1067,6 +1067,7 @@ Ethernaut系列完结撒花~~~
 
 与`ethernaut-25-Motorbike`题目类似都使用了UUPS代理模式，也存在`Impl`合约未初始化的问题，可以直接调用`Impl`合约的`initialize`函数来获取owner
 但是调用`initialize`需要0.1个eth，得再去找点水，使用test可以自行分配一些eth
+`initialize`要求传入的address参数要是0，并且没有限制只能调用一次，选手们可随意抢夺owner权限
 
 获得owner权限后就可以调用`whitelistUser`函数把自己加入到白名单中
 `Impl`合约继承了`UUPSUpgradeable`合约[UUPSUpgradeable.sol](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v4.9/contracts/proxy/utils/UUPSUpgradeable.sol)，可通过调用`upgradeTo`函数来升级合约
@@ -1090,5 +1091,120 @@ proxychains3 forge test test/proxy/Proxy.t.sol --rpc-url $SEPOLIA_RPC_URL  -vvvv
 ```
 
 ### 2024.09.16
+
+#### 2. Flash loan
+
+本关的挑战与闪电贷有关
+闪电贷是一种无抵押贷款，只要借入的资产在同一笔区块链交易中偿还，用户就可以在没有前期抵押物的情况下借入资产，以此达到套利或操纵价格的目的
+个人理解闪电贷有点类似于传统的性能测试，有些程序在并发较低的情况下运行良好，但在并发高的情况下就会有问题，闪电贷通过提供大量流动性可能发现的潜在攻击媒介
+
+闪电贷攻击示例：
+1. 攻击者从支持闪电贷的协议中借用了大量代币 A
+2. 攻击者在 DEX 上将代币 A 换成代币 B（降低代币 A 的现货价格并提高代币 B 在 DEX 上的现货价格）
+3. 攻击者将购买的代币 B 作为抵押品存入 DeFi 协议，该协议使用上述 DEX 的现货价格作为其唯一的价格馈送，并使用操纵的现货价格借入比正常情况下更大的代币 A
+4. 攻击者使用借入的代币 A 的一部分全额偿还原始闪电贷并保留剩余的代币，利用协议操纵的价格馈送产生利润
+5. 由于 DEX 上代币 A 和 B 的现货价格被套利回真实的全市场价格，因此 DeFi 协议处于抵押不足的情况
+
+也就是说最终攻击的对象是Defi
+
+攻击思路：
+1. 设置`minFlashLoan`变量为`1e23 + 1`确保闪电贷金额高于Aave的10000代币上限
+2. 通过 Aave 的闪电贷功能借入大量 DAI
+3. 编写攻击合约实现一个`executeOperation`函数，这个函数是Aave闪电贷的回调函数。当`flashLoanSimple`被调用并且贷款资金到达后，`executeOperation`就会被执行
+4. 在`executeOperation`中将贷款金额和利息转移到`loan`合约，随后触发`loan`合约进行另一笔闪电贷操作，这样就实现了循环调用
+5. 从`loan`合约中提取所有奖励代币
+6. 偿还闪电贷借款，同时保留从`loan`合约中提取的奖励
+
+test文件[Loan.t.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/flashloan/Loan.t.sol)
+
+进入`warroom-ethcc-2023`目录中，执行以下命令测试：
+
+``` bash
+proxychains3 forge test test/flashloan/Loan.t.sol --rpc-url $SEPOLIA_RPC_URL  -vvvv
+```
+
+### 2024.09.17
+
+#### 3. Signature malleability
+
+这一关标题是签名可塑性漏洞，要求攻击者利用此漏洞提取合约中的资金
+
+给定一个有效的签名，攻击者可以做一些快速的算术来推导出一个不同的签名。然后，攻击者可以 "重放"这个修改过的签名
+
+`WhitelistedRewards`合约中有一个`whitelist`函数与`claim`函数
+`whitelist`函数要求`msg.sender`在白名单中才可以设置新的白名单用户
+`claim`函数使用`ecrecover`函数来根据给定的签名和hash来恢复签名者公钥地址，要求传入hash、r、s、v这4个参数，且要求计算出的signer在白名单中
+
+主要需要使用到`flip s`技巧
+
+``` bash
+// verify that the same signature cannot be used again
+vm.expectRevert(bytes("used"));
+rewards.claim(whitelisted, whitelistedAmount, v, r, s);
+
+// The following is math magic to invert the signature and create a valid one
+// flip s
+bytes32 s2 = bytes32(uint256(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141) - uint256(s));
+
+// invert v
+uint8 v2;
+require(v == 27 || v == 28, "invalid v");
+v2 = v == 27 ? 28 : 27;
+
+vm.prank(user);
+rewards.claim(user, whitelistedAmount, v2, r, s2);
+```
+
+test文件[WhitelistedRewards.t.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/signature/WhitelistedRewards.t.sol)
+
+进入`warroom-ethcc-2023`目录中，执行以下命令测试：
+
+``` bash
+proxychains3 forge test test/flashloan/WhitelistedRewards.t.sol --rpc-url $SEPOLIA_RPC_URL  -vvvv
+```
+
+### 2024.09.18
+
+#### 4. Access Control
+
+这一关提供了两个合约`RewardsBox`和`AccessControl`
+`AccessControl`是一个存取控制器，指定了vitalk.eth和一个备用管理者，即使是`AccessControl`的owner也无法添加新的admin
+`RewardsBox`合约实现了一个`claim`方法，在此方法需要两个参数`accessController`和`amount`，判断了传入的`accessController`代码是否与之前提供的相同，并且判断了`msg.sender`是否被授权可以提币
+
+也就是说只要求`AccesssControl`合约代码相同，不要求是同一个地址，所以我们可以部署一个新的
+
+这里的问题在于，EVM中部署合约时，可以在构造函数中实现任意代码，也就是`creation code`，而不会影响到`runtime code`，`RewardsBox`中检查的是`runtime code`而不是`creation code`
+
+攻击思路:
+1. 编写一个新的`AccesssControl`在构造函数中把自己设为`owner`其他保持不变
+2. 使用新的`AccessControl`地址传入`RewardsBox`的`claim`函数
+
+test文件[AccessControl.t.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/accesscontrol/AccessControl.t.sol)
+
+进入`warroom-ethcc-2023`目录中，执行以下命令测试：
+
+``` bash
+proxychains3 forge test test/flashloan/AccessControl.t.sol --rpc-url $SEPOLIA_RPC_URL  -vvvv
+```
+
+#### 5. Metamorphic
+
+这一关的目标是看用户能否识别到`Multiply`合约是使用`Factory`部署的，这个合约允许用户花费一些代币换取合约中的代币，在用户授权`Multiply`合约后，直接销毁掉`Multiply`合约并部署一个新的`Multiply2`恶意合约，以此盗取用户钱包内的代币
+
+为了不让用户发现使用了不同的合约，需要利用到在同一个地址部署不同合约的技巧
+
+通过`create`部署的合约地址计算是通过`contract address = last 20 bytes of sha3(rlp_encode(sender, nonce))`
+
+`sender`是部署者的地址，`nonce`是sender发送交易的数量，通过reset nonce值，就可以给不同的合约部署成一样的地址
+
+test文件[MultiplerRug.t.sol](https://github.com/awmpy/warroom-ethcc-2023/blob/master/test/metamorphic/MultiplerRug.t.sol)
+
+进入`warroom-ethcc-2023`目录中，执行以下命令测试：
+
+``` bash
+proxychains3 forge test test/flashloan/MultiplerRug.t.sol --rpc-url $SEPOLIA_RPC_URL  -vvvv
+```
+
+### 2024.09.19
 
 <!-- Content_END -->

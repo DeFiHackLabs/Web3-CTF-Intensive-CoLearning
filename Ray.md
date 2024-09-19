@@ -126,4 +126,21 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 完成 ethernaut 的 Recevory:
 [Day16](Writeup/Ray/Day16.md)
 
+### 2024.09.16
+完成 ethernaut 的 MagicNum:
+[Day17](Writeup/Ray/Day17.md)
+
+### 2024.09.17
+完成 ethernaut 的 AlienCodex:
+[Day18](Writeup/Ray/Day18.md)
+
+### 2024.09.18
+完成 ethernaut 的 Denial:
+[Day19](Writeup/Ray/Day19.md)
+
+
+### 2024.09.19
+完成 ethernaut 的 Shop:
+[Day20](Writeup/Ray/Day20.md)
+
 <!-- Content_END -->

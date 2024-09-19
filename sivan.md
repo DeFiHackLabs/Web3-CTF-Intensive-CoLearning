@@ -56,4 +56,10 @@ timezone: Asia/Shanghai
 ### 2024.09.14
 - MetaTrust 2023 中的greeterGate，与Switch题目类似，不一样的是这题多了一层data需要包裹。
 - [2024.9.14](./Writeup/Sivan/2024.9.14)
+### 2024.09.18
+- Openzeppelin CTF 2023中的AlienSpaceship一题，主要是要理解整个合约的逻辑，精心构造调用顺序来完成挑战。
+- [2024.9.18](./Writeup/Sivan/2024.9.18)
+### 2024.09.19
+- Openzeppelin CTF 2023中的SpaceBank一题，主要是要理解闪电贷的逻辑以及验证资金归还的方式，可以通过deposit将钱打进去，并且同时归还闪电贷掏空合约；同时还需要满足里面的各个条件，包括流程控制、合约销毁转移eth等机制。
+- [2024.9.19](./Writeup/Sivan/2024.9.19)
 <!-- Content_END -->
