@@ -198,4 +198,8 @@ mint20次即可，但要注意一个点，mint20次后要手动调一下solve方
 
 周日不知道算不算一周两次的那个额度，防一手。
 
+### 2024.09.19
+
+我看了下，blaze后面的题都偏难，目前不太适合我，这期剩下几天就还是复盘下ethernaut，把之前遗留的26题DoublerEntry、29题switch、30题HigerOrder给做了得了。
+
 <!-- Content_END -->
