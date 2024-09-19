@@ -566,6 +566,42 @@ offset是从callata其实位置偏移多少开始读区数据， length是数据
 |80: |76227e1200000000000000000000000000000000000000000000000000000000|turnSwitchOn selector|
 
 
+**Level 28 Gatekeeperthree**
+
+这题三个gate 一个gate 一个gate破解
+
+首先 gateone 这个简单，使用账户发起交易， 调用POC合约破解
+
+gatetwo allowEntrance == true, allowEntrance 为true 需要调用 getAllowance 函数
+需要 trick.checkPassword 通过， 但是trick 还没有，需要先调用 createTrick()
+
+如何拿到trick password ， 前面知识已经学到了利用 web3.eth.getStorageAt 从slot获取 private storage
+
+
+```
+password = web3.utils.hexToNumber(await web3.eth.getStorageAt("0x77C22839Fb328206C050b3d61db08ffE7E7Bdb0f", 2))
+
+1726730014
+```
+
+gatethree, 合约balance > 0.001ether ， owner接受 eth 返回false，首先POC调用 construct0r 设置owner，  owner就是POC合约 写一个 receive() 函数 revert() 报错
+
+合约balance大于 合约有receive函数就发点ether就好了。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/gatekeeperthree_poc.s.sol)
+
+**Level 27 Good Samaritan**
+这个题开始我想搞个循环一直执行 requestDonation 函数每次减少10， 当coin小于10的时候就会报错 NotEnoughBalance ，这时候程序调用 wallet.transferRemainder 转移走全部coin。
+
+但是这样循环要 10w次， 要好多gas， 后来发现POC还要实现 notify 函数， 可以利用notify函数
+触发NotEnoughBalance 报错。这样一次就可以转走全部coin。
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/goodsamaritan_poc.s.sol)
+
+下一题 **Level 26 DoubleEntryPoint**
+
+
+
 ### 2024.09.20
 
 <!-- Content_END -->
