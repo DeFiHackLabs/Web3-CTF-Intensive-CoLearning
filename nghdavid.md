@@ -359,6 +359,15 @@ abstract contract ReentrancyGuard {
 - 接著這個合約的receive()要針對挑戰合約的地址去revert
 - 如此一來別人無法再成功呼叫挑戰合約的receive()，別人也就無法成為king了
 
+### 2024.09.19
+# Ethernut第十題
+- 這題的關鍵是withdraw裡的Re-entrancy漏洞
+- 因為沒有先實際修改有發生作用(受影響)的狀態變數就與外部合約互動
+- 攻擊合約
+  * 攻擊合約裡的receive()要先檢查關卡合約的balance，要>0才會有下一步
+  * 接著攻擊合約會再呼叫一次關卡合約的withdraw()
+- 首先要呼叫關卡合約的donate()，讓攻擊者的balance有值
+- 再呼叫關卡合約的withdraw()，讓重入攻擊一直重複到balance < 0
 
 
 <!-- Content_END -->
