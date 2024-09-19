@@ -129,6 +129,10 @@ timezone: Asia/Taipei
 
 ### 2024.09.18
 - Review 3 challenges from fuzzland.
- 
+
+ ### 2024.09.19
+- Create a repo [damn-vulnerable-defi-solutions](https://github.com/SunWeb3Sec/damn-vulnerable-defi-solutions)
+- Translate and review damn writeup
+  
   
 <!-- Content_END -->
