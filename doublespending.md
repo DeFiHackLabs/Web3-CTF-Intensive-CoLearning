@@ -316,7 +316,7 @@ B: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
   - Besides, we should swap the free `WETH` to `USDC` to play the game which will have 2x returns in some slots. Then, we can withdraw all the `USDC` inside CasinoAdvanced.
   - Next, we should swap the `USDC` to `WBTC` to play the game which will have 2x returns in some slots. Then, we can withdraw all the `WBTC` inside CasinoAdvanced.
 
-### 2024.09.18
+### 2024.09.19
 
 B: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
 
