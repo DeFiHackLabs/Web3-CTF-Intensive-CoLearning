@@ -284,7 +284,7 @@ skip
 
 ### 2024.09.15
 
-A: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
+B: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
 
 - Arcade
   - According execution order of the code, [`_redeem` acutally is executed after `_setNewPlayer` inside `changePlayer`](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Arcade/Arcade.sol#L64)
@@ -293,7 +293,7 @@ A: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
 
 ### 2024.09.16
 
-A: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
+B: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
 
 - Casino
   - [The `_bet` inside `play` is used to charge token from user](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/Casino/Casino.sol#L148)
@@ -309,11 +309,20 @@ skip
 
 ### 2024.09.18
 
-A: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
+B: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
 
 - CasinoAdvanced
   - Almost the same as `Casino`
   - Besides, we should swap the free `WETH` to `USDC` to play the game which will have 2x returns in some slots. Then, we can withdraw all the `USDC` inside CasinoAdvanced.
   - Next, we should swap the `USDC` to `WBTC` to play the game which will have 2x returns in some slots. Then, we can withdraw all the `WBTC` inside CasinoAdvanced.
+
+### 2024.09.18
+
+B: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
+
+- ETHTaipeiWarRoomNFT
+  - At first, we can see that [balance is changed after NFT transfer](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/ETHTaipeiWarRoomNFT/Pool.sol#L40). Reentrancy attack is obvious.
+  - Then, [solidity (version < 0.8.0)](https://github.com/consenlabs/account-abstraction/blob/3381bd75823c238a05c870fb11c61548c8fc7c9d/src/paymaster/OffChainPaymaster.sol#L2) has not applied underflow check as default.
+  - Finally, we can withdraw twice using `onERC721Received` callback and make the balance underflow.
 
 <!-- Content_END -->
