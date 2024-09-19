@@ -162,7 +162,7 @@ timezone: Asia/Taipei
 解題:  
   [Lev12-Privacy](./Writeup/Clad/script/Lev12Sol.s.sol)  
 
-### 2024.09.17
+### 2024.09.18
 題目: GateKeeperOne      
 學習內容      
 目標: 滿足題目的三個 function 條件
@@ -178,5 +178,21 @@ timezone: Asia/Taipei
     - 為什麼 .call{gas: 8191*3} 就好, 還要跑迴圈  
 解題:      
   [Lev13-GatekeeperOne](./Writeup/Clad/script/Lev13Sol.s.sol)  
+
+### 2024.09.19
+題目: GateKeeperTwo        
+學習內容      
+目標: 滿足題目的三個 function 條件
+      1.msg.sender != tx.origin
+      2.extcodesize(caller()) 要確保呼叫者地址的程式碼大小是 0 -> 寫的攻擊合約只在 construct 發動, 不能寫其他 function
+      3.^
+筆記:     
+    - tx.origin 是 EOA, msg.sender 可以是合約, 所以用合約呼叫, 不是用 EOA  
+    - extcodesize(caller()) 要確保呼叫者地址的程式碼大小是 0 -> 寫的攻擊合約只在 construct 發動, 不能寫其他 function
+    - 第三關, 關於 ^ 運算, 讓   uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ type(uint64).max == uint64(_gateKey)  
+問題:  
+    - run code 的時候出現找不到 EthernautHelper.sol": No such file or directory, 但我的 code 應是沒用到 EthernautHelper.sol 去初始化, 這個問題還待排除  
+解題:      
+  [Lev14-GatekeeperTwo](./Writeup/Clad/script/Lev14Sol.s.sol)  
   
 <!-- Content_END -->
