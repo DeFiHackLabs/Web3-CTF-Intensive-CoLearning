@@ -141,5 +141,9 @@ Finish ethernaut dex
 
 Finish ethernaut dex2
 
+### 2024.09.18
+
+Finish ethernaut dex2 update
+
 
 <!-- Content_END -->

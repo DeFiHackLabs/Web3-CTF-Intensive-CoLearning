@@ -388,6 +388,26 @@ I was stuck for 2 hours because of a weird Solidity behaviour on `public` vs `ex
 
 **Time used: 6h 30m and ongoing...**
 
+### 2024.09.18
+
+#### 📚 Reading: Uniswap stuffs
+
+- https://medium.com/@jamesowen.dev/what-is-uniswap-v1-v2-v3-v4-563440e0885f
+- https://jeiwan.net/posts/programming-defi-uniswap-1/
+- https://docs.uniswap.org/contracts/v1/reference/exchange
+
+#### 🏁 Damn Vulnerable DeFi: Puppet
+
+**Time used: ~1h 10m**
+
+The goal is to drain the 100,000 DVTs in the lending pool. The deposit to borrow depends on the balance of ETH & DVT in the Uniswap exchange (namely, $\text{ETH}_{ex}$ and $\text{DVT}_{ex}$). The below expression is the price (in ETH) to borrow 1 DVT:
+
+$$2 \times \frac{\text{ETH}_{ex}}{\text{DVT}_{ex}}.$$
+
+Additionally, we can call `uniswapV1Exchange.tokenToEthSwapOutput` to buy some ETH. Since $x \cdot y = k$, we can make DVT less worthy by selling it. In particular, if we want to buy 9.9 ETH, we would need to pay ~993 DVT. This is because we would need to send 990 DVT to make $10 \cdot 10 = k = (10 - 9.9) \cdot (10 + 990)$, and we need to pay an additional ~0.3% fee for using Uniswap.
+
+In that case, we will make the price (in ETH) to borrow 1 DVT to be $2 \times 0.1 / 1000 = 0.0002$. Thus we can buy out the 100,000 DVT using 20 ETH.
+
 <!-- Content_END -->
 
 <!-- 
