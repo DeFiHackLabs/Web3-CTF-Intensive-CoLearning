@@ -161,4 +161,20 @@ timezone: Asia/Taipei
     - 照著題目把 key 轉換成 bytes32, 再轉成 bytes16 餵入 unlock()
 解題:  
   [Lev12-Privacy](./Writeup/Clad/script/Lev12Sol.s.sol)  
+
+### 2024.09.17
+題目: GateKeeperOne      
+學習內容      
+目標: 滿足題目的三個 function 條件
+      1.msg.sender != tx.origin
+      2.當前的 gas 數量能被 8191 整除
+      3.能在 uint, bytes, address 之間轉換, 會用到 type casting
+筆記:     
+    - tx.origin 是 EOA, msg.sender 可以是合約, 所以用合約呼叫, 不是用 EOA  
+    - 用 .call{gas: amount} 控制 external call 使用的 gas 量, 每一個 external call 最低 gas 是 21000, 所以用迴圈 .call{gas: i + 8191 * 3} 去跑看能否被 8191 整除
+    - 第三關複雜了, 到目前還是看不太懂, 可能要先把 type casting 觀念釐清
+問題:
+    - 為什麼 .call{gas: 8191*3} 就好, 還要跑迴圈
+解題:  
+  [Lev13-GatekeeperOne](./Writeup/Clad/script/Lev13Sol.s.sol) 
 <!-- Content_END -->
