@@ -133,6 +133,8 @@ timezone: Asia/Taipei
  ### 2024.09.19
 - Create a repo [damn-vulnerable-defi-solutions](https://github.com/SunWeb3Sec/damn-vulnerable-defi-solutions)
 - Translate and review damn writeup
+- [Grey Cat the Flag 2024 Milotruck challs Writeup](https://hackmd.io/@SunWeb3Sec/Syyktk2n0)
+- [Warroom ETHCC 2023](https://hackmd.io/@SunWeb3Sec/SyHsLzXpA)
   
   
 <!-- Content_END -->
