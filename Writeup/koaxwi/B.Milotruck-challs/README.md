@@ -74,7 +74,9 @@ The problem occurrs with the voting ratio. The vault calculates the votes as `am
 If we lock 4 token separately, we only get 4 votes as each time the vaule is floored to 1.
 Then we delegate the votes to someone else (cannot unlock due to the lock duration), our votes will be reduced by 5 - underflow!
 
-## Meta Staking (TODO)
+## Meta Staking (2024/09/19)
+
+Very similar to Damn Vulnerable Defi - Naive Receiver, refer [here](../A.damn-vulnerable-defi#naive-receiver-240830).
 
 ## Gnosis Unsafe (TODO)
 
