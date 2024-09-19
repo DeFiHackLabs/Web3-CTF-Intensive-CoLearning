@@ -1384,4 +1384,18 @@ function test_theRewarder() public checkSolvedByPlayer {
 
 - 把 09.18 的題目補完
 
+- 稍微看了一下 DVD-06-Selfie，肉眼掃 Code
+- 目測感覺是要找方法濫用 `SimpleGovernance` 來呼叫 `SelfiePool.emergencyExit()` 函數，把 token 幹走
+- 因為感覺 `flashLoan()` 函數沒什麼地方可以把錢偷走了...transfer走的 token 應該也會在後續的 transferFrom 被拿回來
+- 未看實施細節先猜，過關方式是呼叫 `queueAction()` 函數 pending 一個 proposal 進去
+- 然後再呼叫 `executeAction()` 函數，以 Governance 的身份執行 `SelfiePool.emergencyExit()` 函數
+- 再往深一點的地方看，尋找正確呼叫 `SimpleGovernance.queueAction()` 的方式，發現它需要有一定數量的 voting token 才能 queue 一個 Action
+  - 我猜測這裡應該是要透過 `SelfiePool.flashLoan()` 借一點 voting token 出來
+- 要執行 `SimpleGovernance.executeAction()` 看起來是必須等待 queue 了 Action 之後 2 天嗎...Hmmm
+  - `unchecked{ timeDelta = uint64(block.timestamp) - actionToExecute.proposedAt}` 這一段看起來怪詭異的...
+  - 但感覺...這好像只是為了省 overflow checker 的 gas fee, 實際上也沒看到可以利用的地方呢...
+- 那這樣好像只能手動用 Foundry 作弊，快轉區塊時間 2 天了呢
+- 明天補上 Exploit Code
+
+
 <!-- Content_END -->
