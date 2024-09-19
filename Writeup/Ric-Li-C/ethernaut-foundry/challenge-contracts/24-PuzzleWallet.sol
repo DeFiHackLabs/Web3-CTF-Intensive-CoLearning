@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
-import "../helpers/UpgradeableProxy-08.sol";
+import "./helpers/UpgradeableProxy-08.sol";
 
 // NOTE our goal it to become owner of the proxy
 contract PuzzleProxy is UpgradeableProxy {

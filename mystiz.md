@@ -388,18 +388,67 @@ I was stuck for 2 hours because of a weird Solidity behaviour on `public` vs `ex
 
 **Time used: 6h 30m and ongoing...**
 
-<!-- Content_END -->
+### 2024.09.18
 
-<!-- 
+Progress
 
-Stash
+* Damn Vulnerable DeFi (9/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+* OnlyPwner.xyz (12/16)
+
+#### 📚 Reading: Uniswap stuffs
+
+- https://medium.com/@jamesowen.dev/what-is-uniswap-v1-v2-v3-v4-563440e0885f
+- https://jeiwan.net/posts/programming-defi-uniswap-1/
+- https://docs.uniswap.org/contracts/v1/reference/exchange
 
 #### 🏁 Damn Vulnerable DeFi: Puppet
 
-`calculateDepositRequired(amount)` is the amount of ETH required to lend `amount` in tokens. For instance, `calculateDepositRequired(1 ether)`
+**Time used: ~1h 10m**
 
-1. would be `2 ether` when `uniswapPair.balance == 10 ether` and `token.balanceOf(uniswapPair) == 10 ether`,
-2. would be `1 ether` when `uniswapPair.balance == 10 ether` and `token.balanceOf(uniswapPair) == 20 ether`,
-3. would be `4 ether` when `uniswapPair.balance == 20 ether` and `token.balanceOf(uniswapPair) == 10 ether`.
+The goal is to drain the 100,000 DVTs in the lending pool. The deposit to borrow depends on the balance of ETH & DVT in the Uniswap exchange (namely, $\text{ETH}_{ex}$ and $\text{DVT}_{ex}$). The below expression is the price (in ETH) to borrow 1 DVT:
 
--->
+$$2 \times \frac{\text{ETH}_{ex}}{\text{DVT}_{ex}}.$$
+
+Additionally, we can call `uniswapV1Exchange.tokenToEthSwapOutput` to buy some ETH. Since $x \cdot y = k$, we can make DVT less worthy by selling it. In particular, if we want to buy 9.9 ETH, we would need to pay ~993 DVT. This is because we would need to send 990 DVT to make $10 \cdot 10 = k = (10 - 9.9) \cdot (10 + 990)$, and we need to pay an additional ~0.3% fee for using Uniswap.
+
+In that case, we will make the price (in ETH) to borrow 1 DVT to be $2 \times 0.1 / 1000 = 0.0002$. Thus we can buy out the 100,000 DVT using 20 ETH.
+
+### 2024.09.19
+
+Progress
+
+* Damn Vulnerable DeFi (11/18)
+* EthTaipei CTF 2023 (2/5)
+* MetaTrust CTF 2023 (0/22)
+* OnlyPwner.xyz (12/16)
+
+#### 🏁 Damn Vulnerable DeFi: Puppet v2
+
+**Time used: ~35m**
+
+Puppet v2 is similar to the last challenge, except that
+
+- it is using Uniswap v2, and
+- the numbers (e.g. the player balance, the price, etc) are different.
+
+This time, even if we swap all of our 10000 DVTs to ETH, we are unable to "borrow" all of the DVTs using the swapped ETH.
+
+We can instead do the following:
+
+1. swap 10000 DVT to ETHs,
+1. borrow 100000 DVTs,
+1. swap 100000 DVTs to ETHs,
+1. borrow 900000 DVTs,
+1. swap 100000 DVTs from ETHs.
+
+#### 🏁 Damn Vulnerable DeFi: Free Rider
+
+**Time used: ~1h 10m**
+
+There is an vulnerability that we can buy the NFT even without the token. This is because that in `_buyOne`, only `msg.value >= priceToPay` is required. Thus we are able to pay 15 ETH to `buyMany` to buy all of the NFTs.
+
+However, we only have 0.1 ETH. We can use the "flash loan" provided by Uniswap v2. There is a (WETH, DVT) pair that has sufficient liquidity.
+
+<!-- Content_END -->
