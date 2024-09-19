@@ -85,7 +85,7 @@ https://hackmd.io/@0xbc000/BJD8HhqnA
 1. ethernaut level21
 2. DefiHackLabs加分題
 https://sepolia.etherscan.io/tx/0x1655a6cadb26e786be6a3fb7f8bb2e6552eec7f8ef9796767ce04cbabdda575c
-3. 開始學習 https://github.com/chaitin/Real-World-CTF-6th-Challenges/tree/main/SafeBridge
+3. Learning Bridge Concept: https://github.com/chaitin/Real-World-CTF-6th-Challenges/tree/main/SafeBridge
 
 ### 2024.09.14
 1. ethernaut level22
@@ -105,5 +105,9 @@ https://hackmd.io/@0xbc000/SJ61x8j3R
 ### 2024.09.18
 1. ethernaut level25 - https://hackmd.io/@0xbc000/BJ1G17ZpC
 2. Damn Vulnerable DeFi - Puppet V2 https://hackmd.io/@0xbc000/rywCYGla0
+
+### 2024.09.19
+1. Damn Vulnerable DeFi - Free Rider https://hackmd.io/@0xbc000/HkFEZKl60
+2. Work on blog post for old challenges
 
 <!-- Content_END -->
