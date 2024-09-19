@@ -117,6 +117,9 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Denial - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 学会了 DoS 攻击；
 
+### 2024.09.19
 
+- 1.Ethernaut CTF (31) - Shop - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 
 
 <!-- Content_END -->
