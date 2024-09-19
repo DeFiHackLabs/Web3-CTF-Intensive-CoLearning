@@ -168,5 +168,4 @@ contract SafeProxyFactory {
 ```
 
 ### Solution
-// Not completed yet
-See [WalletMining.t.sol](./WalletMining.t.sol#L127).
+See [WalletMining.t.sol](./WalletMining.t.sol#L131).
