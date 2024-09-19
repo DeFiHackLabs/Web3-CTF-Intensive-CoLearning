@@ -1207,4 +1207,18 @@ proxychains3 forge test test/flashloan/MultiplerRug.t.sol --rpc-url $SEPOLIA_RPC
 
 ### 2024.09.19
 
+需要尽快熟悉一下blazctf-2023
+
+- blazctf-2023
+
+#### 1. Hello World
+
+直接打开etherscan.io，搜索交易`0xe19bd1067cbdc46d6fdb8b374e3ca384c32fd88e1413a9434e03c36b36924877`，再点击`Read Chat`就可以看到flag
+
+#### 2. Rock Scissor Paper
+
+TODO
+
+### 2024.09.20
+
 <!-- Content_END -->
