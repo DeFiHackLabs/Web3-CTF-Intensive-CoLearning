@@ -24,7 +24,7 @@
         uint256 fromShares = shares[from] - _shares; //vulnerable
         uint256 toShares = shares[to] + _shares;  //vulnerable
 ```
-[POC:](./gratcat/test/greyhats-dollar.sol) 
+[POC:](./greyhats/test/greyhats-dollar.sol) 
 ```
 contract Exploit {
     Setup setup;
@@ -82,7 +82,7 @@ contract Exploit {
 解題:
 - 當 ClonesWithImmutableArgs 代理被調用時，不可變參數和一個 2-byte 的長度字段會附加在委託調用（delegate call）的 calldata 中.
 - tokenY 是 address(0)：address(0) 以 0x00 表示, tokenY 的最後一個 byte 為 0x00, 通過利用 ClonesWithImmutableArgs 的 calldata 優化, 我們可以省略 tokenY 的最後一個 byte, 並將未使用的 length field byte 作為 tokenY 的最後一個 byte, 你可以傳遞 19 bytes 的 0x00, 並且仍然能夠達到與傳遞完整 20 bytes 相同的效果, 計算出來的 paramsHash 會是一樣的, 這樣我們可以部署一樣的 escrowId 合約和覆蓋 owner.
-[POC:](./gratcat/test/escrow.sol) 
+[POC:](./greyhats/test/escrow.sol) 
 ```
 function _getArgs() internal pure returns (address factory, address tokenX, address tokenY) {
     // This function retrieves three arguments: factory, tokenX, and tokenY.
@@ -144,7 +144,7 @@ ERC-4626 太複雜了，所以我做了一個 AMM，能在股份與資產之間�
 - AMM 合約內預設題目上有 1000 SA shares 和 2000 grey 代幣, 在swap 功能中要滿足 computeK(reserveX, reserveY) >= k, AMM提供了 flashloan, 不用手續費.
 - Vault 合約預設有 2000 grey 代幣. 可以透過flashloan 借出 1000 SA, 可以把 vault 上的 2000 grey 領走, 在把 1000 grey 存入拿到 1000 SA, 在歸還給 flashloan.
 - 因為目前仍滿足 computeK(reserveX, reserveY) >= k, 1000+1000>= 2000, 所以可以透過 swap 使用 0 SA share 換出 1000 grey 代幣,  
-[POC:](./gratcat/test/simple-amm-vault.sol) 
+[POC:](./greyhats/test/simple-amm-vault.sol) 
 
 ```
     function solve() external {
