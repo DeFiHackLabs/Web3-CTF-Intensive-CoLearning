@@ -120,6 +120,11 @@ timezone: Asia/Shanghai
 ### 2024.09.19
 
 - 1.Ethernaut CTF (31) - Shop - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
-    - 
+    - 学会了利用其他合约绕过 view 函数限制的操作；
+
+### 2024.09.20
+
+- 1.Ethernaut CTF (31) - Dex - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
+    - 学会了对 DEX 对价格操纵攻击，以及写了一个通用的 POC；
 
 <!-- Content_END -->
