@@ -254,4 +254,12 @@ Plan:
 
 - [Write-up](./Writeup/HarryRiddle/Paradigm-CTF-2023.md#L13)
 
+### 2024.09.20
+
+#### Paradigm CTF 2023 - [GrainsOfSand](./Writeup/HarryRiddle/Paradigm-CTF-2023/paradigm-ctf-2023/grains-of-sand/challenge/project/src/Challenge.sol) (Finished)
+
+- [Write-up](./Writeup/HarryRiddle/Paradigm-CTF-2023.md#L13)
+
+- [Solution](./Writeup/HarryRiddle/Paradigm-CTF-2023//paradigm-ctf-2023/grains-of-sand/challenge/project/script/Solve.Harry.s.sol)
+
 <!-- Content_END -->

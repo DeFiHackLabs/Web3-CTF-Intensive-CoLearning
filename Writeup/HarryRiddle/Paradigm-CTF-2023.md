@@ -94,4 +94,29 @@ However, we should do math again because something was wrong in the doing time. 
 `11111 / 20 = 555.55` = 556 transactions required
 556 transactions \* 8 seconds = 4,448 seconds required = 74 minutes.
 
-Unfortunately, we only have 1440 seconds for the instance provided to us to solve this proble. So, we hope to buy a large enough amount of token from the `TOKENSTORE` contract.
+Unfortunately, we only have 1440 seconds for the instance provided to us to solve this problem. So, we hope to buy a large enough amount of token from the `TOKENSTORE` contract.
+
+- Attack Implementation - Find sell orders to fulfill.
+
+We will query all events on the `TOKENSTORE` contract by [Dune](https://dune.com/)
+
+```sql
+    SELECT contract_address, topic0, data, tx_hash
+    FROM ethereum.logs
+    WHERE contract_address = 0x1ce7ae555139c5ef5a57cc8d814a867ee6ee33d8 AND topic0 = 0x3314c351c2a2a45771640a1442b843167a4da29bd543612311c031bbfb4ffa98 AND bytearray_position(data, 0xc937f5027d47250fa2df8cbf21f6f88e98817845) > 0 AND bytearray_substring(data, 1, 31) = 0x00000000000000000000000000000000000000000000000000000000000000
+```
+
+There are a few things:
+
+1. `XGR` token contract exists in the event-log data.
+2. The first 32 bytes in the event-log data are all zeros. It means that selling `XGR` tokens for `ETH` tokens
+
+We found 2 appropriate orders needs to fulfill
+
+1. [Order-1](https://etherscan.io/tx/0x1483f5c6158dfb9a899b137ccfa988fb2b1f6927854dcd83e0a29caadd0e38ba) - 100 XGR sold, 2,000 XGR up for sale total
+2. [Order-2](https://etherscan.io/tx/0x6d727f761c7744bebf4a8773f5a06cd7af280dcda0b55c0995aea47d5570f1a1) - 1,000 XGR sold, 10,000 XGR up for sale total
+
+So, if we can fulfill both these orders, we’d have access to 10,900 XGR total (because we have to take away the amount of XGR that was already sold in those transactions). That would then require us to abuse the fee-on-transfer functionality to drain `11111 - 10900 = 211 XGR`.
+
+At a rate of 20 XGR per transaction (discussed above), that would take 11 transactions = ~88 seconds.
+After that, we can just withdraw the rest of the tokens from the TOKENSTORE contract and solve the challenge.
