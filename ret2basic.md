@@ -123,4 +123,8 @@ Today:
 
 1. Researching prompt engineering
 
+### 2024.09.20
+
+1. Wrote a minecraft-like browser game with three.js
+
 <!-- Content_END -->
