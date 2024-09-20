@@ -236,4 +236,10 @@ Link: https://onlypwner.xyz/challenges/9
 
 Link: https://onlypwner.xyz/challenges/12
 
+### 2024.09.20
+
+(1) OnlyPwner ALL OR NOTHING Challenge
+
+Link: https://onlypwner.xyz/challenges/10
+
 <!-- Content_END -->
