@@ -498,5 +498,13 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
    [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/14-puppet-v3/14-puppet-v3-solution.md)
    [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/14-puppet-v3/PuppetV3.t.sol)
 
+### 2024.09.19
+1. Damn Vulnerable DeFi - ABI Smuggling
+   [Solution Report](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/15-abi-smuggling/15-abi-smuggling-solution.md)
+   [Solution Code](https://github.com/elvin-a-blockchain/damn-vulnerable-defi-v4-solution/blob/main/15-abi-smuggling/ABISmuggling.t.sol)
+
+### 2024.09.20
+Prepare Blaz 2024
+
 
 <!-- Content_END -->

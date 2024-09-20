@@ -186,6 +186,13 @@ KeShin, 合约安全新人
 ### 2024.9.18
 
 ### 2024.9.19
+#### [Ethernaut CTF : 30 HigherOrder](https://ethernaut.openzeppelin.com/level/30)
+- sstore(treasury.slot, calldataload(4)) 是从 calldata 的第4位开始读取数据，那么我们构造 calldata 使值大于 255
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/30-HigherOrder/)
+
+#### [Ethernaut CTF : 31 Stake](https://ethernaut.openzeppelin.com/level/301)
+- [POC](./Writeup/KeShin/A-Ethernaut%20CTF/31-Stake/)
+
 
 ### 2024.9.20
 

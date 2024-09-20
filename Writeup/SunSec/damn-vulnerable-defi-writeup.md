@@ -1,9 +1,9 @@
-## Damn Vulnerable DeFi Writeup [SunSec]
+## Damn Vulnerable DeFi v4 Writeup [SunSec]
 
 ![Screenshot 2024-09-11 at 10 18 33 AM](https://github.com/user-attachments/assets/7e3df1a1-3fc6-4d01-8860-88e06ef820f1)
 
-### Unstoppable
-
+### 1. Unstoppable
+--- 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/unstoppable/): 
 有一個代幣化的金庫，存入了100萬個DVT代幣。該金庫提供免費的閃電貸款，直到寬限期結束。為了在完全無需許可前捕捉任何錯誤，開發者決定在測試網中進行實時測試。還有一個監控合約，用來檢查閃電貸款功能的運行狀況。從餘額為10個DVT代幣開始，展示如何使金庫停止運行。必須讓它停止提供閃電貸款。
 
@@ -31,7 +31,7 @@
 
 
 
-### Naive Receiver
+### 2. Naive Receiver
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/naive-receiver/): 
 有一個資金池，餘額為1000 WETH，並提供閃電貸款。它收取固定費用為1 WETH。該資金池通過整合無需許可的轉發合約，支持元交易。一名使用者部署了一個餘額為10 WETH的範例合約。看起來它可以執行WETH的閃電貸款。所有資金都面臨風險！將使用者和資金池中的所有WETH救出，並將其存入指定的recovery賬戶。
@@ -109,7 +109,7 @@
     }
 ```
 
-### Truster
+### 3. Truster
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/truster/): 
 越來越多的借貸池提供閃電貸款。在這個情況下，一個新的池子已經啟動，提供免費的 DVT 代幣閃電貸款。該池子持有 100 萬個 DVT 代幣。而你什麼都沒有。要通過這個挑戰，你需要在一筆交易中拯救池子中的所有資金，並將這些資金存入指定的恢復賬戶。
@@ -144,7 +144,7 @@
 }
 ```
 
-### Side Entrance
+### 4. Side Entrance
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/side-entrance/): 一個出乎意料的簡單池子允許任何人存入ETH，並隨時提取。該池子已經有1000 ETH的餘額，並提供免費的閃電貸款來推廣他們的系統。你開始時有1 ETH的餘額。通過將池子裡的所有ETH救出並存入指定的 Recovery 錢包來完成挑戰。
 
@@ -186,7 +186,7 @@ contract Exploit{
 }
 
 ```
-### The Rewarder
+### 5. The Rewarder
 [題目](https://www.damnvulnerabledefi.xyz/challenges/the-rewarder/): 一個合約正在分發Damn Valuable Tokens和WETH作為獎勵。要領取獎勵，用戶必須證明自己在選定的受益者名單中。不過不用擔心燃料費，這個合約已經過優化，允許在同一筆交易中領取多種代幣。Alice已經領取了她的獎勵。你也可以領取你的獎勵！但你發現這個合約中存在一個關鍵漏洞。儘可能多地從這個分發者手中拯救資金，將所有回收的資產轉移到指定的 Recovery 錢包中。
 
 過關條件:
@@ -266,7 +266,7 @@ contract Exploit{
     
 ```
 
-### Selfie
+### 6. Selfie
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/selfie/): 一個新的貸款池已經上線！現在它提供DVT代幣的閃電貸款服務。這個池子還包括一個精巧的治理機制來控制它。這能出什麼問題呢，對吧？你開始時沒有任何DVT代幣餘額，而這個池子中有150萬的資金面臨風險。將池子中的所有資金救出並存入指定的回收賬戶，完成這項挑戰。
 
@@ -342,7 +342,7 @@ contract Exploit is IERC3156FlashBorrower{
 }
 ```
 
-### Compromised
+### 7. Compromised
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/compromised/): 在瀏覽一個最受歡迎的DeFi項目之一的網絡服務時，你從服務器那裡得到了一個奇怪的響應。以下是其中的一段：
 ```
@@ -477,7 +477,7 @@ Wallet address: 0xA417D473c40a4d42BAd35f147c21eEa7973539D8
 }
 ```
 
-### Puppet
+### 8. Puppet
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/puppet/): 有一個貸款池，使用者可以在其中借貸Damn Valuable Tokens（DVTs）。要借貸，他們首先需要存入借款額度兩倍的ETH作為抵押品。該池目前有100,000 DVT的流動性。在一個老舊的Uniswap v1交易所中開設了DVT市場，目前有10 ETH和10 DVT的流動性。通過將貸款池中的所有代幣救出來並將它們存入指定的 recovery 錢包來完成挑戰。你開始時有25 ETH和1000 DVT的餘額。
 
@@ -547,7 +547,7 @@ contract Exploit {
   after calculateDepositRequired(amount) 19664329888798200000
 ```
 
-### Puppet V2
+### 9. Puppet V2
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/puppet-v2/): 上一個貸款池的開發者似乎吸取了教訓，並發布了新版本。現在，他們使用Uniswap v2交易所作為價格預言機，並搭配推薦的實用庫。這樣應該足夠了吧？你開始時有20 ETH和10000 DVT代幣的餘額。該池子有一百萬DVT代幣的資金面臨風險！將池子中的所有資金救出，並將它們存入指定的recovery 錢包。
 
@@ -598,7 +598,7 @@ contract Exploit {
 
 ```
 
-### Free Rider
+### 10. Free Rider
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/free-rider/): 一個全新的Damn Valuable NFTs市場已經發布！市場上有6個NFT被首次鑄造，現已開放出售，每個價格為15 ETH。有一個關鍵漏洞被報告，聲稱所有的代幣都可以被奪走。然而，開發者們不知道如何拯救這些代幣！他們提供了一個45 ETH的賞金，給任何願意將這些NFT取出並送回給他們的人。回收過程由一個專門的智能合約管理。你已經同意幫忙。儘管如此，你的餘額只有0.1 ETH。開發者們對你要求更多資金的消息卻毫無回應。如果你能獲得免費的ETH，至少瞬間獲得一些該多好。
 
@@ -721,7 +721,7 @@ contract Exploit {
 }
 ```
 
-### Backdoor
+### 11. Backdoor
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/backdoor/): 為了激勵團隊成員創建更安全的錢包，有人部署了一個Safe錢包的註冊表。當團隊中的某個人部署並註冊一個錢包時，他們會獲得10個DVT代幣。這個註冊表與合法的Safe代理工廠（Safe Proxy Factory）緊密集成，並且包括嚴格的安全檢查。目前，有四個人被註冊為受益人：Alice、Bob、Charlie和David。註冊表中有40個DVT代幣餘額，準備分配給他們。找出註冊表中的漏洞，救出所有資金，並將它們存入指定的回收賬戶。並且在一次交易中完成。
 
@@ -831,7 +831,7 @@ contract Exploit {
 }
 ```
 
-### Climber
+### 12. Climber
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/climber/): 有一個安全金庫合約，裡面保管了1000萬個DVT代幣。該金庫是可升級的，並且遵循UUPS模式。金庫的所有者是一個timelock合約。該合約每15天可以提取有限數量的代幣。在金庫上還有一個額外的角色，擁有在緊急情況下清空所有代幣的權限。在timelock合約上，只有擁有「提議者」角色的帳戶才能安排在1小時後執行的操作。你必須從金庫中救出所有代幣並將其存入指定的恢復帳戶。
 
@@ -929,7 +929,7 @@ contract PawnedClimberVault is ClimberVault {
 }
 ```
 
-### Wallet Mining
+### 13. Wallet Mining
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/wallet-mining/): 激勵用戶部署 Safe 錢包，並獎勵他們 1 DVT。它集成了一個可升級的授權機制，只允許特定的部署者（也就是所謂的守衛者）為特定部署獲得報酬。這個部署者合約只能與在部署過程中設置的 Safe 工廠和 copy 一起工作。看起來 Safe 單例工廠已經部署了。團隊將 2000 萬個 DVT 代幣轉移到地址 0x8be6a88D3871f793aD5D5e24eF39e1bf5be31d2b 的用戶，她的簡單 1-of-1 Safe 原本應該在那裡部署。但他們遺失了應用於部署的 nonce。更糟的是，系統中有漏洞的傳聞正在流傳。團隊非常驚慌。沒有人知道該怎麼做，讓這位用戶更加不知所措。她已授權你訪問她的私鑰。你必須在為時已晚之前，拯救所有資金！從錢包部署者合約中回收所有代幣，並將它們發送到對應的守衛者地址。同時保護並返還用戶的所有資金。在一筆交易中完成。
 
@@ -989,7 +989,7 @@ contract PawnedClimberVault is ClimberVault {
  
  
  
-### Puppet V3
+### 14. Puppet V3
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/climber/): 無論是熊市還是牛市，真正的 DeFi 開發者都會持續建設。還記得你之前幫助過的那個借貸池嗎？他們現在推出了新版本。他們現在使用 Uniswap V3 作為預言機。沒錯，不再使用現貨價格！這次借貸池查詢的是資產的時間加權平均價格，並且使用了所有推薦的庫。Uniswap 市場中有 100 WETH 和 100 DVT 的流動性。借貸池裡有一百萬個 DVT 代幣。你從 1 ETH 和一些 DVT 開始，必須拯救所有人於這個存在漏洞的借貸池。別忘了將它們發送到指定的恢復帳戶。注意：此挑戰需要有效的 RPC URL，以便將主網狀態分叉到你的本地環境。
 
@@ -1044,7 +1044,7 @@ console.log("beofre quote: ", quote1); //quote:3000000000000000000000000
 ```
 
 
-### ABI Smuggling
+### 15. ABI Smuggling
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/climber/): 這裡有一個權限金庫，裡面存有 100 萬個 DVT 代幣。該金庫允許定期提取資金，也允許在緊急情況下提取所有資金。合約內嵌了一個通用授權方案，只允許已知帳戶執行特定操作。開發團隊已收到負責任的披露，稱所有資金可能被盜取。請從金庫中救出所有資金，並將其轉移到指定的回收帳戶。
 
@@ -1188,7 +1188,7 @@ Memory loc      Data
 If you hex decode 48656c6c6f2c20776f726c6421 you will get "Hello, world!".
 ```
 
-### Shards
+### 16. Shards
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/shards/): Shards NFT 市場是一個無需許可的智能合約，允許 Damn Valuable NFT 的持有者以任何價格（以 USDC 表示）出售這些 NFT。這些 NFT 可能非常有價值，以至於賣家可以將它們拆分成較小的份額（稱為 “shards”）。買家可以購買這些 shards，這些份額以 ERC1155 代幣形式表示。只有當整個 NFT 售出後，市場才會向賣家付款。市場向賣家收取 1% 的手續費，並以 Damn Valuable Tokens (DVT) 支付。這些 DVT 可以存放在安全的鏈上金庫中，而該金庫與 DVT 的質押系統整合。有人正在出售一個 NFT，價格高達……哇，一百萬 USDC？在那些瘋狂的玩家發現之前，你最好先深入研究這個市場。你一開始沒有任何 DVT，請儘量在一次交易中救回資金，並將資產存入指定的回收帳戶。
 
@@ -1258,7 +1258,7 @@ contract Exploit {
 }
 ```
 
-### Curvy Puppet
+### 17. Curvy Puppet
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/curvy-puppet/): 這裡有一個借貸合約，任何人都可以從 Curve 的 stETH/ETH 池中借出 LP 代幣。為了這麼做，借款人必須首先存入足夠的 Damn Valuable 代幣 (DVT) 作為抵押。如果借款頭寸的價值超過了抵押品的價值，任何人都可以透過償還債務並奪取所有抵押品來清算它。該借貸合約整合了 Permit2 來安全管理代幣授權。它還使用了一個受限的價格預言機來獲取 ETH 和 DVT 的當前價格。Alice、Bob 和 Charlie 都在借貸合約中開立了頭寸。為了格外安全，他們決定將頭寸大幅過度抵押。但他們真的安全嗎？這不是開發者收到的緊急漏洞報告中所聲稱的。在使用者資金被奪走之前，關閉所有頭寸並取回所有可用的抵押品。
 
@@ -1280,7 +1280,7 @@ contract Exploit {
 - 最後透過了兩個 flashloan 來過關. 
 - 主要是 Balancer 在借 weth 時不用費用. 這樣我們就可以計算出可以滿足清算而且還有足夠的錢可以還 flashloan.
     
-### Withdrawal
+### 18. Withdrawal
 
 [題目](https://www.damnvulnerabledefi.xyz/challenges/withdrawal/): 
 有一個代幣橋用來將 Damn Valuable Tokens (DVT) 從 L2 提領到 L1，該橋上有一百萬 DVT 代幣的餘額。L1 端的代幣橋允許任何人在延遲期過後，並且提供有效的默克爾證明時，完成提領。該證明必須與代幣橋所有者設定的最新提領根對應。你收到了一個包含 4 筆在 L2 發起的提領的事件日誌的 JSON 檔案。這些提領可以在 7 天延遲期過後執行。但其中有一筆可疑的提領，不是嗎？你可能需要仔細檢查，因為所有資金可能都處於風險之中。幸運的是，你是一名具有特殊權限的橋樑操作員。透過完成所有給定的提領，防止可疑的那一筆執行，並且確保不會耗盡所有資金來保護這座橋樑。

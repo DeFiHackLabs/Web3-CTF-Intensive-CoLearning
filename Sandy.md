@@ -75,4 +75,9 @@ timezone: Asia/Taipei
 完成題數：26
 
 今天解Ethernaut CTF 2024 Alien Spaceship
+
+### 2024.09.19
+完成題數：27
+
+今天解Ethernaut CTF 2024 Beef
 <!-- Content_END -->
