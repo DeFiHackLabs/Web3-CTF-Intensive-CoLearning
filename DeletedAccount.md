@@ -1399,7 +1399,7 @@ function test_theRewarder() public checkSolvedByPlayer {
 
 ### 2024.09.20
 
-#### [DamnVulnerableDeFi-07] Compromised
+#### [DamnVulnerableDeFi-06] Selfie
 
 - 通關條件: 把 `SelfiePool` 合約的 token 餘額偷走，轉到 recovery 帳號去
 - 解法:
@@ -1460,6 +1460,9 @@ contract Hack is IERC3156FlashBorrower {
 ```
 
 - [DamnVulnerableDeFi-06-Selfie.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-06-Selfie.t.sol)
+
+
+#### [DamnVulnerableDeFi-07] Compromised
 
 
 <!-- Content_END -->
