@@ -136,5 +136,8 @@ timezone: Asia/Taipei
 - [Grey Cat the Flag 2024 Milotruck challs Writeup](https://hackmd.io/@SunWeb3Sec/Syyktk2n0)
 - [Warroom ETHCC 2023](https://hackmd.io/@SunWeb3Sec/SyHsLzXpA)
   
+ ### 2024.09.20
+- 準備比賽環境
+- 建立群組隊伍
   
 <!-- Content_END -->
