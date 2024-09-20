@@ -11,6 +11,7 @@ import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
 import {FreeRiderNFTMarketplace} from "../../src/free-rider/FreeRiderNFTMarketplace.sol";
 import {FreeRiderRecoveryManager} from "../../src/free-rider/FreeRiderRecoveryManager.sol";
 import {DamnValuableNFT} from "../../src/DamnValuableNFT.sol";
+import {ExploitContract} from "./ExploitContract.sol";
 
 contract FreeRiderChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -123,7 +124,14 @@ contract FreeRiderChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_freeRider() public checkSolvedByPlayer {
-        
+        // setting:
+        // - 1 NFT = 15 ETH, we have 6 to sell in marketplace (owned by deployer)
+        // - marketplace has 90 ether
+        // - uniswap: 15000 DVT -- 9000 WETH
+        // - player starts with 0.1 ETH
+        ExploitContract exploit = new ExploitContract(uniswapPair, marketplace, weth, nft, player, address(recoveryManager));
+        payable(address(exploit)).transfer(0.1 ether);
+        exploit.run();
     }
 
     /**
@@ -146,3 +154,28 @@ contract FreeRiderChallenge is Test {
         assertEq(address(recoveryManager).balance, 0);
     }
 }
+
+/*
+
+    function _buyOne(uint256 tokenId) private {
+        uint256 priceToPay = offers[tokenId];
+        if (priceToPay == 0) {
+            revert TokenNotOffered(tokenId);
+        }
+
+        if (msg.value < priceToPay) {
+            revert InsufficientPayment();
+        }
+
+        --offersCount;
+
+        // transfer from seller to buyer
+        DamnValuableNFT _token = token; // cache for gas savings
+        _token.safeTransferFrom(_token.ownerOf(tokenId), msg.sender, tokenId);
+
+        // pay seller using cached token <-- cached... really?
+        payable(_token.ownerOf(tokenId)).sendValue(priceToPay);
+
+        emit NFTBought(msg.sender, tokenId, priceToPay);
+    }
+*/

@@ -82,4 +82,12 @@ timezone: Asia/Shanghai
 
 完成B类Ethcc 第1题
 
+### 2024.09.19
+
+完成B类Ethcc 第2题
+
+### 2024.09.20
+
+完成B类Ethcc 第3题
+
 <!-- Content_END -->
