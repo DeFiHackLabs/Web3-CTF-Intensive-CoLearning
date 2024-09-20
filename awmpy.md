@@ -1211,14 +1211,68 @@ proxychains3 forge test test/flashloan/MultiplerRug.t.sol --rpc-url $SEPOLIA_RPC
 
 - blazctf-2023
 
+由于时间不够，只能先了解一下所有题目的攻击思路，后续再补test
+
 #### 1. Hello World
 
 直接打开etherscan.io，搜索交易`0xe19bd1067cbdc46d6fdb8b374e3ca384c32fd88e1413a9434e03c36b36924877`，再点击`Read Chat`就可以看到flag
 
 #### 2. Rock Scissor Paper
 
-TODO
+本关目标是要赢得猜拳游戏
+
+题目中是通过block.number来计算猜拳结果，通过攻击合约调用被攻击合约时，交易实在同一个区块内执行，只需要在攻击合约内提前算好出什么会赢，再传给`tryToBeatMe`即可
 
 ### 2024.09.20
+
+#### 3. Eazy NFT
+
+这一关的挑战点在于`ERC721`合约的`_mint`函数没有校验token是否已mint过，因此攻击者只需要不断的调用`ET`合约的`mint`函数就可以获取到所有的NFT
+
+#### 4. Hide on Bush
+
+这一关完全看不懂先跳过
+
+#### 5. Missing
+
+这一关完全看不懂先跳过
+
+#### 6. Lockless Swap
+
+TODO
+
+#### 7. Ketai
+
+TODO
+
+#### 8. Tornado Crash
+
+TODO
+
+#### 9. Cup of Tea
+
+TODO
+
+#### 10. Saluting Ducks
+
+TODO
+
+#### 11. Be biLlionAireS Today
+
+TODO
+
+#### 12. Maze
+
+TODO
+
+#### 13. Ghost
+
+TODO
+
+#### 14. Jambo
+
+TODO
+
+### 2024.09.21
 
 <!-- Content_END -->
