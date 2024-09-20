@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: MIT
+// // SPDX-License-Identifier: MIT
 // pragma solidity ^0.8.18;
 
-// import "./interface/ISlotPuzzleFactory.sol";
+// import {ISlotPuzzleFactory} from "./ISlotPuzzleFactory.sol";
 
 // contract SlotPuzzle {
 //     bytes32 public immutable ghost = 0x68747470733a2f2f6769746875622e636f6d2f61726176696e64686b6d000000;    
