@@ -598,10 +598,9 @@ gatethree, 合约balance > 0.001ether ， owner接受 eth 返回false，首先PO
 
 [POC 代码](Writeup/SpeedX/script/Ethernaut/goodsamaritan_poc.s.sol)
 
+### 2024.09.20
 下一题 **Level 26 DoubleEntryPoint**
 
-
-
-### 2024.09.20
+今天有事儿先打卡。
 
 <!-- Content_END -->
