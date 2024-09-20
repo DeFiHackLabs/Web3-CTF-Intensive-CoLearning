@@ -62,5 +62,12 @@ damn-vulnerable-defi
 17.	Curvy Puppet test
 18	Withdrawal test + writeup
 
+### 2024.09.18
+damn-vulnerable-defi
+8.9 check writeup and POC test
+
+### 2024.09.19
+6.7 check writeup and POC test
+
 
 <!-- Content_END -->
