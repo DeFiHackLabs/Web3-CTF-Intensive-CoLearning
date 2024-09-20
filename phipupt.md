@@ -953,4 +953,18 @@ forge script script/Level20.s.sol:CallContractScript --rpc-url sepolia --broadca
 脚本还在测试中...
 
 
+### 2024.09.20
+
+[The Ethernaut level 23](https://ethernaut.openzeppelin.com/level/23)
+
+本关将要求你以不同的方式打破DexTwo，这是上一关经过微妙修改的Dex合约。
+
+这一关的目的是把 DexTwo 中 token1 和 token2 的余额都提取出来。
+
+
+仔细阅读合约，该合约是前一关卡 Dex 的微调版本。`swap` 函数去掉了 `require((from == token1 && to == token2) || (from == token2 && to == token1), "Invalid tokens");` 限制。这意味可以使用一个任意的 from 代币，从合约中中获得真正的"to"代币。
+
+
+脚本还在测试中...
+
 <!-- Content_END -->

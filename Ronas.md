@@ -101,5 +101,8 @@ timezone: Asia/Taipei
 
 - [A. Ethernaut CTF - level 22 Dex](/Writeup/Ronas/Ethernaut%20CTF/level22.md)
 
+### 2024.09.19
+
+- [A. Ethernaut CTF - level 23 Dex2](/Writeup/Ronas/Ethernaut%20CTF/level23.md)
 
 <!-- Content_END -->
