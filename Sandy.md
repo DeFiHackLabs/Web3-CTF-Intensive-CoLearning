@@ -85,4 +85,10 @@ timezone: Asia/Taipei
 完成題數：28
 
 今天解Ethernaut CTF 2024 SpaceBank
+
+### 2024.09.21
+完成題數：29
+
+今天解Ethernaut CTF 2024 Start.exe
+Ethernaut-Dex 寫到一半
 <!-- Content_END -->
