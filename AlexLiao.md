@@ -211,17 +211,19 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 挑戰題目：
 
--   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [ETHTaipeiWarRoomNFT](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/E挑戰題目：
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [ETHTaipeiWarRoomNFT](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/ETHTaipeiWarRoomNFT)
+
+筆記連結： [ETH Taipei CTF 2023: ETHTaipeiWarRoomNFT](./Writeup/AlexLiao/ETHTaipeiCTF2023/ETHTaipeiWarRoomNFT.md)
+
+### 2024.09.13
+
+挑戰題目：
 
 -   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [Casino](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/Casino)
 
 筆記連結： [ETH Taipei CTF 2023: Casino](./Writeup/AlexLiao/ETHTaipeiCTF2023/Casino.md)
 
-### 2024.09.14THTaipeiWarRoomNFT)
-
-筆記連結： [ETH Taipei CTF 2023: ETHTaipeiWarRoomNFT](./Writeup/AlexLiao/ETHTaipeiCTF2023/ETHTaipeiWarRoomNFT.md)
-
-### 2024.09.13
+### 2024.09.14
 
 挑戰題目：
 
@@ -288,5 +290,37 @@ abi.encodePacked(type(Contract).creationCode, uint256(uint160(address(owner))))
 -   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Wallet Mining](https://www.damnvulnerabledefi.xyz/challenges/wallet-mining/)
 
 筆記連結： 解到一半，還在找 salt，等後續解完再來補充！目前思路是先把利用 `init` 把 player 設成 `wards` ，然後再呼叫 WalletDeployer 的 `drop` 來創建出題目說的那個丟失 slat 的地址，最後用 user 的私鑰去控制 safe 錢包把錢轉到 recovery 地址。思路應該是正確的了，只是 WalletDeployer 合約變數命名真的很糟糕，看很久才知道在幹嘛...
+
+### 2024.09.19
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Wallet Mining](https://www.damnvulnerabledefi.xyz/challenges/wallet-mining/)
+
+筆記連結： [DamnVulnerableDeFi: Wallet Mining](./Writeup/AlexLiao/DamnVulnerableDeFi/WalletMining.md)
+
+### 2024.09.20
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Shards](https://www.damnvulnerabledefi.xyz/challenges/shards/)
+
+-   [Blaz CTF 2023](https://github.com/fuzzland/blazctf-2023/tree/main) - [Hello World](https://github.com/fuzzland/blazctf-2023/tree/main/challenges/hello-world)
+
+-   [Blaz CTF 2023](https://github.com/fuzzland/blazctf-2023/tree/main) - [Rock Scissor Paper](https://github.com/fuzzland/blazctf-2023/tree/main/challenges/rock-paper-scissor)
+
+-   [Blaz CTF 2023](https://github.com/fuzzland/blazctf-2023/tree/main) - [Eazy NFT](https://github.com/fuzzland/blazctf-2023/tree/main/challenges/eazy-nft)
+
+筆記連結：
+
+-   [DamnVulnerableDeFi: Shards](./Writeup/AlexLiao/DamnVulnerableDeFi/Shards.md)
+
+-   [Blaz CTF 2023: Hello World](./Writeup/AlexLiao/BlazCTF2023/HelloWorld.md)
+
+-   [Blaz CTF 2023: Rock Scissor Paper](./Writeup/AlexLiao/BlazCTF2023/RockScissorPaper.md)
+
+-   [Blaz CTF 2023: Eazy NFT](./Writeup/AlexLiao/BlazCTF2023/EazyNFT.md)
+
+### 2024.09.21
 
 <!-- Content_END -->

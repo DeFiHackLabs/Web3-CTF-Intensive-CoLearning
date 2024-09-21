@@ -230,4 +230,16 @@ Link: https://onlypwner.xyz/challenges/7
 
 Link: https://onlypwner.xyz/challenges/9
 
+### 2024.09.19
+
+(1) OnlyPwner WRAPPED ETHER Challenge
+
+Link: https://onlypwner.xyz/challenges/12
+
+### 2024.09.20
+
+(1) OnlyPwner ALL OR NOTHING Challenge
+
+Link: https://onlypwner.xyz/challenges/10
+
 <!-- Content_END -->

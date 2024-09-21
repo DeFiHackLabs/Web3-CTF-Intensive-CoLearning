@@ -144,4 +144,12 @@ A.3 選 1 系列
 
         Completed 28-GateKeeperThree
 
+### 2024.09.20
+
+A.3 選 1 系列
+
+    1.Ethernaut CTF (31)
+
+        Completed 30-HigherOrder
+
 <!-- Content_END -->

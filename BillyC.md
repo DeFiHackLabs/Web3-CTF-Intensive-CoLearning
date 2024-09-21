@@ -110,4 +110,9 @@ https://hackmd.io/@0xbc000/SJ61x8j3R
 1. Damn Vulnerable DeFi - Free Rider https://hackmd.io/@0xbc000/HkFEZKl60
 2. Work on blog post for old challenges
 
+### 2024.09.20
+1. Damn Vulnerable DeFi - Backdoor https://hackmd.io/@0xbc000/rJ1d_9ZTC
+2. Work on blog post for old challenges
+
+
 <!-- Content_END -->

@@ -81,4 +81,8 @@ timezone: Pacific/Auckland
 ### 2024.09.19
 [[Blaz CTF 2023] 3 | Eazy NFT](./Writeup/0xE/blazctf-2023/eazy-nft.md)  
 
+### 2024.09.20
+[[Blaz CTF 2023] 4 | Lockless Swap](./Writeup/0xE/blazctf-2023/lockless-swap.md)  
+
+
 <!-- Content_END -->

@@ -325,4 +325,45 @@ B: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
   - Then, [solidity (version < 0.8.0)](https://github.com/consenlabs/account-abstraction/blob/3381bd75823c238a05c870fb11c61548c8fc7c9d/src/paymaster/OffChainPaymaster.sol#L2) has not applied underflow check as default.
   - Finally, we can withdraw twice using `onERC721Received` callback and make the balance underflow.
 
+### 2024.09.20
+
+B: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
+
+- WBC
+  - We should create contract `Ans` implmenting `IGame` to satisfy the requirements of `WBC`
+  - To pass `bodyCheck`
+    - Call `bodyCheck` inside `constructor` of `Ans` to meet the requirement [here](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/WBC/WBC.sol#L32)
+    - Use differnt salt to create `Ans` with different addresses to meet the requirement [here](https://github.com/dinngo/ETHTaipei-war-room/blob/b5bdb72097172f50baa13b996be2422fd1b6786c/src/WBC/WBC.sol#L33)
+  - To pass `ready`
+    - `judge()` of `Ans` should return `block.conbase`.
+  - To pass `_swing`
+    - To pass `_secondBase`
+    - `steal()` of `Ans` should return the `input` value by just copy
+    - To pass `_thirdBase` - We should find xxx that `this.decode(xxx) = "HitAndRun"`.
+      - xxx = 0\*(32-10)||9||HitAndRun
+        ```
+          function decode(bytes32 data) external pure returns (string memory) {
+            assembly {
+                mstore(0x20, 0x20)
+                mstore(0x49, data)
+                // [0x20(offset), 0*9 || data[0:23](length), data[23:32] || 0*23(raw)]
+                // [0x20(offset), 0*9 || xxx.length(length), xxx.data || 0*23(raw)]
+                return(0x20, 0x60)
+            }
+          }
+        ```
+    - To pass `_homeBase`
+      - We should find a way to distinguish the two sequential static call. - We can use `gasleft()`
+      - We can find a value `i` - `gasleft() % i == 0` in the first call - `gasleft() % i != 0` in the second call
+
+### 2024.09.21
+
+B: [Grey Cat the Flag 2024 Milotruck challs](https://github.com/MiloTruck/evm-ctf-challenges) (6)
+
+- GreyHats Dollar
+  - The share finally updates at this [line](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/greyhats-dollar/GHD.sol#L133)
+  - `transferFrom` has not consider the case that `from` equals to `to`.
+    - At this case, we get [`shares[to=from] = origin + _shares`](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/greyhats-dollar/GHD.sol#L133)
+    - However, the share is expected unchanged.
+
 <!-- Content_END -->

@@ -79,4 +79,12 @@ writeup:[Privacy](./Writeup/geyu/writeup/16_Preservation.md)
 ### 2024.09.18
 完成了 ethernaut 第 17 个练习 NaughtCoin
 writeup:[Privacy](./Writeup/geyu/writeup/17_Recovery.md)
+
+### 2024.09.19
+完成了 ethernaut 第 17 个练习 NaughtCoin
+writeup:[Privacy](./Writeup/geyu/writeup/18_MagicNumber.md)
+
+### 2024.09.20
+完成了 ethernaut 第 19 个练习 NaughtCoin
+writeup:[Privacy](./Writeup/geyu/writeup/19_AlienCodex.md)
 <!-- Content_END -->

