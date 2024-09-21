@@ -323,4 +323,8 @@ abi.encodePacked(type(Contract).creationCode, uint256(uint160(address(owner))))
 
 ### 2024.09.21
 
+參加 BlazCTF 2024
+
+### 2024.09.22
+
 <!-- Content_END -->
