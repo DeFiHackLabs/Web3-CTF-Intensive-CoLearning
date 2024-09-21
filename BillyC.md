@@ -114,5 +114,7 @@ https://hackmd.io/@0xbc000/SJ61x8j3R
 1. Damn Vulnerable DeFi - Backdoor https://hackmd.io/@0xbc000/rJ1d_9ZTC
 2. Work on blog post for old challenges
 
+### 2024.09.21
+1. BlazCTF .... but only solve the hello world 😢
 
 <!-- Content_END -->
