@@ -120,5 +120,10 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 - https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/18_magicnumber.md
 
 ### 2024.09.20
-- [19_AlienCodex](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/19_AlienCodex.md)
+- [19_AlienCodex](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/19_AlienCodex.md
+
+### 2024.09.21
+- https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/20_Denial
+
+
 <!-- Content_END -->
