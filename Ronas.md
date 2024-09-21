@@ -105,4 +105,12 @@ timezone: Asia/Taipei
 
 - [A. Ethernaut CTF - level 23 Dex2](/Writeup/Ronas/Ethernaut%20CTF/level23.md)
 
+### 2024.09.20
+
+- 請假
+
+### 2024.09.21
+
+- 參加 Blaz CTF
+
 <!-- Content_END -->
