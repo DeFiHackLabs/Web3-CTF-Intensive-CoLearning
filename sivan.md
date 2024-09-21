@@ -62,4 +62,7 @@ timezone: Asia/Shanghai
 ### 2024.09.19
 - Openzeppelin CTF 2023中的SpaceBank一题，主要是要理解闪电贷的逻辑以及验证资金归还的方式，可以通过deposit将钱打进去，并且同时归还闪电贷掏空合约；同时还需要满足里面的各个条件，包括流程控制、合约销毁转移eth等机制。
 - [2024.9.19](./Writeup/Sivan/2024.9.19)
+### 2024.09.21
+- EthTaipei CTF 2023中的Hello world一题，这题比较简单，传入合约中给定的字符串便可通关。
+- [2024.9.21](./Writeup/Sivan/2024.9.21)
 <!-- Content_END -->

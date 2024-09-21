@@ -163,4 +163,15 @@ timezone: Asia/Taipei
 - [POC](./Writeup/Tanner/test/QuillCTF/KeyCraft.t.sol) 
 
 
+### 2024.09.20
+
+學習內容: 
+
+- 完成 CollatzPuzzle
+
+#### [QuillAudit CTF - CollatzPuzzle](./Writeup/Tanner/src/QuillCTF/CollatzPuzzle.sol)
+
+- [POC](./Writeup/Tanner/test/QuillCTF/CollatzPuzzle.t.sol) 
+
+
 <!-- Content_END -->

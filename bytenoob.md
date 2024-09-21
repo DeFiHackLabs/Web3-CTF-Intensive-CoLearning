@@ -149,5 +149,9 @@ Finish ethernaut dex2 update
 
 Finish ethernaut dex2 finish
 
+### 2024.09.20
+
+Finish ethernaut puzzle try
+
 
 <!-- Content_END -->

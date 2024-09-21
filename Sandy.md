@@ -80,4 +80,9 @@ timezone: Asia/Taipei
 完成題數：27
 
 今天解Ethernaut CTF 2024 Beef
+
+### 2024.09.20
+完成題數：28
+
+今天解Ethernaut CTF 2024 SpaceBank
 <!-- Content_END -->

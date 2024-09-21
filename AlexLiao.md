@@ -211,17 +211,19 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 挑戰題目：
 
--   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [ETHTaipeiWarRoomNFT](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/E挑戰題目：
+-   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [ETHTaipeiWarRoomNFT](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/ETHTaipeiWarRoomNFT)
+
+筆記連結： [ETH Taipei CTF 2023: ETHTaipeiWarRoomNFT](./Writeup/AlexLiao/ETHTaipeiCTF2023/ETHTaipeiWarRoomNFT.md)
+
+### 2024.09.13
+
+挑戰題目：
 
 -   [ETH Taipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/) - [Casino](https://github.com/dinngo/ETHTaipei-war-room/tree/main/src/Casino)
 
 筆記連結： [ETH Taipei CTF 2023: Casino](./Writeup/AlexLiao/ETHTaipeiCTF2023/Casino.md)
 
-### 2024.09.14THTaipeiWarRoomNFT)
-
-筆記連結： [ETH Taipei CTF 2023: ETHTaipeiWarRoomNFT](./Writeup/AlexLiao/ETHTaipeiCTF2023/ETHTaipeiWarRoomNFT.md)
-
-### 2024.09.13
+### 2024.09.14
 
 挑戰題目：
 
@@ -298,5 +300,27 @@ abi.encodePacked(type(Contract).creationCode, uint256(uint160(address(owner))))
 筆記連結： [DamnVulnerableDeFi: Wallet Mining](./Writeup/AlexLiao/DamnVulnerableDeFi/WalletMining.md)
 
 ### 2024.09.20
+
+挑戰題目：
+
+-   [damn-vulnerable-defi](https://www.damnvulnerabledefi.xyz/) - [Shards](https://www.damnvulnerabledefi.xyz/challenges/shards/)
+
+-   [Blaz CTF 2023](https://github.com/fuzzland/blazctf-2023/tree/main) - [Hello World](https://github.com/fuzzland/blazctf-2023/tree/main/challenges/hello-world)
+
+-   [Blaz CTF 2023](https://github.com/fuzzland/blazctf-2023/tree/main) - [Rock Scissor Paper](https://github.com/fuzzland/blazctf-2023/tree/main/challenges/rock-paper-scissor)
+
+-   [Blaz CTF 2023](https://github.com/fuzzland/blazctf-2023/tree/main) - [Eazy NFT](https://github.com/fuzzland/blazctf-2023/tree/main/challenges/eazy-nft)
+
+筆記連結：
+
+-   [DamnVulnerableDeFi: Shards](./Writeup/AlexLiao/DamnVulnerableDeFi/Shards.md)
+
+-   [Blaz CTF 2023: Hello World](./Writeup/AlexLiao/BlazCTF2023/HelloWorld.md)
+
+-   [Blaz CTF 2023: Rock Scissor Paper](./Writeup/AlexLiao/BlazCTF2023/RockScissorPaper.md)
+
+-   [Blaz CTF 2023: Eazy NFT](./Writeup/AlexLiao/BlazCTF2023/EazyNFT.md)
+
+### 2024.09.21
 
 <!-- Content_END -->
