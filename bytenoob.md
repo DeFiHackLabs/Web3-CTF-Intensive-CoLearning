@@ -155,7 +155,7 @@ Finish ethernaut puzzle try
 
 ### 2024.09.21
 
-nothing
+Finish nothing
 
 
 <!-- Content_END -->
