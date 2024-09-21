@@ -174,4 +174,11 @@ timezone: Asia/Taipei
 - [POC](./Writeup/Tanner/test/QuillCTF/CollatzPuzzle.t.sol) 
 
 
+### 2024.09.21
+
+學習內容: 
+
+- Working on BlazCTF
+
+
 <!-- Content_END -->
