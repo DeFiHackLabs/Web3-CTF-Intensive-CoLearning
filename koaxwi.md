@@ -114,5 +114,12 @@ Solved Meta Staking.
 
 Solved Gnosis Unsafe.
 
+### 2024.09.21
+
+BlazCTF:
+- Ciao
+- BigenLayer
+- 8Inch
+- ...
 
 <!-- Content_END -->

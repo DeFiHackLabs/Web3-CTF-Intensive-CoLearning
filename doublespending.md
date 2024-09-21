@@ -356,4 +356,14 @@ B: [EthTaipei CTF 2023](https://github.com/dinngo/ETHTaipei-war-room/)(5)
       - We should find a way to distinguish the two sequential static call. - We can use `gasleft()`
       - We can find a value `i` - `gasleft() % i == 0` in the first call - `gasleft() % i != 0` in the second call
 
+### 2024.09.21
+
+B: [Grey Cat the Flag 2024 Milotruck challs](https://github.com/MiloTruck/evm-ctf-challenges) (6)
+
+- GreyHats Dollar
+  - The share finally updates at this [line](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/greyhats-dollar/GHD.sol#L133)
+  - `transferFrom` has not consider the case that `from` equals to `to`.
+    - At this case, we get [`shares[to=from] = origin + _shares`](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/greyhats-dollar/GHD.sol#L133)
+    - However, the share is expected unchanged.
+
 <!-- Content_END -->
