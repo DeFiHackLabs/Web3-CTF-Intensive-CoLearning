@@ -72,4 +72,7 @@ timezone: Asia/Shanghai
 
 ### 2024.09.20
 - [Ethernaut 第25题](/Writeup/blockpanda/readme.md/Ethernaut第25题.md)
+
+### 2024.09.21
+- 总复习
 <!-- Content_END -->
