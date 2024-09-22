@@ -181,4 +181,11 @@ timezone: Asia/Taipei
 - Working on BlazCTF
 
 
+### 2024.09.22
+
+學習內容: 
+
+- Working on BlazCTF
+
+
 <!-- Content_END -->
