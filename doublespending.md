@@ -366,4 +366,28 @@ B: [Grey Cat the Flag 2024 Milotruck challs](https://github.com/MiloTruck/evm-ct
     - At this case, we get [`shares[to=from] = origin + _shares`](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/greyhats-dollar/GHD.sol#L133)
     - However, the share is expected unchanged.
 
+### 2024.09.22
+
+B: [Grey Cat the Flag 2024 Milotruck challs](https://github.com/MiloTruck/evm-ctf-challenges) (6)
+
+- Escrow
+
+  - Ownership of escrowId has been renounced at the end.
+  - So, we should find a way to get back the ownership through [`deployEscrow`](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/escrow/EscrowFactory.sol#L70)
+  - Approach 1
+
+    - To by pass the check [here](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/escrow/EscrowFactory.sol#L54), we can construct different `args` that can generate the same `escrowId`
+    - [`args` contributes to `tokenX` and `tokenY`](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/escrow/DualAssetEscrow.sol#L45-L46). They are fetched [here](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/escrow/DualAssetEscrow.sol#L116-L117). `tokenY` is expected to be `address(0)`.
+    - However, [`_getArgAddress`](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/escrow/lib/Clone.sol#L15-L25) just reads 20 bytes from `argOffset`.
+    - However, `tokenY` can be `bytes19(0)`. If the following byte is bytes1(0), we can always get `tokenY` as `address(0)` by `_getArgAddress`.
+    - [For length of data smaller than 256, so the following byte is bytes1(0).](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/escrow/DualAssetEscrow.sol#L47)
+    - Why not just append 0 bytes to `args`?
+      - Becasue there is a length check [here](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/escrow/DualAssetEscrow.sol#L49)
+
+  - Approach 2
+    - To by pass the check [here](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/escrow/EscrowFactory.sol#L54), we can construct different `implId` that can generate the same `escrowId`
+    - We can add the same implementation [here](https://github.com/MiloTruck/evm-ctf-challenges/blob/a385836e1e83543b06ff3b8108cf962f4d74a49d/src/escrow/EscrowFactory.sol#L32) with the same `impl` parameter.
+    - Then, we get different `implId`(=1) with the same `impl` and `implId` does not contribute to `escrowId`
+    - However, only factory owner can call `addImplementation`.
+
 <!-- Content_END -->

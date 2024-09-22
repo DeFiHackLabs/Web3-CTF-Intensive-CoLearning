@@ -369,5 +369,15 @@ abstract contract ReentrancyGuard {
 - 首先要呼叫關卡合約的donate()，讓攻擊者的balance有值
 - 再呼叫關卡合約的withdraw()，讓重入攻擊一直重複到balance < 0
 
+### 2024.09.21
+# Ethernut第十二題
+- 這題的關鍵是要找到data[2]的值做為key
+- 但data為private varible，所以用vm.load去讀取
+- bool佔據1個byte，在storage slot 0
+- ID為uint256，佔據32byte，在storage slot 1
+- flattening、denomination、awkwardness，加起來佔據32byte，在storage slot 2
+- data的type為bytes32[]，所以每一個值會對應到一個slot
+- data[0]對應到slot3，data[1]對應到slot4，data[2]對應到slot5
+- 所以key在slot5，用vm.load(challengeInstance, bytes32(uint256(5)))就能讀取出來key
 
 <!-- Content_END -->

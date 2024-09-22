@@ -506,5 +506,8 @@ This PoC successfully drains the entire pool balance of 1000 ETH and transfers i
 ### 2024.09.20
 Prepare Blaz 2024
 
+### 2024.09.21
+Participate Blaz 2024
+
 
 <!-- Content_END -->

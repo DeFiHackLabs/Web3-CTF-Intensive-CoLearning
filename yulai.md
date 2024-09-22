@@ -441,4 +441,8 @@ nc localhost 1337 # 再次创建，成功。得到相关的 rpc 地址
 ### 2024.09.21
 今天在看 blazCTF的 题目，不怎么会做...
 
+### 2024.09.22
+#### ethernaut - HigherOrder
+这道题考查对低级方法的使用。calldataload 会读取传入参数的后面32字节数据，如果我们传入一个大于255的数据，就能将 treasury 设置为超过 255
+
 <!-- Content_END -->
