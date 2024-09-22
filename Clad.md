@@ -12,8 +12,8 @@ timezone: Asia/Taipei
 <!-- Content_START -->
 
 ### 心得
-- foundry 和 solidity 零經驗, 目前寫到 Ethernaut 第六題, 幾乎都要看著解答才寫得出來
-- 目前至少會在本地跑 foundry 環境, 並讓 code 跑起來
+- foundry 和 solidity 零經驗, 目前寫到 Ethernaut 第 15 題, 幾乎都要看著解答才寫得出來  
+- 目前至少會在本地跑 foundry 環境, 並讓 code 跑起來  
 - 目前嘗試邊寫 Ethernaut, 邊學習 solidity 基礎
 
 ### 2024.08.29
@@ -194,5 +194,16 @@ timezone: Asia/Taipei
     - run code 的時候出現找不到 EthernautHelper.sol": No such file or directory, 但我的 code 應是沒用到 EthernautHelper.sol 去初始化, 這個問題還待排除  
 解題:      
   [Lev14-GatekeeperTwo](./Writeup/Clad/script/Lev14Sol.s.sol)  
+
+### 2024.09.22
+題目: NaughtCoin       
+學習內容      
+目標: 讓 player(你) 的餘額歸零
+筆記:     
+    - ERC-20 有兩種轉帳方式, transfer()、transferFrom()
+    - Player 授權代幣總供給數量給攻擊合約
+    - 攻擊合約對關卡呼叫 transferFrom(), 把 Player 身上的代幣全部轉進攻擊合約, 就可以讓 Player 持有代  
+解題:      
+  [Lev15-NaughtCoin](./Writeup/Clad/script/Lev15Sol.s.sol)  
   
 <!-- Content_END -->
