@@ -24,7 +24,7 @@ contract Stake {
         require(bytesToUint(allowance) >= amount,"How am I moving the funds honey?");
         totalStaked += amount;
         UserStake[msg.sender] += amount;
-        (bool transfered, ) = WETH.call(abi.encodeWithSelector(0x23b872dd, msg.sender,address(this),amount));
+        (bool transfered, ) = WETH.call(abi.encodeWithSelector(0x23b872dd, msg.sender,address(this),amount)); // transfer from
         Stakers[msg.sender] = true;
         return transfered;
     }

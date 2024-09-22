@@ -438,4 +438,11 @@ nc localhost 1337 # 再次创建，成功。得到相关的 rpc 地址
 实例地址：0x08557A8d841ad88Eff166c08E1388dCbB1681bc1
 发现字节码还是很厉害的
 
+### 2024.09.21
+今天在看 blazCTF的 题目，不怎么会做...
+
+### 2024.09.22
+#### ethernaut - HigherOrder
+这道题考查对低级方法的使用。calldataload 会读取传入参数的后面32字节数据，如果我们传入一个大于255的数据，就能将 treasury 设置为超过 255
+
 <!-- Content_END -->

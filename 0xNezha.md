@@ -93,5 +93,8 @@ bytes32[3] private data 通过合约调用的方式当然无法读取 private �
 这一关主要考察 ERC20 的 ABI，该代币的持有者无法直接转账，必须等锁定期过了才能转。但如果把全部额度授权给第三人，则第三人可以把代币全部提走。主要使用 approve(address _spender, uint256 _value) 和 transferFrom(address _from, address _to, uint256 _value)。 [15_NaughtCoin](./Writeup/0xNezha/Ethernaut/15_NaughtCoin.md)
 
 ### 2024.09.20
-这一关主要考察delegatecall()。目标合约想要通过 timeZone1Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp)) 来调用库合约的 setTime(uint256 _time) 达到修改目标合约中 uint256 storedTime 变量的目的。然而使用 delegatecall() 函数进行外部调用时，当涉及到 storage 变量的修改时，是根据 slot 的位置来修改的，而不是通过变量名。也就是说库合约中的 uint256 storedTime 位于 slot0，则目标合约调用外部函数时，修改的也是目标合约的 slot0，而不是位于其他 slot 的变量 storedTime。
+这一关主要考察delegatecall()。目标合约想要通过 timeZone1Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp)) 来调用库合约的 setTime(uint256 _time) 达到修改目标合约中 uint256 storedTime 变量的目的。然而使用 delegatecall() 函数进行外部调用时，当涉及到 storage 变量的修改时，是根据 slot 的位置来修改的，而不是通过变量名。也就是说库合约中的 uint256 storedTime 位于 slot0，则目标合约调用外部函数时，修改的也是目标合约的 slot0，而不是位于其他 slot 的变量 storedTime。[16_Preservation](./Writeup/0xNezha/Ethernaut/16_Preservation/16_Preservation.md)
+
+### 2024.09.21
+这一关主要考察 合约地址的计算和 destroy() 的应用。合约地址计算就不多说了，也可以在区块浏览器中直接查到合约地址，然后调用 destroy() [17_Recovery](./Writeup/0xNezha/Ethernaut/17_Recovery.md)
 <!-- Content_END -->
