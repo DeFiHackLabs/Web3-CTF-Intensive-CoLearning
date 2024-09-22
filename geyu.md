@@ -90,4 +90,6 @@ writeup:[Privacy](./Writeup/geyu/writeup/19_AlienCodex.md)
 
 ### 2024.09.21
 参加 blaz ctf 
+### 2024.09.22
+参加 blaz ctf
 <!-- Content_END -->
