@@ -248,6 +248,10 @@ function pancakeCall(address sender, uint256 amount0, uint256 amount1, bytes cal
 ### 2024.9.21
 做blazctf2024，感觉真正做题和做以前的github里面的题感觉大不相同，要自己去找数据，下载题目
 ### 2024.9.22
-因为不怎么用telegram今天一登陆发现错过了1000多信息，也发现原来要在那上面请假
+因为不怎么用telegram今天一登陆发现错过了1000多信息，也发现原来要在那上面请假才算，，，
+
+blazctf2024做出了两道，等明天比赛结束了写
+
+https://github.com/JadeLight7/blazctf2024/tree/main
 
 <!-- Content_END -->
