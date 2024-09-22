@@ -11,6 +11,9 @@ Billy, currently work as security engineer. Wanna learn web3 security
 2. 你认为你会完成本次残酷学习吗？
 Will try my best to finish it
 
+
+[09/22/2024] Do finish it and update blog, here's the link https://hackmd.io/@0xbc000/BlochchainSecurityBook
+
 ## Notes
 
 <!-- Content_START -->
@@ -116,5 +119,8 @@ https://hackmd.io/@0xbc000/SJ61x8j3R
 
 ### 2024.09.21
 1. BlazCTF .... but only solve the hello world 😢
+
+### 2024.09.22
+1. 只整理了文章進來.... https://hackmd.io/@0xbc000/BlochchainSecurityBook
 
 <!-- Content_END -->
