@@ -327,4 +327,8 @@ abi.encodePacked(type(Contract).creationCode, uint256(uint160(address(owner))))
 
 ### 2024.09.22
 
+參加 BlazCTF 2024，今天有解出一題 Oh Fuck。
+
+另外也恭喜讀書會終於完賽了，每天都有成功打卡！經過這幾天瘋狂刷題後，感覺這次參賽 BlazCTF 有比以前更進步，看到題目比較有感覺知道往哪個方向下手，和大家討論也比較有 sense，甚至有機會自己完整解出一題，感覺很有成就感，期待下一期讀書會！
+
 <!-- Content_END -->
