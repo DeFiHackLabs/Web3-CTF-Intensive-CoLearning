@@ -6,7 +6,7 @@ import "forge-std/console2.sol";
 contract AttackPuzzleScript is Script {
     function run() public {
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
-        address level24 = 0xCa8F3EC44380Bb22eC127F32E8e8d0477CF47D98;
+        address level24 = 0x086d96259d019c3af4F5451602329f7613270Aa0;
         vm.stopBroadcast();
     }
 }

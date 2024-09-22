@@ -164,4 +164,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 blazctf 2023 的 be-billionaires-today 题目。
 
+### 2024.09.21
+
+blazctf 2024，队名 Little Big Us，目前完成了 Ciao、BigenLayer 和 8Inch。
+
 <!-- Content_END -->

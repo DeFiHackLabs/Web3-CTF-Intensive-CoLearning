@@ -127,4 +127,12 @@ timezone: Asia/Shanghai
 - 1.Ethernaut CTF (31) - Dex - [writeup](./Writeup/YuanboXie/EthernautCTF-writeup.md)
     - 学会了对 DEX 对价格操纵攻击，以及写了一个通用的 POC；
 
+### 2024.09.21
+
+- 参加 BlazCTF;
+
+### 2024.09.22
+
+- 参加 BlzeCTF;
+
 <!-- Content_END -->
