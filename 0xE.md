@@ -87,4 +87,7 @@ timezone: Pacific/Auckland
 ### 2024.09.21
 参加 Blaz CTF 2024  
 
+### 2024.09.22
+参加 Blaz CTF 2024  
+
 <!-- Content_END -->
