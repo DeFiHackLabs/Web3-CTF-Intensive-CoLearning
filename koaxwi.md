@@ -122,4 +122,10 @@ BlazCTF:
 - 8Inch
 - ...
 
+### 2024.09.22
+
+BlazCTF:
+- Doju
+- other challs checked but not solved
+
 <!-- Content_END -->
