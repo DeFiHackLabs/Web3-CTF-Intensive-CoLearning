@@ -245,6 +245,9 @@ function pancakeCall(address sender, uint256 amount0, uint256 amount1, bytes cal
 ```
 这是攻击的主要代码，但是不理解为什么要连续调用那么多次skim，也没弄清楚攻击逻辑。
 
-
+### 2024.9.21
+做blazctf2024，感觉真正做题和做以前的github里面的题感觉大不相同，要自己去找数据，下载题目
+### 2024.9.22
+因为不怎么用telegram今天一登陆发现错过了1000多信息，也发现原来要在那上面请假
 
 <!-- Content_END -->
