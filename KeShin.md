@@ -203,5 +203,7 @@ KeShin, 合约安全新人
 
 
 ### 2024.9.22
+#### [Ethcc CTF 2023 : 2 Flash loan](https://github.com/spalen0/warroom-ethcc-2023?tab=readme-ov-file#task-1---proxy-capture-15-points)
+- [POC](./Writeup/KeShin/B-ETHCC2023/2-Flashloan/)
 
 <!-- Content_END -->
