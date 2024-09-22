@@ -453,12 +453,10 @@ However, we only have 0.1 ETH. We can use the "flash loan" provided by Uniswap v
 
 ### 2024.09.21
 
-Solved Doju, 8Inch in [BlazCTF 2024](https://ctf.blaz.ai/).
+Solved Doju, 8Inch and Tonyallet in [BlazCTF 2024](https://ctf.blaz.ai/).
 
-<!-- Content_END -->
-
-
-<!-- 
 ### 2024.09.22
 
--->
+Solved TonyLend and Cyber Cartel in [BlazCTF 2024](https://ctf.blaz.ai/).
+
+<!-- Content_END -->
