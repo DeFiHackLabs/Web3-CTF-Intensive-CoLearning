@@ -125,5 +125,7 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 ### 2024.09.21
 - https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/20_Denial
 
+### 2024.09.22
+- [shop](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/21_Thankyou.md)
 
 <!-- Content_END -->
