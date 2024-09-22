@@ -131,4 +131,8 @@ timezone: Asia/Shanghai
 
 - 参加 BlazCTF;
 
+### 2024.09.22
+
+- 参加 BlzeCTF;
+
 <!-- Content_END -->
