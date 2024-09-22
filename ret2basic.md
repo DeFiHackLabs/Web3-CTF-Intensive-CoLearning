@@ -127,4 +127,12 @@ Today:
 
 1. Wrote a minecraft-like browser game with three.js
 
+### 2024.09.21
+
+1. play blaz
+
+### 2024.09.22
+
+1. play blaz
+
 <!-- Content_END -->
