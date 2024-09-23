@@ -107,7 +107,14 @@ A: Damn Vulnerable DeFi V4(3/18)
 ### 2024.09.18
 - 解决Paradigm2023-Hopping into place
 
+### 2024.9.19
+- 学习Hopping into place
 
+### 2024.9.21
+- Play BlazCTF
+
+### 2024.9.22
+- Play BlazCTF
 
 
 <!-- Content_END -->
