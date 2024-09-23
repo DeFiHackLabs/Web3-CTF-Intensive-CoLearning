@@ -133,7 +133,7 @@ https://github.com/fiveoutofnine/tardis
 | VioletSakura777 | ⭕️ | ⭕️ | ❌ | | | | | | | | | | | | | | | | | | | | | | |
 | creativebluecat | ⭕️ | ⭕️ | ❌ | | | | | | | | | | | | | | | | | | | | | | |
 | Alan | ⭕️ | ⭕️ | ❌ | | | | | | | | | | | | | | | | | | | | | | |
-| kkontheway | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⭕️ | ⭕️ | ❌ | |
+| kkontheway | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⭕️ | ✅ | ✅ |
 | Teron | ⭕️ | ⭕️ | ❌ | | | | | | | | | | | | | | | | | | | | | | |
 | Henry | ✅ | ⭕️ | ✅ | ✅ | ✅ | ✅ | ⭕️ | ✅ | ⭕️ | ❌ | | | | | | | | | | | | | | | |
 | Beihai | ⭕️ | ✅ | ⭕️ | ✅ | ✅ | ✅ | ⭕️ | ⭕️ | ❌ | | | | | | | | | | | | | | | | |
@@ -1561,15 +1561,16 @@ https://github.com/fiveoutofnine/tardis
 
 
 
+
 <!-- STATISTICALDATA_START -->
 
 
 ## 统计数据
 
 - 总参与人数: 110
-- 完成人数: 32
+- 完成人数: 33
 - 全勤用户: SunSec, phipupt, koaxwi, BillyC, awmpy, AlexLiao, 0xE, YuanboXie
-- 淘汰人数: 78
-- 淘汰率: 70.91%
-- Fork人数: 116
+- 淘汰人数: 77
+- 淘汰率: 70.00%
+- Fork人数: 117
 <!-- STATISTICALDATA_END -->
