@@ -118,4 +118,14 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 ### 2024.09.19
 - 新加坡網路爛掉...不知道除了這個鐵人賽還能不能完成🥹
 - https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/18_magicnumber.md
+
+### 2024.09.20
+- [19_AlienCodex](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/19_AlienCodex.md
+
+### 2024.09.21
+- https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/20_Denial
+
+### 2024.09.22
+- [shop](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/freepavel/21_Thankyou.md)
+
 <!-- Content_END -->

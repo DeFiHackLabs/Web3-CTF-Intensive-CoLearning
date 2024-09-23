@@ -69,4 +69,13 @@ timezone: Asia/Shanghai
 
 ### 2024.09.19
 - 重做Ethernaut 第24题 Puzzle Wallet
+
+### 2024.09.20
+- [Ethernaut 第25题](/Writeup/blockpanda/readme.md/Ethernaut第25题.md)
+
+### 2024.09.21
+- 总复习
+
+### 2024.09.22
+- [Ethernaut 第25题](/Writeup/blockpanda/readme.md/Ethernaut第26题.md)
 <!-- Content_END -->

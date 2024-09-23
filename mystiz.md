@@ -451,4 +451,12 @@ There is an vulnerability that we can buy the NFT even without the token. This i
 
 However, we only have 0.1 ETH. We can use the "flash loan" provided by Uniswap v2. There is a (WETH, DVT) pair that has sufficient liquidity.
 
+### 2024.09.21
+
+Solved Doju, 8Inch and Tonyallet in [BlazCTF 2024](https://ctf.blaz.ai/).
+
+### 2024.09.22
+
+Solved TonyLend and Cyber Cartel in [BlazCTF 2024](https://ctf.blaz.ai/).
+
 <!-- Content_END -->

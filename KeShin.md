@@ -190,14 +190,20 @@ KeShin, 合约安全新人
 - sstore(treasury.slot, calldataload(4)) 是从 calldata 的第4位开始读取数据，那么我们构造 calldata 使值大于 255
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/30-HigherOrder/)
 
-#### [Ethernaut CTF : 31 Stake](https://ethernaut.openzeppelin.com/level/301)
+#### [Ethernaut CTF : 31 Stake](https://ethernaut.openzeppelin.com/level/31)
+- 使合约满足条件：合约的 ETH balance 大于 0，totalStaked 比 合约的 ETH balance 大（这意味着有 WETH 质押），我自己必须是质押人，但质押余额是 0（质押过然后撤回了）
 - [POC](./Writeup/KeShin/A-Ethernaut%20CTF/31-Stake/)
 
 
 ### 2024.9.20
+#### [Ethcc CTF 2023 : 1 Proxy capture](https://github.com/spalen0/warroom-ethcc-2023?tab=readme-ov-file#task-1---proxy-capture-15-points)
+- [POC](./Writeup/KeShin/B-ETHCC2023/1-ProxyCapture/)
 
 ### 2024.9.21
 
+
 ### 2024.9.22
+#### [Ethcc CTF 2023 : 2 Flash loan](https://github.com/spalen0/warroom-ethcc-2023?tab=readme-ov-file#task-1---proxy-capture-15-points)
+- [POC](./Writeup/KeShin/B-ETHCC2023/2-Flashloan/)
 
 <!-- Content_END -->

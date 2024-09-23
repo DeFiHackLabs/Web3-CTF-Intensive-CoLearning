@@ -463,6 +463,34 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 
 
 
+### 2024.09.20
+
+学习內容:
+
+工作又开始忙起来了，感觉这一期学不完ethernaut了
+
+今天仍然是在做题与写poc度过的
+
+今天做的AlexCodex ，感觉在复杂数据里，动态数组还算简单的了，毕竟很好计算 数据值存储的位置。
+
+这个合约中，提供了动态数组中指定下标元素的set方法，而我们知道 owner 变量和contact 变量一起存储 slot0 中。由于不能直接设置 slot 的值，所以，我们要想办法通过数组元素的 set 来更新 slot0 的值。
+
+合约存储的数组是 2的256的长度，理论上是无限大的，但和 uint256 一样，如果出现了溢出，就会导致数组长度无限扩大，从而 codex 这个数组覆盖掉整个 状态变量存储的数组，这样，我们找到此时 slot0 存储的数组值，更新这个数组值就可以更新这个slot了
+
+同样，POC待整理 
+
+POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main/Writeup/lianshus/POC/
+
+
+
+### 2024.09.21
+
+学习內容:
+
+CTF ing
+
+
+
 ### 2024.07.12
 
 <!-- Content_END -->

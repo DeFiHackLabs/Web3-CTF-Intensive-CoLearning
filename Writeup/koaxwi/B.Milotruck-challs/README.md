@@ -78,5 +78,10 @@ Then we delegate the votes to someone else (cannot unlock due to the lock durati
 
 Very similar to Damn Vulnerable Defi - Naive Receiver, refer [here](../A.damn-vulnerable-defi#naive-receiver-240830).
 
-## Gnosis Unsafe (TODO)
+## Gnosis Unsafe (2024/09/20)
 
+This bug is a compiler bug: https://soliditylang.org/blog/2022/08/08/calldata-tuple-reencoding-head-overflow-bug/
+
+The argument layout of the functions matches the bug pattern. Though the blog states it occurs when forwarding the calldata to other contracts, it actually also happens in `abi.encode`.
+Hence the signer field in the hashed data is overwritten to `0`, and we can queue a transaction with any owner and executing it with zero address signer.
+When `ecrecover` fails, it returns zero address, so our transaction gets executed

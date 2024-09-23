@@ -147,4 +147,8 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 完成 ethernaut 的 Dex:
 [Day21](Writeup/Ray/Day21.md)
 
+### 2024.09.21
+完成 ethernaut 的 DexTwo:
+[Day22](Writeup/Ray/Day22.md)
+
 <!-- Content_END -->

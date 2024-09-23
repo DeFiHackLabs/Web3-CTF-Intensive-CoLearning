@@ -84,5 +84,10 @@ timezone: Pacific/Auckland
 ### 2024.09.20
 [[Blaz CTF 2023] 4 | Lockless Swap](./Writeup/0xE/blazctf-2023/lockless-swap.md)  
 
+### 2024.09.21
+参加 Blaz CTF 2024  
+
+### 2024.09.22
+参加 Blaz CTF 2024  
 
 <!-- Content_END -->

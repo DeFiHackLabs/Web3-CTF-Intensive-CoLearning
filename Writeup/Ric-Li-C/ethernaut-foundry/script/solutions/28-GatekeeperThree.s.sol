@@ -69,7 +69,7 @@ contract Solution {
         three.construct0r();
 
         // For modifier gateTwo()
-        trick.checkPassword(block.timestamp);
+        trick.checkPassword(block.timestamp); // If `trick = three.trick();` is moved into function `open()`, this line will not be needed.
         three.getAllowance(block.timestamp);
 
         three.enter();

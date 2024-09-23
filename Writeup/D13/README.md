@@ -24,6 +24,8 @@
 9. [level 20 - Denial](./script/20_Denial.s.sol)
 0. [level 21 - Shop](./script/21_Shop.s.sol)
 0. [level 22 - Dex](./script/22_Dex.s.sol)
+0. [level 23 - DexTwo](./script/23_Dex2.s.sol)
+
 
 
 
@@ -49,3 +51,4 @@
 9. [level 20 - Denial](https://hackmd.io/@D13/ethernaut20)
 9. [level 21 - Shop](https://hackmd.io/@D13/ethernaut21)
 0. [level 22 - Dex](https://hackmd.io/@D13/ethernaut22)
+0. [level 23 - DexTwo](https://hackmd.io/@D13/ethernaut23)

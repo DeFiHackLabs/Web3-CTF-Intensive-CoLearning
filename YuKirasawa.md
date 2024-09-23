@@ -160,4 +160,16 @@ timezone: Pacific/Auckland # 新西兰标准时间 (UTC+12)
 
 完成了 blazctf 2023 的 hide-on-bush 题目。
 
+### 2024.09.20
+
+完成了 blazctf 2023 的 be-billionaires-today 题目。
+
+### 2024.09.21
+
+blazctf 2024，队名 Little Big Us，目前完成了 Ciao、BigenLayer 和 8Inch。
+
+### 2024.09.22
+
+做了一道 Doju，其他的感觉都做不动了。
+
 <!-- Content_END -->

