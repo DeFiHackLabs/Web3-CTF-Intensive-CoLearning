@@ -118,14 +118,20 @@ Solved Gnosis Unsafe.
 
 BlazCTF:
 - Ciao
+  - check internal calldata
 - BigenLayer
+  - weak/leak private key (0x1337)
 - 8Inch
+  - price 10 wojak : 1 weth, buy 9 wojak cost 0 weth
+  - `SafeUint112` is not safe when `value == 1<<122`
 - ...
 
 ### 2024.09.22
 
 BlazCTF:
 - Doju
+  - leverage the call in `sellTokens` to transfer tokens
+  - find an EOA with suffix matching `Doju`'s prefix 4 bytes (using tools such as profanity)
 - other challs checked but not solved
 
 <!-- Content_END -->
