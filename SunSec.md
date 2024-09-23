@@ -140,4 +140,12 @@ timezone: Asia/Taipei
 - 準備比賽環境
 - 建立群組隊伍
   
+ ### 2024.09.21
+- 進行 BlazCTF 
+- 爆肝
+  
+ ### 2024.09.22
+- 進行 BlazCTF 
+- 爆肝
+  
 <!-- Content_END -->
