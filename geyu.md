@@ -92,4 +92,8 @@ writeup:[Privacy](./Writeup/geyu/writeup/19_AlienCodex.md)
 参加 blaz ctf 
 ### 2024.09.22
 参加 blaz ctf
+### 2024.09.23
+完成了 ethernaut 第 19 个练习 NaughtCoin
+writeup:[Privacy](./Writeup/geyu/writeup/20_Denial.md)
+
 <!-- Content_END -->
