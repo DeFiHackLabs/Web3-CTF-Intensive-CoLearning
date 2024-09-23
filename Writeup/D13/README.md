@@ -48,6 +48,8 @@
 6. [level 15 - Naught Coin](ttps://hackmd.io/@D13/ethernaut15)
 7. [level 16 - Preservation](ttps://hackmd.io/@D13/ethernaut16)
 8. [level 17 - Recovery](https://hackmd.io/@D13/ethernaut17)
+8. [level 18 - MagicNumber](https://hackmd.io/@D13/ethernaut18)
+9. [level 19 - Alien Codex](https://hackmd.io/@D13/ethernaut19)
 9. [level 20 - Denial](https://hackmd.io/@D13/ethernaut20)
 9. [level 21 - Shop](https://hackmd.io/@D13/ethernaut21)
 0. [level 22 - Dex](https://hackmd.io/@D13/ethernaut22)
