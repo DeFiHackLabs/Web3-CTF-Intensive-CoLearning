@@ -602,5 +602,10 @@ gatethree, 合约balance > 0.001ether ， owner接受 eth 返回false，首先PO
 下一题 **Level 26 DoubleEntryPoint**
 
 今天有事儿先打卡。
+### 2024.09.21
+参加比赛补打卡
+
+### 2024.09.22
+参加比赛补打卡
 
 <!-- Content_END -->
