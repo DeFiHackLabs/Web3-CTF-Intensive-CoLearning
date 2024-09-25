@@ -65,4 +65,6 @@ timezone: Asia/Shanghai
 ### 2024.09.21
 - EthTaipei CTF 2023中的Hello world一题，这题比较简单，传入合约中给定的字符串便可通关。
 - [2024.9.21](./Writeup/Sivan/2024.9.21)
+### 2024.09.22
+- 参加CTF比赛，今天未进行练习。
 <!-- Content_END -->
