@@ -489,6 +489,12 @@ POC -- : https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/tree/main
 
 CTF ing
 
+### 2024.09.22
+
+学习內容:
+
+酣畅淋漓的汗流浃背，虽然比赛一题也没解出来，但是感受到了CTF的氛围，后续还要持续学习，基础知识积累的还不够！
+
 
 
 ### 2024.07.12
