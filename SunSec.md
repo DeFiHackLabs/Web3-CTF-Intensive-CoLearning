@@ -53,7 +53,7 @@ timezone: Asia/Taipei
 - On-chain: 可以透過 ``cast send`` 或是 forge script 來解.
 - Local: 透過 forge test 通常是在local解題, 方便 debug.
 - RoadClosed 為例子我寫了2個解題方式. testRoadClosedExploit 和 testRoadClosedContractExploit (因為題目有檢查msg.sender是不是合約, 所以可以透過constructor來繞過 isContract)
-- [POC](./Writeup/SunSec/test/QuillCTF/RoadClosed.t.sol) 
+- [POC](https://github.com/DeFiHackLabs/Web3-CTF-Intensive-CoLearning/blob/main/Writeup/SunSec/QuillCTF/test/RoadClosed.t.sol) 
 
 ### 2024.08.30
 - DamnVulnerableDeFi #1 [Unstoppable](./Writeup/SunSec/damn-vulnerable-defi-writeup.md#unstoppable)
